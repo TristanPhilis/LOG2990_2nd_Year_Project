@@ -44,7 +44,7 @@ export class PencilService extends Tool {
     }
 
     onMouseMove(event: MouseEvent): void {
-        this.mouseDown = event.buttons === 1; // MouseButton.Left;
+        this.mouseDown = event.buttons === MouseButton.Left;
         if (this.mouseDown) {
             const mousePosition = this.getPositionFromMouse(event);
             this.pathData.push(mousePosition);
