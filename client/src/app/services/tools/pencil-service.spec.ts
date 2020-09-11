@@ -33,7 +33,7 @@ describe('PencilService', () => {
         mouseEvent = {
             offsetX: 25,
             offsetY: 25,
-            button: 0,
+            buttons: 1,
         } as MouseEvent;
     });
 
@@ -111,4 +111,8 @@ describe('PencilService', () => {
         // tslint:disable-next-line:no-magic-numbers
         expect(imageData.data[3]).not.toEqual(0); // A
     });
+
+    // it('should change the color', () => {});
+
+    // it('should change the thickness', () => {});
 });
