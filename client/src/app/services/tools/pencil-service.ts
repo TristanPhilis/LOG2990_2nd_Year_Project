@@ -25,7 +25,7 @@ export class PencilService extends Tool {
     }
 
     onMouseDown(event: MouseEvent): void {
-        this.mouseDown = event.button === MouseButton.Left;
+        this.mouseDown = event.buttons === MouseButton.Left;
         if (this.mouseDown) {
             this.clearPath();
             this.mouseDownCoord = this.getPositionFromMouse(event);
@@ -44,15 +44,15 @@ export class PencilService extends Tool {
     }
 
     onMouseMove(event: MouseEvent): void {
-        this.mouseDown = event.buttons === MouseButton.Left;
-        if (this.mouseDown) {
+        console.log(this.mouseDown);
+        if (this.mouseDown && event.buttons === MouseButton.Left) {
             const mousePosition = this.getPositionFromMouse(event);
             this.pathData.push(mousePosition);
             // On dessine sur le canvas de prévisualisation et on l'efface à chaque déplacement de la souris
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
             this.drawLine(this.drawingService.previewCtx, this.pathData);
+            this.drawLine(this.drawingService.baseCtx, this.pathData);
         }
-        this.drawLine(this.drawingService.baseCtx, this.pathData);
     }
 
     private drawLine(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
@@ -60,8 +60,12 @@ export class PencilService extends Tool {
         ctx.lineCap = 'round';
         ctx.lineWidth = this.thickness;
         for (const point of path) {
-            if (point.x !== this.drawingService.canvas.height || (0 && point.y !== this.drawingService.canvas.width) || 0)
-                ctx.lineTo(point.x, point.y);
+            // const leftBorder = point.x === this.drawingService.canvas.height;
+            // const rightBorder = point.y === this.drawingService.canvas.width;
+            // console.log(this.drawingService.canvas);
+            // if (!leftBorder && !rightBorder) {
+            ctx.lineTo(point.x, point.y);
+            // }
         }
         ctx.strokeStyle = `rgb(${155},${55},${255})`;
         ctx.stroke();
