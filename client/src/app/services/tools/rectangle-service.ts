@@ -59,15 +59,13 @@ export class RectangleService extends Tool {
 
     private drawRectangle(ctx: CanvasRenderingContext2D, path: Vec2[], event: MouseEvent): void {
         ctx.beginPath();
-        let mouseDownCoord = this.getPositionFromMouse(event);
-        this.width = Math.abs(path[0].x - mouseDownCoord.x);
-        this.height = Math.abs(path[0].y - mouseDownCoord.y);
+        let currentMouseCoord = this.getPositionFromMouse(event);
 
         let traceType = 0;
         const x1 = path[0].x;
         const y1 = path[0].y;
-        let x2 = mouseDownCoord.x;
-        let y2 = mouseDownCoord.y;
+        let x2 = currentMouseCoord.x;
+        let y2 = currentMouseCoord.y;
 
         if (event.shiftKey) {
             const diffX = x2 - x1;
