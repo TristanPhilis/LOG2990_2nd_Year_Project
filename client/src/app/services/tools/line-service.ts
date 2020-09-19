@@ -9,6 +9,7 @@ export enum MouseButton {
     Right = 2,
     Back = 3,
     Forward = 4,
+    click = 5,
 }
 
 @Injectable({
@@ -22,17 +23,6 @@ export class LineService extends Tool {
         this.clearPath();
     }
 
-    /*     onMouseClick(event: MouseEvent): void {
-        this.mouseDown = event.button === MouseButton.Left;
-        if (this.mouseDown) {
-            this.clearPath();
-
-            this.mouseDownCoord = this.getPositionFromMouse(event);
-            this.pathData.push(this.mouseDownCoord);
-            console.log('tst fonctionne');
-        }
-    } */
-
     onMouseDown(event: MouseEvent): void {
         this.mouseDown = event.button === MouseButton.Left;
         if (this.mouseDown) {
@@ -43,22 +33,14 @@ export class LineService extends Tool {
         }
     }
 
-    onMouseUp(event: MouseEvent): void {
-        if (this.mouseDown) {
-            const mousePosition = this.getPositionFromMouse(event);
-            this.pathData.push(mousePosition);
-            this.drawLine(this.drawingService.baseCtx, this.pathData, event);
-        }
-        this.mouseDown = false;
-        this.clearPath();
-    }
     onMouseMove(event: MouseEvent): void {
         if (this.mouseDown) {
             const mousePosition = this.getPositionFromMouse(event);
             this.pathData.push(mousePosition);
 
             // On dessine sur le canvas de prévisualisation et on l'efface à chaque déplacement de la souris
-            this.drawingService.clearCanvas(this.drawingService.previewCtx);
+            // this.drawingService.clearCanvas(this.drawingService.previewCtx);
+            // if (event.click -> draw line); reflexion sur suppression de clearth path ou non pour conserver lien vecs2 pour coordonnes x,y
             this.drawLine(this.drawingService.previewCtx, this.pathData, event);
         }
     }
@@ -67,14 +49,14 @@ export class LineService extends Tool {
         ctx.beginPath();
         const mouseCoord = this.getPositionFromMouse(event);
 
-        const x1 = path[0].x;
-        const y1 = path[0].y;
-        const x2 = mouseCoord.x;
-        const y2 = mouseCoord.y;
-
+        const i = 0;
+        const x1 = mouseCoord.x;
+        const y1 = mouseCoord.y;
+        const x2 = this.pathData[i + 1].x;
+        const y2 = this.pathData[i + 1].y;
         ctx.lineTo(x1, y1);
         ctx.lineTo(x2, y2);
-        console.log('test marche');
+
         ctx.stroke();
     }
 
