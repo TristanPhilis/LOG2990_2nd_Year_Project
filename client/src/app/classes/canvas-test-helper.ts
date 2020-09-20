@@ -1,9 +1,6 @@
 const WIDTH = 100;
 const HEIGHT = 100;
 
-const MIN_THICKNESS = 0;
-const MAX_THICKNESS = 100;
-
 const canvas = document.createElement('canvas');
 canvas.width = WIDTH;
 canvas.height = HEIGHT;
