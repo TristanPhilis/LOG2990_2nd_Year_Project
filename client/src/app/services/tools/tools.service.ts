@@ -7,8 +7,6 @@ import { ToolId } from '@app/shared/enum';
     providedIn: 'root',
 })
 export class ToolsService {
-
-    //@ViewChild
     currentTool: Tool;
     private tools: Tool[];
     constructor(pencilService: PencilService) {
