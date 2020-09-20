@@ -8,7 +8,7 @@ import { ToolOptionComponent } from './tool-option/tool-option.component';
     templateUrl: './sidebar.component.html',
     styleUrls: ['./sidebar.component.scss'],
 })
-export class SidebarComponent implements AfterViewInit {
+export class SidebarComponent {
     selectedTool: ToolId;
     tools: ToolOptionComponent[];
     constructor(private toolsService: ToolsService) {
