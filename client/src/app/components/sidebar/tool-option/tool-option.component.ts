@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { ToolId } from '../../../shared/enum';
 // import { Tool } from '../../../classes/tool';
 
 @Component({
@@ -8,6 +9,7 @@ import { Component } from '@angular/core';
 })
 export class ToolOptionComponent {
 
+    id: ToolId
     thickness: number;
     color: string;
     /*export const toolOption: Tool[] = {

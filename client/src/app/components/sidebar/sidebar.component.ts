@@ -12,10 +12,12 @@ export class SidebarComponent implements AfterViewInit {
     selectedTool: ToolId;
     tools: ToolOptionComponent[];
     constructor(private toolsService: ToolsService) {
+        this.selectedTool = 0;
         this.tools = [
-            { thickness: 10, color: 'dark' },
-            { thickness: 10, color: 'dark' },
+            {id: ToolId.pencilService, thickness: 10, color: 'dark' },
+            {id: ToolId.brushService, thickness: 10, color: 'dark' },
         ];
+        console.log(this.tools);
     }
 
     ngAfterViewInit() {}
