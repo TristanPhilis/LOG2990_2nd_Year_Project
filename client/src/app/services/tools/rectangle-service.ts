@@ -61,7 +61,8 @@ export class RectangleService extends Tool {
         ctx.beginPath();
         const currentMouseCoord = this.getPositionFromMouse(event);
 
-        const traceType = 0;
+        // tslint:disable-next-line: prefer-const
+        let traceType = 0;
         const x1 = path[0].x;
         const y1 = path[0].y;
         let x2 = currentMouseCoord.x;
@@ -90,7 +91,7 @@ export class RectangleService extends Tool {
                 ctx.stroke();
 
                 break;
-            case 1:
+            case 2:
                 ctx.fill();
                 ctx.stroke();
                 break;
