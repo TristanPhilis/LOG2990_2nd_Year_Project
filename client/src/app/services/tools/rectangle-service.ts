@@ -2,22 +2,14 @@ import { Injectable } from '@angular/core';
 import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { MouseButton } from '@app/shared/enum';
 
-export enum MouseButton {
-    Left = 0,
-    Middle = 1,
-    Right = 2,
-    Back = 3,
-    Forward = 4,
-}
 
 @Injectable({
     providedIn: 'root',
 })
 export class RectangleService extends Tool {
     private pathData: Vec2[];
-    x: number;
-    y: number;
     width: number;
     height: number;
 
