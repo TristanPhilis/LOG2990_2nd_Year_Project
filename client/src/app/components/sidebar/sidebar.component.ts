@@ -1,4 +1,4 @@
-import { AfterViewInit, Component } from '@angular/core';
+import { Component } from '@angular/core';
 import { ToolsService } from '@app/services/tools/tools.service';
 import { ToolId } from '@app/shared/enum';
 import { ToolOptionComponent } from './tool-option/tool-option.component';
