@@ -8,6 +8,7 @@ import { ToolOptionComponent } from './tool-option/tool-option.component';
     templateUrl: './sidebar.component.html',
     styleUrls: ['./sidebar.component.scss'],
 })
+<<<<<<< HEAD
 export class SidebarComponent {
     selectedTool: ToolId;
     tools: ToolOptionComponent[];
@@ -26,3 +27,6 @@ export class SidebarComponent {
         this.selectedTool = toolId;
     }
 }
+=======
+export class SidebarComponent {
+>>>>>>> bb53b68... Tests work
