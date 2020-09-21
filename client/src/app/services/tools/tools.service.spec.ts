@@ -26,7 +26,7 @@ describe('ToolsService', () => {
 
     // todo: Change with an other tool
     it('Should change the current tool properly', () => {
-        service.setCurrentTool(ToolId.pencil);
+        service.setCurrentTool(ToolId.pencilService);
         expect(service.currentTool).toEqual(pencilStub);
     });
 });
