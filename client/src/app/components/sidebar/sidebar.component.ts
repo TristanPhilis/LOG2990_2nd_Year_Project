@@ -15,7 +15,7 @@ export class SidebarComponent {
         this.selectedTool = 0;
         this.tools = [
             { id: ToolId.pencilService, thickness: 10, color: 'dark' },
-            { id: ToolId.brushService, thickness: 10, color: 'dark' },
+            { id: ToolId.rectangleService, thickness: 10, color: 'dark' },
         ];
         console.log(this.tools);
     }
