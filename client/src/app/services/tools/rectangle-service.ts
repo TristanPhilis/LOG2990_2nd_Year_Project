@@ -4,7 +4,6 @@ import { Vec2 } from '@app/classes/vec2';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { MouseButton } from '@app/shared/enum';
 
-
 @Injectable({
     providedIn: 'root',
 })
