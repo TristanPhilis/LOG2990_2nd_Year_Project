@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Tool } from '@app/classes/tool';
 import { PencilService } from '@app/services/tools/pencil-service';
 import { ToolId } from '@app/shared/enum';
+import { RectangleService } from './rectangle-service';
 
 @Injectable({
     providedIn: 'root',
@@ -9,9 +10,9 @@ import { ToolId } from '@app/shared/enum';
 export class ToolsService {
     currentTool: Tool;
     private tools: Tool[];
-    constructor(pencilService: PencilService) {
+    constructor(pencilService: PencilService, rectangleService: RectangleService) {
         this.currentTool = pencilService;
-        this.tools = [pencilService];
+        this.tools = [pencilService, rectangleService];
     }
 
     setCurrentTool(toolId: ToolId): void {

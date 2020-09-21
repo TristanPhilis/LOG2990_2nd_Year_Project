@@ -8,7 +8,7 @@ import { MouseButton } from '@app/shared/enum';
     providedIn: 'root',
 })
 export class RectangleService extends Tool {
-    private pathData: Vec2[];
+    private initialPosition: Vec2;
     width: number;
     height: number;
 
@@ -22,40 +22,32 @@ export class RectangleService extends Tool {
         if (this.mouseDown) {
             this.clearPath();
 
-            this.mouseDownCoord = this.getPositionFromMouse(event);
-            this.pathData.push(this.mouseDownCoord);
+            this.initialPosition = this.getPositionFromMouse(event);
         }
     }
 
     onMouseUp(event: MouseEvent): void {
         if (this.mouseDown) {
-            const mousePosition = this.getPositionFromMouse(event);
-            this.pathData.push(mousePosition);
-            this.drawRectangle(this.drawingService.baseCtx, this.pathData, event);
+            this.drawRectangle(this.drawingService.baseCtx, event);
         }
         this.mouseDown = false;
-        this.clearPath();
     }
 
     onMouseMove(event: MouseEvent): void {
         if (this.mouseDown) {
-            const mousePosition = this.getPositionFromMouse(event);
-            this.pathData.push(mousePosition);
-
-            // On dessine sur le canvas de prévisualisation et on l'efface à chaque déplacement de la souris
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
-            this.drawRectangle(this.drawingService.previewCtx, this.pathData, event);
+            this.drawRectangle(this.drawingService.previewCtx, event);
         }
     }
 
-    private drawRectangle(ctx: CanvasRenderingContext2D, path: Vec2[], event: MouseEvent): void {
+    private drawRectangle(ctx: CanvasRenderingContext2D, event: MouseEvent): void {
         ctx.beginPath();
         const currentMouseCoord = this.getPositionFromMouse(event);
 
         // tslint:disable-next-line: prefer-const
         let traceType = 0;
-        const x1 = path[0].x;
-        const y1 = path[0].y;
+        const x1 = this.initialPosition.x;
+        const y1 = this.initialPosition.y;
         let x2 = currentMouseCoord.x;
         let y2 = currentMouseCoord.y;
 
@@ -89,9 +81,5 @@ export class RectangleService extends Tool {
             default:
                 ctx.fill();
         }
-    }
-
-    private clearPath(): void {
-        this.pathData = [];
     }
 }
