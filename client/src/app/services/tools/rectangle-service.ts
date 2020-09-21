@@ -14,14 +14,11 @@ export class RectangleService extends Tool {
 
     constructor(drawingService: DrawingService) {
         super(drawingService);
-        this.clearPath();
     }
 
     onMouseDown(event: MouseEvent): void {
         this.mouseDown = event.button === MouseButton.Left;
         if (this.mouseDown) {
-            this.clearPath();
-
             this.initialPosition = this.getPositionFromMouse(event);
         }
     }
