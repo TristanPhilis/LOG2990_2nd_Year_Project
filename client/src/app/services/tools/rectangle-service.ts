@@ -8,7 +8,7 @@ import { MouseButton } from '@app/shared/enum';
     providedIn: 'root',
 })
 export class RectangleService extends Tool {
-    private initialPosition: Vec2;
+    initialPosition: Vec2;
     width: number;
     height: number;
 

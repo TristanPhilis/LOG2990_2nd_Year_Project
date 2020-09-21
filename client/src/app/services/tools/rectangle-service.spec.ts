@@ -44,7 +44,7 @@ describe('RectangleService', () => {
     it(' mouseDown should set mouseDownCoord to correct position', () => {
         const expectedResult: Vec2 = { x: 25, y: 25 };
         service.onMouseDown(mouseEvent);
-        expect(service.mouseDownCoord).toEqual(expectedResult);
+        expect(service.initialPosition).toEqual(expectedResult);
     });
 
     it(' mouseDown should set mouseDown property to true on left click', () => {
@@ -63,7 +63,7 @@ describe('RectangleService', () => {
     });
 
     it(' onMouseUp should call drawRectangle if mouse was already down', () => {
-        service.mouseDownCoord = { x: 0, y: 0 };
+        service.initialPosition = { x: 0, y: 0 };
         service.mouseDown = true;
 
         service.onMouseUp(mouseEvent);
@@ -72,14 +72,14 @@ describe('RectangleService', () => {
 
     it(' onMouseUp should not call drawRectangle if mouse was not already down', () => {
         service.mouseDown = false;
-        service.mouseDownCoord = { x: 0, y: 0 };
+        service.initialPosition = { x: 0, y: 0 };
 
         service.onMouseUp(mouseEvent);
         expect(drawRectangleSpy).not.toHaveBeenCalled();
     });
 
     it(' onMouseMove should call drawRectangle if mouse was already down', () => {
-        service.mouseDownCoord = { x: 0, y: 0 };
+        service.initialPosition = { x: 0, y: 0 };
         service.mouseDown = true;
 
         service.onMouseMove(mouseEvent);
@@ -88,7 +88,7 @@ describe('RectangleService', () => {
     });
 
     it(' onMouseMove should not call drawRectangle if mouse was not already down', () => {
-        service.mouseDownCoord = { x: 0, y: 0 };
+        service.initialPosition = { x: 0, y: 0 };
         service.mouseDown = false;
 
         service.onMouseMove(mouseEvent);
