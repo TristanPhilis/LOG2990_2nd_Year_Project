@@ -9,6 +9,7 @@ import { ToolOptionComponent } from './tool-option/tool-option.component';
     styleUrls: ['./sidebar.component.scss'],
 })
 <<<<<<< HEAD
+<<<<<<< HEAD
 export class SidebarComponent {
     selectedTool: ToolId;
     tools: ToolOptionComponent[];
@@ -30,3 +31,6 @@ export class SidebarComponent {
 =======
 export class SidebarComponent {
 >>>>>>> bb53b68... Tests work
+=======
+export class SidebarComponent {}
+>>>>>>> 215bfdf... Fixed pencil out of canvas behaviour
