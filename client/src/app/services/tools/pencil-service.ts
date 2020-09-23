@@ -51,6 +51,9 @@ export class PencilService extends Tool {
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
             this.drawLine(this.drawingService.previewCtx, this.pathData);
         }
+        if (this.mouseDown && !(event.buttons === MouseButton.Left)) {
+            this.drawLine(this.drawingService.baseCtx, this.pathData);
+        }
     }
 
     private drawLine(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
