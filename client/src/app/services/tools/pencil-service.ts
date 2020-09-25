@@ -64,6 +64,7 @@ export class PencilService extends Tool {
         }
         // ctx.strokeStyle = `rgba(${0},${0},${0},${0.05})`;
         ctx.stroke();
+        console.log('hi');
     }
 
     private clearPath(): void {
