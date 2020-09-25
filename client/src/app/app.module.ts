@@ -8,9 +8,10 @@ import { EditorComponent } from './components/editor/editor.component';
 import { MainPageComponent } from './components/main-page/main-page.component';
 import { SidebarComponent } from './components/sidebar/sidebar.component';
 import { ToolOptionComponent } from './components/sidebar/tool-option/tool-option.component';
+import { SidebarToolComponent } from './src/app/components/sidebar/sidebar-tool/sidebar-tool.component';
 
 @NgModule({
-    declarations: [AppComponent, EditorComponent, SidebarComponent, DrawingComponent, MainPageComponent, ToolOptionComponent],
+    declarations: [AppComponent, EditorComponent, SidebarComponent, DrawingComponent, MainPageComponent, ToolOptionComponent, SidebarToolComponent],
     imports: [BrowserModule, HttpClientModule, AppRoutingModule],
     providers: [],
     bootstrap: [AppComponent],

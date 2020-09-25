@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { ToolsService } from '@app/services/tools/tools.service';
-import { ToolId } from '@app/shared/enum';
+import { drawingToolId } from '@app/shared/enum';
 import { ToolOptionComponent } from './tool-option/tool-option.component';
 
 @Component({
@@ -9,20 +9,21 @@ import { ToolOptionComponent } from './tool-option/tool-option.component';
     styleUrls: ['./sidebar.component.scss'],
 })
 export class SidebarComponent {
-    selectedTool: ToolId;
-    tools: ToolOptionComponent[];
+    selectedTool: drawingToolId;
+    drawingTools: ToolOptionComponent[];
+    sideBarTools: ToolOptionComponent[];
+
     constructor(private toolsService: ToolsService) {
         this.selectedTool = 0;
-        this.tools = [
-            { id: ToolId.pencilService, thickness: 10, color: 'dark' },
-            { id: ToolId.rectangleService, thickness: 10, color: 'dark' },
-            { id: ToolId.ellipseService, thickness: 10, color: 'dark' },
+        this.drawingTools = [
+            { id: drawingToolId.pencilService, name: 'Pencil', thickness: 10, color: 'dark' },
+            { id: drawingToolId.rectangleService, name: 'Rectangle', thickness: 10, color: 'dark' },
+            { id: drawingToolId.ellipseService, name: 'Ellipse', thickness: 10, color: 'dark' },
         ];
-        console.log(this.tools);
     }
 
-    showToolDetails(toolId: ToolId): void {
-        this.toolsService.setCurrentTool(toolId);
-        this.selectedTool = toolId;
+    showToolDetails(id: drawingToolId): void {
+        this.toolsService.setCurrentTool(id);
+        this.selectedTool = id;
     }
 }

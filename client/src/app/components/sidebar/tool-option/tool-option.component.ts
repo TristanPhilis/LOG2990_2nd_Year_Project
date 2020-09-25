@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { ToolId } from '@app/shared/enum';
+import { drawingToolId } from '@app/shared/enum';
 
 @Component({
     selector: 'app-tool-option',
@@ -7,7 +7,8 @@ import { ToolId } from '@app/shared/enum';
     styleUrls: ['./tool-option.component.scss'],
 })
 export class ToolOptionComponent {
-    id: ToolId;
+    id: drawingToolId;
+    name: string;
     thickness: number;
     color: string;
     constructor() {
