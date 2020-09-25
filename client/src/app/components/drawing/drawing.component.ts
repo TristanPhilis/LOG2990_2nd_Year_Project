@@ -30,7 +30,6 @@ export class DrawingComponent implements AfterViewInit {
         this.drawingService.baseCtx = this.baseCtx;
         this.drawingService.previewCtx = this.previewCtx;
         this.drawingService.canvas = this.baseCanvas.nativeElement;
-        console.log(this.drawingService.canvas);
     }
 
     @HostListener('mousemove', ['$event'])

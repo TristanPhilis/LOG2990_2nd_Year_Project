@@ -20,7 +20,7 @@ export class PencilService extends Tool {
 
     constructor(drawingService: DrawingService) {
         super(drawingService);
-        this.thickness = 5; // Remplacer par un observable
+        this.thickness = 1; // Remplacer par un observable
         this.clearPath();
     }
 
@@ -47,7 +47,6 @@ export class PencilService extends Tool {
         if (this.mouseDown && event.buttons === MouseButton.Left) {
             const mousePosition = this.getPositionFromMouse(event);
             this.pathData.push(mousePosition);
-            // On dessine sur le canvas de prévisualisation et on l'efface à chaque déplacement de la souris
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
             this.drawLine(this.drawingService.previewCtx, this.pathData);
         }
@@ -61,18 +60,10 @@ export class PencilService extends Tool {
         ctx.lineCap = 'round';
         ctx.lineWidth = this.thickness;
         for (const point of path) {
-            // const leftBorder = point.x === this.drawingService.canvas.height;
-            // const rightBorder = point.y === this.drawingService.canvas.width;
-            // console.log(this.drawingService.canvas);
-            // if (!leftBorder && !rightBorder) {
             ctx.lineTo(point.x, point.y);
-            // }
         }
         // ctx.strokeStyle = `rgba(${0},${0},${0},${0.05})`;
         ctx.stroke();
-        for (const point of path) {
-            console.log(ctx.getImageData(point.x, point.y, 1, 1).data[3]);
-        }
     }
 
     private clearPath(): void {
