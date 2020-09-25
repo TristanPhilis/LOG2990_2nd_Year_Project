@@ -14,7 +14,7 @@ export class ToolsService {
     private tools: Tool[];
     constructor(pencilService: PencilService, rectangleService: RectangleService, ellipseService: EllipseService, eraserService: EraserService) {
         this.currentTool = pencilService;
-        this.tools = [pencilService, rectangleService, ellipseService];
+        this.tools = [pencilService, rectangleService, ellipseService, eraserService];
     }
 
     setCurrentTool(toolId: ToolId): void {
