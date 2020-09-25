@@ -4,52 +4,67 @@ import { Vec2 } from '@app/classes/vec2';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { MouseButton } from '@app/shared/enum';
 
-// TODO : Déplacer ça dans un fichier séparé accessible par tous
-
+// Ceci est une implémentation de base de l'outil Crayon pour aider à débuter le projet
+// L'implémentation ici ne couvre pas tous les critères d'accepetation du projet
+// Vous êtes encouragés de modifier et compléter le code.
+// N'oubliez pas de regarder les tests dans le fichier spec.ts aussi!
 @Injectable({
     providedIn: 'root',
 })
 export class EraserService extends Tool {
-    initial: Vec2;
-    mouseCoord: Vec2;
+    private pathData: Vec2[];
+    private thickness: number;
 
     constructor(drawingService: DrawingService) {
         super(drawingService);
+        this.thickness = 5; // Remplacer par un observable
+        this.clearPath();
     }
 
     onMouseDown(event: MouseEvent): void {
         this.mouseDown = event.buttons === MouseButton.Left;
         if (this.mouseDown) {
-            this.initial = this.getPositionFromMouse(event);
-        }
-    }
-
-    onMouseMove(event: MouseEvent): void {
-        if (this.mouseDown && event.buttons === MouseButton.Left) {
-            this.mouseCoord = this.getPositionFromMouse(event);
-            this.drawingService.clearCanvas(this.drawingService.previewCtx);
-            this.eraserLine(this.drawingService.previewCtx, event);
-        }
-        if (this.mouseDown && !(event.buttons === MouseButton.Left)) {
-            this.mouseDown = false;
-            this.eraserLine(this.drawingService.baseCtx, event);
+            this.clearPath();
+            this.mouseDownCoord = this.getPositionFromMouse(event);
+            this.pathData.push(this.mouseDownCoord);
         }
     }
 
     onMouseUp(event: MouseEvent): void {
         if (this.mouseDown) {
-            this.eraserLine(this.drawingService.baseCtx, event);
+            const mousePosition = this.getPositionFromMouse(event);
+            this.pathData.push(mousePosition);
+            this.eraseLine(this.drawingService.baseCtx, this.pathData);
         }
         this.mouseDown = false;
+        this.clearPath();
     }
 
-    private eraserLine(ctx: CanvasRenderingContext2D, event: MouseEvent): void {
+    onMouseMove(event: MouseEvent): void {
+        if (this.mouseDown && event.buttons === MouseButton.Left) {
+            const mousePosition = this.getPositionFromMouse(event);
+            this.pathData.push(mousePosition);
+            // On dessine sur le canvas de prévisualisation et on l'efface à chaque déplacement de la souris
+            this.drawingService.clearCanvas(this.drawingService.previewCtx);
+            this.eraseLine(this.drawingService.baseCtx, this.pathData);
+        }
+        if (this.mouseDown && !(event.buttons === MouseButton.Left)) {
+            this.eraseLine(this.drawingService.baseCtx, this.pathData);
+        }
+    }
+
+    private eraseLine(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
         ctx.beginPath();
+        ctx.globalCompositeOperation = 'destination-out';
+        ctx.lineCap = 'round';
+        ctx.lineWidth = this.thickness;
+        for (const point of path) {
+            ctx.lineTo(point.x, point.y);
+        }
+        ctx.stroke();
+    }
 
-        const smallestRadius = 5;
-
-        ctx.arc(this.mouseCoord.x, this.mouseCoord.y, smallestRadius, 0, 2 * Math.PI);
-
-        ctx.stroke(); // Stroke for now, has to be dynamic to fill for example
+    private clearPath(): void {
+        this.pathData = [];
     }
 }
