@@ -17,7 +17,7 @@ export class EllipseService extends Tool {
     }
 
     onMouseDown(event: MouseEvent): void {
-        this.mouseDown = event.button === MouseButton.Left;
+        this.mouseDown = event.buttons === MouseButton.Left;
         if (this.mouseDown) {
             this.initial = this.getPositionFromMouse(event);
         }
