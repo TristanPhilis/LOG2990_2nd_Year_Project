@@ -113,7 +113,7 @@ describe('PencilService', () => {
     it(' should change the pixel of the canvas ', () => {
         mouseEvent = { offsetX: 0, offsetY: 0, buttons: 1 } as MouseEvent;
         service.onMouseDown(mouseEvent);
-        mouseEvent = { offsetX: 1, offsetY: 0, buttons: 1 } as MouseEvent;
+        mouseEvent = { offsetX: 10, offsetY: 10, buttons: 1 } as MouseEvent;
         service.onMouseUp(mouseEvent);
 
         // Premier pixel seulement
