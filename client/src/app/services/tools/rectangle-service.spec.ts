@@ -47,7 +47,7 @@ describe('RectangleService', () => {
         mouseEventRClick = {
             offsetX: 25,
             offsetY: 25,
-            buttons: 0,
+            buttons: 2,
         } as MouseEvent;
     });
 
