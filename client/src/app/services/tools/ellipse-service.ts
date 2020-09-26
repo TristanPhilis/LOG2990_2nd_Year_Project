@@ -11,6 +11,7 @@ import { MouseButton } from '@app/shared/enum';
 })
 export class EllipseService extends Tool {
     initial: Vec2;
+    mouseCoord: Vec2;
 
     constructor(drawingService: DrawingService) {
         super(drawingService);
@@ -24,9 +25,14 @@ export class EllipseService extends Tool {
     }
 
     onMouseMove(event: MouseEvent): void {
-        if (this.mouseDown) {
+        if (this.mouseDown && event.buttons === MouseButton.Left) {
+            this.mouseCoord = this.getPositionFromMouse(event);
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
             this.drawEllipse(this.drawingService.previewCtx, event);
+        }
+        if (this.mouseDown && !(event.buttons === MouseButton.Left)) {
+            this.mouseDown = false;
+            this.drawEllipse(this.drawingService.baseCtx, event);
         }
     }
 
@@ -39,14 +45,18 @@ export class EllipseService extends Tool {
 
     private drawEllipse(ctx: CanvasRenderingContext2D, event: MouseEvent): void {
         ctx.beginPath();
-        const mouseCoord = this.getPositionFromMouse(event);
-        const xRadius = Math.abs(this.initial.x - mouseCoord.x);
-        const yRadius = Math.abs(this.initial.y - mouseCoord.y);
+        const xRadius = Math.abs(this.initial.x - this.mouseCoord.x) / 2;
+        const yRadius = Math.abs(this.initial.y - this.mouseCoord.y) / 2;
+
+        const xMiddle = (this.initial.x + this.mouseCoord.x) / 2;
+        const yMiddle = (this.initial.y + this.mouseCoord.y) / 2;
+
+        const smallestRadius = Math.min(xRadius, yRadius);
 
         if (event.shiftKey) {
-            ctx.arc(this.initial.x, this.initial.y, xRadius, 0, 2 * Math.PI);
+            ctx.arc(xMiddle, yMiddle, smallestRadius, 0, 2 * Math.PI);
         } else {
-            ctx.ellipse(this.initial.x, this.initial.y, xRadius, yRadius, 0, 0, 2 * Math.PI);
+            ctx.ellipse(xMiddle, yMiddle, xRadius, yRadius, 0, 0, 2 * Math.PI);
         }
 
         ctx.stroke(); // Stroke for now, has to be dynamic to fill for example
