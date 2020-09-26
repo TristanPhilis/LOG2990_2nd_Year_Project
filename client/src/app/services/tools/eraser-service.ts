@@ -14,10 +14,11 @@ import { MouseButton } from '@app/shared/enum';
 export class EraserService extends Tool {
     private pathData: Vec2[];
     private thickness: number;
+    private five: number = 5;
 
     constructor(drawingService: DrawingService) {
         super(drawingService);
-        this.thickness = 5; // Remplacer par un observable
+        this.thickness = this.five; // Remplacer par un observable
         this.clearPath();
     }
 

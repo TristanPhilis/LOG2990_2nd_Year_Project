@@ -12,7 +12,7 @@ describe('EraserService', () => {
 
     let baseCtxStub: CanvasRenderingContext2D;
     let previewCtxStub: CanvasRenderingContext2D;
-    let eraserLineSpy: jasmine.Spy<any>;
+    let eraseLineSpy: jasmine.Spy<any>;
 
     beforeEach(() => {
         baseCtxStub = canvasTestHelper.canvas.getContext('2d') as CanvasRenderingContext2D;
@@ -23,7 +23,7 @@ describe('EraserService', () => {
             providers: [{ provide: DrawingService, useValue: drawServiceSpy }],
         });
         service = TestBed.inject(EraserService);
-        eraserLineSpy = spyOn<any>(service, 'eraserLine').and.callThrough();
+        eraseLineSpy = spyOn<any>(service, 'eraseLine').and.callThrough();
 
         // Configuration du spy du service
         // tslint:disable:no-string-literal
@@ -67,7 +67,7 @@ describe('EraserService', () => {
         service.mouseDown = true;
 
         service.onMouseUp(mouseEvent);
-        expect(eraserLineSpy).toHaveBeenCalled();
+        expect(eraseLineSpy).toHaveBeenCalled();
     });
 
     it(' onMouseUp should not call eraseLine if mouse was not already down', () => {
@@ -75,7 +75,7 @@ describe('EraserService', () => {
         service.mouseDownCoord = { x: 0, y: 0 };
 
         service.onMouseUp(mouseEvent);
-        expect(eraserLineSpy).not.toHaveBeenCalled();
+        expect(eraseLineSpy).not.toHaveBeenCalled();
     });
 
     it(' onMouseMove should call eraseLine if mouse was already down', () => {
@@ -84,7 +84,7 @@ describe('EraserService', () => {
 
         service.onMouseMove(mouseEvent);
         expect(drawServiceSpy.clearCanvas).toHaveBeenCalled();
-        expect(eraserLineSpy).toHaveBeenCalled();
+        expect(eraseLineSpy).toHaveBeenCalled();
     });
 
     it(' onMouseMove should call eraseLine if mouse was already down but dropped outside', () => {
@@ -97,7 +97,7 @@ describe('EraserService', () => {
         } as MouseEvent;
 
         service.onMouseMove(droppedMouseEvent);
-        expect(eraserLineSpy).toHaveBeenCalled();
+        expect(eraseLineSpy).toHaveBeenCalled();
     });
 
     it(' onMouseMove should not call eraseLine if mouse was not already down', () => {
@@ -106,23 +106,7 @@ describe('EraserService', () => {
 
         service.onMouseMove(mouseEvent);
         expect(drawServiceSpy.clearCanvas).not.toHaveBeenCalled();
-        expect(eraserLineSpy).not.toHaveBeenCalled();
-    });
-
-    // Exemple de test d'intégration qui est quand même utile
-    it(' should change the pixel of the canvas ', () => {
-        mouseEvent = { offsetX: 0, offsetY: 0, buttons: 1 } as MouseEvent;
-        service.onMouseDown(mouseEvent);
-        mouseEvent = { offsetX: 1, offsetY: 0, buttons: 1 } as MouseEvent;
-        service.onMouseUp(mouseEvent);
-
-        // Premier pixel seulement
-        const imageData: ImageData = baseCtxStub.getImageData(0, 0, 1, 1);
-        expect(imageData.data[0]).toEqual(0); // R
-        expect(imageData.data[1]).toEqual(0); // G
-        expect(imageData.data[2]).toEqual(0); // B
-        // tslint:disable-next-line:no-magic-numbers
-        expect(imageData.data[3]).not.toEqual(0); // A
+        expect(eraseLineSpy).not.toHaveBeenCalled();
     });
 
     // it('should change the color', () => {});
