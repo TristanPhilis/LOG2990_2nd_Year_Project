@@ -45,8 +45,6 @@ export class EraserService extends Tool {
         if (this.mouseDown && event.buttons === MouseButton.Left) {
             const mousePosition = this.getPositionFromMouse(event);
             this.pathData.push(mousePosition);
-            // On dessine sur le canvas de prévisualisation et on l'efface à chaque déplacement de la souris
-            this.drawingService.clearCanvas(this.drawingService.previewCtx);
             this.eraseLine(this.drawingService.baseCtx, this.pathData);
         }
         if (this.mouseDown && !(event.buttons === MouseButton.Left)) {

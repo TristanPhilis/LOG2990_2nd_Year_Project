@@ -83,7 +83,6 @@ describe('EraserService', () => {
         service.mouseDown = true;
 
         service.onMouseMove(mouseEvent);
-        expect(drawServiceSpy.clearCanvas).toHaveBeenCalled();
         expect(eraseLineSpy).toHaveBeenCalled();
     });
 
