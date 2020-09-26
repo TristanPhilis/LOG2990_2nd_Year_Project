@@ -17,7 +17,7 @@ export class RectangleService extends Tool {
     }
 
     onMouseDown(event: MouseEvent): void {
-        this.mouseDown = event.button === MouseButton.Left;
+        this.mouseDown = event.buttons === MouseButton.Left;
         if (this.mouseDown) {
             this.initialPosition = this.getPositionFromMouse(event);
         }

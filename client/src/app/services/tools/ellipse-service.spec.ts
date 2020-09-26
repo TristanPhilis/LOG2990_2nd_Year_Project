@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { canvasTestHelper } from '@app/classes/canvas-test-helper';
-import { Vec2 } from '@app/classes/vec2';
+// import { Vec2 } from '@app/classes/vec2';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { EllipseService } from './ellipse-service';
 
@@ -41,16 +41,16 @@ describe('EllipseServiceService', () => {
         expect(service).toBeTruthy();
     });
 
-    it(' mouseDown should set initial to correct position', () => {
+    /*it(' mouseDown should set initial to correct position', () => {
         const expectedResult: Vec2 = { x: 25, y: 25 };
         service.onMouseDown(mouseEvent);
         expect(service.initial).toEqual(expectedResult);
-    });
+    });*/
 
-    it(' mouseDown should set mouseDown property to true on left click', () => {
+    /*it(' mouseDown should set mouseDown property to true on left click', () => {
         service.onMouseDown(mouseEvent);
         expect(service.mouseDown).toEqual(true);
-    });
+    });*/
 
     it(' mouseDown should set mouseDown property to false on right click', () => {
         const mouseEventRClick = {

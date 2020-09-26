@@ -5,9 +5,10 @@ export enum ToolId {
 }
 
 export enum MouseButton {
-    Left = 0,
-    Middle = 1,
-    Right = 2,
-    Back = 3,
-    Forward = 4,
+    None = 0,
+    Left = 1,
+    Middle = 2,
+    Right = 3,
+    Back = 4,
+    Forward = 5,
 }
