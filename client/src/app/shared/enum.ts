@@ -1,6 +1,7 @@
-export enum sideBarToolID {
+export enum sidebarToolID {
     move,
     cropping,
+    drawing,
     text,
     filling, // More to add
 }
