@@ -9,6 +9,7 @@ import { MouseButton } from '@app/shared/enum';
 })
 export class RectangleService extends Tool {
     initialPosition: Vec2;
+    mouseCoord: Vec2;
     width: number;
     height: number;
 
@@ -17,7 +18,7 @@ export class RectangleService extends Tool {
     }
 
     onMouseDown(event: MouseEvent): void {
-        this.mouseDown = event.button === MouseButton.Left;
+        this.mouseDown = event.buttons === MouseButton.Left;
         if (this.mouseDown) {
             this.initialPosition = this.getPositionFromMouse(event);
         }
@@ -31,22 +32,26 @@ export class RectangleService extends Tool {
     }
 
     onMouseMove(event: MouseEvent): void {
-        if (this.mouseDown) {
+        if (this.mouseDown && event.buttons === MouseButton.Left) {
+            this.mouseCoord = this.getPositionFromMouse(event);
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
             this.drawRectangle(this.drawingService.previewCtx, event);
+        }
+        if (this.mouseDown && !(event.buttons === MouseButton.Left)) {
+            this.drawRectangle(this.drawingService.baseCtx, event);
+            this.mouseDown = false;
         }
     }
 
     private drawRectangle(ctx: CanvasRenderingContext2D, event: MouseEvent): void {
         ctx.beginPath();
-        const currentMouseCoord = this.getPositionFromMouse(event);
 
         // tslint:disable-next-line: prefer-const
         let traceType = 0;
         const x1 = this.initialPosition.x;
         const y1 = this.initialPosition.y;
-        let x2 = currentMouseCoord.x;
-        let y2 = currentMouseCoord.y;
+        let x2 = this.mouseCoord.x;
+        let y2 = this.mouseCoord.y;
 
         if (event.shiftKey) {
             const diffX = x2 - x1;

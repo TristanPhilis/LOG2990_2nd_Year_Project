@@ -33,7 +33,7 @@ describe('PencilService', () => {
         mouseEvent = {
             offsetX: 25,
             offsetY: 25,
-            button: 0,
+            buttons: 1,
         } as MouseEvent;
     });
 
@@ -87,6 +87,19 @@ describe('PencilService', () => {
         expect(drawLineSpy).toHaveBeenCalled();
     });
 
+    it(' onMouseMove should call drawLine if mouse was already down but dropped outside', () => {
+        service.mouseDownCoord = { x: 0, y: 0 };
+        service.mouseDown = true;
+        const droppedMouseEvent = {
+            offsetX: 25,
+            offsetY: 25,
+            buttons: 0,
+        } as MouseEvent;
+
+        service.onMouseMove(droppedMouseEvent);
+        expect(drawLineSpy).toHaveBeenCalled();
+    });
+
     it(' onMouseMove should not call drawLine if mouse was not already down', () => {
         service.mouseDownCoord = { x: 0, y: 0 };
         service.mouseDown = false;
@@ -98,9 +111,9 @@ describe('PencilService', () => {
 
     // Exemple de test d'intégration qui est quand même utile
     it(' should change the pixel of the canvas ', () => {
-        mouseEvent = { offsetX: 0, offsetY: 0, button: 0 } as MouseEvent;
+        mouseEvent = { offsetX: 0, offsetY: 0, buttons: 1 } as MouseEvent;
         service.onMouseDown(mouseEvent);
-        mouseEvent = { offsetX: 1, offsetY: 0, button: 0 } as MouseEvent;
+        mouseEvent = { offsetX: 1, offsetY: 0, buttons: 1 } as MouseEvent;
         service.onMouseUp(mouseEvent);
 
         // Premier pixel seulement
@@ -111,4 +124,8 @@ describe('PencilService', () => {
         // tslint:disable-next-line:no-magic-numbers
         expect(imageData.data[3]).not.toEqual(0); // A
     });
+
+    // it('should change the color', () => {});
+
+    // it('should change the thickness', () => {});
 });
