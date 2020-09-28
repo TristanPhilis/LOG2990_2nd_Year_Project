@@ -110,10 +110,10 @@ describe('PencilService', () => {
     });
 
     // Exemple de test d'intégration qui est quand même utile
-    /*it(' should change the pixel of the canvas ', () => {
+    it(' should change the pixel of the canvas ', () => {
         mouseEvent = { offsetX: 0, offsetY: 0, buttons: 1 } as MouseEvent;
         service.onMouseDown(mouseEvent);
-        mouseEvent = { offsetX: 10, offsetY: 10, buttons: 1 } as MouseEvent;
+        mouseEvent = { offsetX: 1, offsetY: 0, buttons: 1 } as MouseEvent;
         service.onMouseUp(mouseEvent);
 
         // Premier pixel seulement
@@ -123,7 +123,7 @@ describe('PencilService', () => {
         expect(imageData.data[2]).toEqual(0); // B
         // tslint:disable-next-line:no-magic-numbers
         expect(imageData.data[3]).not.toEqual(0); // A
-    });*/
+    });
 
     // it('should change the color', () => {});
 
