@@ -45,7 +45,6 @@ export class RectangleService extends Tool {
 
     private drawRectangle(ctx: CanvasRenderingContext2D, event: MouseEvent): void {
         ctx.beginPath();
-
         // tslint:disable-next-line: prefer-const
         let traceType = 0;
         const x1 = this.initialPosition.x;

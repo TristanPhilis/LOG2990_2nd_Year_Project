@@ -35,7 +35,6 @@ export class EraserService extends Tool {
         if (this.mouseDown) {
             const mousePosition = this.getPositionFromMouse(event);
             this.pathData.push(mousePosition);
-            this.eraseLine(this.drawingService.baseCtx, this.pathData);
         }
         this.mouseDown = false;
         this.clearPath();
@@ -45,6 +44,7 @@ export class EraserService extends Tool {
         if (this.mouseDown && event.buttons === MouseButton.Left) {
             const mousePosition = this.getPositionFromMouse(event);
             this.pathData.push(mousePosition);
+            this.eraseLine(this.drawingService.previewCtx, this.pathData);
             this.eraseLine(this.drawingService.baseCtx, this.pathData);
         }
         if (this.mouseDown && !(event.buttons === MouseButton.Left)) {
@@ -53,14 +53,15 @@ export class EraserService extends Tool {
     }
 
     private eraseLine(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
-        ctx.beginPath();
         ctx.globalCompositeOperation = 'destination-out';
+        ctx.beginPath();
         ctx.lineCap = 'round';
         ctx.lineWidth = this.thickness;
         for (const point of path) {
             ctx.lineTo(point.x, point.y);
         }
         ctx.stroke();
+        ctx.globalCompositeOperation = 'source-over';
     }
 
     private clearPath(): void {
