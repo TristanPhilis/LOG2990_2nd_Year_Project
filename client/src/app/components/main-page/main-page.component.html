@@ -7,7 +7,10 @@
         <button class="button" (click)="sendTimeToServer()">Envoyer un message au serveur</button>
     </div>
 
-    <button class="button" routerLink="/editor">Ouvir Éditeur</button>
+    <button class="button" routerLink="/editor">Créer un nouveau dessin</button>
+    <ng-template [ngIf]="false"><div><button class="button" routerLink="/continue">Continuer un dessin</button></div></ng-template>
+    <button class="button" routerLink="/carousel">Ouvrir le carrousel de dessins</button>
+    <button class="button" routerLink="/guide">Afficher le Guide d'utilisation</button>
 
     <div class="footer-item">
         <h4 class="team-name">Équipe Poly</h4>
