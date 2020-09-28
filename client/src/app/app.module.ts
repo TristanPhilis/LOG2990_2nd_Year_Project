@@ -11,6 +11,7 @@ import { ColorPaletteComponent } from './components/sidebar/color-picker/color-p
 import { ColorPickerComponent } from './components/sidebar/color-picker/color-picker.component';
 import { ColorSliderComponent } from './components/sidebar/color-picker/color-slider/color-slider.component';
 import { SidebarComponent } from './components/sidebar/sidebar.component';
+import { ToolOptionComponent } from './components/sidebar/tool-option/tool-option.component';
 
 @NgModule({
     declarations: [
@@ -22,9 +23,10 @@ import { SidebarComponent } from './components/sidebar/sidebar.component';
         ColorPickerComponent,
         ColorSliderComponent,
         ColorPaletteComponent,
+        ToolOptionComponent,
     ],
     imports: [BrowserModule, HttpClientModule, AppRoutingModule, ReactiveFormsModule],
     providers: [],
     bootstrap: [AppComponent],
 })
-export class AppModule {}
+export class AppModule { }
