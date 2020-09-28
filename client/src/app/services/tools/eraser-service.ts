@@ -28,6 +28,7 @@ export class EraserService extends Tool {
             this.clearPath();
             this.mouseDownCoord = this.getPositionFromMouse(event);
             this.pathData.push(this.mouseDownCoord);
+            this.eraseLine(this.drawingService.baseCtx, this.pathData);
         }
     }
 
