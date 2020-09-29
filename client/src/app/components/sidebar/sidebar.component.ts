@@ -51,4 +51,8 @@ export class SidebarComponent {
         this.toolsService.setCurrentTool(id);
         this.selectedTool = id;
     }
+
+    get showToolsValue(): boolean {
+        return this.showDrawingTools;
+    }
 }
