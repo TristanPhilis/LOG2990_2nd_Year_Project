@@ -1,5 +1,5 @@
 <div class="container">
-    <li *ngFor="let sidebarTool of sideBarTools">
+    <li *ngFor="let sidebarTool of sideBarTools" class="sidebar-container">
         <button (click)="chooseTool(sidebarTool.id)">{{ sidebarTool.name }}</button>
     </li>
 
