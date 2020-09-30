@@ -2,12 +2,15 @@ import { TestBed } from '@angular/core/testing';
 import { canvasTestHelper } from '@app/classes/canvas-test-helper';
 import { Vec2 } from '@app/classes/vec2';
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { SHIFT_KEY } from '@app/shared/constant';
 import { RectangleService } from './rectangle-service';
 
 // tslint:disable:no-any
 describe('RectangleService', () => {
     let service: RectangleService;
     let mouseEvent: MouseEvent;
+    let mouseEventLClick: MouseEvent;
+    let mouseEventRClick: MouseEvent;
     let drawServiceSpy: jasmine.SpyObj<DrawingService>;
 
     let baseCtxStub: CanvasRenderingContext2D;
@@ -35,6 +38,18 @@ describe('RectangleService', () => {
             offsetY: 25,
             button: 0,
         } as MouseEvent;
+
+        mouseEventLClick = {
+            offsetX: 25,
+            offsetY: 25,
+            buttons: 1,
+        } as MouseEvent;
+
+        mouseEventRClick = {
+            offsetX: 25,
+            offsetY: 25,
+            buttons: 2,
+        } as MouseEvent;
     });
 
     it('should be created', () => {
@@ -43,52 +58,49 @@ describe('RectangleService', () => {
 
     it(' mouseDown should set mouseDownCoord to correct position', () => {
         const expectedResult: Vec2 = { x: 25, y: 25 };
-        service.onMouseDown(mouseEvent);
-        expect(service.initialPosition).toEqual(expectedResult);
+        service.onMouseDown(mouseEventLClick);
+        expect(service.initialCoord).toEqual(expectedResult);
     });
 
     it(' mouseDown should set mouseDown property to true on left click', () => {
-        service.onMouseDown(mouseEvent);
+        service.onMouseDown(mouseEventLClick);
         expect(service.mouseDown).toEqual(true);
     });
 
     it(' mouseDown should set mouseDown property to false on right click', () => {
-        const mouseEventRClick = {
-            offsetX: 25,
-            offsetY: 25,
-            button: 1, // TODO: Avoir ceci dans un enum accessible
-        } as MouseEvent;
         service.onMouseDown(mouseEventRClick);
         expect(service.mouseDown).toEqual(false);
     });
 
     it(' onMouseUp should call drawRectangle if mouse was already down', () => {
-        service.initialPosition = { x: 0, y: 0 };
+        service.initialCoord = { x: 0, y: 0 };
+        service.mouseDownCoord = { x: 0, y: 0 };
         service.mouseDown = true;
 
-        service.onMouseUp(mouseEvent);
+        service.onMouseUp(mouseEventLClick);
         expect(drawRectangleSpy).toHaveBeenCalled();
     });
 
     it(' onMouseUp should not call drawRectangle if mouse was not already down', () => {
         service.mouseDown = false;
-        service.initialPosition = { x: 0, y: 0 };
+        service.initialCoord = { x: 0, y: 0 };
 
         service.onMouseUp(mouseEvent);
         expect(drawRectangleSpy).not.toHaveBeenCalled();
     });
 
     it(' onMouseMove should call drawRectangle if mouse was already down', () => {
-        service.initialPosition = { x: 0, y: 0 };
+        service.initialCoord = { x: 0, y: 0 };
+        service.mouseDownCoord = { x: 0, y: 0 };
         service.mouseDown = true;
 
-        service.onMouseMove(mouseEvent);
+        service.onMouseMove(mouseEventLClick);
         expect(drawServiceSpy.clearCanvas).toHaveBeenCalled();
         expect(drawRectangleSpy).toHaveBeenCalled();
     });
 
     it(' onMouseMove should not call drawRectangle if mouse was not already down', () => {
-        service.initialPosition = { x: 0, y: 0 };
+        service.initialCoord = { x: 0, y: 0 };
         service.mouseDown = false;
 
         service.onMouseMove(mouseEvent);
@@ -96,19 +108,56 @@ describe('RectangleService', () => {
         expect(drawRectangleSpy).not.toHaveBeenCalled();
     });
 
-    // Exemple de test d'intégration qui est quand même utile
-    it(' should change the pixel of the canvas ', () => {
-        mouseEvent = { offsetX: 0, offsetY: 0, button: 0 } as MouseEvent;
-        service.onMouseDown(mouseEvent);
-        mouseEvent = { offsetX: 10, offsetY: 10, button: 0 } as MouseEvent;
-        service.onMouseUp(mouseEvent);
+    it(' onMouseMove should call drawRectangle if mouse was already down but left button wasnt', () => {
+        service.initialCoord = { x: 0, y: 0 };
+        service.mouseDownCoord = { x: 0, y: 0 };
+        service.mouseDown = true;
 
-        // Premier pixel seulement
-        const imageData: ImageData = baseCtxStub.getImageData(0, 0, 1, 1);
-        expect(imageData.data[0]).toEqual(0); // R
-        expect(imageData.data[1]).toEqual(0); // G
-        expect(imageData.data[2]).toEqual(0); // B
-        // tslint:disable-next-line:no-magic-numbers
-        expect(imageData.data[3]).not.toEqual(0); // A
+        service.onMouseMove(mouseEventRClick);
+        expect(drawRectangleSpy).toHaveBeenCalled();
+    });
+
+    it('onKeyDown Should call drawRectangle with shiftDown to true when shift is pressed and mouse is down', () => {
+        service.onMouseDown(mouseEventLClick);
+        const keyEvent = {
+            key: SHIFT_KEY,
+        } as KeyboardEvent;
+
+        service.onKeyDown(keyEvent);
+        expect(drawRectangleSpy).toHaveBeenCalled();
+        expect(service.shiftDown).toBeTrue();
+    });
+
+    it('onKeyUp upShould call drawRectangle with shiftDown to false when shift is released and mouse is down', () => {
+        service.onMouseDown(mouseEventLClick);
+        const keyEvent = {
+            key: SHIFT_KEY,
+        } as KeyboardEvent;
+
+        service.onKeyUp(keyEvent);
+        expect(drawRectangleSpy).toHaveBeenCalled();
+        expect(service.shiftDown).toBeFalse();
+    });
+
+    it('key event Should not call drawRectangle when mouse is not down', () => {
+        service.mouseDown = false;
+        const keyEvent = {
+            key: SHIFT_KEY,
+        } as KeyboardEvent;
+
+        service.onKeyDown(keyEvent);
+        service.onKeyUp(keyEvent);
+        expect(drawRectangleSpy).not.toHaveBeenCalled();
+    });
+
+    it('Pressing an other key shound not do anything', () => {
+        const keyEvent = {
+            key: 'Alt',
+        } as KeyboardEvent;
+
+        service.onKeyDown(keyEvent);
+        expect(service.shiftDown).toBeFalse();
+        service.onKeyUp(keyEvent);
+        expect(drawRectangleSpy).not.toHaveBeenCalled();
     });
 });

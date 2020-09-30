@@ -18,6 +18,7 @@ export class SidebarComponent {
             { id: ToolId.rectangleService, thickness: 10, color: 'dark' },
             { id: ToolId.ellipseService, thickness: 10, color: 'dark' },
             { id: ToolId.lineService, thickness: 10, color: 'dark' },
+            { id: ToolId.eraserService, thickness: 10, color: 'dark' },
         ];
         console.log(this.tools);
     }
