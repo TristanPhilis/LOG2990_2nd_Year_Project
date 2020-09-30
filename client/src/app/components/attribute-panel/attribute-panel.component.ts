@@ -13,7 +13,6 @@ export class AttributePanelComponent {
 
     public showTools: boolean;
     public drawingTools: ToolOptionComponent[];
-    public selectedTool: drawingToolId;
 
     constructor(public toolsService: ToolsService) {
         this.drawingTools = [
@@ -23,9 +22,7 @@ export class AttributePanelComponent {
         ];
     }
 
-    public handleChange(): void {
-        this.selectedTool = this.select.nativeElement.value;
-        // this.toolsService.showToolDetails(this.selectedTool);
-        console.log(this.selectedTool);
+    public handleChange(selectedTool: drawingToolId): void {
+        this.toolsService.showToolDetails(selectedTool);
     }
 }
