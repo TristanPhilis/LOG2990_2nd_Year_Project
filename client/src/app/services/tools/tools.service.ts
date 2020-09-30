@@ -11,6 +11,10 @@ import { drawingToolId } from '@app/shared/enum';
 export class ToolsService {
     currentTool: Tool;
     private tools: Tool[];
+
+    private _selectedTool: drawingToolId;
+    private _showDrawingTools: boolean;
+
     constructor(pencilService: PencilService, rectangleService: RectangleService, ellipseService: EllipseService) {
         this.currentTool = pencilService;
         this.tools = [pencilService, rectangleService, ellipseService];
@@ -18,5 +22,26 @@ export class ToolsService {
 
     setCurrentTool(toolId: drawingToolId): void {
         this.currentTool = this.tools[toolId];
+    }
+
+    get showDrawingTools(): boolean {
+        return this._showDrawingTools;
+    }
+
+    set showDrawingTools(value: boolean) {
+        this._showDrawingTools = value;
+    }
+
+    showToolDetails(id: drawingToolId): void {
+        this.setCurrentTool(id);
+        this._selectedTool = id;
+    }
+
+    get selectedTool(): drawingToolId {
+        return this._selectedTool;
+    }
+
+    set selectedTool(tool: drawingToolId) {
+        this._selectedTool = tool;
     }
 }

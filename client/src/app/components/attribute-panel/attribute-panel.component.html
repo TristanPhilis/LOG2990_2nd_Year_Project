@@ -1,1 +1,8 @@
-<p>attribute-panel works!</p>
+<div *ngIf="this.toolsService.showDrawingTools">
+    <li *ngFor="let tool of drawingTools">
+        <button (click)="toolsService.showToolDetails(tool.id)">{{ tool.name }}</button>
+        <div *ngIf="tool.id === toolsService.selectedTool">
+            {{ tool.name }}
+        </div>
+    </li>
+</div>
