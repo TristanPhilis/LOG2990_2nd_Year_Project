@@ -2,95 +2,147 @@ import { Injectable } from '@angular/core';
 import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
 import { DrawingService } from '@app/services/drawing/drawing.service';
-import * as CONSTANTS from '@app/shared/constant';
-import { MouseButton } from '@app/shared/enum';
+import { BACKSPACE_KEY, ESCAPE_KEY, PI_OVER_4, PI_OVER_8, SHIFT_KEY } from '@app/shared/constant';
 
 @Injectable({
     providedIn: 'root',
 })
 export class LineService extends Tool {
     private pathData: Vec2[];
-    private angle: number;
+    private currentCoord: Vec2;
+    private lineStarted: boolean;
+    private initialCoord: Vec2;
 
     constructor(drawingService: DrawingService) {
         super(drawingService);
         this.clearPath();
+        this.lineStarted = false;
     }
 
-    onMouseDown(event: MouseEvent): void {
-        this.mouseDown = event.button === MouseButton.Left;
-        if (this.mouseDown) {
-            this.mouseDownCoord = this.getPositionFromMouse(event);
-            this.drawLine(this.drawingService.baseCtx, event, this.pathData);
-            this.pathData.push(this.mouseDownCoord);
+    onMouseClick(event: MouseEvent): void {
+        if (this.lineStarted) {
+            this.pathData.push(this.currentCoord);
+        } else {
+            this.lineStarted = true;
+            this.initialCoord = this.getPositionFromMouse(event);
+            this.currentCoord = this.initialCoord;
         }
-    }
-
-    onMouseUp(event: MouseEvent): void {
-        if (this.mouseDown) {
-            this.mouseDownCoord = this.getPositionFromMouse(event);
-            this.pathData.push(this.mouseDownCoord);
-        }
-        this.mouseDown = false;
     }
 
     onMouseMove(event: MouseEvent): void {
-        if (!this.mouseDown) {
-            const mousePosition = this.getPositionFromMouse(event);
-            this.pathData.push(mousePosition);
-            this.drawingService.clearCanvas(this.drawingService.previewCtx);
-            this.drawLine(this.drawingService.previewCtx, event, this.pathData);
+        if (this.lineStarted) {
+            this.currentCoord = this.getPositionFromMouse(event);
+            if (this.shiftDown) {
+                this.currentCoord = this.getSnappedCoord();
+            }
+            this.drawLine(this.drawingService.previewCtx);
         }
     }
 
-    calculateAngle(event: MouseEvent): number {
-        const size = this.pathData.length;
-        const mousePosition = this.getPositionFromMouse(event);
-        if (size) {
-            const xRadius = Math.abs(this.pathData[size - 1].x - mousePosition.x);
-            const yRadius = Math.abs(this.pathData[size - 1].y - mousePosition.y);
-
-            this.angle = Math.atan(yRadius / xRadius);
+    onMouseDoubleClick(event: MouseEvent): void {
+        if (this.lineStarted) {
+            this.drawLine(this.drawingService.baseCtx);
+            this.endLine();
         }
-        return this.angle;
     }
 
-    private drawLine(ctx: CanvasRenderingContext2D, event: MouseEvent, path: Vec2[]): void {
-        const point = this.pathData.pop();
-        const angle = this.calculateAngle(event);
-        ctx.beginPath();
+    endLine(): void {
+        const closingMinDistance = 20;
+        const diff = this.getDiff(this.initialCoord, this.currentCoord);
+        const closeShape = Math.abs(diff.x) <= closingMinDistance && Math.abs(diff.y) <= closingMinDistance;
+        if (closeShape) {
+            const ctx = this.drawingService.baseCtx;
+            ctx.beginPath();
+            ctx.moveTo(this.currentCoord.x, this.currentCoord.y);
+            ctx.lineTo(this.initialCoord.x, this.initialCoord.y);
+            ctx.stroke();
+        }
+        this.clearPath();
+        this.lineStarted = false;
+    }
 
-        if (point && this.mouseDownCoord) {
-            if (event.shiftKey) {
-                if (angle < Math.PI / CONSTANTS.lineDivideBy8) {
-                    ctx.lineTo(this.mouseDownCoord.x, this.mouseDownCoord.y);
-                    ctx.lineTo(point.x, this.mouseDownCoord.y);
-                } else if (angle > (CONSTANTS.lineNumber3 * Math.PI) / CONSTANTS.lineDivideBy8) {
-                    ctx.lineTo(this.mouseDownCoord.x, this.mouseDownCoord.y);
-                    ctx.lineTo(this.mouseDownCoord.x, point.y);
-                } else {
-                    const xRadius = point.x - this.mouseDownCoord.x;
-                    const yRadius = point.y - this.mouseDownCoord.y;
-
-                    if ((xRadius > 0 && yRadius < 0) || (xRadius < 0 && yRadius > 0)) {
-                        const y = Math.round(xRadius + this.mouseDownCoord.y);
-                        ctx.lineTo(this.mouseDownCoord.x, this.mouseDownCoord.y);
-                        ctx.lineTo(this.mouseDownCoord.x, y);
-                    } else {
-                        const y = Math.round(-xRadius + this.mouseDownCoord.y);
-                        ctx.lineTo(this.mouseDownCoord.x, this.mouseDownCoord.y);
-                        ctx.lineTo(this.mouseDownCoord.x, y);
-                    }
-                }
-            } else {
-                ctx.lineTo(this.mouseDownCoord.x, this.mouseDownCoord.y);
-                ctx.lineTo(point.x, point.y);
+    onKeyUp(event: KeyboardEvent): void {
+        if (event.key === SHIFT_KEY) {
+            this.shiftDown = false;
+            if (this.lineStarted) {
+                this.drawLine(this.drawingService.previewCtx);
             }
         }
+    }
+
+    onKeyDown(event: KeyboardEvent): void {
+        switch (event.key) {
+            case SHIFT_KEY:
+                this.shiftDown = true;
+                if (this.lineStarted) {
+                    this.drawLine(this.drawingService.previewCtx);
+                }
+                break;
+            case BACKSPACE_KEY:
+                this.pathData.pop();
+                if (this.lineStarted) {
+                    this.drawLine(this.drawingService.previewCtx);
+                }
+                break;
+            case ESCAPE_KEY:
+                this.lineStarted = false;
+                this.clearPath();
+                this.drawingService.clearCanvas(this.drawingService.previewCtx);
+                break;
+        }
+    }
+
+    calculateAngle(startingPoint: Vec2, endPoint: Vec2): number {
+        const diff = this.getDiff(startingPoint, endPoint);
+        return Math.atan(Math.abs(diff.y) / Math.abs(diff.x));
+    }
+
+    getSnappedCoord(): Vec2 {
+        const nPoints = this.pathData.length;
+        const startingPoint = nPoints > 0 ? this.pathData[nPoints - 1] : this.initialCoord;
+        const angle = this.calculateAngle(startingPoint, this.currentCoord);
+
+        let point = { x: 0, y: 0 };
+        if (angle < PI_OVER_8) {
+            point = { x: this.currentCoord.x, y: startingPoint.y };
+        } else if (angle > PI_OVER_4 + PI_OVER_8) {
+            point = { x: startingPoint.x, y: this.currentCoord.y };
+        } else {
+            point = this.getProjectedPoint(startingPoint, this.currentCoord, angle);
+        }
+        return point;
+    }
+
+    getProjectedPoint(startingPoint: Vec2, endPoint: Vec2, angle: number): Vec2 {
+        const diff = this.getDiff(startingPoint, this.currentCoord);
+        // parameter angle is the angle between the line based on the two points and the positive x axis
+        // middle angle is between the line and the 45 degree line from the positive x axis
+        const middleAngle = PI_OVER_4 - angle;
+        const currentLineLenght = Math.sqrt(Math.pow(diff.x, 2) + Math.pow(diff.y, 2));
+        const projectedLineLenght = currentLineLenght * Math.cos(middleAngle);
+        const projectedPoint = {
+            x: startingPoint.x + Math.cos(PI_OVER_4) * projectedLineLenght * Math.sign(diff.x),
+            y: startingPoint.y + Math.sin(PI_OVER_4) * projectedLineLenght * Math.sign(diff.y),
+        };
+        return projectedPoint;
+    }
+
+    private drawLine(ctx: CanvasRenderingContext2D): void {
+        this.drawingService.clearCanvas(this.drawingService.previewCtx);
+        ctx.beginPath();
+
+        ctx.moveTo(this.initialCoord.x, this.initialCoord.y);
+        for (const point of this.pathData) {
+            ctx.lineTo(point.x, point.y);
+        }
+
+        ctx.lineTo(this.currentCoord.x, this.currentCoord.y);
         ctx.stroke();
     }
 
     private clearPath(): void {
         this.pathData = [];
+        this.initialCoord = { x: 0, y: 0 };
+        this.currentCoord = { x: 0, y: 0 };
     }
 }

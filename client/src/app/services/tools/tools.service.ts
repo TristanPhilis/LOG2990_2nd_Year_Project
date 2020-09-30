@@ -13,7 +13,13 @@ import { ToolId } from '@app/shared/enum';
 export class ToolsService {
     currentTool: Tool;
     private tools: Tool[];
-    constructor(pencilService: PencilService, rectangleService: RectangleService, ellipseService: EllipseService, eraserService: EraserService, lineService: LineService) {
+    constructor(
+        pencilService: PencilService,
+        rectangleService: RectangleService,
+        ellipseService: EllipseService,
+        eraserService: EraserService,
+        lineService: LineService,
+    ) {
         this.currentTool = pencilService;
         this.tools = [pencilService, rectangleService, ellipseService, eraserService, lineService];
     }
