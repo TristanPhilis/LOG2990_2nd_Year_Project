@@ -63,30 +63,27 @@ export class LineService extends Tool {
         if (point && this.mouseDownCoord) {
             if (event.shiftKey) {
                 if (angle < Math.PI / CONSTANTS.lineDivideBy8) {
-                    ctx.moveTo(this.mouseDownCoord.x, this.mouseDownCoord.y);
+                    ctx.lineTo(this.mouseDownCoord.x, this.mouseDownCoord.y);
                     ctx.lineTo(point.x, this.mouseDownCoord.y);
                 } else if (angle > (CONSTANTS.lineNumber3 * Math.PI) / CONSTANTS.lineDivideBy8) {
-                    ctx.moveTo(this.mouseDownCoord.x, this.mouseDownCoord.y);
+                    ctx.lineTo(this.mouseDownCoord.x, this.mouseDownCoord.y);
                     ctx.lineTo(this.mouseDownCoord.x, point.y);
                 } else {
-                    //
                     const xRadius = point.x - this.mouseDownCoord.x;
                     const yRadius = point.y - this.mouseDownCoord.y;
 
                     if ((xRadius > 0 && yRadius < 0) || (xRadius < 0 && yRadius > 0)) {
-                        const y = xRadius * angle;
-                        console.log(y, 'y1');
-                        ctx.moveTo(this.mouseDownCoord.x, this.mouseDownCoord.y);
+                        const y = Math.round(xRadius + this.mouseDownCoord.y);
+                        ctx.lineTo(this.mouseDownCoord.x, this.mouseDownCoord.y);
                         ctx.lineTo(this.mouseDownCoord.x, y);
                     } else {
-                        const y = -xRadius * angle;
-                        console.log(y, 'y2');
-                        ctx.moveTo(this.mouseDownCoord.x, this.mouseDownCoord.y);
+                        const y = Math.round(-xRadius + this.mouseDownCoord.y);
+                        ctx.lineTo(this.mouseDownCoord.x, this.mouseDownCoord.y);
                         ctx.lineTo(this.mouseDownCoord.x, y);
-                    } //
+                    }
                 }
             } else {
-                ctx.moveTo(this.mouseDownCoord.x, this.mouseDownCoord.y);
+                ctx.lineTo(this.mouseDownCoord.x, this.mouseDownCoord.y);
                 ctx.lineTo(point.x, point.y);
             }
         }
