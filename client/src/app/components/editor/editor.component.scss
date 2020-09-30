@@ -6,11 +6,13 @@
 .drawing-container {
     overflow: auto;
     flex: 1 1 auto;
+    display: grid;
+    grid-template-columns: auto 50px;
+    grid-template-rows: auto 50px;
 }
 
 .drawing {
-    display: grid;
     width: min-content;
+    height: auto;
     outline: none;
 }
-  
