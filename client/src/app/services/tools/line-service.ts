@@ -18,7 +18,7 @@ export class LineService extends Tool {
     }
 
     onMouseDown(event: MouseEvent): void {
-        this.mouseDown = event.button === MouseButton.Left;
+        this.mouseDown = event.buttons === MouseButton.Left;
         if (this.mouseDown) {
             this.mouseDownCoord = this.getPositionFromMouse(event);
             this.drawLine(this.drawingService.baseCtx, event, this.pathData);
@@ -32,15 +32,21 @@ export class LineService extends Tool {
             this.pathData.push(this.mouseDownCoord);
         }
         this.mouseDown = false;
+        this.dblClick = false;
     }
 
     onMouseMove(event: MouseEvent): void {
-        if (!this.mouseDown) {
+        if (!this.mouseDown && !this.dblClick) {
             const mousePosition = this.getPositionFromMouse(event);
             this.pathData.push(mousePosition);
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
             this.drawLine(this.drawingService.previewCtx, event, this.pathData);
         }
+    }
+
+    onDblClick(event: MouseEvent): void {
+        this.dblClick = true;
+        this.clearPath();
     }
 
     calculateAngle(event: MouseEvent): number {
