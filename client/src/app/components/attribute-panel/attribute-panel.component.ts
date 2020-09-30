@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { ToolsService } from '@app/services/tools/tools.service';
 import { drawingToolId } from '@app/shared/enum';
 import { ToolOptionComponent } from '../sidebar/tool-option/tool-option.component';
@@ -9,9 +9,11 @@ import { ToolOptionComponent } from '../sidebar/tool-option/tool-option.componen
     styleUrls: ['./attribute-panel.component.scss'],
 })
 export class AttributePanelComponent {
-    public showTools: boolean;
+    @ViewChild('toolSelect') select: any;
 
+    public showTools: boolean;
     public drawingTools: ToolOptionComponent[];
+    public selectedTool: drawingToolId;
 
     constructor(public toolsService: ToolsService) {
         this.drawingTools = [
@@ -19,5 +21,11 @@ export class AttributePanelComponent {
             { id: drawingToolId.rectangleService, name: 'Rectangle', thickness: 10, color: 'dark' },
             { id: drawingToolId.ellipseService, name: 'Ellipse', thickness: 10, color: 'dark' },
         ];
+    }
+
+    public handleChange(): void {
+        this.selectedTool = this.select.nativeElement.value;
+        // this.toolsService.showToolDetails(this.selectedTool);
+        console.log(this.selectedTool);
     }
 }

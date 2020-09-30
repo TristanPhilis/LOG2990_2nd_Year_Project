@@ -33,6 +33,7 @@ export class ToolsService {
     }
 
     showToolDetails(id: drawingToolId): void {
+        console.log('Changing Tool');
         this.setCurrentTool(id);
         this._selectedTool = id;
     }
