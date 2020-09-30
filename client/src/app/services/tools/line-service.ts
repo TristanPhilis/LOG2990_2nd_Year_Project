@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import * as CONSTANTS from '@app/shared/constant';
 import { MouseButton } from '@app/shared/enum';
 
 @Injectable({
@@ -9,6 +10,7 @@ import { MouseButton } from '@app/shared/enum';
 })
 export class LineService extends Tool {
     private pathData: Vec2[];
+    private angle: number;
 
     constructor(drawingService: DrawingService) {
         super(drawingService);
@@ -41,13 +43,52 @@ export class LineService extends Tool {
         }
     }
 
+    calculateAngle(event: MouseEvent): number {
+        const size = this.pathData.length;
+        const mousePosition = this.getPositionFromMouse(event);
+        if (size) {
+            const xRadius = Math.abs(this.pathData[size - 1].x - mousePosition.x);
+            const yRadius = Math.abs(this.pathData[size - 1].y - mousePosition.y);
+
+            this.angle = Math.atan(yRadius / xRadius);
+        }
+        return this.angle;
+    }
+
     private drawLine(ctx: CanvasRenderingContext2D, event: MouseEvent, path: Vec2[]): void {
         const point = this.pathData.pop();
+        const angle = this.calculateAngle(event);
         ctx.beginPath();
 
         if (point && this.mouseDownCoord) {
-            ctx.lineTo(this.mouseDownCoord.x, this.mouseDownCoord.y);
-            ctx.lineTo(point.x, point.y);
+            if (event.shiftKey) {
+                if (angle < Math.PI / CONSTANTS.lineDivideBy8) {
+                    ctx.moveTo(this.mouseDownCoord.x, this.mouseDownCoord.y);
+                    ctx.lineTo(point.x, this.mouseDownCoord.y);
+                } else if (angle > (CONSTANTS.lineNumber3 * Math.PI) / CONSTANTS.lineDivideBy8) {
+                    ctx.moveTo(this.mouseDownCoord.x, this.mouseDownCoord.y);
+                    ctx.lineTo(this.mouseDownCoord.x, point.y);
+                } else {
+                    //
+                    const xRadius = point.x - this.mouseDownCoord.x;
+                    const yRadius = point.y - this.mouseDownCoord.y;
+
+                    if ((xRadius > 0 && yRadius < 0) || (xRadius < 0 && yRadius > 0)) {
+                        const y = xRadius * angle;
+                        console.log(y, 'y1');
+                        ctx.moveTo(this.mouseDownCoord.x, this.mouseDownCoord.y);
+                        ctx.lineTo(this.mouseDownCoord.x, y);
+                    } else {
+                        const y = -xRadius * angle;
+                        console.log(y, 'y2');
+                        ctx.moveTo(this.mouseDownCoord.x, this.mouseDownCoord.y);
+                        ctx.lineTo(this.mouseDownCoord.x, y);
+                    } //
+                }
+            } else {
+                ctx.moveTo(this.mouseDownCoord.x, this.mouseDownCoord.y);
+                ctx.lineTo(point.x, point.y);
+            }
         }
         ctx.stroke();
     }
