@@ -9,7 +9,8 @@ import { SidebarToolComponent } from './sidebar-tool/sidebar-tool.component';
     styleUrls: ['./sidebar.component.scss'],
 })
 export class SidebarComponent {
-    public sideBarTools: SidebarToolComponent[];
+    public sideBarToolsTop: SidebarToolComponent[];
+    public sideBarToolsBottom: SidebarToolComponent[];
 
     public showDrawingTools: boolean;
 
@@ -17,16 +18,23 @@ export class SidebarComponent {
         toolsService.selectedTool = 0;
         toolsService.showDrawingTools = false;
 
-        this.sideBarTools = [
+        this.sideBarToolsTop = [
             { id: sidebarToolID.move, name: 'Select & Move' },
             { id: sidebarToolID.cropping, name: 'Crop' },
             { id: sidebarToolID.drawing, name: 'Drawing' },
             { id: sidebarToolID.text, name: 'Text' },
             { id: sidebarToolID.filling, name: 'Fill' },
         ];
+        this.sideBarToolsBottom = [
+            { id: sidebarToolID.createNew, name: 'New Drawing' },
+            { id: sidebarToolID.saveCurrent, name: 'Save Drawing' },
+            { id: sidebarToolID.openCarrousel, name: 'Open Carrousel' },
+            { id: sidebarToolID.exportCurrent, name: 'Export Drawing' },
+            { id: sidebarToolID.openGuide, name: 'Open Guide' },
+        ];
     }
 
-    chooseTool(id: sidebarToolID): void {
+    onButtonPress(id: sidebarToolID): void {
         if (id === sidebarToolID.drawing) {
             if (!this.toolsService.showDrawingTools) {
                 this.toolsService.showDrawingTools = true;

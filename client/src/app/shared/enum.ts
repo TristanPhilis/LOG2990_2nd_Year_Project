@@ -3,7 +3,12 @@ export enum sidebarToolID {
     cropping,
     drawing,
     text,
-    filling, // More to add
+    filling,
+    createNew,
+    saveCurrent,
+    openCarrousel,
+    exportCurrent,
+    openGuide,
 }
 
 export enum drawingToolId {
