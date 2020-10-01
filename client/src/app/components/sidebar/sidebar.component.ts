@@ -35,14 +35,19 @@ export class SidebarComponent {
     }
 
     onButtonPress(id: sidebarToolID): void {
-        if (id === sidebarToolID.drawing) {
-            if (!this.toolsService.showDrawingTools) {
-                this.toolsService.showDrawingTools = true;
-            } else {
+        switch (id) {
+            case sidebarToolID.drawing: {
+                if (!this.toolsService.showDrawingTools) {
+                    this.toolsService.showDrawingTools = true;
+                } else {
+                    this.toolsService.showDrawingTools = false;
+                }
+                break;
+            }
+
+            default: {
                 this.toolsService.showDrawingTools = false;
             }
-        } else {
-            this.toolsService.showDrawingTools = false;
         }
     }
 

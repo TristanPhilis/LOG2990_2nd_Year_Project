@@ -12,15 +12,11 @@ import { drawingToolId } from '@app/shared/enum';
 export class ToolsService {
     currentTool: Tool;
     private tools: Tool[];
-<<<<<<< HEAD
 
     private _selectedTool: drawingToolId;
     private _showDrawingTools: boolean;
 
-    constructor(pencilService: PencilService, rectangleService: RectangleService, ellipseService: EllipseService) {
-=======
     constructor(pencilService: PencilService, rectangleService: RectangleService, ellipseService: EllipseService, eraserService: EraserService) {
->>>>>>> EntryPoint
         this.currentTool = pencilService;
         this.tools = [pencilService, rectangleService, ellipseService, eraserService];
     }
