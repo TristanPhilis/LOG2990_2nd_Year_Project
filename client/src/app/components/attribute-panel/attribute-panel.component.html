@@ -1,5 +1,10 @@
-<div *ngIf="this.toolsService.showDrawingTools">
+<div *ngIf="this.toolsService.showTracingTools">
     <select #toolSelect (change)="handleChange($event.target.value)">
-        <option *ngFor="let tool of drawingTools" value="{{ tool.id }}">{{ tool.name }}</option>
+        <option *ngFor="let tool of tracingTools" value="{{ tool.id }}">{{ tool.name }}</option>
+    </select>
+</div>
+<div *ngIf="this.toolsService.showShapesTools">
+    <select #toolSelect (change)="handleChange($event.target.value)">
+        <option *ngFor="let tool of shapesTools" value="{{ tool.id }}">{{ tool.name }}</option>
     </select>
 </div>

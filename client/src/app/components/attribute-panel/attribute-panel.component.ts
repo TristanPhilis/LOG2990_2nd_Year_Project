@@ -12,17 +12,18 @@ export class AttributePanelComponent {
     @ViewChild('toolSelect') select: any;
 
     public showTools: boolean;
-    public drawingTools: ToolOptionComponent[];
+    public tracingTools: ToolOptionComponent[];
+    public shapesTools: ToolOptionComponent[];
 
     constructor(public toolsService: ToolsService) {
-        this.drawingTools = [
-            { id: drawingToolId.pencilService, name: 'Pencil', thickness: 10, color: 'dark' },
+        this.tracingTools = [{ id: drawingToolId.pencilService, name: 'Pencil', thickness: 10, color: 'dark' }];
+        this.shapesTools = [
             { id: drawingToolId.rectangleService, name: 'Rectangle', thickness: 10, color: 'dark' },
             { id: drawingToolId.ellipseService, name: 'Ellipse', thickness: 10, color: 'dark' },
         ];
     }
 
     public handleChange(selectedTool: drawingToolId): void {
-        this.toolsService.showToolDetails(selectedTool);
+        this.toolsService.setCurrentTool(selectedTool);
     }
 }

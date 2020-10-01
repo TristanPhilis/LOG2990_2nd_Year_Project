@@ -1,7 +1,8 @@
 export enum sidebarToolID {
     move,
     cropping,
-    drawing,
+    tracing,
+    shapes,
     text,
     filling,
     createNew,

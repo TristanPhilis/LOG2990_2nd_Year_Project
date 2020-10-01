@@ -4,7 +4,7 @@ import { EllipseService } from '@app/services/tools/ellipse-service';
 import { EraserService } from '@app/services/tools/eraser-service';
 import { PencilService } from '@app/services/tools/pencil-service';
 import { RectangleService } from '@app/services/tools/rectangle-service';
-import { drawingToolId } from '@app/shared/enum';
+import { drawingToolId, sidebarToolID } from '@app/shared/enum';
 
 @Injectable({
     providedIn: 'root',
@@ -13,8 +13,9 @@ export class ToolsService {
     currentTool: Tool;
     private tools: Tool[];
 
-    private _selectedTool: drawingToolId;
-    private _showDrawingTools: boolean;
+    private _selectedSideBarTool: sidebarToolID;
+    private _showTracingTools: boolean;
+    private _showShapesTools: boolean;
 
     constructor(pencilService: PencilService, rectangleService: RectangleService, ellipseService: EllipseService, eraserService: EraserService) {
         this.currentTool = pencilService;
@@ -25,25 +26,27 @@ export class ToolsService {
         this.currentTool = this.tools[toolId];
     }
 
-    get showDrawingTools(): boolean {
-        return this._showDrawingTools;
+    get showTracingTools(): boolean {
+        return this._showTracingTools;
     }
 
-    set showDrawingTools(value: boolean) {
-        this._showDrawingTools = value;
+    set showTracingTools(value: boolean) {
+        this._showTracingTools = value;
     }
 
-    showToolDetails(id: drawingToolId): void {
-        console.log('Changing Tool');
-        this.setCurrentTool(id);
-        this._selectedTool = id;
+    get showShapesTools(): boolean {
+        return this._showShapesTools;
     }
 
-    get selectedTool(): drawingToolId {
-        return this._selectedTool;
+    set showShapesTools(value: boolean) {
+        this._showShapesTools = value;
     }
 
-    set selectedTool(tool: drawingToolId) {
-        this._selectedTool = tool;
+    get selectedSideBarTool(): sidebarToolID {
+        return this._selectedSideBarTool;
+    }
+
+    set selectedSideBarTool(tool: sidebarToolID) {
+        this._selectedSideBarTool = tool;
     }
 }
