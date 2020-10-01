@@ -61,7 +61,6 @@ export class SidebarComponent {
                 });
                 break;
             }
-
             default: {
                 this.toolsService.showDrawingTools = false;
                 break;
