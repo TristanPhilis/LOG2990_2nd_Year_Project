@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ToolsService } from '@app/services/tools/tools.service';
-import { sidebarToolID } from '@app/shared/enum';
+import { drawingToolId, sidebarToolID } from '@app/shared/enum';
 import { GuideComponent } from '../guide/guide.component';
 import { SidebarToolComponent } from './sidebar-tool/sidebar-tool.component';
 // tslint:disable-next-line: no-relative-imports
@@ -19,8 +19,6 @@ export class SidebarComponent {
     public showDrawingTools: boolean;
 
     constructor(private toolsService: ToolsService, private dialog: MatDialog, private drawingService: DrawingService) {
-        toolsService.showTracingTools = false;
-
         this.sideBarToolsTop = [
             { id: sidebarToolID.move, name: 'Select & Move' },
             { id: sidebarToolID.cropping, name: 'Crop' },
@@ -41,19 +39,14 @@ export class SidebarComponent {
     onButtonPress(id: sidebarToolID): void {
         switch (id) {
             case sidebarToolID.tracing: {
-                if (!this.toolsService.showTracingTools) {
-                    this.toolsService.showTracingTools = true;
-                } else {
-                    this.toolsService.showTracingTools = false;
-                }
+                this.toolsService.selectedSideBarTool = sidebarToolID.tracing;
+                this.toolsService.setCurrentTool(drawingToolId.pencilService);
                 break;
             }
             case sidebarToolID.shapes: {
-                if (!this.toolsService.showShapesTools) {
-                    this.toolsService.showShapesTools = true;
-                } else {
-                    this.toolsService.showShapesTools = false;
-                }
+                this.toolsService.selectedSideBarTool = sidebarToolID.shapes;
+                this.toolsService.setCurrentTool(drawingToolId.rectangleService);
+
                 break;
             }
             case sidebarToolID.createNew: {
@@ -69,11 +62,6 @@ export class SidebarComponent {
                 });
                 break;
             }
-            // default: {
-            //     this.toolsService.showTracingTools = false;
-            //     this.toolsService.showShapesTools = false;
-            //     break;
-            // }
         }
     }
 }
