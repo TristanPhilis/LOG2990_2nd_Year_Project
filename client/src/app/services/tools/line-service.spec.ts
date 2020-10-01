@@ -2,6 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { canvasTestHelper } from '@app/classes/canvas-test-helper';
 import { Vec2 } from '@app/classes/vec2';
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { BACKSPACE_KEY, SHIFT_KEY } from '@app/shared/constant';
 import { LineService } from './line-service';
 
 // tslint:disable:no-any
@@ -41,56 +42,94 @@ describe('LineService', () => {
         expect(service).toBeTruthy();
     });
 
-    it(' mouseDown should set mouseDown to correct position', () => {
+    it(' onMouseClick should set lineStarted to true on mouse click', () => {
+        service.onMouseClick(mouseEvent);
         const expectedResult: Vec2 = { x: 25, y: 25 };
-        service.onMouseDown(mouseEvent);
-        expect(service.mouseDownCoord).toEqual(expectedResult);
+        service.onMouseClick(mouseEvent);
+        expect(service.initialCoord).toEqual(expectedResult);
     });
 
-    it(' mouseDown should set mouseDown property to true on left click', () => {
-        service.onMouseDown(mouseEvent);
-        expect(service.mouseDown).toEqual(true);
-    });
-
-    it(' mouseDown should set mouseDown property to false on right click', () => {
-        const mouseEventRClick = {
-            offsetX: 25,
-            offsetY: 25,
-            button: 1, // TODO: Avoir ceci dans un enum accessible
-        } as MouseEvent;
-        service.onMouseDown(mouseEventRClick);
-        expect(service.mouseDown).toEqual(false);
-    });
-
-    it(' onMouseDown should call drawLine if mouse was already down', () => {
-        service.mouseDownCoord = { x: 0, y: 0 };
-        service.mouseDown = false;
-
-        service.onMouseUp(mouseEvent);
-        expect(drawLineSpy).toHaveBeenCalled();
-    });
-
-    it(' mouseDown should set onMouseUp property to true on left click', () => {
-        service.mouseDown = true;
-        service.onMouseUp(mouseEvent);
-        expect(service.mouseDown).toEqual(true);
-    });
-
-    it(' onMouseMove should call drawLine if mouse was already down', () => {
-        service.mouseDownCoord = { x: 0, y: 0 };
-        service.mouseDown = true;
-
+    it(' onMouseMove should not call drawLine', () => {
+        service.lineStarted = false;
         service.onMouseMove(mouseEvent);
-        expect(drawServiceSpy.clearCanvas).toHaveBeenCalled();
-        expect(drawLineSpy).toHaveBeenCalled();
-    });
-
-    it(' onMouseMove should not call drawLine if mouse was not already down', () => {
-        service.mouseDownCoord = { x: 0, y: 0 };
-        service.mouseDown = false;
-
-        service.onMouseMove(mouseEvent);
-        expect(drawServiceSpy.clearCanvas).not.toHaveBeenCalled();
         expect(drawLineSpy).not.toHaveBeenCalled();
+    });
+
+    it(' onMouseMove should call drawLine and shiftDown should be true', () => {
+        service.lineStarted = true;
+        service.shiftDown = true;
+        service.onMouseMove(mouseEvent);
+        expect(drawLineSpy).toHaveBeenCalled();
+    });
+
+    it(' onMouseMove should call drawLine and shiftDown should be false', () => {
+        service.lineStarted = true;
+        service.shiftDown = false;
+        service.onMouseMove(mouseEvent);
+        expect(drawLineSpy).toHaveBeenCalled();
+    });
+
+    it('onMouseDoubleClick should call drawnLine', () => {
+        service.lineStarted = true;
+        service.onMouseDoubleClick(mouseEvent);
+        expect(drawLineSpy).toHaveBeenCalled();
+    });
+
+    it('onMouseDoubleClick should not call drawnLine', () => {
+        service.lineStarted = false;
+        service.onMouseDoubleClick(mouseEvent);
+        expect(drawLineSpy).not.toHaveBeenCalled();
+    });
+
+    it('endLine should not draw a line between the first and last point', () => {
+        service.initialCoord = { x: 0, y: 0 };
+        service.currentCoord = { x: 270, y: 270 };
+        service.endLine();
+    });
+
+    it('onKeyUp up Should call drawLine with shiftDown to false when shift is released and mouse is click', () => {
+        service.lineStarted = true;
+        const keyEvent = {
+            key: SHIFT_KEY,
+        } as KeyboardEvent;
+
+        service.onKeyUp(keyEvent);
+        expect(drawLineSpy).toHaveBeenCalled();
+        expect(service.shiftDown).toBeFalse();
+    });
+    it('onKeyUp up Should not call drawLine with  shift key not pressed', () => {
+        const keyEvent = {
+            key: BACKSPACE_KEY,
+        } as KeyboardEvent;
+
+        service.onKeyUp(keyEvent);
+        expect(drawLineSpy).not.toHaveBeenCalled();
+    });
+    it('onKeyDown up Should call drawLine with shiftDown to true when shift is pressed and mouse is click', () => {
+        service.lineStarted = true;
+        const keyEvent = {
+            key: SHIFT_KEY,
+        } as KeyboardEvent;
+
+        service.onKeyDown(keyEvent);
+        expect(drawLineSpy).toHaveBeenCalled();
+    });
+
+    it('key event Should not call drawnLine when mouse is not click', () => {
+        service.lineStarted = false;
+        const keyEvent = {
+            key: SHIFT_KEY,
+        } as KeyboardEvent;
+
+        service.onKeyDown(keyEvent);
+        service.onKeyUp(keyEvent);
+        expect(drawLineSpy).not.toHaveBeenCalled();
+    });
+
+    it('getSnappedCoord should return point coordinate', () => {
+        service.initialCoord = { x: 18, y: 0 };
+        service.getSnappedCoord();
+        service.initialCoord = { x: 0, y: 18 };
+        service.getSnappedCoord();
     });
 });

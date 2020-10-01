@@ -2,16 +2,16 @@ import { Injectable } from '@angular/core';
 import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
 import { DrawingService } from '@app/services/drawing/drawing.service';
-import { BACKSPACE_KEY, ESCAPE_KEY, PI_OVER_4, PI_OVER_8, SHIFT_KEY } from '@app/shared/constant';
+import { BACKSPACE_KEY, BASE_SNAP_ANGLE, ESCAPE_KEY, MIDDLE_SNAP_ANGLE, SHIFT_KEY } from '@app/shared/constant';
 
 @Injectable({
     providedIn: 'root',
 })
 export class LineService extends Tool {
     private pathData: Vec2[];
-    private currentCoord: Vec2;
-    private lineStarted: boolean;
-    private initialCoord: Vec2;
+    currentCoord: Vec2;
+    lineStarted: boolean;
+    initialCoord: Vec2;
 
     constructor(drawingService: DrawingService) {
         super(drawingService);
@@ -103,9 +103,9 @@ export class LineService extends Tool {
         const angle = this.calculateAngle(startingPoint, this.currentCoord);
 
         let point = { x: 0, y: 0 };
-        if (angle < PI_OVER_8) {
+        if (angle < BASE_SNAP_ANGLE) {
             point = { x: this.currentCoord.x, y: startingPoint.y };
-        } else if (angle > PI_OVER_4 + PI_OVER_8) {
+        } else if (angle > MIDDLE_SNAP_ANGLE + BASE_SNAP_ANGLE) {
             point = { x: startingPoint.x, y: this.currentCoord.y };
         } else {
             point = this.getProjectedPoint(startingPoint, this.currentCoord, angle);
@@ -117,12 +117,12 @@ export class LineService extends Tool {
         const diff = this.getDiff(startingPoint, this.currentCoord);
         // parameter angle is the angle between the line based on the two points and the positive x axis
         // middle angle is between the line and the 45 degree line from the positive x axis
-        const middleAngle = PI_OVER_4 - angle;
+        const middleAngle = MIDDLE_SNAP_ANGLE - angle;
         const currentLineLenght = Math.sqrt(Math.pow(diff.x, 2) + Math.pow(diff.y, 2));
         const projectedLineLenght = currentLineLenght * Math.cos(middleAngle);
         const projectedPoint = {
-            x: startingPoint.x + Math.cos(PI_OVER_4) * projectedLineLenght * Math.sign(diff.x),
-            y: startingPoint.y + Math.sin(PI_OVER_4) * projectedLineLenght * Math.sign(diff.y),
+            x: startingPoint.x + Math.cos(MIDDLE_SNAP_ANGLE) * projectedLineLenght * Math.sign(diff.x),
+            y: startingPoint.y + Math.sin(MIDDLE_SNAP_ANGLE) * projectedLineLenght * Math.sign(diff.y),
         };
         return projectedPoint;
     }

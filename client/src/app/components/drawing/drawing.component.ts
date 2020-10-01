@@ -67,11 +67,6 @@ export class DrawingComponent implements AfterViewInit {
         this.currentTool.onKeyUp(event);
     }
 
-    @HostListener('dblclick', ['$event'])
-    onDblClick(event: MouseEvent): void {
-        this.currentTool.onDblClick(event);
-    }
-
     get width(): number {
         return this.canvasSize.x;
     }
