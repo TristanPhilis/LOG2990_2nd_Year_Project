@@ -1,8 +1,8 @@
-<div class="container" >
-<li *ngFor="let tool of tools">
-<button (click)="showToolDetails(tool.id)">a</button>
-    <div *ngIf="tool.id === selectedTool">
-    {{tool}}
-    </div>
-</li>
+<div class="container">
+    <li *ngFor="let tool of tools">
+        <button (click)="showToolDetails(tool.id)">a</button>
+        <div *ngIf="tool.id === selectedTool">
+            {{ tool }}
+        </div>
+    </li>
 </div>

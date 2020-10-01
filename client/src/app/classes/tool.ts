@@ -7,6 +7,7 @@ export abstract class Tool {
     mouseDownCoord: Vec2;
     mouseDown: boolean = false;
     shiftDown: boolean = false;
+    dblClick: boolean = false;
 
     constructor(protected drawingService: DrawingService) {}
 
@@ -16,11 +17,21 @@ export abstract class Tool {
 
     onMouseMove(event: MouseEvent): void {}
 
+    onMouseClick(event: MouseEvent): void {}
+
+    onMouseDoubleClick(event: MouseEvent): void {}
+
     onKeyDown(event: KeyboardEvent): void {}
 
     onKeyUp(event: KeyboardEvent): void {}
 
     getPositionFromMouse(event: MouseEvent): Vec2 {
         return { x: event.offsetX, y: event.offsetY };
+    }
+
+    getDiff(firstCoord: Vec2, secondCoord: Vec2): Vec2 {
+        const xDiff = secondCoord.x - firstCoord.x;
+        const yDiff = secondCoord.y - firstCoord.y;
+        return { x: xDiff, y: yDiff };
     }
 }
