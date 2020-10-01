@@ -14,6 +14,7 @@ import { GuideComponent } from '../guide/guide.component';
 })
 export class MainPageComponent {
     readonly title: string = 'LOG2990';
+
     message: BehaviorSubject<string> = new BehaviorSubject<string>('');
 
     constructor(private basicService: IndexService, public dialog: MatDialog) {}
@@ -42,9 +43,8 @@ export class MainPageComponent {
     openDialog(): void {
         const dialogRef = this.dialog.open(GuideComponent);
 
-        dialogRef.afterClosed().subscribe(result => {
+        dialogRef.afterClosed().subscribe((result) => {
             console.log(`Dialog result: ${result}`);
         });
-
     }
 }
