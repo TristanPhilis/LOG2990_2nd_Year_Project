@@ -1,7 +1,10 @@
 import { Component } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { ToolsService } from '@app/services/tools/tools.service';
 import { drawingToolId, sidebarToolID } from '@app/shared/enum';
+import { GuideComponent } from '../guide/guide.component';
 import { SidebarToolComponent } from './sidebar-tool/sidebar-tool.component';
+// tslint:disable-next-line: no-relative-imports
 
 @Component({
     selector: 'app-sidebar',
@@ -14,7 +17,7 @@ export class SidebarComponent {
 
     public showDrawingTools: boolean;
 
-    constructor(public toolsService: ToolsService) {
+    constructor(public toolsService: ToolsService, public dialog: MatDialog) {
         toolsService.selectedTool = 0;
         toolsService.showDrawingTools = false;
 
@@ -44,9 +47,18 @@ export class SidebarComponent {
                 }
                 break;
             }
+            case sidebarToolID.openGuide: {
+                const dialogRef = this.dialog.open(GuideComponent);
+
+                dialogRef.afterClosed().subscribe((result) => {
+                    console.log(`Dialog result: ${result}`);
+                });
+                break;
+            }
 
             default: {
                 this.toolsService.showDrawingTools = false;
+                break;
             }
         }
     }
