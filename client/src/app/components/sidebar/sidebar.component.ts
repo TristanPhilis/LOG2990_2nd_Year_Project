@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ToolsService } from '@app/services/tools/tools.service';
 import { drawingToolId, sidebarToolID } from '@app/shared/enum';
 import { GuideComponent } from '../guide/guide.component';
@@ -17,7 +18,7 @@ export class SidebarComponent {
 
     public showDrawingTools: boolean;
 
-    constructor(public toolsService: ToolsService, public dialog: MatDialog) {
+    constructor(private toolsService: ToolsService, private dialog: MatDialog, private drawingService: DrawingService) {
         toolsService.selectedTool = 0;
         toolsService.showDrawingTools = false;
 
@@ -45,6 +46,11 @@ export class SidebarComponent {
                 } else {
                     this.toolsService.showDrawingTools = false;
                 }
+                break;
+            }
+            case sidebarToolID.createNew: {
+                this.drawingService.clearCanvas(this.drawingService.baseCtx);
+                this.drawingService.clearCanvas(this.drawingService.previewCtx);
                 break;
             }
             case sidebarToolID.openGuide: {
