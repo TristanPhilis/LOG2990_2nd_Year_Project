@@ -10,25 +10,35 @@ import { drawingToolId, sidebarToolID } from '@app/shared/enum';
     providedIn: 'root',
 })
 export class ToolsService {
-    public currentTool: Tool;
+    public _currentDrawingTool: Tool;
     private tools: Tool[];
 
-    private _selectedSideBarTool: sidebarToolID;
+    private _selectedSideBarToolID: sidebarToolID;
+    private _currentDrawingToolID: drawingToolId;
 
     constructor(pencilService: PencilService, rectangleService: RectangleService, ellipseService: EllipseService, eraserService: EraserService) {
-        this.currentTool = pencilService;
+        this._currentDrawingTool = pencilService;
         this.tools = [pencilService, rectangleService, ellipseService, eraserService];
     }
 
-    setCurrentTool(toolId: drawingToolId): void {
-        this.currentTool = this.tools[toolId];
+    set currentDrawingTool(newToolID: drawingToolId) {
+        this._currentDrawingTool = this.tools[newToolID];
+        this.currentDrawingToolID = newToolID;
     }
 
-    get selectedSideBarTool(): sidebarToolID {
-        return this._selectedSideBarTool;
+    get currentDrawingToolID(): drawingToolId {
+        return this._currentDrawingToolID;
     }
 
-    set selectedSideBarTool(tool: sidebarToolID) {
-        this._selectedSideBarTool = tool;
+    set currentDrawingToolID(id: drawingToolId) {
+        this._currentDrawingToolID = id;
+    }
+
+    get selectedSideBarToolID(): sidebarToolID {
+        return this._selectedSideBarToolID;
+    }
+
+    set selectedSideBarToolID(id: sidebarToolID) {
+        this._selectedSideBarToolID = id;
     }
 }

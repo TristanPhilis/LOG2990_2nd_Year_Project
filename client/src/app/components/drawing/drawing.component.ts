@@ -66,6 +66,6 @@ export class DrawingComponent implements AfterViewInit {
     }
 
     get currentTool(): Tool {
-        return this.toolsService.currentTool;
+        return this.toolsService._currentDrawingTool;
     }
 }

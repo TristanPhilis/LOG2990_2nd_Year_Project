@@ -43,19 +43,19 @@ export class SidebarComponent {
     onButtonPress(id: sidebarToolID): void {
         switch (id) {
             case sidebarToolID.tracing: {
-                this.toolsService.selectedSideBarTool = sidebarToolID.tracing;
-                this.toolsService.setCurrentTool(drawingToolId.pencilService);
+                this.toolsService.selectedSideBarToolID = sidebarToolID.tracing;
+                this.toolsService.currentDrawingTool = drawingToolId.pencilService;
                 break;
             }
             case sidebarToolID.shapes: {
-                this.toolsService.selectedSideBarTool = sidebarToolID.shapes;
-                this.toolsService.setCurrentTool(drawingToolId.rectangleService);
+                this.toolsService.selectedSideBarToolID = sidebarToolID.shapes;
+                this.toolsService.currentDrawingTool = drawingToolId.rectangleService;
 
                 break;
             }
             case sidebarToolID.eraser: {
-                this.toolsService.selectedSideBarTool = sidebarToolID.eraser;
-                this.toolsService.setCurrentTool(drawingToolId.eraserService);
+                this.toolsService.selectedSideBarToolID = sidebarToolID.eraser;
+                this.toolsService.currentDrawingTool = drawingToolId.eraserService;
                 break;
             }
             case sidebarToolID.createNew: {

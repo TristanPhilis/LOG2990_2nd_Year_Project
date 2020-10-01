@@ -7,10 +7,11 @@ import { drawingToolId } from '@app/shared/enum';
     styleUrls: ['./tool-option.component.scss'],
 })
 export class ToolOptionComponent {
-    id: drawingToolId;
-    name: string;
-    thickness: number;
-    color: string;
+    public id: drawingToolId;
+    public name: string;
+    public thickness: number;
+    public outlineType?: string;
+    public color: string;
     constructor() {
         /*no empty*/
     }

@@ -21,12 +21,12 @@ describe('ToolsService', () => {
     });
 
     it('default tool should be the pencil', () => {
-        expect(service.currentTool).toEqual(pencilStub);
+        expect(service._currentDrawingTool).toEqual(pencilStub);
     });
 
     // todo: Change with an other tool
     it('Should change the current tool properly', () => {
-        service.setCurrentTool(ToolId.pencilService);
-        expect(service.currentTool).toEqual(pencilStub);
+        service.currentDrawingTool = ToolId.pencilService;
+        expect(service._currentDrawingTool).toEqual(pencilStub);
     });
 });
