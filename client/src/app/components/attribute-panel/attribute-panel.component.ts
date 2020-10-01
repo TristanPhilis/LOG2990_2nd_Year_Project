@@ -1,6 +1,6 @@
 import { Component, ViewChild } from '@angular/core';
 import { ToolsService } from '@app/services/tools/tools.service';
-import { drawingToolId } from '@app/shared/enum';
+import { drawingToolId, sidebarToolID } from '@app/shared/enum';
 import { ToolOptionComponent } from '../sidebar/tool-option/tool-option.component';
 
 @Component({
@@ -21,6 +21,10 @@ export class AttributePanelComponent {
             { id: drawingToolId.rectangleService, name: 'Rectangle', thickness: 10, color: 'dark' },
             { id: drawingToolId.ellipseService, name: 'Ellipse', thickness: 10, color: 'dark' },
         ];
+    }
+
+    public get sidebarToolID(): typeof sidebarToolID {
+        return sidebarToolID;
     }
 
     public handleChange(selectedTool: drawingToolId): void {
