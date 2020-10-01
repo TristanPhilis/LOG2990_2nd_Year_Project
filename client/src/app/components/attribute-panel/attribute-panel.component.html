@@ -1,4 +1,4 @@
-<div *ngIf="this.toolsService.selectedSideBarToolID === sidebarToolID.tracing" class="attribute-container">
+<div *ngIf="this.toolsService._selectedSideBarToolID === sidebarToolID.tracing" class="attribute-container">
     <label for="tracing">Tracing</label>
     <select (change)="handleChange($event.target.value)" id="tracing">
         <option *ngFor="let tool of tracingTools" value="{{ tool.id }}">{{ tool.name }}</option>
@@ -9,7 +9,7 @@
     </div>
 </div>
 
-<div *ngIf="this.toolsService.selectedSideBarToolID === sidebarToolID.shapes" class="attribute-container">
+<div *ngIf="this.toolsService._selectedSideBarToolID === sidebarToolID.shapes" class="attribute-container">
     <label for="shapes">Shapes</label>
     <select (change)="handleChange($event.target.value)" id="shapes">
         <option *ngFor="let tool of shapesTools" value="{{ tool.id }}">{{ tool.name }}</option>

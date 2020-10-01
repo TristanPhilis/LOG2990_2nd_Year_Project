@@ -4,9 +4,9 @@ import { Injectable } from '@angular/core';
     providedIn: 'root',
 })
 export class DrawingService {
-    public baseCtx: CanvasRenderingContext2D;
-    public previewCtx: CanvasRenderingContext2D;
-    public canvas: HTMLCanvasElement;
+    baseCtx: CanvasRenderingContext2D;
+    previewCtx: CanvasRenderingContext2D;
+    canvas: HTMLCanvasElement;
 
     clearCanvas(context: CanvasRenderingContext2D): void {
         context.clearRect(0, 0, this.canvas.width, this.canvas.height);

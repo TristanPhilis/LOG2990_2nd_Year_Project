@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
+import { ToolOptionComponent } from '@app/components/sidebar/tool-option/tool-option.component';
 import { ToolsService } from '@app/services/tools/tools.service';
 import { drawingToolId, sidebarToolID } from '@app/shared/enum';
-import { ToolOptionComponent } from '../sidebar/tool-option/tool-option.component';
 
 @Component({
     selector: 'app-attribute-panel',
@@ -9,9 +9,9 @@ import { ToolOptionComponent } from '../sidebar/tool-option/tool-option.componen
     styleUrls: ['./attribute-panel.component.scss'],
 })
 export class AttributePanelComponent {
-    public showTools: boolean;
-    public tracingTools: ToolOptionComponent[];
-    public shapesTools: ToolOptionComponent[];
+    showTools: boolean;
+    tracingTools: ToolOptionComponent[];
+    shapesTools: ToolOptionComponent[];
 
     constructor(public toolsService: ToolsService) {
         this.tracingTools = [{ id: drawingToolId.pencilService, name: 'Pencil', thickness: 10, color: 'dark' }];
@@ -21,18 +21,18 @@ export class AttributePanelComponent {
         ];
     }
 
-    public get sidebarToolID(): typeof sidebarToolID {
+    get sidebarToolID(): typeof sidebarToolID {
         return sidebarToolID;
     }
 
-    public handleChange(selectedTool: drawingToolId): void {
-        this.toolsService.currentDrawingTool = selectedTool;
+    handleChange(selectedTool: drawingToolId): void {
+        this.toolsService._currentDrawingTool = selectedTool;
     }
 
-    public sliderChange(event: any): void {
-        switch (this.toolsService.selectedSideBarToolID) {
+    sliderChange(event: any): void {
+        switch (this.toolsService._selectedSideBarToolID) {
             case sidebarToolID.tracing: {
-                switch (this.toolsService.currentDrawingToolID) {
+                switch (this.toolsService._currentDrawingToolID) {
                     case drawingToolId.pencilService: {
                         this.tracingTools[0].thickness = event.target.value;
                         break;
@@ -41,13 +41,13 @@ export class AttributePanelComponent {
                 break;
             }
             case sidebarToolID.shapes: {
-                switch (this.toolsService.currentDrawingToolID) {
+                switch (this.toolsService._currentDrawingToolID) {
                     case drawingToolId.rectangleService: {
                         this.shapesTools[0].thickness = event.target.value;
                         break;
                     }
                     case drawingToolId.ellipseService: {
-                        this.shapesTools[1].thickness = event.taraget.value;
+                        this.shapesTools[1].thickness = event.target.value;
                         break;
                     }
                 }

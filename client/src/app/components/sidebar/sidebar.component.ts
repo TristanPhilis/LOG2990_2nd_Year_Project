@@ -1,9 +1,9 @@
 import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { GuideComponent } from '@app/components/guide/guide.component';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ToolsService } from '@app/services/tools/tools.service';
 import { drawingToolId, sidebarToolID } from '@app/shared/enum';
-import { GuideComponent } from '../guide/guide.component';
 import { SidebarToolComponent } from './sidebar-tool/sidebar-tool.component';
 // tslint:disable-next-line: no-relative-imports
 
@@ -13,10 +13,10 @@ import { SidebarToolComponent } from './sidebar-tool/sidebar-tool.component';
     styleUrls: ['./sidebar.component.scss'],
 })
 export class SidebarComponent {
-    public sideBarToolsTop: SidebarToolComponent[];
-    public sideBarToolsBottom: SidebarToolComponent[];
+    sideBarToolsTop: SidebarToolComponent[];
+    sideBarToolsBottom: SidebarToolComponent[];
 
-    public showDrawingTools: boolean;
+    showDrawingTools: boolean;
 
     constructor(private toolsService: ToolsService, private dialog: MatDialog, private drawingService: DrawingService) {
         this.sideBarToolsTop = [
@@ -43,19 +43,19 @@ export class SidebarComponent {
     onButtonPress(id: sidebarToolID): void {
         switch (id) {
             case sidebarToolID.tracing: {
-                this.toolsService.selectedSideBarToolID = sidebarToolID.tracing;
-                this.toolsService.currentDrawingTool = drawingToolId.pencilService;
+                this.toolsService._selectedSideBarToolID = sidebarToolID.tracing;
+                this.toolsService._currentDrawingTool = drawingToolId.pencilService;
                 break;
             }
             case sidebarToolID.shapes: {
-                this.toolsService.selectedSideBarToolID = sidebarToolID.shapes;
-                this.toolsService.currentDrawingTool = drawingToolId.rectangleService;
+                this.toolsService._selectedSideBarToolID = sidebarToolID.shapes;
+                this.toolsService._currentDrawingTool = drawingToolId.rectangleService;
 
                 break;
             }
             case sidebarToolID.eraser: {
-                this.toolsService.selectedSideBarToolID = sidebarToolID.eraser;
-                this.toolsService.currentDrawingTool = drawingToolId.eraserService;
+                this.toolsService._selectedSideBarToolID = sidebarToolID.eraser;
+                this.toolsService._currentDrawingTool = drawingToolId.eraserService;
                 break;
             }
             case sidebarToolID.createNew: {
