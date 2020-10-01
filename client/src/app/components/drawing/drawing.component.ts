@@ -4,10 +4,6 @@ import { Vec2 } from '@app/classes/vec2';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ToolsService } from '@app/services/tools/tools.service';
 
-// TODO : Avoir un fichier séparé pour les constantes ?
-export const DEFAULT_WIDTH = 1000;
-export const DEFAULT_HEIGHT = 800;
-
 @Component({
     selector: 'app-drawing',
     templateUrl: './drawing.component.html',
@@ -65,6 +61,16 @@ export class DrawingComponent implements AfterViewInit, OnChanges {
     @HostListener('mouseup', ['$event'])
     onMouseUp(event: MouseEvent): void {
         this.currentTool.onMouseUp(event);
+    }
+
+    @HostListener('keydown', ['$event'])
+    onKeyDown(event: KeyboardEvent): void {
+        this.currentTool.onKeyDown(event);
+    }
+
+    @HostListener('keyup', ['$event'])
+    onKeyUp(event: KeyboardEvent): void {
+        this.currentTool.onKeyUp(event);
     }
 
     get width(): number {
