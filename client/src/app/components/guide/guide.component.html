@@ -4,12 +4,13 @@
 </div>
   
   <!-- Tab content -->
+  <body>
   <div id="Divers" class="tabcontent">
     <h3>Créer un nouveau dessin</h3>
     <p>Grace au boutton créer un nouveau dessin (présent sur point d'entrée de l'application et sur la barre latérale) ou avec les touches "CTRL + o" il est possible de créer un nouveau dessin. Si il y a un déssin deja présent lors de l'utilisation de cette fonction l'utilisateur recevra un aveertissement confirmant ou non vouloir abondonner ses changements. </p>
-    <img src="../../shared/images/UserGuide/createone.jpg"  width="500" height="240">
-    <p> </p>
+    <img src="UserGuide/CreateDrawingOne.jpg" alt=""  width="500" height="240">
   </div>
+  </body>
   
   <div id="Dessiner" class="tabcontent">
     <div class="tab">
@@ -19,13 +20,17 @@
         <button class="tablinks" (click)="openTab('Efface')">Efface</button>
         <button class="tablinks" (click)="openTab('Rectangle')">Rectangle</button>
         <button class="tablinks" (click)="openTab('Ellipse')">Ellipse</button>
+        <button class="tablinks" (click)="openTab('Palette de couleur')">Palette de couleur</button>
     </div>
   </div>
 
+  <body>
   <div id="Crayon" class="tabcontent">
     <h3>Crayon</h3>
     <p>Le boutton "pencil" permet d'acceder a l'outil crayon, ce dernier peut etre utiliser pour dessiner sur le canvas. Il est possible de changer la couleur et la largeur du trait grace au option données sur la toolbar.  </p>
+    <iframe width="560" height="315" src="https://www.youtube.com/embed/_w6N_nplmAw" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
   </div>
+  </body>
 
   <div id="Pinceau" class="tabcontent">
     <h3>Pinceau</h3>
@@ -50,4 +55,9 @@
   <div id="Ellipse" class="tabcontent">
     <h3>Ellipse</h3>
     <p>Le boutton "ellipse" permet d'acceder a l'outil "ellipse", ce dernier peut etre utiliser pour dessiner des ellipses et cercles sur le canvas. Lors de l'utilisation de cet outil si la touche shift est utilisée un cercle sera tracé a la place d'une ellipse. Il est possible de choisir 3 types de tracé (Contour, Plein ou Plein avec contour). Il est possible de choisir la couleur du contour et du 'filling' séparement, et la largeur du contour grace au option donnée sur la toolbar. </p>
+  </div>
+
+  <div id="Palette de couleur" class="tabcontent">
+    <h3>Palette de couleur</h3>
+    <p>La palette de couleur est un outil present dans la barre lateral qui permet de choisir la/les couleurs qui seront utilisée pour les divers outils de l'application </p>
   </div>
