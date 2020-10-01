@@ -8,7 +8,7 @@ import { of } from 'rxjs';
 import { MainPageComponent } from './main-page.component';
 
 import SpyObj = jasmine.SpyObj;
-import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { MatDialogModule } from '@angular/material/dialog';
 
 describe('MainPageComponent', () => {
     let component: MainPageComponent;
