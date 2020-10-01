@@ -1,0 +1,55 @@
+<div class="tab">
+    <button class="tablinks" (click)="openTab('Divers')">Divers</button>
+    <button class="tablinks" (click)="openTab('Dessiner')">Dessiner</button>
+</div>
+  
+  <!-- Tab content -->
+  <mat-dialog-content id="Divers" class="tabcontent">
+    <h3>Créer un nouveau dessin</h3>
+    <p>Grace au boutton créer un nouveau dessin (présent sur point d'entrée de lèapplication et sur la barre latrale) ou avec les touches "CTRL + o" il est possible de créer un nouveau dessin. Si il y a un déssin deja présent lors de l'utilisation de cette fonction l'utilisateur recevra un aveertissement confirmant ou non vouloir abondonner ses changements. </p>
+  </mat-dialog-content>
+  
+  <div id="Dessiner" class="tabcontent">
+    <div class="tab">
+        <button class="tablinks" (click)="openTabInTab('Crayon')">Crayon</button>
+        <button class="tablinks" (click)="openTabInTab('Pinceau')">Pinceau</button>
+        <button class="tablinks" (click)="openTabInTab('Ligne')">Ligne</button>
+        <button class="tablinks" (click)="openTabInTab('Efface')">Efface</button>
+        <button class="tablinks" (click)="openTabInTab('Rectangle')">Rectangle</button>
+        <button class="tablinks" (click)="openTabInTab('Ellipse')">Ellipse</button>
+    </div>
+  </div>
+
+  <div id="Crayon" class="tabcontent">
+    <h3>Créer un nouveau dessin</h3>
+    <p>Grace au boutton créer un nouveau dessin (présent sur point d'entrée de lèapplication et sur la barre latrale) ou avec les touches "CTRL + o" il est possible de créer un nouveau dessin. Si il y a un déssin deja présent lors de l'utilisation de cette fonction l'utilisateur recevra un aveertissement confirmant ou non vouloir abondonner ses changements. </p>
+  </div>
+
+  <div id="Pinceau" class="tabcontent">
+    <h3>Créer un nouveau dessin</h3>
+    <p>Grace au boutton créer un nouveau dessin (présent sur point d'entrée de lèapplication et sur la barre latrale) ou avec les touches "CTRL + o" il est possible de créer un nouveau dessin. Si il y a un déssin deja présent lors de l'utilisation de cette fonction l'utilisateur recevra un aveertissement confirmant ou non vouloir abondonner ses changements. </p>
+  </div>
+
+  <div id="Ligne" class="tabcontent">
+    <h3>Créer un nouveau dessin</h3>
+    <p>Grace au boutton créer un nouveau dessin (présent sur point d'entrée de lèapplication et sur la barre latrale) ou avec les touches "CTRL + o" il est possible de créer un nouveau dessin. Si il y a un déssin deja présent lors de l'utilisation de cette fonction l'utilisateur recevra un aveertissement confirmant ou non vouloir abondonner ses changements. </p>
+  </div>
+
+  <div id="Efface" class="tabcontent">
+    <h3>Créer un nouveau dessin</h3>
+    <p>Grace au boutton créer un nouveau dessin (présent sur point d'entrée de lèapplication et sur la barre latrale) ou avec les touches "CTRL + o" il est possible de créer un nouveau dessin. Si il y a un déssin deja présent lors de l'utilisation de cette fonction l'utilisateur recevra un aveertissement confirmant ou non vouloir abondonner ses changements. </p>
+  </div>
+
+  <div id="Rectangle" class="tabcontent">
+    <h3>Créer un nouveau dessin</h3>
+    <p>Grace au boutton créer un nouveau dessin (présent sur point d'entrée de lèapplication et sur la barre latrale) ou avec les touches "CTRL + o" il est possible de créer un nouveau dessin. Si il y a un déssin deja présent lors de l'utilisation de cette fonction l'utilisateur recevra un aveertissement confirmant ou non vouloir abondonner ses changements. </p>
+  </div>
+
+  <div id="Ellipse" class="tabcontent">
+    <h3>Créer un nouveau dessin</h3>
+    <p>Grace au boutton créer un nouveau dessin (présent sur point d'entrée de lèapplication et sur la barre latrale) ou avec les touches "CTRL + o" il est possible de créer un nouveau dessin. Si il y a un déssin deja présent lors de l'utilisation de cette fonction l'utilisateur recevra un aveertissement confirmant ou non vouloir abondonner ses changements. </p>
+  </div>
+
+  <mat-dialog-actions align="end">
+    <button mat-button mat-dialog-close>Cancel</button>
+  </mat-dialog-actions>

@@ -9,6 +9,7 @@ import { SidebarToolComponent } from './sidebar-tool/sidebar-tool.component';
     styleUrls: ['./sidebar.component.scss'],
 })
 export class SidebarComponent {
+<<<<<<< HEAD
     public sideBarToolsTop: SidebarToolComponent[];
     public sideBarToolsBottom: SidebarToolComponent[];
 
@@ -24,6 +25,17 @@ export class SidebarComponent {
             { id: sidebarToolID.drawing, name: 'Drawing' },
             { id: sidebarToolID.text, name: 'Text' },
             { id: sidebarToolID.filling, name: 'Fill' },
+=======
+    selectedTool: ToolId;
+    tools: ToolOptionComponent[];
+    constructor(private toolsService: ToolsService) {
+        this.selectedTool = 0;
+        this.tools = [
+            { id: ToolId.pencilService, thickness: 10, color: 'dark' },
+            { id: ToolId.rectangleService, thickness: 10, color: 'dark' },
+            { id: ToolId.ellipseService, thickness: 10, color: 'dark' },
+            { id: ToolId.eraserService, thickness: 10, color: 'dark' },
+>>>>>>> EntryPoint
         ];
         this.sideBarToolsBottom = [
             { id: sidebarToolID.createNew, name: 'New Drawing' },

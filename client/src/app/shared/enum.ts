@@ -15,6 +15,7 @@ export enum drawingToolId {
     pencilService,
     rectangleService,
     ellipseService,
+    eraserService,
 }
 
 export enum MouseButton {
