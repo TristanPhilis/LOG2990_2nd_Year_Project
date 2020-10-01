@@ -40,6 +40,11 @@ export class MainPageComponent {
     }
 
     openDialog(): void {
-        this.dialog.open(GuideComponent);
+        const dialogRef = this.dialog.open(GuideComponent);
+
+        dialogRef.afterClosed().subscribe(result => {
+            console.log(`Dialog result: ${result}`);
+        });
+
     }
 }

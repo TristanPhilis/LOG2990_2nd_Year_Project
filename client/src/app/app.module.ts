@@ -1,5 +1,6 @@
 import { HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule } from '@angular/material/dialog';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -14,7 +15,7 @@ import { ToolOptionComponent } from './components/sidebar/tool-option/tool-optio
 
 @NgModule({
     declarations: [AppComponent, EditorComponent, SidebarComponent, DrawingComponent, MainPageComponent, ToolOptionComponent],
-    imports: [BrowserModule, HttpClientModule, AppRoutingModule, MatDialogModule, BrowserAnimationsModule],
+    imports: [BrowserModule, HttpClientModule, AppRoutingModule, MatDialogModule, MatButtonModule, BrowserModule, BrowserAnimationsModule],
     entryComponents: [GuideComponent],
     providers: [],
     bootstrap: [AppComponent],

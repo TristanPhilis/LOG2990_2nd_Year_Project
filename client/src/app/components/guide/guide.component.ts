@@ -5,4 +5,48 @@ import { Component } from '@angular/core';
     templateUrl: './guide.component.html',
     styleUrls: ['./guide.component.scss'],
 })
-export class GuideComponent {}
+export class GuideComponent {
+    openTab(tab: string): void {
+        // Declare all variables
+        let i: number;
+        let tabcontent: any;
+        let tablinks: any;
+
+        // Get all elements with class="tabcontent" and hide them
+        tabcontent = document.getElementsByClassName('tabcontent');
+        for (i = 0; i < tabcontent.length; i++) {
+            tabcontent[i].style.display = 'none';
+        }
+
+        // Get all elements with class="tablinks" and remove the class "active"
+        tablinks = document.getElementsByClassName('tablinks');
+        for (i = 0; i < tablinks.length; i++) {
+            tablinks[i].className = tablinks[i].className.replace(' active', '');
+        }
+
+        // Show the current tab, and add an "active" class to the button that opened the tab
+        document.getElementById(tab).style.display = 'block';
+    }
+
+    openTabInTab(tab: string): void {
+        // Declare all variables
+        let i: number;
+        let tabcontent: any;
+        let tablinks: any;
+
+        // Get all elements with class="tabcontent" and hide them
+        tabcontent = document.getElementsByClassName('tabcontent');
+        for (i = 0; i < tabcontent.length; i++) {
+            tabcontent[i].style.display = 'none';
+        }
+
+        // Get all elements with class="tablinks" and remove the class "active"
+        tablinks = document.getElementsByClassName('tablinks');
+        for (i = 0; i < tablinks.length; i++) {
+            tablinks[i].className = tablinks[i].className.replace(' active', '');
+        }
+
+        // Show the current tab, and add an "active" class to the button that opened the tab
+        document.getElementById(tab).style.display = 'block';
+    }
+}
