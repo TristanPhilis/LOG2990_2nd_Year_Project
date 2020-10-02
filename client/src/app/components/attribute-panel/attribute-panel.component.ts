@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { ToolOptionComponent } from '@app/components/sidebar/tool-option/tool-option.component';
-import { ToolsService } from '@app/services/tools/tools.service';
+import { ToolsService } from '@app/services/tools/tools-service';
 import { drawingToolId, sidebarToolID } from '@app/shared/enum';
 
 @Component({
@@ -29,7 +29,8 @@ export class AttributePanelComponent {
         this.toolsService._currentDrawingTool = selectedTool;
     }
 
-    // tslint:disable-next-line: no-any
+    // need any to acces target.valueAsNumber
+    // tslint:disable-next-line:no-any
     sliderChange(event: any): void {
         switch (this.toolsService._selectedSideBarToolID) {
             case sidebarToolID.tracing: {

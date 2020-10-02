@@ -23,4 +23,20 @@ describe('DrawingService', () => {
         const hasColoredPixels = pixelBuffer.some((color) => color !== 0);
         expect(hasColoredPixels).toEqual(false);
     });
+
+    it('Should set and get correct imageData', () => {
+        const width = service.canvas.width;
+        const height = service.canvas.height;
+        const imageData = service.baseCtx.createImageData(width, height);
+        const maxAlpha = 255;
+        const singlePixelDataSize = 4;
+        for (let i = 0; i < imageData.data.length; i += singlePixelDataSize) {
+            imageData.data[i + 0] = 1;
+            imageData.data[i + 1] = 1;
+            imageData.data[i + 2] = 1;
+            imageData.data[i + singlePixelDataSize - 1] = maxAlpha;
+        }
+        service.setImageData(imageData);
+        expect(service.getImageData()).toEqual(imageData);
+    });
 });

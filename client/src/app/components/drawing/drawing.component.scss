@@ -4,16 +4,17 @@ canvas {
     position: absolute;
     left: 0;
     top: 0;
+    box-sizing: border-box; 
 }
 
-#canvas{
+#canvas {
     z-index: 0;
 }
 
-#drawCanvas{
+#drawCanvas {
     z-index: 1;
 }
 
-#canvas-container{
+#canvas-container {
     position: relative;
 }
