@@ -19,8 +19,8 @@ export class SidebarComponent {
             { id: ToolId.ellipseService, thickness: 10, color: 'dark' },
             { id: ToolId.lineService, thickness: 10, color: 'dark' },
             { id: ToolId.eraserService, thickness: 10, color: 'dark' },
+            { id: ToolId.brushService, thickness: 10, color: 'dark' },
         ];
-        console.log(this.tools);
     }
 
     showToolDetails(toolId: ToolId): void {
