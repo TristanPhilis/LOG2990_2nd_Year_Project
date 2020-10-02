@@ -6,7 +6,7 @@ import { EraserService } from '@app/services/tools/eraser-service';
 import { LineService } from '@app/services/tools/line-service';
 import { PencilService } from '@app/services/tools/pencil-service';
 import { RectangleService } from '@app/services/tools/rectangle-service';
-import { ToolsService } from '@app/services/tools/tools.service';
+import { ToolsService } from '@app/services/tools/tools-service';
 import { drawingToolId, sidebarToolID, TraceTypes } from '@app/shared/enum';
 // tslint:disable:no-any
 
