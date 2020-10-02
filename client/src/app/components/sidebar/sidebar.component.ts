@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { ToolsService } from '@app/services/tools/tools.service';
+import { ToolsService } from '@app/services/tools/tools-service';
 import { drawingToolId, sidebarToolID } from '@app/shared/enum';
 import { SidebarToolComponent } from './sidebar-tool/sidebar-tool.component';
 import { ToolOptionComponent } from './tool-option/tool-option.component';
