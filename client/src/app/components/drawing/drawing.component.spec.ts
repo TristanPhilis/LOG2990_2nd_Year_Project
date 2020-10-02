@@ -8,10 +8,6 @@ import SpyObj = jasmine.SpyObj;
 
 class ToolStub extends Tool {}
 
-// TODO : Déplacer dans un fichier accessible à tous
-const DEFAULT_WIDTH = 1000;
-const DEFAULT_HEIGHT = 800;
-
 describe('DrawingComponent', () => {
     let component: DrawingComponent;
     let fixture: ComponentFixture<DrawingComponent>;
@@ -41,13 +37,6 @@ describe('DrawingComponent', () => {
 
     it('should create', () => {
         expect(component).toBeTruthy();
-    });
-
-    it('should have a default WIDTH and HEIGHT', () => {
-        const height = component.height;
-        const width = component.width;
-        expect(height).toEqual(DEFAULT_HEIGHT);
-        expect(width).toEqual(DEFAULT_WIDTH);
     });
 
     it('should get the current tool', () => {
