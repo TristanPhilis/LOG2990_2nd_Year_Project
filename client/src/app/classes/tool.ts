@@ -6,6 +6,7 @@ import { Vec2 } from './vec2';
 export abstract class Tool {
     mouseDownCoord: Vec2;
     mouseDown: boolean = false;
+    shiftDown: boolean = false;
 
     constructor(protected drawingService: DrawingService) {}
 
@@ -14,6 +15,10 @@ export abstract class Tool {
     onMouseUp(event: MouseEvent): void {}
 
     onMouseMove(event: MouseEvent): void {}
+
+    onKeyDown(event: KeyboardEvent): void {}
+
+    onKeyUp(event: KeyboardEvent): void {}
 
     getPositionFromMouse(event: MouseEvent): Vec2 {
         return { x: event.offsetX, y: event.offsetY };
