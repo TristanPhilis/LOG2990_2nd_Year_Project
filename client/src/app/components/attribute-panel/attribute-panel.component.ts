@@ -55,6 +55,5 @@ export class AttributePanelComponent {
             }
         }
 
-        console.log(this.tracingTools[0].thickness);
     }
 }
