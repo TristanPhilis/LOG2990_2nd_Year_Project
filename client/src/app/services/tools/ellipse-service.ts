@@ -11,8 +11,18 @@ import { MouseButton } from '@app/shared/enum';
 export class EllipseService extends Tool {
     initialCoord: Vec2;
 
+    private thickness: number;
+
     constructor(drawingService: DrawingService) {
         super(drawingService);
+    }
+
+    set _thickness(newThickness: number) {
+        this.thickness = newThickness;
+    }
+
+    get _thickness(): number {
+        return this.thickness;
     }
 
     onMouseDown(event: MouseEvent): void {
@@ -65,6 +75,7 @@ export class EllipseService extends Tool {
         ctx.beginPath();
         const xRadius = (this.mouseDownCoord.x - this.initialCoord.x) / 2;
         const yRadius = (this.mouseDownCoord.y - this.initialCoord.y) / 2;
+        ctx.lineWidth = this.thickness;
 
         if (this.shiftDown) {
             const smallestRadius = Math.min(Math.abs(xRadius), Math.abs(yRadius));

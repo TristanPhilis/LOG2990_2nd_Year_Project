@@ -1,5 +1,10 @@
 import { Component } from '@angular/core';
 import { ToolOptionComponent } from '@app/components/sidebar/tool-option/tool-option.component';
+import { EllipseService } from '@app/services/tools/ellipse-service';
+import { EraserService } from '@app/services/tools/eraser-service';
+import { LineService } from '@app/services/tools/line-service';
+import { PencilService } from '@app/services/tools/pencil-service';
+import { RectangleService } from '@app/services/tools/rectangle-service';
 import { ToolsService } from '@app/services/tools/tools.service';
 import { drawingToolId, sidebarToolID } from '@app/shared/enum';
 
@@ -13,7 +18,14 @@ export class AttributePanelComponent {
     tracingTools: ToolOptionComponent[];
     shapesTools: ToolOptionComponent[];
 
-    constructor(public toolsService: ToolsService) {
+    constructor(
+        public toolsService: ToolsService,
+        private pencilService: PencilService,
+        private rectangleService: RectangleService,
+        private ellipseService: EllipseService,
+        private lineService: LineService,
+        private eraserService: EraserService,
+    ) {
         this.tracingTools = [{ id: drawingToolId.pencilService, name: 'Pencil', thickness: 10, color: 'dark' }];
         this.shapesTools = [
             { id: drawingToolId.rectangleService, name: 'Rectangle', thickness: 10, color: 'dark' },
@@ -34,7 +46,7 @@ export class AttributePanelComponent {
             case sidebarToolID.tracing: {
                 switch (this.toolsService._currentDrawingToolID) {
                     case drawingToolId.pencilService: {
-                        this.tracingTools[0].thickness = event.target.value;
+                        this.pencilService._thickness = event.target.value;
                         break;
                     }
                 }
@@ -43,18 +55,22 @@ export class AttributePanelComponent {
             case sidebarToolID.shapes: {
                 switch (this.toolsService._currentDrawingToolID) {
                     case drawingToolId.rectangleService: {
-                        this.shapesTools[0].thickness = event.target.value;
+                        this.rectangleService._thickness = event.target.value;
                         break;
                     }
                     case drawingToolId.ellipseService: {
-                        this.shapesTools[1].thickness = event.target.value;
+                        this.ellipseService._thickness = event.target.value;
                         break;
                     }
                 }
                 break;
             }
+            case sidebarToolID.line: {
+                this.lineService._thickness = event.target.value;
+            }
+            case sidebarToolID.eraser: {
+                this.eraserService._thickness = event.target.value;
+            }
         }
-
-        console.log(this.tracingTools[0].thickness);
     }
 }

@@ -12,11 +12,21 @@ export class LineService extends Tool {
     currentCoord: Vec2;
     lineStarted: boolean;
     initialCoord: Vec2;
+    private thickness: number;
 
     constructor(drawingService: DrawingService) {
         super(drawingService);
+        this.thickness = 0;
         this.clearPath();
         this.lineStarted = false;
+    }
+
+    set _thickness(newThickness: number) {
+        this.thickness = newThickness;
+    }
+
+    get _thickness(): number {
+        return this.thickness;
     }
 
     onMouseClick(event: MouseEvent): void {
@@ -132,6 +142,7 @@ export class LineService extends Tool {
         ctx.beginPath();
 
         ctx.moveTo(this.initialCoord.x, this.initialCoord.y);
+        ctx.lineWidth = this.thickness;
         for (const point of this.pathData) {
             ctx.lineTo(point.x, point.y);
         }

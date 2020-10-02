@@ -5,7 +5,7 @@
     </select>
     <label for="tracingThickness">Thickness</label>
     <div class="slide-container">
-        <input type="range" min="1" max="100" value="10" id="tracingThickness" (input)="sliderChange($event)" />
+        <input type="range" min="1" max="100" value="1" id="tracingThickness" (input)="sliderChange($event)" />
     </div>
 </div>
 
@@ -18,6 +18,20 @@
     <select id="outlineType"></select>
     <label for="outlineThickness">Thickness</label>
     <div class="slide-container">
-        <input type="range" min="1" max="100" value="10" id="outlineThickness" (input)="sliderChange($event)" />
+        <input type="range" min="1" max="100" value="1" id="outlineThickness" (input)="sliderChange($event)" />
+    </div>
+</div>
+
+<div *ngIf="this.toolsService._selectedSideBarToolID === sidebarToolID.line" class="attribute-container">
+    <label for="tracingThickness">Thickness</label>
+    <div class="slide-container">
+        <input type="range" min="1" max="100" value="1" id="lineThickness" (input)="sliderChange($event)" />
+    </div>
+</div>
+
+<div *ngIf="this.toolsService._selectedSideBarToolID === sidebarToolID.eraser" class="attribute-container">
+    <label for="tracingThickness">Thickness</label>
+    <div class="slide-container">
+        <input type="range" min="1" max="100" value="1" id="eraserThickness" (input)="sliderChange($event)" />
     </div>
 </div>

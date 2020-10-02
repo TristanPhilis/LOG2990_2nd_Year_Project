@@ -10,9 +10,19 @@ import { MouseButton } from '@app/shared/enum';
 })
 export class RectangleService extends Tool {
     initialCoord: Vec2;
+    private thickness: number;
 
     constructor(drawingService: DrawingService) {
         super(drawingService);
+        this.thickness = 0;
+    }
+
+    set _thickness(newThickness: number) {
+        this.thickness = newThickness;
+    }
+
+    get _thickness(): number {
+        return this.thickness;
     }
 
     onMouseDown(event: MouseEvent): void {
@@ -68,6 +78,9 @@ export class RectangleService extends Tool {
 
         const width = this.mouseDownCoord.x - this.initialCoord.x;
         const height = this.mouseDownCoord.y - this.initialCoord.y;
+
+        ctx.lineWidth = this.thickness;
+
         if (this.shiftDown) {
             const squareSize = Math.min(Math.abs(width), Math.abs(height));
             ctx.rect(this.initialCoord.x, this.initialCoord.y, squareSize * Math.sign(width), squareSize * Math.sign(height));
