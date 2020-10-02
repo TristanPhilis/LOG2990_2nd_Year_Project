@@ -1,7 +1,7 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { Tool } from '@app/classes/tool';
 import { DrawingService } from '@app/services/drawing/drawing.service';
-import { ToolsService } from '@app/services/tools/tools.service';
+import { ToolsService } from '@app/services/tools/tools-service';
 import { DrawingComponent } from './drawing.component';
 
 import SpyObj = jasmine.SpyObj;
@@ -19,7 +19,7 @@ describe('DrawingComponent', () => {
         toolStub = new ToolStub({} as DrawingService);
         drawingStub = new DrawingService();
         toolsServiceSpy = jasmine.createSpyObj('ToolsService', ['']);
-        toolsServiceSpy.currentTool = toolStub;
+        toolsServiceSpy.currentDrawingTool = toolStub;
         TestBed.configureTestingModule({
             declarations: [DrawingComponent],
             providers: [
@@ -40,13 +40,13 @@ describe('DrawingComponent', () => {
     });
 
     it('should get the current tool', () => {
-        const currentTool = component.currentTool;
-        expect(currentTool).toEqual(toolsServiceSpy.currentTool);
+        const currentDrawingTool = component.currentTool;
+        expect(currentDrawingTool).toEqual(toolsServiceSpy.currentDrawingTool);
     });
 
     it(" should call the tool's mouse move when receiving a mouse move event", () => {
         const event = {} as MouseEvent;
-        const mouseEventSpy = spyOn(toolsServiceSpy.currentTool, 'onMouseMove').and.callThrough();
+        const mouseEventSpy = spyOn(toolsServiceSpy.currentDrawingTool, 'onMouseMove').and.callThrough();
         component.onMouseMove(event);
         expect(mouseEventSpy).toHaveBeenCalled();
         expect(mouseEventSpy).toHaveBeenCalledWith(event);
@@ -54,7 +54,7 @@ describe('DrawingComponent', () => {
 
     it(" should call the tool's mouse down when receiving a mouse down event", () => {
         const event = {} as MouseEvent;
-        const mouseEventSpy = spyOn(toolsServiceSpy.currentTool, 'onMouseDown').and.callThrough();
+        const mouseEventSpy = spyOn(toolsServiceSpy.currentDrawingTool, 'onMouseDown').and.callThrough();
         component.onMouseDown(event);
         expect(mouseEventSpy).toHaveBeenCalled();
         expect(mouseEventSpy).toHaveBeenCalledWith(event);
@@ -62,7 +62,7 @@ describe('DrawingComponent', () => {
 
     it(" should call the tool's mouse up when receiving a mouse up event", () => {
         const event = {} as MouseEvent;
-        const mouseEventSpy = spyOn(toolsServiceSpy.currentTool, 'onMouseUp').and.callThrough();
+        const mouseEventSpy = spyOn(toolsServiceSpy.currentDrawingTool, 'onMouseUp').and.callThrough();
         component.onMouseUp(event);
         expect(mouseEventSpy).toHaveBeenCalled();
         expect(mouseEventSpy).toHaveBeenCalledWith(event);
@@ -70,7 +70,7 @@ describe('DrawingComponent', () => {
 
     it(" should call the tool's key down when receiving a key down event", () => {
         const event = {} as KeyboardEvent;
-        const mouseEventSpy = spyOn(toolsServiceSpy.currentTool, 'onKeyDown').and.callThrough();
+        const mouseEventSpy = spyOn(toolsServiceSpy.currentDrawingTool, 'onKeyDown').and.callThrough();
         component.onKeyDown(event);
         expect(mouseEventSpy).toHaveBeenCalled();
         expect(mouseEventSpy).toHaveBeenCalledWith(event);
@@ -78,7 +78,7 @@ describe('DrawingComponent', () => {
 
     it(" should call the tool's key up when receiving a key up event", () => {
         const event = {} as KeyboardEvent;
-        const mouseEventSpy = spyOn(toolsServiceSpy.currentTool, 'onKeyUp').and.callThrough();
+        const mouseEventSpy = spyOn(toolsServiceSpy.currentDrawingTool, 'onKeyUp').and.callThrough();
         component.onKeyUp(event);
         expect(mouseEventSpy).toHaveBeenCalled();
         expect(mouseEventSpy).toHaveBeenCalledWith(event);

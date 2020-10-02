@@ -2,7 +2,7 @@ import { AfterViewInit, Component, ElementRef, HostListener, Input, OnChanges, S
 import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
 import { DrawingService } from '@app/services/drawing/drawing.service';
-import { ToolsService } from '@app/services/tools/tools.service';
+import { ToolsService } from '@app/services/tools/tools-service';
 
 @Component({
     selector: 'app-drawing',
@@ -92,6 +92,6 @@ export class DrawingComponent implements AfterViewInit, OnChanges {
     }
 
     get currentTool(): Tool {
-        return this.toolsService.currentTool;
+        return this.toolsService.currentDrawingTool;
     }
 }

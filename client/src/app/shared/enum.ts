@@ -1,4 +1,22 @@
-export enum ToolId {
+export enum sidebarToolID {
+    move,
+    selection,
+    tracing,
+    shapes,
+    line,
+    text,
+    paintBucket,
+    stamp,
+    pipette,
+    eraser,
+    createNew,
+    saveCurrent,
+    openCarrousel,
+    exportCurrent,
+    openGuide,
+}
+
+export enum drawingToolId {
     pencilService,
     rectangleService,
     ellipseService,
@@ -10,9 +28,9 @@ export enum ToolId {
 export enum MouseButton {
     None = 0,
     Left = 1,
-    Middle = 2,
-    Right = 3,
-    Back = 4,
+    Right = 2,
+    both = 3,
+    Middle = 4,
     Forward = 5,
 }
 
@@ -22,4 +40,9 @@ export enum Texture {
     three = 'https://graphicriver.img.customer.envatousercontent.com/files/123430005/Artistic%20brush%20strokes%20texture%20(main%20preview).jpg?auto=compress%2Cformat&q=80&fit=crop&crop=top&max-h=8000&max-w=590&s=8a772be2757757feb791790f7de6c66d',
     four = 'https://i.pinimg.com/originals/a2/f3/fa/a2f3fab2b66b9dfc3fcc97404e25c294.jpg',
     five = 'https://static3.bigstockphoto.com/6/0/3/large2/306552718.jpg',
+}
+
+export enum ColorSelection {
+    primary,
+    secondary,
 }

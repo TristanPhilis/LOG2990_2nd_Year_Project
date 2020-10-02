@@ -6,15 +6,18 @@ import { EraserService } from '@app/services/tools/eraser-service';
 import { LineService } from '@app/services/tools/line-service';
 import { PencilService } from '@app/services/tools/pencil-service';
 import { RectangleService } from '@app/services/tools/rectangle-service';
-
-import { ToolId } from '@app/shared/enum';
+import { drawingToolId, sidebarToolID } from '@app/shared/enum';
 
 @Injectable({
     providedIn: 'root',
 })
 export class ToolsService {
-    currentTool: Tool;
+    currentDrawingTool: Tool;
     private tools: Tool[];
+
+    private selectedSideBarToolID: sidebarToolID;
+    private currentDrawingToolID: drawingToolId;
+
     constructor(
         pencilService: PencilService,
         rectangleService: RectangleService,
@@ -23,11 +26,28 @@ export class ToolsService {
         lineService: LineService,
         brushService: BrushService,
     ) {
-        this.currentTool = pencilService;
+        this.currentDrawingTool = pencilService;
         this.tools = [pencilService, rectangleService, ellipseService, eraserService, lineService, brushService];
     }
 
-    setCurrentTool(toolId: ToolId): void {
-        this.currentTool = this.tools[toolId];
+    set _currentDrawingTool(newToolID: drawingToolId) {
+        this.currentDrawingTool = this.tools[newToolID];
+        this.currentDrawingToolID = newToolID;
+    }
+
+    get _currentDrawingToolID(): drawingToolId {
+        return this.currentDrawingToolID;
+    }
+
+    set _currentDrawingToolID(id: drawingToolId) {
+        this.currentDrawingToolID = id;
+    }
+
+    get _selectedSideBarToolID(): sidebarToolID {
+        return this.selectedSideBarToolID;
+    }
+
+    set _selectedSideBarToolID(id: sidebarToolID) {
+        this.selectedSideBarToolID = id;
     }
 }
