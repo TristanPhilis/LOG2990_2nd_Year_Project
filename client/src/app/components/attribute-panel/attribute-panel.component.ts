@@ -8,6 +8,7 @@ import { PencilService } from '@app/services/tools/pencil-service';
 import { RectangleService } from '@app/services/tools/rectangle-service';
 import { ToolsService } from '@app/services/tools/tools.service';
 import { drawingToolId, sidebarToolID, TraceTypes } from '@app/shared/enum';
+// tslint:disable:no-any
 
 @Component({
     selector: 'app-attribute-panel',
@@ -57,7 +58,6 @@ export class AttributePanelComponent {
             case sidebarToolID.shapes: {
                 switch (this.toolsService._currentDrawingToolID) {
                     case drawingToolId.rectangleService: {
-                        console;
                         this.rectangleService._traceType = event.target.value;
                         break;
                     }
