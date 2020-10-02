@@ -79,13 +79,16 @@ export class ColorPickerComponent implements OnInit {
     onSelect(): void {
         if (this.colorForm.valid) {
             this.colorSelectionService.updateHistory(this.color);
+            this.colorSelectionService.selectNewColor(this.color);
+            this.colorSelectionService.showColorPicker = false;
         } else {
             alert('Select a valid color');
         }
+
     }
 
     onCancel(): void {
-        //
+        this.colorSelectionService.showColorPicker = false;
     }
 
     get colorHistory(): Color[] {

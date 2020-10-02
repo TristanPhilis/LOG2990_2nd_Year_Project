@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Color } from '@app/classes/color';
+import { ColorSelection } from '@app/shared/enum';
 
 const MAX_HISTORY_SIZE = 10;
 
@@ -9,12 +10,18 @@ const MAX_HISTORY_SIZE = 10;
 export class ColorSelectionService {
     primaryColor: Color;
     secondaryColor: Color;
+    selectedColor: ColorSelection;
+    showColorPicker: boolean;
     private colorsHistory: Color[];
+
 
     constructor() {
         this.colorsHistory = new Array(MAX_HISTORY_SIZE);
+        const blackColor = new Color(0, 0, 0);
+        this.primaryColor = blackColor;
+        this.secondaryColor = new Color(10, 100, 50);
         for (let index = 0; index < this.colorsHistory.length; index++) {
-            this.colorsHistory[index] = new Color(0, 0, 0);
+            this.colorsHistory[index] = blackColor;
         }
     }
 
@@ -41,5 +48,13 @@ export class ColorSelectionService {
         const temp = this.primaryColor;
         this.primaryColor = this.secondaryColor;
         this.secondaryColor = temp;
+    }
+
+    selectNewColor(color: Color) {
+        if (this.selectedColor === ColorSelection.primary) {
+            this.primaryColor = color;
+        } else {
+            this.secondaryColor = color;
+        }
     }
 }

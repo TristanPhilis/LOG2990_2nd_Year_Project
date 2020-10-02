@@ -27,8 +27,13 @@ export enum drawingToolId {
 export enum MouseButton {
     None = 0,
     Left = 1,
-    Middle = 2,
-    Right = 3,
-    Back = 4,
+    Right = 2,
+    both = 3,
+    Middle = 4,
     Forward = 5,
+}
+
+export enum ColorSelection {
+    primary,
+    secondary,
 }
