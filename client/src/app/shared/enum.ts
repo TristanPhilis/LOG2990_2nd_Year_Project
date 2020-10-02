@@ -1,9 +1,19 @@
 export enum sidebarToolID {
     move,
-    cropping,
-    drawing,
+    selection,
+    tracing,
+    shapes,
+    line,
     text,
-    filling, // More to add
+    paintBucket,
+    stamp,
+    pipette,
+    eraser,
+    createNew,
+    saveCurrent,
+    openCarrousel,
+    exportCurrent,
+    openGuide,
 }
 
 export enum drawingToolId {

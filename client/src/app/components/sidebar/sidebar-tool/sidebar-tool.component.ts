@@ -9,6 +9,4 @@ import { sidebarToolID } from '@app/shared/enum';
 export class SidebarToolComponent {
     id: sidebarToolID;
     name: string;
-
-    constructor() {}
 }

@@ -92,6 +92,6 @@ export class DrawingComponent implements AfterViewInit, OnChanges {
     }
 
     get currentTool(): Tool {
-        return this.toolsService.currentTool;
+        return this.toolsService.currentDrawingTool;
     }
 }

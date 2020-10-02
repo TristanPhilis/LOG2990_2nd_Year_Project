@@ -1,8 +1,11 @@
 import { Component } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { IndexService } from '@app/services/index/index.service';
 import { Message } from '@common/communication/message';
 import { BehaviorSubject } from 'rxjs';
 import { map } from 'rxjs/operators';
+// tslint:disable-next-line: no-relative-imports
+import { GuideComponent } from '../guide/guide.component';
 
 @Component({
     selector: 'app-main-page',
@@ -11,9 +14,10 @@ import { map } from 'rxjs/operators';
 })
 export class MainPageComponent {
     readonly title: string = 'LOG2990';
+
     message: BehaviorSubject<string> = new BehaviorSubject<string>('');
 
-    constructor(private basicService: IndexService) {}
+    constructor(private basicService: IndexService, public dialog: MatDialog) {}
 
     sendTimeToServer(): void {
         const newTimeMessage: Message = {
@@ -34,5 +38,13 @@ export class MainPageComponent {
                 }),
             )
             .subscribe(this.message);
+    }
+
+    openDialog(): void {
+        const dialogRef = this.dialog.open(GuideComponent);
+
+        dialogRef.afterClosed().subscribe((result) => {
+            console.log(`Dialog result: ${result}`);
+        });
     }
 }

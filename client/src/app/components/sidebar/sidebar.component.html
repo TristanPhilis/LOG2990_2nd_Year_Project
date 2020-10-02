@@ -1,15 +1,12 @@
 <div class="container">
-    <li *ngFor="let sidebarTool of sideBarTools">
-        <button (click)="chooseTool(sidebarTool.id)">{{ sidebarTool.name }}</button>
-    </li>
-
-    <div *ngIf="showDrawingTools">
-        <li *ngFor="let tool of drawingTools">
-            <button (click)="showToolDetails(tool.id)">{{ tool.name }}</button>
-            <div *ngIf="tool.id === selectedTool">
-                {{ tool.name }}
-            </div>
+    <div>
+        <li *ngFor="let sidebarTool of sideBarToolsTop" class="sidebar-container-top">
+            <button (click)="onButtonPress(sidebarTool.id)">{{ sidebarTool.name }}</button>
         </li>
-        <app-sidebar-color-options></app-sidebar-color-options>
+    </div>
+    <div>
+        <li *ngFor="let sidebarTool of sideBarToolsBottom" class="sidebar-container-bottom">
+            <button (click)="onButtonPress(sidebarTool.id)">{{ sidebarTool.name }}</button>
+        </li>
     </div>
 </div>

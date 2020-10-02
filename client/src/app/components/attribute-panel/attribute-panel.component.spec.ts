@@ -1,18 +1,18 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { SidebarToolComponent } from './sidebar-tool.component';
+import { AttributePanelComponent } from './attribute-panel.component';
 
-describe('SidebarToolComponent', () => {
-    let component: SidebarToolComponent;
-    let fixture: ComponentFixture<SidebarToolComponent>;
+describe('AttributePanelComponent', () => {
+    let component: AttributePanelComponent;
+    let fixture: ComponentFixture<AttributePanelComponent>;
 
     beforeEach(async(() => {
         TestBed.configureTestingModule({
-            declarations: [SidebarToolComponent],
+            declarations: [AttributePanelComponent],
         }).compileComponents();
     }));
 
     beforeEach(() => {
-        fixture = TestBed.createComponent(SidebarToolComponent);
+        fixture = TestBed.createComponent(AttributePanelComponent);
         component = fixture.componentInstance;
         fixture.detectChanges();
     });

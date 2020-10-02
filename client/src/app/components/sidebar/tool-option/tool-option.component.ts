@@ -10,6 +10,7 @@ export class ToolOptionComponent {
     id: drawingToolId;
     name: string;
     thickness: number;
+    outlineType?: string;
     color: string;
     constructor() {
         /*no empty*/

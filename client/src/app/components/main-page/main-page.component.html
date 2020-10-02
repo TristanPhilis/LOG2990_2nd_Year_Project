@@ -7,10 +7,14 @@
         <button class="button" (click)="sendTimeToServer()">Envoyer un message au serveur</button>
     </div>
 
-    <button class="button" routerLink="/editor">Ouvir Éditeur</button>
+    <button mat-raised-button routerLink="/editor">Créer un nouveau dessin</button>
+    <ng-template [ngIf]="false"><div><button mat-raised-button routerLink="/continue">Continuer un dessin</button></div></ng-template>
+    <button mat-raised-button routerLink="/carousel">Ouvrir le carrousel de dessins</button>
+    
+    <button mat-raised-button (click)="openDialog()">Afficher le Guide d'utilisation</button>
 
     <div class="footer-item">
-        <h4 class="team-name">Équipe Poly</h4>
-        <p>Coequipier #1, Coequipier #2, Coequipier #3, Coequipier #4, Coequipier #5, Coequipier #6</p>
+        <h4 class="team-name">Équipe Roger</h4>
+        <p>Tristan Philis 1906402, Romain Saez 1889436, Gabriel Moreau 1957746, Hugo Fontaine Nemoto 1887074, Ramzi Belbahri 1963293</p>
     </div>
 </div>

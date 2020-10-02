@@ -1,0 +1,24 @@
+<app-sidebar-color-options></app-sidebar-color-options>
+<div *ngIf="this.toolsService._selectedSideBarToolID === sidebarToolID.tracing" class="attribute-container">
+    <label for="tracing">Tracing</label>
+    <select (change)="handleChange($event.target.value)" id="tracing">
+        <option *ngFor="let tool of tracingTools" value="{{ tool.id }}">{{ tool.name }}</option>
+    </select>
+    <label for="tracingThickness">Thickness</label>
+    <div class="slide-container">
+        <input type="range" min="1" max="100" value="10" id="tracingThickness" (input)="sliderChange($event)" />
+    </div>
+</div>
+
+<div *ngIf="this.toolsService._selectedSideBarToolID === sidebarToolID.shapes" class="attribute-container">
+    <label for="shapes">Shapes</label>
+    <select (change)="handleChange($event.target.value)" id="shapes">
+        <option *ngFor="let tool of shapesTools" value="{{ tool.id }}">{{ tool.name }}</option>
+    </select>
+    <label for="outlineType">Outline</label>
+    <select id="outlineType"></select>
+    <label for="outlineThickness">Thickness</label>
+    <div class="slide-container">
+        <input type="range" min="1" max="100" value="10" id="outlineThickness" (input)="sliderChange($event)" />
+    </div>
+</div>
