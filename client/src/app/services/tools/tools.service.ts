@@ -33,7 +33,6 @@ export class ToolsService {
     set _currentDrawingTool(newToolID: drawingToolId) {
         this.currentDrawingTool = this.tools[newToolID];
         this.currentDrawingToolID = newToolID;
-        console.log(this.currentDrawingTool);
     }
 
     get _currentDrawingToolID(): drawingToolId {

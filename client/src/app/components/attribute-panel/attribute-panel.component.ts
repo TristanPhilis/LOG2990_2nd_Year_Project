@@ -7,7 +7,7 @@ import { LineService } from '@app/services/tools/line-service';
 import { PencilService } from '@app/services/tools/pencil-service';
 import { RectangleService } from '@app/services/tools/rectangle-service';
 import { ToolsService } from '@app/services/tools/tools.service';
-import { drawingToolId, sidebarToolID } from '@app/shared/enum';
+import { drawingToolId, sidebarToolID, TraceTypes } from '@app/shared/enum';
 
 @Component({
     selector: 'app-attribute-panel',
@@ -18,6 +18,7 @@ export class AttributePanelComponent {
     showTools: boolean;
     tracingTools: ToolOptionComponent[];
     shapesTools: ToolOptionComponent[];
+    tracingTypes: ToolOptionComponent[];
 
     constructor(
         public toolsService: ToolsService,
@@ -36,6 +37,11 @@ export class AttributePanelComponent {
             { id: drawingToolId.rectangleService, name: 'Rectangle', thickness: 10, color: 'dark' },
             { id: drawingToolId.ellipseService, name: 'Ellipse', thickness: 10, color: 'dark' },
         ];
+        this.tracingTypes = [
+            { id: TraceTypes.fill, name: 'Fill' },
+            { id: TraceTypes.stroke, name: 'Stroke' },
+            { id: TraceTypes.fillAndStroke, name: 'Fill and Stroke' },
+        ];
     }
 
     get sidebarToolID(): typeof sidebarToolID {
@@ -44,6 +50,25 @@ export class AttributePanelComponent {
 
     handleChange(selectedTool: drawingToolId): void {
         this.toolsService._currentDrawingTool = Number(selectedTool);
+    }
+
+    handleTraceTypeChange(event: any): void {
+        switch (this.toolsService._selectedSideBarToolID) {
+            case sidebarToolID.shapes: {
+                switch (this.toolsService._currentDrawingToolID) {
+                    case drawingToolId.rectangleService: {
+                        console;
+                        this.rectangleService._traceType = event.target.value;
+                        break;
+                    }
+                    case drawingToolId.ellipseService: {
+                        // this.ellipseService._traceType = type;
+                        break;
+                    }
+                }
+                break;
+            }
+        }
     }
 
     sliderChange(event: any): void {

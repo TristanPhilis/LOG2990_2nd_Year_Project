@@ -41,3 +41,9 @@ export enum Texture {
     four = 'https://i.pinimg.com/originals/a2/f3/fa/a2f3fab2b66b9dfc3fcc97404e25c294.jpg',
     five = 'https://static3.bigstockphoto.com/6/0/3/large2/306552718.jpg',
 }
+
+export enum TraceTypes {
+    fill,
+    stroke,
+    fillAndStroke,
+}
