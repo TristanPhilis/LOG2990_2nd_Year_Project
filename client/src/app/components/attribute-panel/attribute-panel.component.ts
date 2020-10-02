@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { ToolOptionComponent } from '@app/components/sidebar/tool-option/tool-option.component';
+import { BrushService } from '@app/services/tools/brush.service';
 import { EllipseService } from '@app/services/tools/ellipse-service';
 import { EraserService } from '@app/services/tools/eraser-service';
 import { LineService } from '@app/services/tools/line-service';
@@ -25,8 +26,12 @@ export class AttributePanelComponent {
         private ellipseService: EllipseService,
         private lineService: LineService,
         private eraserService: EraserService,
+        private brushService: BrushService,
     ) {
-        this.tracingTools = [{ id: drawingToolId.pencilService, name: 'Pencil', thickness: 10, color: 'dark' }];
+        this.tracingTools = [
+            { id: drawingToolId.pencilService, name: 'Pencil', thickness: 10, color: 'dark' },
+            { id: drawingToolId.brushService, name: 'Brush', thickness: 10, color: 'dark' },
+        ];
         this.shapesTools = [
             { id: drawingToolId.rectangleService, name: 'Rectangle', thickness: 10, color: 'dark' },
             { id: drawingToolId.ellipseService, name: 'Ellipse', thickness: 10, color: 'dark' },
@@ -49,23 +54,21 @@ export class AttributePanelComponent {
                         this.pencilService._thickness = event.target.value;
                         break;
                     }
+                    case drawingToolId.brushService: {
+                        this.brushService._thickness = event.target.value;
+                    }
                 }
                 break;
             }
             case sidebarToolID.shapes: {
                 switch (this.toolsService._currentDrawingToolID) {
                     case drawingToolId.rectangleService: {
-                        console.log('Rectangle');
                         this.rectangleService._thickness = event.target.value;
                         break;
                     }
                     case drawingToolId.ellipseService: {
-                        console.log('Ellipse');
                         this.ellipseService._thickness = event.target.value;
                         break;
-                    }
-                    default: {
-                        console.log('Default', this.toolsService._currentDrawingToolID);
                     }
                 }
                 break;

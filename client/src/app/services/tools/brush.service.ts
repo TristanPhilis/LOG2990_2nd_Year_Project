@@ -2,26 +2,24 @@ import { Injectable } from '@angular/core';
 import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
 import { DrawingService } from '@app/services/drawing/drawing.service';
-import { MouseButton } from '@app/shared/enum';
+import { MouseButton, Texture } from '@app/shared/enum';
 
-// Ceci est une implémentation de base de l'outil Crayon pour aider à débuter le projet
-// L'implémentation ici ne couvre pas tous les critères d'accepetation du projet
-// Vous êtes encouragés de modifier et compléter le code.
-// N'oubliez pas de regarder les tests dans le fichier spec.ts aussi!
 @Injectable({
     providedIn: 'root',
 })
-export class PencilService extends Tool {
+export class BrushService extends Tool {
     private pathData: Vec2[];
     // Todo: Attributs globaux
     // private color: string;
     // private opacity: number;
     private thickness: number;
+    selectedTexture: Texture;
 
     constructor(drawingService: DrawingService) {
         super(drawingService);
-        this.thickness = 1;
+        this.thickness = 1; // Remplacer par un observable
         this.clearPath();
+        this.selectedTexture = Texture.one;
     }
 
     set _thickness(newThickness: number) {
@@ -45,7 +43,7 @@ export class PencilService extends Tool {
         if (this.mouseDown) {
             const mousePosition = this.getPositionFromMouse(event);
             this.pathData.push(mousePosition);
-            this.drawLine(this.drawingService.baseCtx, this.pathData);
+            this.drawBrush(this.drawingService.baseCtx, this.pathData);
         }
         this.mouseDown = false;
         this.clearPath();
@@ -55,18 +53,23 @@ export class PencilService extends Tool {
         if (this.mouseDown && event.buttons === MouseButton.Left) {
             const mousePosition = this.getPositionFromMouse(event);
             this.pathData.push(mousePosition);
-            this.drawingService.clearCanvas(this.drawingService.previewCtx);
-            this.drawLine(this.drawingService.previewCtx, this.pathData);
+            // On dessine sur le canvas de prévisualisation et on l'efface à chaque déplacement de la souris
+            this.drawBrush(this.drawingService.previewCtx, this.pathData);
         }
         if (this.mouseDown && !(event.buttons === MouseButton.Left)) {
-            this.drawLine(this.drawingService.baseCtx, this.pathData);
+            this.drawBrush(this.drawingService.baseCtx, this.pathData);
         }
     }
 
-    private drawLine(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
+    private drawBrush(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
+        this.drawingService.clearCanvas(this.drawingService.previewCtx);
         ctx.beginPath();
         ctx.lineCap = 'round';
         ctx.lineWidth = this.thickness;
+        const image = new Image(1, 1);
+        image.src = this.selectedTexture;
+        const pattern = ctx.createPattern(image, 'repeat');
+        if (pattern !== null) ctx.strokeStyle = pattern;
         for (const point of path) {
             ctx.lineTo(point.x, point.y);
         }
