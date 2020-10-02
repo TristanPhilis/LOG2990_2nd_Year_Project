@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { drawingToolId } from '@app/shared/enum';
 import { PencilService } from './pencil-service';
-import { ToolsService } from './tools.service';
+import { ToolsService } from './tools-service';
 
 describe('ToolsService', () => {
     let service: ToolsService;

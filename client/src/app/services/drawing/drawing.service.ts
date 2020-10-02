@@ -8,9 +8,13 @@ export class DrawingService {
     previewCtx: CanvasRenderingContext2D;
     canvas: HTMLCanvasElement;
 
-    /* constructor() {
-        this.canvas = new HTMLCanvasElement();
-    }*/
+    getImageData(): ImageData {
+        return this.baseCtx.getImageData(0, 0, this.canvas.width, this.canvas.height);
+    }
+
+    setImageData(imageData: ImageData): void {
+        this.baseCtx.putImageData(imageData, 0, 0);
+    }
 
     clearCanvas(context: CanvasRenderingContext2D): void {
         context.clearRect(0, 0, this.canvas.width, this.canvas.height);

@@ -71,6 +71,8 @@ export class AttributePanelComponent {
         }
     }
 
+    // need any to acces target.valueAsNumber
+    // tslint:disable-next-line:no-any
     sliderChange(event: any): void {
         switch (this.toolsService._selectedSideBarToolID) {
             case sidebarToolID.tracing: {
