@@ -38,7 +38,7 @@ export class AttributePanelComponent {
     }
 
     handleChange(selectedTool: drawingToolId): void {
-        this.toolsService._currentDrawingTool = selectedTool;
+        this.toolsService._currentDrawingTool = Number(selectedTool);
     }
 
     sliderChange(event: any): void {
@@ -55,21 +55,28 @@ export class AttributePanelComponent {
             case sidebarToolID.shapes: {
                 switch (this.toolsService._currentDrawingToolID) {
                     case drawingToolId.rectangleService: {
+                        console.log('Rectangle');
                         this.rectangleService._thickness = event.target.value;
                         break;
                     }
                     case drawingToolId.ellipseService: {
+                        console.log('Ellipse');
                         this.ellipseService._thickness = event.target.value;
                         break;
+                    }
+                    default: {
+                        console.log('Default', this.toolsService._currentDrawingToolID);
                     }
                 }
                 break;
             }
             case sidebarToolID.line: {
                 this.lineService._thickness = event.target.value;
+                break;
             }
             case sidebarToolID.eraser: {
                 this.eraserService._thickness = event.target.value;
+                break;
             }
         }
     }

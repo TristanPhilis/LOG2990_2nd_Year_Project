@@ -15,6 +15,7 @@ export class EllipseService extends Tool {
 
     constructor(drawingService: DrawingService) {
         super(drawingService);
+        this.thickness = 0;
     }
 
     set _thickness(newThickness: number) {
@@ -76,6 +77,7 @@ export class EllipseService extends Tool {
         const xRadius = (this.mouseDownCoord.x - this.initialCoord.x) / 2;
         const yRadius = (this.mouseDownCoord.y - this.initialCoord.y) / 2;
         ctx.lineWidth = this.thickness;
+        console.log(this.thickness);
 
         if (this.shiftDown) {
             const smallestRadius = Math.min(Math.abs(xRadius), Math.abs(yRadius));
