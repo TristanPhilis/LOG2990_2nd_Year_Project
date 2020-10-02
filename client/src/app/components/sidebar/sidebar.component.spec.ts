@@ -12,7 +12,7 @@ describe('SidebarComponent', () => {
     let component: SidebarComponent;
     let fixture: ComponentFixture<SidebarComponent>;
     let getComposedKeySpy: jasmine.Spy<any>;
-    let keyEvent: KeyboardEvent;
+    const keyEvent: KeyboardEvent;
     let toolsService: ToolsService;
     let drawServiceSpy: jasmine.SpyObj<DrawingService>;
 

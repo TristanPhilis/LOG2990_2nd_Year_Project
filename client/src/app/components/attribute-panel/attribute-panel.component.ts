@@ -29,6 +29,7 @@ export class AttributePanelComponent {
         this.toolsService._currentDrawingTool = selectedTool;
     }
 
+    // tslint:disable-next-line: no-any
     sliderChange(event: any): void {
         switch (this.toolsService._selectedSideBarToolID) {
             case sidebarToolID.tracing: {
@@ -54,6 +55,5 @@ export class AttributePanelComponent {
                 break;
             }
         }
-
     }
 }
