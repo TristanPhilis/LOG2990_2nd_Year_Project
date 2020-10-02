@@ -50,7 +50,11 @@ export class SidebarComponent {
             case sidebarToolID.shapes: {
                 this.toolsService._selectedSideBarToolID = sidebarToolID.shapes;
                 this.toolsService._currentDrawingTool = drawingToolId.rectangleService;
-
+                break;
+            }
+            case sidebarToolID.line: {
+                this.toolsService._selectedSideBarToolID = sidebarToolID.line;
+                this.toolsService._currentDrawingTool = drawingToolId.lineService;
                 break;
             }
             case sidebarToolID.eraser: {
