@@ -29,6 +29,8 @@ export class AttributePanelComponent {
         this.toolsService._currentDrawingTool = selectedTool;
     }
 
+    // need any to acces target.valueAsNumber
+    // tslint:disable-next-line:no-any
     sliderChange(event: any): void {
         switch (this.toolsService._selectedSideBarToolID) {
             case sidebarToolID.tracing: {

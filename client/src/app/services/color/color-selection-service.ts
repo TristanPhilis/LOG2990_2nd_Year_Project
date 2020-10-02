@@ -14,12 +14,11 @@ export class ColorSelectionService {
     showColorPicker: boolean;
     private colorsHistory: Color[];
 
-
     constructor() {
         this.colorsHistory = new Array(MAX_HISTORY_SIZE);
         const blackColor = new Color(0, 0, 0);
         this.primaryColor = blackColor;
-        this.secondaryColor = new Color(10, 100, 50);
+        this.secondaryColor = blackColor;
         for (let index = 0; index < this.colorsHistory.length; index++) {
             this.colorsHistory[index] = blackColor;
         }
@@ -50,7 +49,7 @@ export class ColorSelectionService {
         this.secondaryColor = temp;
     }
 
-    selectNewColor(color: Color) {
+    selectNewColor(color: Color): void {
         if (this.selectedColor === ColorSelection.primary) {
             this.primaryColor = color;
         } else {

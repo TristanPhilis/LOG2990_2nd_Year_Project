@@ -1,4 +1,4 @@
-import { AfterViewInit, Component } from '@angular/core';
+import { Component } from '@angular/core';
 import { Color } from '@app/classes/color';
 import { ColorSelectionService } from '@app/services/color/color-selection-service';
 import { ColorSelection, MouseButton } from '@app/shared/enum';
@@ -6,23 +6,20 @@ import { ColorSelection, MouseButton } from '@app/shared/enum';
 @Component({
     selector: 'app-sidebar-color-options',
     templateUrl: './sidebar-color-options.component.html',
-    styleUrls: ['./sidebar-color-options.component.scss']
+    styleUrls: ['./sidebar-color-options.component.scss'],
 })
-export class SidebarColorOptionsComponent implements AfterViewInit {
-
-    constructor(private colorSelectionService: ColorSelectionService) { }
-
-    ngAfterViewInit(): void {
-        //
-    }
+export class SidebarColorOptionsComponent {
+    constructor(private colorSelectionService: ColorSelectionService) {}
 
     swap(): void {
         this.colorSelectionService.swap();
     }
 
+    // need any to acces target.valueAsNumber
     // tslint:disable-next-line:no-any
-    onAlphaChange(event: any, colorSelected: ColorSelection) {
-        const newAlpha = event.target.valueAsNumber * 0.01;
+    onAlphaChange(event: any, colorSelected: ColorSelection): void {
+        const precentageMultiplier = 0.01;
+        const newAlpha = event.target.valueAsNumber * precentageMultiplier;
         console.log(newAlpha);
         if (colorSelected === ColorSelection.primary) {
             const newColor = new Color(this.primaryColor.r, this.primaryColor.g, this.primaryColor.b, newAlpha);

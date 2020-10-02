@@ -34,7 +34,7 @@ export class EditorComponent implements AfterViewInit {
     resizeX: boolean;
     resizeY: boolean;
 
-    constructor(private cd: ChangeDetectorRef) { }
+    constructor(private cd: ChangeDetectorRef) {}
 
     ngAfterViewInit(): void {
         this.workzoneRect = this.workzone.nativeElement.getBoundingClientRect();

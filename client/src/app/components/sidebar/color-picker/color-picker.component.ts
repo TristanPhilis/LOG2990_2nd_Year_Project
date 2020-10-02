@@ -84,7 +84,6 @@ export class ColorPickerComponent implements OnInit {
         } else {
             alert('Select a valid color');
         }
-
     }
 
     onCancel(): void {

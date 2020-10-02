@@ -40,4 +40,4 @@ import { ToolOptionComponent } from './components/sidebar/tool-option/tool-optio
     providers: [],
     bootstrap: [AppComponent],
 })
-export class AppModule { }
+export class AppModule {}
