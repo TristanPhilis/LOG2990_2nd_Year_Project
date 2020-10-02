@@ -6,7 +6,9 @@ import { Component } from '@angular/core';
     styleUrls: ['./guide.component.scss'],
 })
 export class GuideComponent {
+    // tslint:disable-next-line: no-any
     tabcontent: any;
+    // tslint:disable-next-line: no-any
     tablinks: any;
     openTab(tab: string): void {
         let i: number;
