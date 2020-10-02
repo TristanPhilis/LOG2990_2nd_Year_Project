@@ -21,10 +21,6 @@ import { SidebarComponent } from './components/sidebar/sidebar.component';
 import { ToolOptionComponent } from './components/sidebar/tool-option/tool-option.component';
 
 @NgModule({
-<<<<<<< HEAD
-    declarations: [AppComponent, EditorComponent, SidebarComponent, DrawingComponent, MainPageComponent, ToolOptionComponent],
-    imports: [BrowserModule, HttpClientModule, AppRoutingModule],
-=======
     declarations: [
         AppComponent,
         EditorComponent,
@@ -41,7 +37,6 @@ import { ToolOptionComponent } from './components/sidebar/tool-option/tool-optio
     ],
     imports: [BrowserModule, HttpClientModule, AppRoutingModule, ReactiveFormsModule, MatDialogModule, MatButtonModule, BrowserAnimationsModule],
     entryComponents: [GuideComponent],
->>>>>>> dev
     providers: [],
     bootstrap: [AppComponent],
 })
