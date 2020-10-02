@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { ToolId } from '@app/shared/enum';
+import { drawingToolId, TraceTypes } from '@app/shared/enum';
 
 @Component({
     selector: 'app-tool-option',
@@ -7,9 +7,11 @@ import { ToolId } from '@app/shared/enum';
     styleUrls: ['./tool-option.component.scss'],
 })
 export class ToolOptionComponent {
-    id: ToolId;
-    thickness: number;
-    color: string;
+    id: drawingToolId | TraceTypes;
+    name: string;
+    thickness?: number;
+    outlineType?: string;
+    color?: string;
     constructor() {
         /*no empty*/
     }

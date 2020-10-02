@@ -20,8 +20,16 @@ export class PencilService extends Tool {
 
     constructor(drawingService: DrawingService) {
         super(drawingService);
-        this.thickness = 1; // Remplacer par un observable
+        this.thickness = 1;
         this.clearPath();
+    }
+
+    set _thickness(newThickness: number) {
+        this.thickness = newThickness;
+    }
+
+    get _thickness(): number {
+        return this.thickness;
     }
 
     onMouseDown(event: MouseEvent): void {

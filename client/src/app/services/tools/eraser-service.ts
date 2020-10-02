@@ -22,6 +22,14 @@ export class EraserService extends Tool {
         this.clearPath();
     }
 
+    set _thickness(newThickness: number) {
+        this.thickness = newThickness;
+    }
+
+    get _thickness(): number {
+        return this.thickness;
+    }
+
     onMouseDown(event: MouseEvent): void {
         this.mouseDown = event.buttons === MouseButton.Left;
         if (this.mouseDown) {

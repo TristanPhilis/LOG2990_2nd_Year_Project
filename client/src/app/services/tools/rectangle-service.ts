@@ -3,16 +3,36 @@ import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { SHIFT_KEY } from '@app/shared/constant';
-import { MouseButton } from '@app/shared/enum';
+import { MouseButton, TraceTypes } from '@app/shared/enum';
 
 @Injectable({
     providedIn: 'root',
 })
 export class RectangleService extends Tool {
     initialCoord: Vec2;
+    private thickness: number;
+    private traceType: number;
 
     constructor(drawingService: DrawingService) {
         super(drawingService);
+        this.thickness = 0;
+        this.traceType = 0;
+    }
+
+    set _thickness(newThickness: number) {
+        this.thickness = newThickness;
+    }
+
+    get _thickness(): number {
+        return this.thickness;
+    }
+
+    set _traceType(newType: number) {
+        this.traceType = newType;
+    }
+
+    get _traceType(): number {
+        return this.traceType;
     }
 
     onMouseDown(event: MouseEvent): void {
@@ -64,10 +84,12 @@ export class RectangleService extends Tool {
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
         ctx.beginPath();
         // tslint:disable-next-line: prefer-const
-        let traceType = 0;
 
         const width = this.mouseDownCoord.x - this.initialCoord.x;
         const height = this.mouseDownCoord.y - this.initialCoord.y;
+
+        ctx.lineWidth = this.thickness;
+
         if (this.shiftDown) {
             const squareSize = Math.min(Math.abs(width), Math.abs(height));
             ctx.rect(this.initialCoord.x, this.initialCoord.y, squareSize * Math.sign(width), squareSize * Math.sign(height));
@@ -75,16 +97,14 @@ export class RectangleService extends Tool {
             ctx.rect(this.initialCoord.x, this.initialCoord.y, width, height);
         }
 
-        switch (traceType) {
-            case 0:
+        switch (this.traceType) {
+            case TraceTypes.fill:
                 ctx.fill();
-
                 break;
-            case 1:
+            case TraceTypes.stroke:
                 ctx.stroke();
-
                 break;
-            case 2:
+            case TraceTypes.fillAndStroke:
                 ctx.fill();
                 ctx.stroke();
                 break;

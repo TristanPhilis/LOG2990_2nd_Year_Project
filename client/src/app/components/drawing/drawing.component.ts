@@ -2,7 +2,7 @@ import { AfterViewInit, Component, ElementRef, HostListener, Input, OnChanges, S
 import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
 import { DrawingService } from '@app/services/drawing/drawing.service';
-import { ToolsService } from '@app/services/tools/tools.service';
+import { ToolsService } from '@app/services/tools/tools-service';
 
 @Component({
     selector: 'app-drawing',
@@ -63,6 +63,16 @@ export class DrawingComponent implements AfterViewInit, OnChanges {
         this.currentTool.onMouseUp(event);
     }
 
+    @HostListener('click', ['$event'])
+    onMouseClick(event: MouseEvent): void {
+        this.currentTool.onMouseClick(event);
+    }
+
+    @HostListener('dblclick', ['$event'])
+    onMouseDoubleClick(event: MouseEvent): void {
+        this.currentTool.onMouseDoubleClick(event);
+    }
+
     @HostListener('keydown', ['$event'])
     onKeyDown(event: KeyboardEvent): void {
         this.currentTool.onKeyDown(event);
@@ -82,6 +92,6 @@ export class DrawingComponent implements AfterViewInit, OnChanges {
     }
 
     get currentTool(): Tool {
-        return this.toolsService.currentTool;
+        return this.toolsService.currentDrawingTool;
     }
 }
