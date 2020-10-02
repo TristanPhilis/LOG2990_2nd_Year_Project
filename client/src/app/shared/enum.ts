@@ -1,4 +1,12 @@
-export enum ToolId {
+export enum sidebarToolID {
+    move,
+    cropping,
+    drawing,
+    text,
+    filling, // More to add
+}
+
+export enum drawingToolId {
     pencilService,
     rectangleService,
     ellipseService,

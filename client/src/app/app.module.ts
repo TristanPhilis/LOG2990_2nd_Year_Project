@@ -10,6 +10,7 @@ import { MainPageComponent } from './components/main-page/main-page.component';
 import { ColorPaletteComponent } from './components/sidebar/color-picker/color-palette/color-palette.component';
 import { ColorPickerComponent } from './components/sidebar/color-picker/color-picker.component';
 import { ColorSliderComponent } from './components/sidebar/color-picker/color-slider/color-slider.component';
+import { SidebarToolComponent } from './components/sidebar/sidebar-tool/sidebar-tool.component';
 import { SidebarComponent } from './components/sidebar/sidebar.component';
 import { ToolOptionComponent } from './components/sidebar/tool-option/tool-option.component';
 
@@ -24,8 +25,10 @@ import { ToolOptionComponent } from './components/sidebar/tool-option/tool-optio
         ColorSliderComponent,
         ColorPaletteComponent,
         ToolOptionComponent,
+        SidebarToolComponent,
     ],
     imports: [BrowserModule, HttpClientModule, AppRoutingModule, ReactiveFormsModule],
+
     providers: [],
     bootstrap: [AppComponent],
 })
