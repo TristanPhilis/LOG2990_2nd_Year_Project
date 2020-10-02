@@ -20,4 +20,11 @@ describe('GuideComponent', () => {
     it('should create', () => {
         expect(component).toBeTruthy();
     });
+
+    it('should change tabContent and tabLink', () => {
+        const tab = 'crayon';
+        component.openTab(tab);
+        expect(component.tabcontent).toBeDefined();
+        expect(component.tablinks).toBeDefined();
+    });
 });
