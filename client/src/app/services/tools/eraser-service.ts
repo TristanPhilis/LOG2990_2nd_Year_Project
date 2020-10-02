@@ -11,16 +11,14 @@ import { MouseButton } from '@app/shared/enum';
 @Injectable({
     providedIn: 'root',
 })
-export class PencilService extends Tool {
+export class EraserService extends Tool {
     private pathData: Vec2[];
-    // Todo: Attributs globaux
-    // private color: string;
-    // private opacity: number;
     private thickness: number;
+    private five: number = 5;
 
     constructor(drawingService: DrawingService) {
         super(drawingService);
-        this.thickness = 1; // Remplacer par un observable
+        this.thickness = this.five; // Remplacer par un observable
         this.clearPath();
     }
 
@@ -37,7 +35,7 @@ export class PencilService extends Tool {
         if (this.mouseDown) {
             const mousePosition = this.getPositionFromMouse(event);
             this.pathData.push(mousePosition);
-            this.drawLine(this.drawingService.baseCtx, this.pathData);
+            this.eraseLine(this.drawingService.baseCtx, this.pathData);
         }
         this.mouseDown = false;
         this.clearPath();
@@ -47,23 +45,24 @@ export class PencilService extends Tool {
         if (this.mouseDown && event.buttons === MouseButton.Left) {
             const mousePosition = this.getPositionFromMouse(event);
             this.pathData.push(mousePosition);
-            this.drawLine(this.drawingService.previewCtx, this.pathData);
+            this.eraseLine(this.drawingService.previewCtx, this.pathData);
+            this.eraseLine(this.drawingService.baseCtx, this.pathData);
         }
         if (this.mouseDown && !(event.buttons === MouseButton.Left)) {
-            this.drawLine(this.drawingService.baseCtx, this.pathData);
+            this.eraseLine(this.drawingService.baseCtx, this.pathData);
         }
     }
 
-    private drawLine(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
-        this.drawingService.clearCanvas(this.drawingService.previewCtx);
+    private eraseLine(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
+        ctx.globalCompositeOperation = 'destination-out';
         ctx.beginPath();
         ctx.lineCap = 'round';
         ctx.lineWidth = this.thickness;
         for (const point of path) {
             ctx.lineTo(point.x, point.y);
         }
-        // ctx.strokeStyle = `rgba(${0},${0},${0},${0.05})`;
         ctx.stroke();
+        ctx.globalCompositeOperation = 'source-over';
     }
 
     private clearPath(): void {
