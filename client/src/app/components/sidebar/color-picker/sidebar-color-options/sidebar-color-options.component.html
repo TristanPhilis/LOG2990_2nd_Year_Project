@@ -1,0 +1,20 @@
+<div class="color-option-container box">
+    <div class="preview-container box-elem">
+        <span>Primary</span>
+        <div class="color-preview"
+            [ngStyle]="{'background-color': primaryColor ? primaryColor.getRgbString() : 'white'}"></div>
+    </div>
+    <div class="preview-container box-elem">
+        <span>Secondary</span>
+        <div class="color-preview"
+            [ngStyle]="{'background-color': secondaryColor ? secondaryColor.getRgbString() : 'white'}"></div>
+    </div>
+    <button (click)="swap()">Swap</button>
+    <div class="color-history-wrapper box">
+        <ng-container *ngFor="let color of colorHistory">
+            <div class="color-choice" (click)="onHistoryColorSelected($event, color)"
+                [ngStyle]="{'background-color': color.getRgbString()}">
+            </div>
+        </ng-container>
+    </div>
+</div>
