@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, HostListener } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { GuideComponent } from '@app/components/guide/guide.component';
 import { DrawingService } from '@app/services/drawing/drawing.service';
@@ -6,6 +6,7 @@ import { ToolsService } from '@app/services/tools/tools.service';
 import { drawingToolId, sidebarToolID } from '@app/shared/enum';
 import { SidebarToolComponent } from './sidebar-tool/sidebar-tool.component';
 // tslint:disable-next-line: no-relative-imports
+declare type callback = () => void;
 
 @Component({
     selector: 'app-sidebar',
@@ -75,6 +76,59 @@ export class SidebarComponent {
                 });
                 break;
             }
+        }
+    }
+
+    private getComposedKey(event: KeyboardEvent): string {
+        let keys = '';
+        if (event.ctrlKey) {
+            keys += 'C-';
+        }
+        if (event.shiftKey) {
+            keys += 'S-';
+        }
+        keys += event.key.toLowerCase();
+        return keys;
+    }
+
+    @HostListener('window: keydown', ['$event'])
+    onKeyDown(event: KeyboardEvent): void {
+        const keys: string = this.getComposedKey(event);
+        const kbd: { [id: string]: callback } = {
+            'C-o': () => {
+                this.drawingService.clearCanvas(this.drawingService.baseCtx);
+                this.drawingService.clearCanvas(this.drawingService.previewCtx);
+            },
+        };
+        const func: callback | undefined = kbd[keys];
+        if (func) {
+            event.preventDefault();
+            func();
+        }
+    }
+
+    @HostListener('window: keyup', ['$event'])
+    onKeyUp(event: KeyboardEvent): void {
+        const kbd: { [id: string]: callback } = {
+            c: () => {
+                this.onButtonPress(sidebarToolID.tracing);
+                this.toolsService._currentDrawingTool = drawingToolId.pencilService;
+            },
+            e: () => this.onButtonPress(sidebarToolID.eraser),
+            l: () => this.onButtonPress(sidebarToolID.line),
+            1: () => {
+                this.onButtonPress(sidebarToolID.shapes);
+                this.toolsService._currentDrawingTool = drawingToolId.rectangleService;
+            },
+            2: () => {
+                this.onButtonPress(sidebarToolID.shapes);
+                this.toolsService._currentDrawingTool = drawingToolId.ellipseService;
+            },
+        };
+        const keys: string = this.getComposedKey(event);
+        if (kbd[keys]) {
+            const func: callback = kbd[keys];
+            func();
         }
     }
 }
