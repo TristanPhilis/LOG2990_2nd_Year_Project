@@ -8,10 +8,6 @@ import SpyObj = jasmine.SpyObj;
 
 class ToolStub extends Tool {}
 
-// TODO : Déplacer dans un fichier accessible à tous
-const DEFAULT_WIDTH = 1000;
-const DEFAULT_HEIGHT = 800;
-
 describe('DrawingComponent', () => {
     let component: DrawingComponent;
     let fixture: ComponentFixture<DrawingComponent>;
@@ -43,13 +39,6 @@ describe('DrawingComponent', () => {
         expect(component).toBeTruthy();
     });
 
-    it('should have a default WIDTH and HEIGHT', () => {
-        const height = component.height;
-        const width = component.width;
-        expect(height).toEqual(DEFAULT_HEIGHT);
-        expect(width).toEqual(DEFAULT_WIDTH);
-    });
-
     it('should get the current tool', () => {
         const currentTool = component.currentTool;
         expect(currentTool).toEqual(toolsServiceSpy.currentTool);
@@ -75,6 +64,22 @@ describe('DrawingComponent', () => {
         const event = {} as MouseEvent;
         const mouseEventSpy = spyOn(toolsServiceSpy.currentTool, 'onMouseUp').and.callThrough();
         component.onMouseUp(event);
+        expect(mouseEventSpy).toHaveBeenCalled();
+        expect(mouseEventSpy).toHaveBeenCalledWith(event);
+    });
+
+    it(" should call the tool's key down when receiving a key down event", () => {
+        const event = {} as KeyboardEvent;
+        const mouseEventSpy = spyOn(toolsServiceSpy.currentTool, 'onKeyDown').and.callThrough();
+        component.onKeyDown(event);
+        expect(mouseEventSpy).toHaveBeenCalled();
+        expect(mouseEventSpy).toHaveBeenCalledWith(event);
+    });
+
+    it(" should call the tool's key up when receiving a key up event", () => {
+        const event = {} as KeyboardEvent;
+        const mouseEventSpy = spyOn(toolsServiceSpy.currentTool, 'onKeyUp').and.callThrough();
+        component.onKeyUp(event);
         expect(mouseEventSpy).toHaveBeenCalled();
         expect(mouseEventSpy).toHaveBeenCalledWith(event);
     });

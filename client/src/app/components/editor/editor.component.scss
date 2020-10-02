@@ -13,3 +13,38 @@
     width: min-content;
     outline: none;
 }
+
+.resize-preview {
+    border: 2px dotted black;
+    position: absolute;
+    top: 8px;
+}
+
+.anchor {
+    position: relative;
+    background-color: black;
+}
+
+#bottomAnchor {
+    width: 10px;
+    height: 5px;
+    &:hover {
+        cursor: n-resize;
+    }
+}
+
+#rightAnchor {
+    width: 5px;
+    height: 10px;
+    &:hover {
+        cursor: ew-resize;
+    }
+}
+
+#cornerAnchor {
+    width: 7px;
+    height: 7px;
+    &:hover {
+        cursor: nwse-resize;
+    }
+}
