@@ -13,6 +13,7 @@ import { ColorSliderComponent } from './components/sidebar/color-picker/color-sl
 import { SidebarToolComponent } from './components/sidebar/sidebar-tool/sidebar-tool.component';
 import { SidebarComponent } from './components/sidebar/sidebar.component';
 import { ToolOptionComponent } from './components/sidebar/tool-option/tool-option.component';
+import { SidebarColorOptionsComponent } from './components/sidebar/color-picker/sidebar-color-options/sidebar-color-options.component';
 
 @NgModule({
     declarations: [
@@ -26,6 +27,7 @@ import { ToolOptionComponent } from './components/sidebar/tool-option/tool-optio
         ColorPaletteComponent,
         ToolOptionComponent,
         SidebarToolComponent,
+        SidebarColorOptionsComponent,
     ],
     imports: [BrowserModule, HttpClientModule, AppRoutingModule, ReactiveFormsModule],
 
