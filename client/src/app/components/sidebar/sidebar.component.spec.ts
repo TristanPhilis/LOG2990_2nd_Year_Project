@@ -3,7 +3,7 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { DrawingService } from '@app/services/drawing/drawing.service';
-import { ToolsService } from '@app/services/tools/tools.service';
+import { ToolsService } from '@app/services/tools/tools-service';
 import { drawingToolId, sidebarToolID } from '@app/shared/enum';
 import { SidebarComponent } from './sidebar.component';
 
@@ -12,7 +12,7 @@ describe('SidebarComponent', () => {
     let component: SidebarComponent;
     let fixture: ComponentFixture<SidebarComponent>;
     let getComposedKeySpy: jasmine.Spy<any>;
-    const keyEvent: KeyboardEvent;
+    let keyEvent: KeyboardEvent;
     let toolsService: ToolsService;
     let drawServiceSpy: jasmine.SpyObj<DrawingService>;
 
