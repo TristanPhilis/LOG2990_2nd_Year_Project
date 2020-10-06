@@ -2,9 +2,11 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatDialogModule } from '@angular/material/dialog';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { AttributePanelComponent } from '@app/components/attribute-panel/attribute-panel.component';
 import { DrawingComponent } from '@app/components/drawing/drawing.component';
 import { SidebarComponent } from '@app/components/sidebar/sidebar.component';
 import { MIN_CANVAS_SIZE } from '@app/shared/constant';
+import { MockComponents } from 'ng-mocks';
 import { EditorComponent } from './editor.component';
 
 // tslint:disable:no-any
@@ -20,7 +22,7 @@ describe('EditorComponent', () => {
     beforeEach(async(() => {
         TestBed.configureTestingModule({
             imports: [MatDialogModule, BrowserModule, BrowserAnimationsModule],
-            declarations: [EditorComponent, DrawingComponent, SidebarComponent],
+            declarations: [EditorComponent, MockComponents(SidebarComponent, AttributePanelComponent, DrawingComponent)],
         }).compileComponents();
     }));
 

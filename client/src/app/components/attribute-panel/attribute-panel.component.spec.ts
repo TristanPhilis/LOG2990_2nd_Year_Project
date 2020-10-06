@@ -1,4 +1,6 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { SidebarColorOptionsComponent } from '@app/components/sidebar/color-picker/sidebar-color-options/sidebar-color-options.component';
+import { MockComponent } from 'ng-mocks';
 import { AttributePanelComponent } from './attribute-panel.component';
 
 describe('AttributePanelComponent', () => {
@@ -7,7 +9,7 @@ describe('AttributePanelComponent', () => {
 
     beforeEach(async(() => {
         TestBed.configureTestingModule({
-            declarations: [AttributePanelComponent],
+            declarations: [AttributePanelComponent, MockComponent(SidebarColorOptionsComponent)],
         }).compileComponents();
     }));
 

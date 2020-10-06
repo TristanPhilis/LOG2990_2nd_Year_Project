@@ -5,7 +5,7 @@ import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ToolsService } from '@app/services/tools/tools-service';
 import { drawingToolId, sidebarToolID } from '@app/shared/enum';
 import { SidebarToolComponent } from './sidebar-tool/sidebar-tool.component';
-// tslint:disable-next-line: no-relative-imports
+
 declare type callback = () => void;
 
 @Component({
@@ -102,7 +102,7 @@ export class SidebarComponent {
         };
         const func: callback | undefined = kbd[keys];
         if (func) {
-            event.preventDefault();
+            // event.preventDefault();
             func();
         }
     }
