@@ -105,7 +105,7 @@ describe('LineService', () => {
         expect(ctxStrokeSpy).toHaveBeenCalled();
     });
 
-    it('onKeyUp up Should call drawLine when shift is released and line is started', () => {
+    it('onKeyUp should call drawLine when shift is released and line is started', () => {
         service.lineStarted = true;
         const keyEvent = {
             key: SHIFT_KEY,
@@ -116,7 +116,7 @@ describe('LineService', () => {
         expect(service.shiftDown).toBeFalse();
     });
 
-    it('onKeyUp up Should not call drawLine with other key then shift released', () => {
+    it('onKeyUp Should not call drawLine with other key then shift released', () => {
         const keyEvent = {
             key: BACKSPACE_KEY,
         } as KeyboardEvent;
@@ -125,7 +125,7 @@ describe('LineService', () => {
         expect(drawLineSpy).not.toHaveBeenCalled();
     });
 
-    it('onKeyDown up Should call drawLine with shiftDown to true when shift is pressed and line is started', () => {
+    it('onKeyDown should call drawLine with shiftDown to true when shift is pressed and line is started', () => {
         service.lineStarted = true;
         const keyEvent = {
             key: SHIFT_KEY,
@@ -133,6 +133,17 @@ describe('LineService', () => {
 
         service.onKeyDown(keyEvent);
         expect(drawLineSpy).toHaveBeenCalled();
+    });
+
+    it('onKeyDown should not call drawLine when shiftDown is already true', () => {
+        service.lineStarted = true;
+        service.shiftDown = true;
+        const keyEvent = {
+            key: SHIFT_KEY,
+        } as KeyboardEvent;
+
+        service.onKeyDown(keyEvent);
+        expect(drawLineSpy).not.toHaveBeenCalled();
     });
 
     it('key event Should not call drawnLine when mouse is not click', () => {
@@ -151,6 +162,20 @@ describe('LineService', () => {
         const secondPoint = { x: 1, y: 1 };
         const expectedAngle = MIDDLE_SNAP_ANGLE;
         expect(service.calculateAngle(firstPoint, secondPoint)).toEqual(expectedAngle);
+    });
+
+    it('getAdjustedCoord should call getSnappedCoord when shift is pressed', () => {
+        const getSnappedCoordSpy = spyOn(service, 'getSnappedCoord');
+        service.shiftDown = true;
+        service.getAdjustedCoord();
+        expect(getSnappedCoordSpy).toHaveBeenCalled();
+    });
+
+    it('getAdjustedCoord should not call getSnappedCoord when shift is not pressed', () => {
+        const getSnappedCoordSpy = spyOn(service, 'getSnappedCoord');
+        service.shiftDown = false;
+        service.getAdjustedCoord();
+        expect(getSnappedCoordSpy).not.toHaveBeenCalled();
     });
 
     it('getSnappedCoord should return the snapped point coordinate', () => {

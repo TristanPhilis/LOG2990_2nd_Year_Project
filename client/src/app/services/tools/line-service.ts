@@ -9,8 +9,8 @@ import { BACKSPACE_KEY, BASE_SNAP_ANGLE, ESCAPE_KEY, MIDDLE_SNAP_ANGLE, SHIFT_KE
 })
 export class LineService extends Tool {
     private pathData: Vec2[];
-    currentCoord: Vec2;
     lineStarted: boolean;
+    currentCoord: Vec2;
     initialCoord: Vec2;
     private thickness: number;
 
@@ -31,7 +31,8 @@ export class LineService extends Tool {
 
     onMouseClick(event: MouseEvent): void {
         if (this.lineStarted) {
-            this.pathData.push(this.currentCoord);
+            const adjustedCoord = this.getAdjustedCoord();
+            this.pathData.push(adjustedCoord);
         } else {
             this.lineStarted = true;
             this.initialCoord = this.getPositionFromMouse(event);
@@ -42,15 +43,14 @@ export class LineService extends Tool {
     onMouseMove(event: MouseEvent): void {
         if (this.lineStarted) {
             this.currentCoord = this.getPositionFromMouse(event);
-            if (this.shiftDown) {
-                this.currentCoord = this.getSnappedCoord();
-            }
             this.drawLine(this.drawingService.previewCtx);
         }
     }
 
     onMouseDoubleClick(event: MouseEvent): void {
         if (this.lineStarted) {
+            const onMouseclickTriggerAdjustment = 2;
+            this.pathData.splice(this.pathData.length - onMouseclickTriggerAdjustment, onMouseclickTriggerAdjustment);
             this.drawLine(this.drawingService.baseCtx);
             this.endLine();
         }
@@ -58,12 +58,13 @@ export class LineService extends Tool {
 
     endLine(): void {
         const closingMinDistance = 20;
-        const diff = this.getDiff(this.initialCoord, this.currentCoord);
+        const endCoord = this.getAdjustedCoord();
+        const diff = this.getDiff(this.initialCoord, endCoord);
         const closeShape = Math.abs(diff.x) <= closingMinDistance && Math.abs(diff.y) <= closingMinDistance;
         if (closeShape) {
             const ctx = this.drawingService.baseCtx;
             ctx.beginPath();
-            ctx.moveTo(this.currentCoord.x, this.currentCoord.y);
+            ctx.moveTo(endCoord.x, endCoord.y);
             ctx.lineTo(this.initialCoord.x, this.initialCoord.y);
             ctx.stroke();
         }
@@ -83,9 +84,11 @@ export class LineService extends Tool {
     onKeyDown(event: KeyboardEvent): void {
         switch (event.key) {
             case SHIFT_KEY:
-                this.shiftDown = true;
-                if (this.lineStarted) {
-                    this.drawLine(this.drawingService.previewCtx);
+                if (this.shiftDown !== true) {
+                    this.shiftDown = true;
+                    if (this.lineStarted) {
+                        this.drawLine(this.drawingService.previewCtx);
+                    }
                 }
                 break;
             case BACKSPACE_KEY:
@@ -105,6 +108,10 @@ export class LineService extends Tool {
     calculateAngle(startingPoint: Vec2, endPoint: Vec2): number {
         const diff = this.getDiff(startingPoint, endPoint);
         return Math.atan(Math.abs(diff.y) / Math.abs(diff.x));
+    }
+
+    getAdjustedCoord(): Vec2 {
+        return this.shiftDown ? this.getSnappedCoord() : this.currentCoord;
     }
 
     getSnappedCoord(): Vec2 {
@@ -139,6 +146,7 @@ export class LineService extends Tool {
 
     private drawLine(ctx: CanvasRenderingContext2D): void {
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
+        const adjustedCoord = this.getAdjustedCoord();
         ctx.beginPath();
 
         ctx.moveTo(this.initialCoord.x, this.initialCoord.y);
@@ -147,7 +155,7 @@ export class LineService extends Tool {
             ctx.lineTo(point.x, point.y);
         }
 
-        ctx.lineTo(this.currentCoord.x, this.currentCoord.y);
+        ctx.lineTo(adjustedCoord.x, adjustedCoord.y);
         ctx.stroke();
     }
 
