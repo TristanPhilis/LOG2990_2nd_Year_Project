@@ -1,0 +1,13 @@
+<div class="container">
+    <app-sidebar></app-sidebar>
+    <app-attribute-panel></app-attribute-panel>
+    <div #workzone class="drawing-container">
+        <app-drawing [canvasSize]="canvasSize" class="drawing" tabindex="0"></app-drawing>
+        <div #bottomAnchor id="bottomAnchor" class="anchor" (mousedown)="onMouseDown($event, 0)"></div>
+        <div #rightAnchor id="rightAnchor" class="anchor" (mousedown)="onMouseDown($event, 1)"></div>
+        <div #cornerAnchor id="cornerAnchor" class="anchor" (mousedown)="onMouseDown($event, 2)"></div>
+        <div *ngIf="mouseDown" class="resize-preview" [style.width.px]="previewSize.x"
+            [style.height.px]="previewSize.y">
+        </div>
+    </div>
+</div>

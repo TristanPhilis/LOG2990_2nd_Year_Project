@@ -1,0 +1,22 @@
+.container {
+    height: auto;
+    min-height: 98vh;
+    border: 1px solid black;
+    padding: 0 5px 0 5px;
+    margin-right: 5px;
+    grid-template-rows: 25% auto 25%;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.sidebar-container-top {
+    display: flex;
+    flex-direction: column;
+}
+
+.sidebar-container-bottom {
+    display: flex;
+    flex-direction: column;
+}
