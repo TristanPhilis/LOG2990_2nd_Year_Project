@@ -14,12 +14,14 @@ export class BrushService extends Tool {
     // private opacity: number;
     private thickness: number;
     selectedTexture: Texture;
+    color: string;
 
     constructor(drawingService: DrawingService) {
         super(drawingService);
         this.thickness = 1; // Remplacer par un observable
         this.clearPath();
         this.selectedTexture = Texture.one;
+        this.color = 'black';
     }
 
     set _thickness(newThickness: number) {
@@ -74,6 +76,10 @@ export class BrushService extends Tool {
             ctx.lineTo(point.x, point.y);
         }
         ctx.stroke();
+        ctx.globalCompositeOperation = 'color';
+        ctx.strokeStyle = this.color;
+        ctx.stroke();
+        ctx.globalCompositeOperation = 'source-over';
     }
 
     private clearPath(): void {
