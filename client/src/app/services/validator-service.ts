@@ -17,7 +17,7 @@ export class ValidatorService {
         return this.isValidHexColorFunction;
     }
 
-    // Extrait note de cours
+    // Course note extract
     /**
      * Validate that form input is a number (Extrait note de cour)
      * @param control the form control to validate

@@ -9,7 +9,7 @@ import { MouseButton, Texture } from '@app/shared/enum';
 })
 export class BrushService extends Tool {
     private pathData: Vec2[];
-    // Todo: Attributs globaux
+    // Todo: Global Attributes
     // private color: string;
     // private opacity: number;
     private thickness: number;
@@ -18,7 +18,7 @@ export class BrushService extends Tool {
 
     constructor(drawingService: DrawingService) {
         super(drawingService);
-        this.thickness = 1; // Remplacer par un observable
+        this.thickness = 1; // Replace with an observable
         this.clearPath();
         this.selectedTexture = Texture.one;
         this.color = 'black';
@@ -55,7 +55,7 @@ export class BrushService extends Tool {
         if (this.mouseDown && event.buttons === MouseButton.Left) {
             const mousePosition = this.getPositionFromMouse(event);
             this.pathData.push(mousePosition);
-            // On dessine sur le canvas de prévisualisation et on l'efface à chaque déplacement de la souris
+            // We draw on the preview canvas and erase it each time the mouse is moved
             this.drawBrush(this.drawingService.previewCtx, this.pathData);
         }
         if (this.mouseDown && !(event.buttons === MouseButton.Left)) {
