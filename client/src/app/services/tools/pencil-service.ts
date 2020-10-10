@@ -67,6 +67,7 @@ export class PencilService extends Tool {
         ctx.beginPath();
         ctx.lineCap = 'round';
         ctx.lineWidth = this.thickness;
+        ctx.strokeStyle = 'black';
         for (const point of path) {
             ctx.lineTo(point.x, point.y);
         }
