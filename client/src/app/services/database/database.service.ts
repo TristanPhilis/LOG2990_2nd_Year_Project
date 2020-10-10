@@ -1,20 +1,20 @@
 import { Injectable } from '@angular/core';
+import { DrawingInfo } from '@app/classes/drawing-info';
 // import { injectable } from 'inversify';
 import { Collection, FilterQuery, FindOneOptions, MongoClient, MongoClientOptions, UpdateQuery } from 'mongodb';
 import 'reflect-metadata';
-import { DrawingInfo } from '../../classes/drawing-info';
 
 const DB_USER = 'NewUser';
 const DB_PASSWORD = 'eWLZhsX3pGPJJE8N';
-const DB_NAME = 'Database';
-const DB_COLLECTION = 'drawings';
+const DB_NAME = 'DrawingsDB';
+const DB_COLLECTION = 'Drawings';
 
-const DB_URL = 'mongodb+srv://database.boh6g.mongodb.net/<Database>';
+const DB_URL = 'mongodb+srv://' + DB_USER + ':' + DB_PASSWORD + '@database.boh6g.mongodb.net/' + DB_NAME + '?retryWrites=true&w=majority';
 @Injectable({
     providedIn: 'root',
 })
 export class DatabaseService {
-    collection: Collection<any>;
+    collection: Collection<DrawingInfo>;
     client: MongoClient;
 
     private options: MongoClientOptions = {
@@ -38,11 +38,11 @@ export class DatabaseService {
         this.client.close();
     }
 
-    async getAllDrawings(): Promise<any[]> {
+    async getAllDrawings(): Promise<DrawingInfo[]> {
         return this.collection
             .find({})
             .toArray()
-            .then((drawings: any[]) => {
+            .then((drawings: DrawingInfo[]) => {
                 return drawings;
             })
             .catch((error: Error) => {
@@ -50,19 +50,19 @@ export class DatabaseService {
             });
     }
 
-    async getDrawing(sbjCode: string): Promise<any> {
+    async getDrawing(drawingName: string): Promise<DrawingInfo> {
         // NB: This can return null if the drawing does not exist, you need to handle it
         return this.collection
-            .findOne({ subjectCode: sbjCode })
-            .then((course: any) => {
-                return course;
+            .findOne({ name: drawingName })
+            .then((drawing: DrawingInfo) => {
+                return drawing;
             })
             .catch((error: Error) => {
                 throw error;
             });
     }
 
-    async addDrawing(drawing: any): Promise<void> {
+    async addDrawing(drawing: DrawingInfo): Promise<void> {
         // if (this.validateDrawing(drawing)) {
         this.collection.insertOne(drawing).catch((error: Error) => {
             throw error;
@@ -72,9 +72,9 @@ export class DatabaseService {
         }*/
     }
 
-    async deleteDrawing(sbjCode: string): Promise<void> {
+    async deleteDrawing(drawingName: string): Promise<void> {
         return this.collection
-            .findOneAndDelete({ subjectCode: sbjCode })
+            .findOneAndDelete({ name: drawingName })
             .then(() => {})
             .catch((error: Error) => {
                 throw new Error('Failed to delete course');
@@ -96,5 +96,8 @@ export class DatabaseService {
         });
     }
 
-    constructor() {}
+    constructor() {
+        //this.populateDB();
+        //this.getAllDrawings();
+    }
 }
