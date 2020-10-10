@@ -20,15 +20,7 @@ export class MainPageComponent {
 
     constructor(private basicService: IndexService, public dialog: MatDialog, private databaseService: DatabaseService) {
       this.databaseService.populateDB();
-      databaseService.getAllDrawings();
-    }
-
-    populate(req: Request, res:Response): {
-
-    }
-
-    getAll(): {
-
+      this.databaseService.getAllDrawings();
     }
 
     sendTimeToServer(): void {

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { DrawingInfo } from '@app/classes/drawing-info';
 // import { injectable } from 'inversify';
-import { Collection, FilterQuery, FindOneOptions, MongoClient, MongoClientOptions, UpdateQuery } from 'mongodb';
+import { Collection, MongoClient, MongoClientOptions } from 'mongodb';
 import 'reflect-metadata';
 
 const DB_USER = 'NewUser';
