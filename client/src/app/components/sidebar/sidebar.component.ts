@@ -114,6 +114,10 @@ export class SidebarComponent {
                 this.onButtonPress(sidebarToolID.tracing);
                 this.toolsService._currentDrawingTool = drawingToolId.pencilService;
             },
+            w: () => {
+                this.onButtonPress(sidebarToolID.tracing);
+                this.toolsService._currentDrawingTool = drawingToolId.brushService;
+            },
             e: () => this.onButtonPress(sidebarToolID.eraser),
             l: () => this.onButtonPress(sidebarToolID.line),
             1: () => {
