@@ -1,5 +1,6 @@
 import { Component, HostListener } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { CreateNewDrawingComponent } from '@app/components/create-new-drawing/create-new-drawing.component';
 import { GuideComponent } from '@app/components/guide/guide.component';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ToolsService } from '@app/services/tools/tools-service';
@@ -64,8 +65,13 @@ export class SidebarComponent {
                 break;
             }
             case sidebarToolID.createNew: {
-                this.drawingService.clearCanvas(this.drawingService.baseCtx);
-                this.drawingService.clearCanvas(this.drawingService.previewCtx);
+                const dialogRef = this.dialog.open(CreateNewDrawingComponent);
+                dialogRef.afterClosed().subscribe((result) => {
+                    console.log(`Dialog result: ${result}`);
+                });
+
+                // this.drawingService.clearCanvas(this.drawingService.baseCtx);
+                // this.drawingService.clearCanvas(this.drawingService.previewCtx);
                 break;
             }
             case sidebarToolID.openGuide: {
