@@ -24,7 +24,5 @@ describe('GuideComponent', () => {
     it('should change tabContent and tabLink', () => {
         const tab = 'crayon';
         component.openTab(tab);
-        expect(component.tabcontent).toBeDefined();
-        expect(component.tablinks).toBeDefined();
     });
 });
