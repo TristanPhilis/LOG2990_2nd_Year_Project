@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { DatabaseService } from '@app/services/database/database.service';
+//import { DatabaseService } from '@app/services/database/database.service';
 import { IndexService } from '@app/services/index/index.service';
 import { Message } from '@common/communication/message';
 import { BehaviorSubject } from 'rxjs';
@@ -18,9 +18,9 @@ export class MainPageComponent {
 
     message: BehaviorSubject<string> = new BehaviorSubject<string>('');
 
-    constructor(private basicService: IndexService, public dialog: MatDialog, private databaseService: DatabaseService) {
-      this.databaseService.populateDB();
-      this.databaseService.getAllDrawings();
+    constructor(private basicService: IndexService, public dialog: MatDialog,/* private databaseService: DatabaseService*/) {
+      /*this.databaseService.populateDB();
+      this.databaseService.getAllDrawings();*/
     }
 
     sendTimeToServer(): void {
