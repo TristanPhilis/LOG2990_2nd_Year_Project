@@ -1,3 +1,4 @@
+import { DatabaseService } from '@app/services/database/database.service';
 import { TYPES } from '@app/types';
 import { Message } from '@common/communication/message';
 import { NextFunction, Request, Response, Router } from 'express';
@@ -10,8 +11,14 @@ const HTTP_STATUS_CREATED = 201;
 export class IndexController {
     router: Router;
 
-    constructor(@inject(TYPES.IndexService) private indexService: IndexService) {
+    constructor(
+        @inject(TYPES.IndexService) private indexService: IndexService,
+        @inject(TYPES.DatabaseService) private databaseService: DatabaseService,
+    ) {
         this.configureRouter();
+        this.databaseService.start();
+        //this.databaseService.populateDB();
+        //this.databaseService.getAllDrawings();
     }
 
     private configureRouter(): void {
