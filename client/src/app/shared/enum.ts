@@ -52,3 +52,13 @@ export enum ColorSelection {
     primary,
     secondary,
 }
+
+export enum JointSelection {
+    normal,
+    dot,
+}
+
+export enum SelectionType {
+    rectangle,
+    ellipse,
+}

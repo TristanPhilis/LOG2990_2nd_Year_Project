@@ -11,7 +11,6 @@ import { MouseButton, TraceTypes } from '@app/shared/enum';
 export class RectangleService extends Tool {
     initialCoord: Vec2;
     private thickness: number;
-    private traceType: number;
 
     constructor(drawingService: DrawingService) {
         super(drawingService);
@@ -27,12 +26,12 @@ export class RectangleService extends Tool {
         return this.thickness;
     }
 
-    set _traceType(newType: number) {
+    set _traceType(newType: TraceTypes) {
         this.traceType = newType;
     }
 
-    get _traceType(): number {
-        return this.traceType;
+    get _traceType(): TraceTypes {
+        return this.traceType!;
     }
 
     onMouseDown(event: MouseEvent): void {

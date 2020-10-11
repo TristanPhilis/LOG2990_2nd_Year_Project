@@ -1,4 +1,5 @@
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { ColorSelection, drawingToolId, JointSelection, SelectionType, Texture, TraceTypes } from '@app/shared/enum';
 import { Vec2 } from './vec2';
 
 // Ceci est justifié vu qu'on a des fonctions qui seront gérés par les classes enfant
@@ -8,6 +9,25 @@ export abstract class Tool {
     mouseDown: boolean = false;
     shiftDown: boolean = false;
     dblClick: boolean = false;
+
+    //Tool identification
+    id: drawingToolId;
+    name: string;
+    //All tool options
+    colorSelection?: ColorSelection;
+    color?: string;
+    lineJoint?: JointSelection;
+    size?: number;
+    outlineType?: string;
+    traceType?: TraceTypes;
+    texture?: Texture;
+    toleranceInterval?: number;
+    numberOfSides?: number;
+    selctionType?: SelectionType;
+    angle?: number;
+    lineLength?: number;
+    emissionPerSecond?: number;
+    imageChoice?: string;
 
     constructor(protected drawingService: DrawingService) {}
 

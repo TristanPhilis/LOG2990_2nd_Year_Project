@@ -53,16 +53,16 @@ export class AttributePanelComponent {
         this.toolsService._currentDrawingTool = Number(selectedTool);
     }
 
-    handleTraceTypeChange(event: any): void {
+    handleTraceTypeChange(traceType: TraceTypes): void {
         switch (this.toolsService._selectedSideBarToolID) {
             case sidebarToolID.shapes: {
                 switch (this.toolsService._currentDrawingToolID) {
                     case drawingToolId.rectangleService: {
-                        this.rectangleService._traceType = event.target.value;
+                        this.rectangleService._traceType = Number(traceType);
                         break;
                     }
                     case drawingToolId.ellipseService: {
-                        // this.ellipseService._traceType = type;
+                        this.ellipseService.traceType = Number(traceType);
                         break;
                     }
                 }
@@ -94,7 +94,7 @@ export class AttributePanelComponent {
                         break;
                     }
                     case drawingToolId.ellipseService: {
-                        this.ellipseService._thickness = event.target.value;
+                        this.ellipseService.size = event.target.value;
                         break;
                     }
                 }
