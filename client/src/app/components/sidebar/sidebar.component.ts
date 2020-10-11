@@ -19,6 +19,7 @@ export class SidebarComponent {
     sideBarToolsBottom: SidebarToolComponent[];
 
     showDrawingTools: boolean;
+    private isDialogOpen: boolean;
 
     constructor(private toolsService: ToolsService, private dialog: MatDialog, private drawingService: DrawingService) {
         this.sideBarToolsTop = [
@@ -66,8 +67,10 @@ export class SidebarComponent {
             }
             case sidebarToolID.createNew: {
                 const dialogRef = this.dialog.open(CreateNewDrawingComponent);
+                this.isDialogOpen = true;
                 dialogRef.afterClosed().subscribe((result) => {
                     console.log(`Dialog result: ${result}`);
+                    this.isDialogOpen = false;
                 });
 
                 // this.drawingService.clearCanvas(this.drawingService.baseCtx);
@@ -115,6 +118,9 @@ export class SidebarComponent {
 
     @HostListener('window: keyup', ['$event'])
     onKeyUp(event: KeyboardEvent): void {
+        if (this.isDialogOpen) {
+            return;
+        }
         const kbd: { [id: string]: callback } = {
             c: () => {
                 this.onButtonPress(sidebarToolID.tracing);
