@@ -13,23 +13,11 @@ import { MouseButton } from '@app/shared/enum';
 })
 export class PencilService extends Tool {
     private pathData: Vec2[];
-    // Todo: Attributs globaux
-    // private color: string;
-    // private opacity: number;
-    private thickness: number;
 
     constructor(drawingService: DrawingService) {
         super(drawingService);
-        this.thickness = 1;
+        this.size = 1;
         this.clearPath();
-    }
-
-    set _thickness(newThickness: number) {
-        this.thickness = newThickness;
-    }
-
-    get _thickness(): number {
-        return this.thickness;
     }
 
     onMouseDown(event: MouseEvent): void {
@@ -66,7 +54,7 @@ export class PencilService extends Tool {
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
         ctx.beginPath();
         ctx.lineCap = 'round';
-        ctx.lineWidth = this.thickness;
+        ctx.lineWidth = this.size!;
         ctx.strokeStyle = 'black';
         for (const point of path) {
             ctx.lineTo(point.x, point.y);

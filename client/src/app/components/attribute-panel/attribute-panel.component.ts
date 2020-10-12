@@ -78,11 +78,11 @@ export class AttributePanelComponent {
             case sidebarToolID.tracing: {
                 switch (this.toolsService._currentDrawingToolID) {
                     case drawingToolId.pencilService: {
-                        this.pencilService._thickness = event.target.value;
+                        this.pencilService.size = event.target.value;
                         break;
                     }
                     case drawingToolId.brushService: {
-                        this.brushService._thickness = event.target.value;
+                        this.brushService.size = event.target.value;
                     }
                 }
                 break;
@@ -90,7 +90,7 @@ export class AttributePanelComponent {
             case sidebarToolID.shapes: {
                 switch (this.toolsService._currentDrawingToolID) {
                     case drawingToolId.rectangleService: {
-                        this.rectangleService._thickness = event.target.value;
+                        this.rectangleService.size = event.target.value;
                         break;
                     }
                     case drawingToolId.ellipseService: {
@@ -101,11 +101,11 @@ export class AttributePanelComponent {
                 break;
             }
             case sidebarToolID.line: {
-                this.lineService._thickness = event.target.value;
+                this.lineService.size = event.target.value;
                 break;
             }
             case sidebarToolID.eraser: {
-                this.eraserService._thickness = event.target.value;
+                this.eraserService.size = event.target.value;
                 break;
             }
         }

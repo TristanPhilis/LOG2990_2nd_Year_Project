@@ -12,24 +12,14 @@ export class BrushService extends Tool {
     // Todo: Attributs globaux
     // private color: string;
     // private opacity: number;
-    private thickness: number;
     selectedTexture: Texture;
-    color: string;
 
     constructor(drawingService: DrawingService) {
         super(drawingService);
-        this.thickness = 1; // Remplacer par un observable
+        this.size = 1; // Remplacer par un observable
         this.clearPath();
         this.selectedTexture = Texture.one;
         this.color = 'black';
-    }
-
-    set _thickness(newThickness: number) {
-        this.thickness = newThickness;
-    }
-
-    get _thickness(): number {
-        return this.thickness;
     }
 
     onMouseDown(event: MouseEvent): void {
@@ -67,7 +57,7 @@ export class BrushService extends Tool {
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
         ctx.beginPath();
         ctx.lineCap = 'round';
-        ctx.lineWidth = this.thickness;
+        ctx.lineWidth = this.size!;
         const image = new Image(1, 1);
         image.src = this.selectedTexture;
         const pattern = ctx.createPattern(image, 'repeat');
@@ -77,7 +67,7 @@ export class BrushService extends Tool {
         }
         ctx.stroke();
         ctx.globalCompositeOperation = 'color';
-        ctx.strokeStyle = this.color;
+        ctx.strokeStyle = this.color!;
         ctx.stroke();
         ctx.globalCompositeOperation = 'source-over';
     }
