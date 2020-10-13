@@ -1,5 +1,4 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-// import { canvasTestHelper } from '@app/classes/canvas-test-helper';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { CreateNewDrawingComponent } from './create-new-drawing.component';
 
@@ -31,7 +30,6 @@ describe('CreateNewDrawingComponent', () => {
 
     it('should call clearCanvas when clearCanvas is called', () => {
         component.clearCanvas();
-        expect(drawServiceSpy.clearCanvas).toHaveBeenCalled();
-        expect(drawServiceSpy.clearCanvas).toHaveBeenCalled();
+        expect(drawServiceSpy.clearCanvas).toHaveBeenCalledTimes(2);
     });
 });
