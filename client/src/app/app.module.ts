@@ -3,6 +3,7 @@ import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule } from '@angular/material/dialog';
+import { MatSidenavModule } from '@angular/material/sidenav';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AppRoutingModule } from './app-routing.module';
@@ -35,7 +36,16 @@ import { ToolOptionComponent } from './components/sidebar/tool-option/tool-optio
         SidebarColorOptionsComponent,
         AttributePanelComponent,
     ],
-    imports: [BrowserModule, HttpClientModule, AppRoutingModule, ReactiveFormsModule, MatDialogModule, MatButtonModule, BrowserAnimationsModule],
+    imports: [
+        BrowserModule,
+        HttpClientModule,
+        AppRoutingModule,
+        ReactiveFormsModule,
+        MatDialogModule,
+        MatButtonModule,
+        BrowserAnimationsModule,
+        MatSidenavModule,
+    ],
     entryComponents: [GuideComponent],
     providers: [],
     bootstrap: [AppComponent],
