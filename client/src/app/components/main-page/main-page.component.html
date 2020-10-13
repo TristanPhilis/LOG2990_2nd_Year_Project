@@ -3,14 +3,16 @@
 
     <div id="server-message">
         <p>Petit message du serveur : {{ message | async }}</p>
+
         <button class="button" (click)="getMessagesFromServer()">Récuper un message du serveur</button>
+        <button class="button" (click)="getDrawingInfo()">Récuper un dessin du serveur</button>
         <button class="button" (click)="sendTimeToServer()">Envoyer un message au serveur</button>
     </div>
 
     <button mat-raised-button routerLink="/editor">Créer un nouveau dessin</button>
     <ng-template [ngIf]="false"><div><button mat-raised-button routerLink="/continue">Continuer un dessin</button></div></ng-template>
     <button mat-raised-button routerLink="/carousel">Ouvrir le carrousel de dessins</button>
-    
+
     <button mat-raised-button (click)="openDialog()">Afficher le Guide d'utilisation</button>
 
     <div class="footer-item">

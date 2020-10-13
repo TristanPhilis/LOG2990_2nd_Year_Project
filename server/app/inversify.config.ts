@@ -1,6 +1,6 @@
 import { DateController } from '@app/controllers/date.controller';
 import { IndexController } from '@app/controllers/index.controller';
-import {DatabaseService } from '@app/services/database/database.service';
+import { DatabaseService } from '@app/services/database/database.service';
 import { DateService } from '@app/services/date.service';
 import { IndexService } from '@app/services/index.service';
 import { Container } from 'inversify';

@@ -95,7 +95,5 @@ export class DatabaseService {
     }
 
     constructor() {
-        //this.populateDB();
-        //this.getAllDrawings();
     }
 }

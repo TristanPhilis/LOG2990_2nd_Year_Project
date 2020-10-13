@@ -1,7 +1,8 @@
 import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-//import { DatabaseService } from '@app/services/database/database.service';
+// import { DatabaseService } from '@app/services/database/database.service';
 import { IndexService } from '@app/services/index/index.service';
+import { DrawingInfo } from '@common/communication/drawing-info';
 import { Message } from '@common/communication/message';
 import { BehaviorSubject } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -17,31 +18,48 @@ export class MainPageComponent {
     readonly title: string = 'LOG2990';
 
     message: BehaviorSubject<string> = new BehaviorSubject<string>('');
+    drawingInfo: BehaviorSubject<DrawingInfo[]> = new BehaviorSubject<DrawingInfo[]>([{ name: '', tags: ['', ''] }]);
 
-    constructor(private basicService: IndexService, public dialog: MatDialog,/* private databaseService: DatabaseService*/) {
-      /*this.databaseService.populateDB();
+    constructor(private basicService: IndexService, public dialog: MatDialog /* private databaseService: DatabaseService*/) {
+        /*this.databaseService.populateDB();
       this.databaseService.getAllDrawings();*/
     }
 
     sendTimeToServer(): void {
         const newTimeMessage: Message = {
-            title: 'Hello from the client',
+            title: 'Hello from the clien',
             body: 'Time is : ' + new Date().toString(),
         };
         // Important de ne pas oublier "subscribe" ou l'appel ne sera jamais lancé puisque personne l'observe
         this.basicService.basicPost(newTimeMessage).subscribe();
+        console.log(newTimeMessage);
     }
 
     getMessagesFromServer(): void {
-        this.basicService
+        /*this.basicService
             .basicGet()
             // Cette étape transforme le Message en un seul string
             .pipe(
                 map((message: Message) => {
+                    console.log(message.title);
                     return `${message.title} ${message.body}`;
                 }),
             )
-            .subscribe(this.message);
+            .subscribe(this.message);*/
+    }
+
+    getDrawingInfo(): void {
+        this.basicService
+            .getDrawing()
+            // Cette étape transforme le Message en un seul string
+            .pipe(
+                map((drawingInfo: DrawingInfo[]) => {
+                    // return `${drawingInfo.name} ${drawingInfo.tags}`;
+                    return drawingInfo;
+                }),
+            )
+            .subscribe(this.drawingInfo);
+            console.log(this.drawingInfo.value);
     }
 
     openDialog(): void {
