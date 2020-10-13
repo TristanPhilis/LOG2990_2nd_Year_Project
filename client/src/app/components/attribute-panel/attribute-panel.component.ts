@@ -31,12 +31,12 @@ export class AttributePanelComponent {
         private brushService: BrushService,
     ) {
         this.tracingTools = [
-            { id: drawingToolId.pencilService, name: 'Pencil', thickness: 10, color: 'dark' },
-            { id: drawingToolId.brushService, name: 'Brush', thickness: 10, color: 'dark' },
+            { id: drawingToolId.pencilService, name: 'Pencil' },
+            { id: drawingToolId.brushService, name: 'Brush' },
         ];
         this.shapesTools = [
-            { id: drawingToolId.rectangleService, name: 'Rectangle', thickness: 10, color: 'dark' },
-            { id: drawingToolId.ellipseService, name: 'Ellipse', thickness: 10, color: 'dark' },
+            { id: drawingToolId.rectangleService, name: 'Rectangle' },
+            { id: drawingToolId.ellipseService, name: 'Ellipse' },
         ];
         this.tracingTypes = [
             { id: TraceTypes.fill, name: 'Fill' },

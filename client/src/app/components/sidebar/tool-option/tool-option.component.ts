@@ -9,9 +9,6 @@ import { drawingToolId, TraceTypes } from '@app/shared/enum';
 export class ToolOptionComponent {
     id: drawingToolId | TraceTypes;
     name: string;
-    thickness?: number;
-    outlineType?: string;
-    color?: string;
     constructor() {
         /*no empty*/
     }
