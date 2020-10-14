@@ -1,8 +1,10 @@
 import { Injectable } from '@angular/core';
 import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
+import { ColorSelectionService } from '@app/services/color/color-selection-service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { BACKSPACE_KEY, BASE_SNAP_ANGLE, ESCAPE_KEY, MIDDLE_SNAP_ANGLE, SHIFT_KEY } from '@app/shared/constant';
+import { ColorSelection } from '@app/shared/enum';
 
 @Injectable({
     providedIn: 'root',
@@ -13,7 +15,7 @@ export class LineService extends Tool {
     currentCoord: Vec2;
     initialCoord: Vec2;
 
-    constructor(drawingService: DrawingService) {
+    constructor(drawingService: DrawingService, private colorSelectionService: ColorSelectionService) {
         super(drawingService);
         this.size = 0;
         this.clearPath();
@@ -142,6 +144,12 @@ export class LineService extends Tool {
 
         ctx.moveTo(this.initialCoord.x, this.initialCoord.y);
         ctx.lineWidth = this.size!;
+        if (this.colorSelection === ColorSelection.primary) {
+            ctx.strokeStyle = this.colorSelectionService.primaryColor.getRgbString();
+        } else if (this.colorSelection === ColorSelection.secondary) {
+            ctx.strokeStyle = this.colorSelectionService.secondaryColor.getRgbString();
+        }
+
         for (const point of this.pathData) {
             ctx.lineTo(point.x, point.y);
         }

@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
 import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
+import { ColorSelectionService } from '@app/services/color/color-selection-service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { SHIFT_KEY } from '@app/shared/constant';
-import { MouseButton, TraceTypes } from '@app/shared/enum';
+import { ColorSelection, MouseButton, TraceTypes } from '@app/shared/enum';
 
 @Injectable({
     providedIn: 'root',
@@ -11,7 +12,7 @@ import { MouseButton, TraceTypes } from '@app/shared/enum';
 export class RectangleService extends Tool {
     initialCoord: Vec2;
 
-    constructor(drawingService: DrawingService) {
+    constructor(drawingService: DrawingService, private colorSelectionService: ColorSelectionService) {
         super(drawingService);
         this.size = 0;
         this.traceType = 0;
@@ -89,16 +90,33 @@ export class RectangleService extends Tool {
 
         switch (this.traceType) {
             case TraceTypes.fill:
+                if (this.colorSelection === ColorSelection.primary) {
+                    ctx.fillStyle = this.colorSelectionService.primaryColor.getRgbString();
+                } else if (this.colorSelection === ColorSelection.secondary) {
+                    ctx.fillStyle = this.colorSelectionService.secondaryColor.getRgbString();
+                }
                 ctx.fill();
                 break;
             case TraceTypes.stroke:
+                if (this.colorSelection === ColorSelection.primary) {
+                    ctx.strokeStyle = this.colorSelectionService.primaryColor.getRgbString();
+                } else if (this.colorSelection === ColorSelection.secondary) {
+                    ctx.strokeStyle = this.colorSelectionService.secondaryColor.getRgbString();
+                }
                 ctx.stroke();
                 break;
             case TraceTypes.fillAndStroke:
+                ctx.fillStyle = this.colorSelectionService.primaryColor.getRgbString();
+                ctx.strokeStyle = this.colorSelectionService.secondaryColor.getRgbString();
                 ctx.fill();
                 ctx.stroke();
                 break;
             default:
+                if (this.colorSelection === ColorSelection.primary) {
+                    ctx.fillStyle = this.colorSelectionService.primaryColor.getRgbString();
+                } else if (this.colorSelection === ColorSelection.secondary) {
+                    ctx.fillStyle = this.colorSelectionService.secondaryColor.getRgbString();
+                }
                 ctx.fill();
         }
     }

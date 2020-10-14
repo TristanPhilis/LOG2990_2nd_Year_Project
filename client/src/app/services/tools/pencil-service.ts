@@ -63,7 +63,6 @@ export class PencilService extends Tool {
             ctx.strokeStyle = this.colorSelectionService.secondaryColor.getRgbString();
         }
 
-        console.log(ctx.strokeStyle);
         for (const point of path) {
             ctx.lineTo(point.x, point.y);
         }
