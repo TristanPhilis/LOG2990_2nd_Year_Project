@@ -45,6 +45,7 @@ import { ToolOptionComponent } from './components/sidebar/tool-option/tool-optio
         MatButtonModule,
         BrowserAnimationsModule,
         MatSidenavModule,
+        MatButtonModule,
     ],
     entryComponents: [GuideComponent],
     providers: [],

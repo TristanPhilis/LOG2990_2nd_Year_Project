@@ -1,9 +1,14 @@
 <div class="container">
-    <app-sidebar></app-sidebar>
-    <!-- <mat-sidenav-container class="example-container">
-        <mat-sidenav mode="side" opened>Sidenav content</mat-sidenav>
-    </mat-sidenav-container> -->
-    <app-attribute-panel></app-attribute-panel>
+    <mat-sidenav-container class="example-container">
+        <mat-sidenav mode="side" opened>
+            <app-sidebar></app-sidebar>
+        </mat-sidenav>
+    </mat-sidenav-container>
+    <mat-drawer-container autosize>
+        <mat-drawer #drawer mode="side">
+            <app-attribute-panel></app-attribute-panel>
+        </mat-drawer>
+    </mat-drawer-container>
     <div #workzone class="drawing-container">
         <app-drawing [canvasSize]="canvasSize" class="drawing" tabindex="0"></app-drawing>
         <div #bottomAnchor id="bottomAnchor" class="anchor" (mousedown)="onMouseDown($event, 0)"></div>
