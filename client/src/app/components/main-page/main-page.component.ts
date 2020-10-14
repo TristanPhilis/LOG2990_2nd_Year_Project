@@ -18,7 +18,7 @@ export class MainPageComponent {
     readonly title: string = 'LOG2990';
 
     message: BehaviorSubject<string> = new BehaviorSubject<string>('');
-    drawingInfo: BehaviorSubject<DrawingInfo[]> = new BehaviorSubject<DrawingInfo[]>([{ name: '', tags: ['', ''] }]);
+    drawingInfo: BehaviorSubject<DrawingInfo[]> = new BehaviorSubject<DrawingInfo[]>([]);
 
     constructor(private basicService: IndexService, public dialog: MatDialog /* private databaseService: DatabaseService*/) {
         /*this.databaseService.populateDB();
@@ -55,11 +55,12 @@ export class MainPageComponent {
             .pipe(
                 map((drawingInfo: DrawingInfo[]) => {
                     // return `${drawingInfo.name} ${drawingInfo.tags}`;
+                    // this.drawingInfo.next(drawingInfo);
                     return drawingInfo;
-                }),
-            )
-            .subscribe(this.drawingInfo);
-            console.log(this.drawingInfo.value);
+                  }),
+                  )
+                  .subscribe(this.drawingInfo);
+                  console.log(this.drawingInfo);
     }
 
     openDialog(): void {

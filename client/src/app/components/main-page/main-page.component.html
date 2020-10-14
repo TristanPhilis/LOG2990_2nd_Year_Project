@@ -3,7 +3,7 @@
 
     <div id="server-message">
         <p>Petit message du serveur : {{ message | async }}</p>
-
+        <p>Dessin du serveur: {{ drawingInfo.value[0].name }} {{ drawingInfo.value[0].tags }}</p>
         <button class="button" (click)="getMessagesFromServer()">Récuper un message du serveur</button>
         <button class="button" (click)="getDrawingInfo()">Récuper un dessin du serveur</button>
         <button class="button" (click)="sendTimeToServer()">Envoyer un message au serveur</button>
