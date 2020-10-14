@@ -14,7 +14,7 @@ export abstract class Tool {
     id: drawingToolId;
     name: string;
     //All tool options
-    colorSelection?: ColorSelection;
+    colorSelection?: ColorSelection = ColorSelection.primary;
     color?: string;
     lineJoint?: JointSelection;
     size?: number;

@@ -3,18 +3,16 @@ import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { MouseButton, Texture } from '@app/shared/enum';
+import { ColorSelectionService } from '../color/color-selection-service';
 
 @Injectable({
     providedIn: 'root',
 })
 export class BrushService extends Tool {
     private pathData: Vec2[];
-    // Todo: Attributs globaux
-    // private color: string;
-    // private opacity: number;
     selectedTexture: Texture;
 
-    constructor(drawingService: DrawingService) {
+    constructor(drawingService: DrawingService, colorSelectionService: ColorSelectionService) {
         super(drawingService);
         this.size = 1; // Remplacer par un observable
         this.clearPath();

@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
 import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
+import { ColorSelectionService } from '@app/services/color/color-selection-service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
-import { MouseButton } from '@app/shared/enum';
+import { ColorSelection, MouseButton } from '@app/shared/enum';
 
 // Ceci est une implémentation de base de l'outil Crayon pour aider à débuter le projet
 // L'implémentation ici ne couvre pas tous les critères d'accepetation du projet
@@ -14,7 +15,7 @@ import { MouseButton } from '@app/shared/enum';
 export class PencilService extends Tool {
     private pathData: Vec2[];
 
-    constructor(drawingService: DrawingService) {
+    constructor(drawingService: DrawingService, private colorSelectionService: ColorSelectionService) {
         super(drawingService);
         this.size = 1;
         this.clearPath();
@@ -55,7 +56,14 @@ export class PencilService extends Tool {
         ctx.beginPath();
         ctx.lineCap = 'round';
         ctx.lineWidth = this.size!;
-        ctx.strokeStyle = 'black';
+
+        if (this.colorSelection === ColorSelection.primary) {
+            ctx.strokeStyle = this.colorSelectionService.primaryColor.getRgbString();
+        } else if (this.colorSelection === ColorSelection.secondary) {
+            ctx.strokeStyle = this.colorSelectionService.secondaryColor.getRgbString();
+        }
+
+        console.log(ctx.strokeStyle);
         for (const point of path) {
             ctx.lineTo(point.x, point.y);
         }
