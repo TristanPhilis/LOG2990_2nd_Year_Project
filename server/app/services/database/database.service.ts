@@ -81,11 +81,11 @@ export class DatabaseService {
 
     async populateDB() {
         const drawings: DrawingInfo[] = [
-            { name: 'Drawing1', tags: ['a', 'c'] },
-            { name: 'Drawing2', tags: ['b', 'c'] },
-            { name: 'Drawing3', tags: ['a'] },
-            { name: 'Drawing4', tags: ['a', 'c', 'd'] },
-            { name: 'Drawing5', tags: ['a', 'b'] },
+            { id: 0, name: 'Drawing1', tags: ['a', 'c'], metadata: '' },
+            { id: 1, name: 'Drawing2', tags: ['b', 'c'], metadata: '' },
+            { id: 2, name: 'Drawing3', tags: ['a'], metadata: '' },
+            { id: 3, name: 'Drawing4', tags: ['a', 'c', 'd'], metadata: '' },
+            { id: 4, name: 'Drawing5', tags: ['a', 'b'], metadata: '' },
         ];
 
         console.log('THIS ADDS DATA TO THE DATABASE, DO NOT USE OTHERWISE');
