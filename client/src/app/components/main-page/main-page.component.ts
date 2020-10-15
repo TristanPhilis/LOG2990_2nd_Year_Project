@@ -3,7 +3,6 @@ import { MatDialog } from '@angular/material/dialog';
 // import { DatabaseService } from '@app/services/database/database.service';
 import { IndexService } from '@app/services/index/index.service';
 import { DrawingInfo } from '@common/communication/drawing-info';
-import { Message } from '@common/communication/message';
 import { BehaviorSubject } from 'rxjs';
 import { map } from 'rxjs/operators';
 // tslint:disable-next-line: no-relative-imports
@@ -18,12 +17,12 @@ export class MainPageComponent {
     readonly title: string = 'LOG2990';
 
     message: BehaviorSubject<string> = new BehaviorSubject<string>('');
-    drawingInfo: BehaviorSubject<DrawingInfo[]> = new BehaviorSubject<DrawingInfo[]>([]);
+    drawingsInfo: BehaviorSubject<DrawingInfo[]> = new BehaviorSubject<DrawingInfo[]>([]);
+    drawingId: DrawingInfo;
 
-    constructor(private basicService: IndexService, public dialog: MatDialog) {
-    }
+    constructor(private basicService: IndexService, public dialog: MatDialog) {}
 
-    sendTimeToServer(): void {
+    /*sendTimeToServer(): void {
         const newTimeMessage: Message = {
             title: 'Hello from the clien',
             body: 'Time is : ' + new Date().toString(),
@@ -31,6 +30,16 @@ export class MainPageComponent {
         // Important de ne pas oublier "subscribe" ou l'appel ne sera jamais lancé puisque personne l'observe
         this.basicService.basicPost(newTimeMessage).subscribe();
         console.log(newTimeMessage);
+    }*/
+
+    sendDrawingToServer(): void {
+        const newDrawing: DrawingInfo = {
+            id: 6,
+            name: 'era',
+            tags: ['a'],
+            metadata: '',
+        };
+        this.basicService.postDrawing(newDrawing).subscribe();
     }
 
     getMessagesFromServer(): void {
@@ -55,10 +64,10 @@ export class MainPageComponent {
                     // return `${drawingInfo.name} ${drawingInfo.tags}`;
                     // this.drawingInfo.next(drawingInfo);
                     return drawingInfo;
-                  }),
-                  )
-                  .subscribe(this.drawingInfo);
-                  console.log(this.drawingInfo);
+                }),
+            )
+            .subscribe(this.drawingsInfo);
+        console.log(this.drawingsInfo.value.length);
     }
 
     openDialog(): void {
