@@ -1,7 +1,7 @@
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { Vec2 } from './vec2';
 
-// Ceci est justifié vu qu'on a des fonctions qui seront gérés par les classes enfant
+// This is justified since we have functions that will be managed by the child classes.
 // tslint:disable:no-empty
 export abstract class Tool {
     mouseDownCoord: Vec2;

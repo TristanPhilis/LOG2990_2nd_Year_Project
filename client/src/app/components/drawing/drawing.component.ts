@@ -11,7 +11,7 @@ import { ToolsService } from '@app/services/tools/tools-service';
 })
 export class DrawingComponent implements AfterViewInit, OnChanges {
     @ViewChild('baseCanvas', { static: false }) baseCanvas: ElementRef<HTMLCanvasElement>;
-    // On utilise ce canvas pour dessiner sans affecter le dessin final
+    // We use this canvas to draw without affecting the final drawing
     @ViewChild('previewCanvas', { static: false }) previewCanvas: ElementRef<HTMLCanvasElement>;
 
     private baseCtx: CanvasRenderingContext2D;
