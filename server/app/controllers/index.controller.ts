@@ -19,8 +19,6 @@ export class IndexController {
     ) {
         this.configureRouter();
         this.databaseService.start();
-        // this.databaseService.populateDB();
-        // this.databaseService.getAllDrawings();
     }
 
     private configureRouter(): void {

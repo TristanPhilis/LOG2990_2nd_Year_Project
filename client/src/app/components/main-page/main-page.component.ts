@@ -20,9 +20,7 @@ export class MainPageComponent {
     message: BehaviorSubject<string> = new BehaviorSubject<string>('');
     drawingInfo: BehaviorSubject<DrawingInfo[]> = new BehaviorSubject<DrawingInfo[]>([]);
 
-    constructor(private basicService: IndexService, public dialog: MatDialog /* private databaseService: DatabaseService*/) {
-        /*this.databaseService.populateDB();
-      this.databaseService.getAllDrawings();*/
+    constructor(private basicService: IndexService, public dialog: MatDialog) {
     }
 
     sendTimeToServer(): void {
