@@ -20,6 +20,7 @@ export class AttributePanelComponent {
     tracingTools: ToolOptionComponent[];
     shapesTools: ToolOptionComponent[];
     tracingTypes: ToolOptionComponent[];
+    textures: ToolOptionComponent[];
 
     constructor(
         public toolsService: ToolsService,
@@ -43,6 +44,13 @@ export class AttributePanelComponent {
             { id: TraceTypes.stroke, name: 'Stroke' },
             { id: TraceTypes.fillAndStroke, name: 'Fill and Stroke' },
         ];
+        this.textures = [
+            { id: Texture.one, name: 'Texture One' },
+            { id: Texture.two, name: 'Texture Two' },
+            { id: Texture.three, name: 'Texture Three' },
+            { id: Texture.four, name: 'Texture Four' },
+            { id: Texture.five, name: 'Texture Five' },
+        ];
     }
 
     get sidebarToolID(): typeof sidebarToolID {
@@ -51,10 +59,6 @@ export class AttributePanelComponent {
 
     get drawingToolId(): typeof drawingToolId {
         return drawingToolId;
-    }
-
-    get Texture(): typeof Texture {
-        return Texture;
     }
 
     handleChange(selectedTool: drawingToolId): void {
@@ -81,16 +85,16 @@ export class AttributePanelComponent {
 
     // need any to acces target.valueAsNumber
     // tslint:disable-next-line:no-any
-    sliderChange(event: any): void {
+    sliderChange(size: number): void {
         switch (this.toolsService._selectedSideBarToolID) {
             case sidebarToolID.tracing: {
                 switch (this.toolsService._currentDrawingToolID) {
                     case drawingToolId.pencilService: {
-                        this.pencilService.size = event.target.value;
+                        this.pencilService.size = size;
                         break;
                     }
                     case drawingToolId.brushService: {
-                        this.brushService.size = event.target.value;
+                        this.brushService.size = size;
                     }
                 }
                 break;
@@ -98,22 +102,47 @@ export class AttributePanelComponent {
             case sidebarToolID.shapes: {
                 switch (this.toolsService._currentDrawingToolID) {
                     case drawingToolId.rectangleService: {
-                        this.rectangleService.size = event.target.value;
+                        this.rectangleService.size = size;
                         break;
                     }
                     case drawingToolId.ellipseService: {
-                        this.ellipseService.size = event.target.value;
+                        this.ellipseService.size = size;
                         break;
                     }
                 }
                 break;
             }
             case sidebarToolID.line: {
-                this.lineService.size = event.target.value;
+                this.lineService.size = size;
                 break;
             }
             case sidebarToolID.eraser: {
-                this.eraserService.size = event.target.value;
+                this.eraserService.size = size;
+                break;
+            }
+        }
+    }
+
+    handleTextureChange(texture: Texture): void {
+        switch (texture) {
+            case Texture.one: {
+                this.brushService.selectedTexture = Texture.one;
+                break;
+            }
+            case Texture.two: {
+                this.brushService.selectedTexture = Texture.two;
+                break;
+            }
+            case Texture.three: {
+                this.brushService.selectedTexture = Texture.three;
+                break;
+            }
+            case Texture.four: {
+                this.brushService.selectedTexture = Texture.four;
+                break;
+            }
+            case Texture.five: {
+                this.brushService.selectedTexture = Texture.five;
                 break;
             }
         }
