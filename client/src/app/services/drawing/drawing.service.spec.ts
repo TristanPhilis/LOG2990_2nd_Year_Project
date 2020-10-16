@@ -24,6 +24,11 @@ describe('DrawingService', () => {
         expect(hasColoredPixels).toEqual(false);
     });
 
+    it('getDataUrl should return the url', () => {
+        const url = service.getImageURL();
+        expect(url).toBeTruthy();
+    });
+
     it('Should set and get correct imageData', () => {
         const width = service.canvas.width;
         const height = service.canvas.height;
