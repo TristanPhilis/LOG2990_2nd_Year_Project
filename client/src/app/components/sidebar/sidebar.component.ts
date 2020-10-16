@@ -3,6 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { GuideComponent } from '@app/components/guide/guide.component';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ToolsService } from '@app/services/tools/tools-service';
+import { UndoRedoService } from '@app/services/tools/undoRedo-service';
 import { drawingToolId, sidebarToolID } from '@app/shared/enum';
 import { SidebarToolComponent } from './sidebar-tool/sidebar-tool.component';
 
@@ -18,9 +19,13 @@ export class SidebarComponent {
     sideBarToolsBottom: SidebarToolComponent[];
 
     showDrawingTools: boolean;
-    undoRedo: any;
 
-    constructor(private toolsService: ToolsService, private dialog: MatDialog, private drawingService: DrawingService) {
+    constructor(
+        private toolsService: ToolsService,
+        private dialog: MatDialog,
+        private drawingService: DrawingService,
+        private undoRedo: UndoRedoService,
+    ) {
         this.sideBarToolsTop = [
             { id: sidebarToolID.move, name: 'Select & Move' },
             { id: sidebarToolID.selection, name: 'Selection' },
@@ -32,7 +37,8 @@ export class SidebarComponent {
             { id: sidebarToolID.stamp, name: 'Stamp' },
             { id: sidebarToolID.pipette, name: 'Pipette' },
             { id: sidebarToolID.eraser, name: 'Eraser' },
-            { id: sidebarToolID.undoRedo, name: 'undoRedo' },
+            { id: sidebarToolID.undo, name: 'undo' },
+            { id: sidebarToolID.redo, name: 'Redo' },
         ];
         this.sideBarToolsBottom = [
             { id: sidebarToolID.createNew, name: 'New Drawing' },
@@ -65,12 +71,18 @@ export class SidebarComponent {
                 this.toolsService._currentDrawingTool = drawingToolId.eraserService;
                 break;
             }
-            case sidebarToolID.undoRedo: {
-                this.toolsService._selectedSideBarToolID = sidebarToolID.undoRedo;
-                this.toolsService._currentDrawingTool = drawingToolId.undoRedoService;
+            case sidebarToolID.undo: {
+                this.toolsService._selectedSideBarToolID = sidebarToolID.undo;
+                // this.toolsService. = this.undoRedo.undo();
+                console.log(this.undoRedo.undoPile);
+                break;
+            }
+            case sidebarToolID.redo: {
+                this.toolsService._selectedSideBarToolID = sidebarToolID.redo;
                 break;
             }
             case sidebarToolID.createNew: {
+                this.undoRedo.clearPile();
                 this.drawingService.clearCanvas(this.drawingService.baseCtx);
                 this.drawingService.clearCanvas(this.drawingService.previewCtx);
                 break;

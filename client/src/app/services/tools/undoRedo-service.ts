@@ -9,12 +9,15 @@ export class UndoRedoService {
     undoPile: UndoRedoPile[];
     redoPile: UndoRedoPile[];
 
-    constructor() {}
+    constructor() {
+        this.clearPile();
+    }
 
     undo(): void {
         const lastIn = this.undoPile.pop();
         if (lastIn != undefined) {
             this.redoPile.push(lastIn);
+            this.undoPile.pop();
         }
     }
     redo(): void {

@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { UndoRedoService } from '@app/services/tools/undoRedo-service';
 import { BACKSPACE_KEY, BASE_SNAP_ANGLE, ESCAPE_KEY, MIDDLE_SNAP_ANGLE, SHIFT_KEY } from '@app/shared/constant';
 
 @Injectable({
@@ -47,11 +48,12 @@ export class LineService extends Tool {
         }
     }
 
-    onMouseDoubleClick(event: MouseEvent): void {
+    onMouseDoubleClick(event: MouseEvent, undoRedo: UndoRedoService): void {
         if (this.lineStarted) {
             const onMouseclickTriggerAdjustment = 2;
             this.pathData.splice(this.pathData.length - onMouseclickTriggerAdjustment, onMouseclickTriggerAdjustment);
             this.drawLine(this.drawingService.baseCtx);
+            undoRedo.undoPile.push({ path: this.pathData });
             this.endLine();
         }
     }
