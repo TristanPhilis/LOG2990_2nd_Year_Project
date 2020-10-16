@@ -1,0 +1,7 @@
+<div>
+        <ng-container *ngFor="let drawing of drawingsInfo.value">
+            <p>{{drawing.name}} {{drawing.tags}}</p>
+        </ng-container>
+        <button class="button" (click)="getDrawingInfo()">Récuper les dessins du serveur</button>
+        <button class="button" (click)="sendDrawingToServer()">Envoyer un dessin au serveur</button>
+    </div>

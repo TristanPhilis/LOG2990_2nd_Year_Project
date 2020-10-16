@@ -1,19 +1,11 @@
 <div class="container">
     <h1 class="header-item">Bienvenue au cours {{ title }}</h1>
 
-    <div id="server-message">
-        <p>Petit message du serveur : {{ message | async }}</p>
-        <p>Dessin du serveur: {{ drawingsInfo.value[drawingsInfo.value.length - 1].name }} {{ drawingsInfo.value[drawingsInfo.value.length - 1].tags }}</p>
-        <button class="button" (click)="getMessagesFromServer()">Récuper un message du serveur</button>
-        <button class="button" (click)="getDrawingInfo()">Récuper un dessin du serveur</button>
-        <button class="button" (click)="sendDrawingToServer()">Envoyer un dessin au serveur</button>
-    </div>
-
     <button mat-raised-button routerLink="/editor">Créer un nouveau dessin</button>
     <ng-template [ngIf]="false"><div><button mat-raised-button routerLink="/continue">Continuer un dessin</button></div></ng-template>
-    <button mat-raised-button routerLink="/carousel">Ouvrir le carrousel de dessins</button>
+    <button mat-raised-button (click) = "openCarousel()">Ouvrir le carrousel de dessins</button>
 
-    <button mat-raised-button (click)="openDialog()">Afficher le Guide d'utilisation</button>
+    <button mat-raised-button (click)= "openGuide()">Afficher le Guide d'utilisation</button>
 
     <div class="footer-item">
         <h4 class="team-name">Équipe Roger</h4>

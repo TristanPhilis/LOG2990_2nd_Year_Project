@@ -19,6 +19,7 @@ import { SidebarColorOptionsComponent } from './components/sidebar/color-picker/
 import { SidebarToolComponent } from './components/sidebar/sidebar-tool/sidebar-tool.component';
 import { SidebarComponent } from './components/sidebar/sidebar.component';
 import { ToolOptionComponent } from './components/sidebar/tool-option/tool-option.component';
+import { CarouselComponent } from './components/carousel/carousel.component';
 
 @NgModule({
     declarations: [
@@ -34,9 +35,10 @@ import { ToolOptionComponent } from './components/sidebar/tool-option/tool-optio
         SidebarToolComponent,
         SidebarColorOptionsComponent,
         AttributePanelComponent,
+        CarouselComponent,
     ],
     imports: [BrowserModule, HttpClientModule, AppRoutingModule, ReactiveFormsModule, MatDialogModule, MatButtonModule, BrowserAnimationsModule],
-    entryComponents: [GuideComponent],
+    entryComponents: [GuideComponent, CarouselComponent],
     providers: [],
     bootstrap: [AppComponent],
 })

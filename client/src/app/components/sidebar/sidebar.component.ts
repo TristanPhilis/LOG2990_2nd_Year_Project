@@ -4,6 +4,7 @@ import { GuideComponent } from '@app/components/guide/guide.component';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ToolsService } from '@app/services/tools/tools-service';
 import { drawingToolId, sidebarToolID } from '@app/shared/enum';
+import { CarouselComponent } from '../carousel/carousel.component';
 import { SidebarToolComponent } from './sidebar-tool/sidebar-tool.component';
 
 declare type callback = () => void;
@@ -70,6 +71,14 @@ export class SidebarComponent {
             }
             case sidebarToolID.openGuide: {
                 const dialogRef = this.dialog.open(GuideComponent);
+
+                dialogRef.afterClosed().subscribe((result) => {
+                    console.log(`Dialog result: ${result}`);
+                });
+                break;
+            }
+            case sidebarToolID.openCarrousel: {
+                const dialogRef = this.dialog.open(CarouselComponent);
 
                 dialogRef.afterClosed().subscribe((result) => {
                     console.log(`Dialog result: ${result}`);
