@@ -12,6 +12,10 @@ export class DrawingService {
         return this.baseCtx.getImageData(0, 0, this.canvas.width, this.canvas.height);
     }
 
+    getImageURL(): string {
+        return this.canvas.toDataURL();
+    }
+
     setImageData(imageData: ImageData): void {
         this.baseCtx.putImageData(imageData, 0, 0);
     }

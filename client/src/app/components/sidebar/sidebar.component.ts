@@ -2,6 +2,7 @@ import { Component, HostListener } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { CreateNewDrawingComponent } from '@app/components/create-new-drawing/create-new-drawing.component';
 import { GuideComponent } from '@app/components/guide/guide.component';
+import { SavePopupComponent } from '@app/components/popup/save-popup/save-popup.component';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ToolsService } from '@app/services/tools/tools-service';
 import { drawingToolId, sidebarToolID } from '@app/shared/enum';
@@ -82,6 +83,14 @@ export class SidebarComponent {
 
                 dialogRef.afterClosed().subscribe((result) => {
                     console.log(`Dialog result: ${result}`);
+                });
+                break;
+            }
+            case sidebarToolID.saveCurrent: {
+                const dialogRef = this.dialog.open(SavePopupComponent);
+                this.isDialogOpen = true;
+                dialogRef.afterClosed().subscribe(() => {
+                    this.isDialogOpen = false;
                 });
                 break;
             }
