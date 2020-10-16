@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+// import {MatButtonModule} from '@angular/material/button';
 import { IndexService } from '@app/services/index/index.service';
 import { DrawingInfo } from '@common/communication/drawing-info';
 import { BehaviorSubject } from 'rxjs';
@@ -10,9 +11,12 @@ import { map } from 'rxjs/operators';
     styleUrls: ['./carousel.component.scss'],
 })
 export class CarouselComponent implements OnInit {
-    constructor(private basicService: IndexService) {}
-
-    drawingsInfo: BehaviorSubject<DrawingInfo[]> = new BehaviorSubject<DrawingInfo[]>([]);
+    drawingsInfo: BehaviorSubject<DrawingInfo[]>;
+    drawingCounter: number;
+    constructor(private basicService: IndexService) {
+        this.drawingCounter = 1;
+        this.drawingsInfo = new BehaviorSubject<DrawingInfo[]>([]);
+    }
     ngOnInit(): void {}
 
     sendDrawingToServer(): void {
@@ -23,9 +27,10 @@ export class CarouselComponent implements OnInit {
             metadata: '',
         };
         this.basicService.postDrawing(newDrawing).subscribe();
+        this.getAllDrawings();
     }
 
-    getDrawingInfo(): void {
+    async getAllDrawings(): Promise<void> {
         this.basicService
             .getDrawing()
             // Cette étape transforme le Message en un seul string
@@ -37,6 +42,18 @@ export class CarouselComponent implements OnInit {
                 }),
             )
             .subscribe(this.drawingsInfo);
-        console.log(this.drawingsInfo.value.length);
+    }
+
+    getPreviousDrawing(): void {
+        if (this.drawingCounter > 0) this.drawingCounter--;
+    }
+
+    getNextDrawing(): void {
+        if (this.drawingCounter < this.drawingsInfo.value.length - 1) this.drawingCounter++;
+    }
+
+    deleteDrawing(drawingId: number): void {
+      this.basicService.deleteDrawing(drawingId).subscribe();
+      this.getAllDrawings();
     }
 }

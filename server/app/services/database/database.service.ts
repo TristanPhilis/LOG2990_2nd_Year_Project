@@ -70,9 +70,9 @@ export class DatabaseService {
         }*/
     }
 
-    async deleteDrawing(drawingName: string): Promise<void> {
+    async deleteDrawing(drawingId: number): Promise<void> {
         return this.collection
-            .findOneAndDelete({ name: drawingName })
+            .findOneAndDelete({ id: drawingId })
             .then(() => {})
             .catch((error: Error) => {
                 throw new Error('Failed to delete course');

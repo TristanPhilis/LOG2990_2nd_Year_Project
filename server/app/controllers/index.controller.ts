@@ -60,5 +60,18 @@ export class IndexController {
                 });
             console.log(this.indexService.clientDrawings);
         });
+
+        this.router.delete('/:id', async (req: Request, res: Response, next: NextFunction)=>{
+            const id = parseInt(req.params.id);
+            this.indexService.deleteDrawing(id);
+            this.databaseService
+                .deleteDrawing(id)
+                .then(() => {
+                    res.sendStatus(Httpstatus.NO_CONTENT).send();
+                })
+                .catch((error: Error) => {
+                    res.status(Httpstatus.NOT_FOUND).send(error.message);
+                });
+        });
     }
 }

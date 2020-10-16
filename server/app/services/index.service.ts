@@ -9,11 +9,18 @@ export class IndexService {
         this.clientDrawings = [];
     }
 
-    storeDrawing(drawingInfo: DrawingInfo): void {
+    async storeDrawing(drawingInfo: DrawingInfo): Promise<void> {
         this.clientDrawings.push(drawingInfo);
     }
 
-    getAllDrawings(): DrawingInfo[] {
+    async getAllDrawings(): Promise<DrawingInfo[]> {
         return this.clientDrawings;
+    }
+
+    async deleteDrawing(drawingId: number): Promise<void> {
+        for (const clientDrawing of this.clientDrawings) {
+            const index = this.clientDrawings.indexOf(clientDrawing);;
+            this.clientDrawings.splice(index, 1);
+        }
     }
 }

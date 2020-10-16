@@ -28,6 +28,10 @@ export class IndexService {
       return this.http.post<void>(this.BASE_URL + '/send', drawingInfo).pipe(catchError(this.handleError<void>('post')));
     }
 
+    deleteDrawing(drawingId: number): Observable<void> {
+      return this.http.delete<void>(this.BASE_URL + '/' + drawingId).pipe(catchError(this.handleError<void>('delete')));
+    }
+
     private handleError<T>(request: string, result?: T): (error: Error) => Observable<T> {
         return (error: Error): Observable<T> => {
             return of(result as T);
