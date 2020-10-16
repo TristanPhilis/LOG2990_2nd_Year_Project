@@ -14,6 +14,7 @@ export enum sidebarToolID {
     openCarrousel,
     exportCurrent,
     openGuide,
+    undoRedo,
 }
 
 export enum drawingToolId {
@@ -23,6 +24,7 @@ export enum drawingToolId {
     eraserService,
     lineService,
     brushService,
+    undoRedoService,
 }
 
 export enum MouseButton {

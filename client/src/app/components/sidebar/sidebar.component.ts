@@ -18,6 +18,7 @@ export class SidebarComponent {
     sideBarToolsBottom: SidebarToolComponent[];
 
     showDrawingTools: boolean;
+    undoRedo: any;
 
     constructor(private toolsService: ToolsService, private dialog: MatDialog, private drawingService: DrawingService) {
         this.sideBarToolsTop = [
@@ -31,6 +32,7 @@ export class SidebarComponent {
             { id: sidebarToolID.stamp, name: 'Stamp' },
             { id: sidebarToolID.pipette, name: 'Pipette' },
             { id: sidebarToolID.eraser, name: 'Eraser' },
+            { id: sidebarToolID.undoRedo, name: 'undoRedo' },
         ];
         this.sideBarToolsBottom = [
             { id: sidebarToolID.createNew, name: 'New Drawing' },
@@ -61,6 +63,11 @@ export class SidebarComponent {
             case sidebarToolID.eraser: {
                 this.toolsService._selectedSideBarToolID = sidebarToolID.eraser;
                 this.toolsService._currentDrawingTool = drawingToolId.eraserService;
+                break;
+            }
+            case sidebarToolID.undoRedo: {
+                this.toolsService._selectedSideBarToolID = sidebarToolID.undoRedo;
+                this.toolsService._currentDrawingTool = drawingToolId.undoRedoService;
                 break;
             }
             case sidebarToolID.createNew: {
