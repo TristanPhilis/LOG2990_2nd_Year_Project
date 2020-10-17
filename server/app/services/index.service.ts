@@ -19,8 +19,10 @@ export class IndexService {
 
     deleteDrawing(drawingId: number): void {
         for (const clientDrawing of this.clientDrawings) {
-            const index = this.clientDrawings.indexOf(clientDrawing);;
-            this.clientDrawings.splice(index, 1);
+            if (clientDrawing.id === drawingId) {
+                const index = this.clientDrawings.indexOf(clientDrawing);
+                this.clientDrawings.splice(index, 1);
+            }
         }
     }
 }

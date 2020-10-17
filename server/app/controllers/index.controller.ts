@@ -51,7 +51,7 @@ export class IndexController {
             // Send the request to the service and send the response
             // const time: Message = await this.indexService.helloWorld();
             // res.json(time);
-            const id = parseInt(req.params.id);
+            const id = parseInt(req.params.id, 10);
             this.databaseService
                 .getDrawing(id)
                 .then((drawing: DrawingInfo) => {
@@ -78,7 +78,7 @@ export class IndexController {
         });
 
         this.router.delete('/:id', (req: Request, res: Response, next: NextFunction) => {
-            const id = parseInt(req.params.id);
+            const id = parseInt(req.params.id, 10);
             this.databaseService
                 .deleteDrawing(id)
                 .then(() => {

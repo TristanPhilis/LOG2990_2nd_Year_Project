@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 // import {MatButtonModule} from '@angular/material/button';
 import { IndexService } from '@app/services/index/index.service';
 import { DrawingInfo } from '@common/communication/drawing-info';
-import { BehaviorSubject, Observer } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 @Component({
@@ -13,40 +13,36 @@ import { map } from 'rxjs/operators';
 export class CarouselComponent implements OnInit {
     drawingsInfo: BehaviorSubject<DrawingInfo[]>;
     drawingCounter: number;
-    drawingObserver: Observer<DrawingInfo[]>;
     constructor(private basicService: IndexService) {
-        this.drawingCounter = 1;
+        this.drawingCounter = 0;
         this.drawingsInfo = new BehaviorSubject<DrawingInfo[]>([]);
-        this.drawingsInfo.subscribe(this.drawingObserver);
     }
     ngOnInit(): void {}
 
-    sendDrawingToServer(): void {
+    sendDrawing(): void {
         const newDrawing: DrawingInfo = {
             id: 6,
             name: 'era',
             tags: ['a'],
             metadata: '',
         };
-        this.basicService.postDrawing(newDrawing).subscribe();
-        this.getAllDrawings();
+        if (this.basicService.postDrawing(newDrawing) !== undefined) this.basicService.postDrawing(newDrawing).subscribe();
     }
 
     getAllDrawings(): void {
-        this.basicService
-            .getAllDrawings()
-            // Cette étape transforme le Message en un seul string
-            .pipe(
-                map((drawingInfo: DrawingInfo[]) => {
-                    // return `${drawingInfo.name} ${drawingInfo.tags}`;
-                    // this.drawingInfo.next(drawingInfo);
-                    return drawingInfo;
-                }),
-            )
-            .subscribe(this.drawingsInfo);
+        if (this.basicService.getAllDrawings() !== undefined) {
+            this.basicService
+                .getAllDrawings()
+                .pipe(
+                    map((drawingInfo: DrawingInfo[]) => {
+                        return drawingInfo;
+                    }),
+                )
+                .subscribe(this.drawingsInfo);
+        }
     }
 
-    getPreviousDrawing(): void {
+    goToPreviousDrawing(): void {
         if (this.drawingCounter === 0) {
             this.drawingCounter = this.drawingsInfo.value.length - 1;
         } else {
@@ -55,7 +51,7 @@ export class CarouselComponent implements OnInit {
         console.log(this.drawingCounter);
     }
 
-    getNextDrawing(): void {
+    goToNextDrawing(): void {
         if (this.drawingCounter === this.drawingsInfo.value.length - 1) {
             this.drawingCounter = 0;
         } else {
@@ -64,8 +60,15 @@ export class CarouselComponent implements OnInit {
     }
 
     deleteDrawing(drawingId: number): void {
-        this.basicService.deleteDrawing(drawingId).subscribe();
-        this.getAllDrawings();
-        this.drawingsInfo.getValue();
+        if (this.basicService.deleteDrawing(drawingId) !== undefined) this.basicService.deleteDrawing(drawingId).subscribe();
+    }
+
+    getDrawingPosition(counter: number): number {
+        let position = counter % this.drawingsInfo.value.length;
+        if (position < 0) {
+            position += this.drawingsInfo.value.length;
+            position = position % this.drawingsInfo.value.length;
+        }
+        return position;
     }
 }
