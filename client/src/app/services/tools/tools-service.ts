@@ -7,6 +7,7 @@ import { LineService } from '@app/services/tools/line-service';
 import { PencilService } from '@app/services/tools/pencil-service';
 import { RectangleService } from '@app/services/tools/rectangle-service';
 import { drawingToolId, sidebarToolID } from '@app/shared/enum';
+import { RectangleSelectorService } from './rectangle-selector-service';
 
 @Injectable({
     providedIn: 'root',
@@ -25,9 +26,10 @@ export class ToolsService {
         eraserService: EraserService,
         lineService: LineService,
         brushService: BrushService,
+        rectangleSelectionService: RectangleSelectorService,
     ) {
         this.currentDrawingTool = pencilService;
-        this.tools = [pencilService, rectangleService, ellipseService, eraserService, lineService, brushService];
+        this.tools = [pencilService, rectangleService, ellipseService, eraserService, lineService, brushService, rectangleSelectionService];
     }
 
     set _currentDrawingTool(newToolID: drawingToolId) {
