@@ -2,8 +2,8 @@ import { Component, HostListener } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { CreateNewDrawingComponent } from '@app/components/create-new-drawing/create-new-drawing.component';
 import { GuideComponent } from '@app/components/guide/guide.component';
-import { SavePopupComponent } from '@app/components/popup/save-popup/save-popup.component';
 import { ExportPopupComponent } from '@app/components/popup/export-popup/export-popup.component';
+import { SavePopupComponent } from '@app/components/popup/save-popup/save-popup.component';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ToolsService } from '@app/services/tools/tools-service';
 import { drawingToolId, sidebarToolID } from '@app/shared/enum';
@@ -27,7 +27,7 @@ export class SidebarComponent {
     constructor(private toolsService: ToolsService, private dialog: MatDialog, private drawingService: DrawingService) {
         this.sideBarToolsTop = [
             { id: sidebarToolID.move, name: 'Select & Move' },
-            { id: sidebarToolID.selection, name: 'Selection' },
+            { id: sidebarToolID.rectangleSelection, name: 'Rectangle Selection' },
             { id: sidebarToolID.tracing, name: 'Tracing' },
             { id: sidebarToolID.shapes, name: 'Shapes' },
             { id: sidebarToolID.line, name: 'Line' },

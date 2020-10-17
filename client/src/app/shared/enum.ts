@@ -1,6 +1,6 @@
 export enum sidebarToolID {
     move,
-    selection,
+    rectangleSelection,
     tracing,
     shapes,
     line,
