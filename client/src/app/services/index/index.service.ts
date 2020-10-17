@@ -20,8 +20,12 @@ export class IndexService {
         return this.http.post<void>(this.BASE_URL + '/send', message).pipe(catchError(this.handleError<void>('basicPost')));
     }*/
 
-    getDrawing(): Observable<DrawingInfo[]> {
-      return this.http.get<DrawingInfo[]>(this.BASE_URL).pipe(catchError(this.handleError<DrawingInfo[]>('getDrawing')));
+    getAllDrawings(): Observable<DrawingInfo[]> {
+      return this.http.get<DrawingInfo[]>(this.BASE_URL + '/all').pipe(catchError(this.handleError<DrawingInfo[]>('getAllDrawings')));
+    };
+
+    getDrawing(drawingId: number): Observable<DrawingInfo> {
+      return this.http.get<DrawingInfo>(this.BASE_URL + '/' + drawingId).pipe(catchError(this.handleError<DrawingInfo>('getDrawing')));
     };
 
     postDrawing(drawingInfo: DrawingInfo): Observable<void> {

@@ -1,8 +1,11 @@
 <div>
         <ng-container *ngIf="drawingsInfo.value.length > 0">
-        <ng-template [ngIf]="drawingCounter > 0"><div>{{drawingsInfo.value[drawingCounter - 1].name}} {{drawingsInfo.value[drawingCounter - 1].tags}}</div><button mat-raised-button (click)="deleteDrawing(drawingsInfo.value[drawingCounter - 1].id)">Delete drawing</button></ng-template>
-        <div class = "server-message">{{drawingsInfo.value[drawingCounter].name}} {{drawingsInfo.value[drawingCounter].tags}}<button mat-raised-button (click)="deleteDrawing(drawingsInfo.value[drawingCounter].id)">Delete drawing</button></div>
-        <ng-template [ngIf]="drawingCounter < drawingsInfo.value.length - 1"><div>{{drawingsInfo.value[drawingCounter + 1].name}} {{drawingsInfo.value[drawingCounter + 1].tags}}</div><button mat-raised-button (click)="deleteDrawing(drawingsInfo.value[drawingCounter + 1].id)">Delete drawing</button></ng-template>
+        <div>{{drawingsInfo.value[((drawingCounter - 1) % drawingsInfo.value.length + drawingsInfo.value.length) % drawingsInfo.value.length].name}} {{drawingsInfo.value[((drawingCounter - 1) % drawingsInfo.value.length + drawingsInfo.value.length) % drawingsInfo.value.length].tags}}</div>
+        <button mat-raised-button (click)="deleteDrawing(drawingsInfo.value[drawingCounter - 1].id)">Delete drawing</button>
+        <div class = "server-message">{{drawingsInfo.value[drawingCounter % drawingsInfo.value.length].name}} {{drawingsInfo.value[drawingCounter % drawingsInfo.value.length].tags}}
+        <button mat-raised-button (click)="deleteDrawing(drawingsInfo.value[drawingCounter].id)">Delete drawing</button></div>
+        <div>{{drawingsInfo.value[(drawingCounter + 1) % drawingsInfo.value.length].name}} {{drawingsInfo.value[(drawingCounter + 1) % drawingsInfo.value.length].tags}}</div>
+        <button mat-raised-button (click)="deleteDrawing(drawingsInfo.value[drawingCounter + 1].id)">Delete drawing</button>
         </ng-container><br>
         <button class="button" (click)="getAllDrawings()">Récuper les dessins du serveur</button><br><br><br><br>
         Filtrer les dessins:<br>
@@ -11,4 +14,9 @@
         <button class="button" (click)="sendDrawingToServer()">Envoyer un dessin au serveur</button>
         <button mat-raised-button (click)="getPreviousDrawing()" >Previous</button>
         <button mat-raised-button (click)="getNextDrawing()" >Next</button>
-    </div>
+
+        <ng-container *ngFor="let drawingInfo of drawingsInfo.value">
+        <p>{{drawingInfo.name}}</p>
+        <p>{{drawingInfo.tags}}</p>
+        </ng-container>
+</div>

@@ -23,7 +23,7 @@ export class IndexController {
     private configureRouter(): void {
         this.router = Router();
 
-        this.router.get('/', async (req: Request, res: Response, next: NextFunction) => {
+        this.router.get('/all', async (req: Request, res: Response, next: NextFunction) => {
             // Send the request to the service and send the response
             // const time: Message = await this.indexService.helloWorld();
             // res.json(time);
@@ -40,19 +40,35 @@ export class IndexController {
                 });
         });
 
-        this.router.get('/about', (req: Request, res: Response, next: NextFunction) => {
+        this.router.get('/about', async (req: Request, res: Response, next: NextFunction) => {
             // Send the request to the service and send the response
             // res.json(this.indexService.about());
             this.databaseService.populateDB();
             res.sendStatus(Httpstatus.StatusCodes.OK);
         });
 
+        this.router.get('/', async (req: Request, res: Response, next: NextFunction) => {
+            // Send the request to the service and send the response
+            // const time: Message = await this.indexService.helloWorld();
+            // res.json(time);
+            const id = parseInt(req.params.id);
+            this.databaseService
+                .getDrawing(id)
+                .then((drawing: DrawingInfo) => {
+                    this.indexService.storeDrawing(drawing);
+                    res.json(drawing);
+                })
+                .catch((error: Error) => {
+                    res.status(Httpstatus.StatusCodes.NOT_FOUND).send(error.message);
+                });
+        });
+
         this.router.post('/send', (req: Request, res: Response, next: NextFunction) => {
             const drawingInfo: DrawingInfo = req.body;
-            this.indexService.storeDrawing(drawingInfo);
             this.databaseService
                 .addDrawing(drawingInfo)
                 .then(() => {
+                    this.indexService.storeDrawing(drawingInfo);
                     res.sendStatus(Httpstatus.StatusCodes.CREATED).send();
                 })
                 .catch((error: Error) => {
@@ -61,12 +77,12 @@ export class IndexController {
             console.log(this.indexService.clientDrawings);
         });
 
-        this.router.delete('/:id', async (req: Request, res: Response, next: NextFunction)=>{
+        this.router.delete('/:id', (req: Request, res: Response, next: NextFunction) => {
             const id = parseInt(req.params.id);
-            this.indexService.deleteDrawing(id);
             this.databaseService
                 .deleteDrawing(id)
                 .then(() => {
+                    this.indexService.deleteDrawing(id);
                     res.sendStatus(Httpstatus.NO_CONTENT).send();
                 })
                 .catch((error: Error) => {

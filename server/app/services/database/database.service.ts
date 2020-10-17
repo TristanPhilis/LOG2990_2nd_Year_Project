@@ -48,10 +48,10 @@ export class DatabaseService {
             });
     }
 
-    async getDrawing(drawingName: string): Promise<DrawingInfo> {
+    async getDrawing(drawingId: number): Promise<DrawingInfo> {
         // NB: This can return null if the drawing does not exist, you need to handle it
         return this.collection
-            .findOne({ name: drawingName })
+            .findOne({ id: drawingId })
             .then((drawing: DrawingInfo) => {
                 return drawing;
             })
