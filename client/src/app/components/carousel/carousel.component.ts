@@ -48,7 +48,6 @@ export class CarouselComponent implements OnInit {
         } else {
             this.drawingCounter--;
         }
-        console.log(this.drawingCounter);
     }
 
     goToNextDrawing(): void {
