@@ -17,12 +17,16 @@ export class IndexService {
         return this.clientDrawings;
     }
 
-    deleteDrawing(drawingId: number): void {
+    deleteDrawing(drawingId: number): DrawingInfo {
+        let deletedDrawing: DrawingInfo;
+        deletedDrawing = {id: -1, name: 'drawingNotFound', tags:[''], metadata: ''};
         for (const clientDrawing of this.clientDrawings) {
             if (clientDrawing.id === drawingId) {
                 const index = this.clientDrawings.indexOf(clientDrawing);
                 this.clientDrawings.splice(index, 1);
+                deletedDrawing = clientDrawing;
             }
         }
+        return deletedDrawing;
     }
 }

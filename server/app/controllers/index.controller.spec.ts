@@ -1,5 +1,5 @@
-import { Application } from '@app/app';
-import { IndexService } from '@app/services/index.service';
+// import { Application } from '@app/app';
+/*import { IndexService } from '@app/services/index.service';
 import { TYPES } from '@app/types';
 import { Message } from '@common/communication/message';
 import { expect } from 'chai';
@@ -8,10 +8,10 @@ import { Stubbed, testingContainer } from '../../test/test-utils';
 
 // tslint:disable:no-any
 const HTTP_STATUS_OK = 200;
-const HTTP_STATUS_CREATED = 201;
+const HTTP_STATUS_CREATED = 201;*/
 
-describe('IndexController', () => {
-    const baseMessage = { title: 'Hello world', body: 'anything really' } as Message;
+/*describe('IndexController', () => {
+    /*const baseMessage = { title: 'Hello world', body: 'anything really' } as Message;
     let indexService: Stubbed<IndexService>;
     let app: Express.Application;
 
@@ -27,7 +27,7 @@ describe('IndexController', () => {
         app = container.get<Application>(TYPES.Application).app;
     });
 
-    it('should return message from index service on valid get request to root', async () => {
+    /*it('should return message from index service on valid get request to root', async () => {
         return supertest(app)
             .get('/api/index')
             .expect(HTTP_STATUS_OK)
@@ -60,5 +60,5 @@ describe('IndexController', () => {
             .then((response: any) => {
                 expect(response.body).to.deep.equal([baseMessage, baseMessage]);
             });
-    });
-});
+    });*/
+//});
