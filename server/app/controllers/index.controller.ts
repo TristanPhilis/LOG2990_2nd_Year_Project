@@ -6,7 +6,6 @@ import * as Httpstatus from 'http-status-codes';
 import { inject, injectable } from 'inversify';
 import { IndexService } from '../services/index.service';
 
-// const HTTP_STATUS_CREATED = 201;
 
 @injectable()
 export class IndexController {
@@ -69,12 +68,11 @@ export class IndexController {
                 .addDrawing(drawingInfo)
                 .then(() => {
                     this.indexService.storeDrawing(drawingInfo);
-                    res.sendStatus(Httpstatus.StatusCodes.CREATED).send();
+                    res.sendStatus(Httpstatus.StatusCodes.CREATED);
                 })
                 .catch((error: Error) => {
                     res.status(Httpstatus.StatusCodes.NOT_FOUND).send(error.message);
                 });
-            console.log(this.indexService.clientDrawings);
         });
 
         this.router.delete('/:id', (req: Request, res: Response, next: NextFunction) => {
@@ -83,10 +81,12 @@ export class IndexController {
                 .deleteDrawing(id)
                 .then(() => {
                     this.indexService.deleteDrawing(id);
-                    res.sendStatus(Httpstatus.StatusCodes.NO_CONTENT).send();
+                    // res.sendStatus(Httpstatus.StatusCodes.NO_CONTENT);
+                    res.json(id);
                 })
                 .catch((error: Error) => {
                     res.status(Httpstatus.StatusCodes.NOT_FOUND).send(error.message);
+                    console.log(error);
                 });
         });
     }

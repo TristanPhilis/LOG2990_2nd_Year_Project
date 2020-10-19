@@ -12,14 +12,6 @@ export class IndexService {
 
     constructor(private http: HttpClient) {}
 
-    /*basicGet(): Observable<Message> {
-        return this.http.get<Message>(this.BASE_URL).pipe(catchError(this.handleError<Message>('basicGet')));
-    }*/
-
-    /*basicPost(message: Message): Observable<void> {
-        return this.http.post<void>(this.BASE_URL + '/send', message).pipe(catchError(this.handleError<void>('basicPost')));
-    }*/
-
     getAllDrawings(): Observable<DrawingInfo[]> {
       return this.http.get<DrawingInfo[]>(this.BASE_URL + '/all').pipe(catchError(this.handleError<DrawingInfo[]>('getAllDrawings')));
     };
@@ -32,8 +24,8 @@ export class IndexService {
       return this.http.post<void>(this.BASE_URL + '/send', drawingInfo).pipe(catchError(this.handleError<void>('post')));
     }
 
-    deleteDrawing(drawingId: number): Observable<void> {
-      return this.http.delete<void>(this.BASE_URL + '/' + drawingId).pipe(catchError(this.handleError<void>('delete')));
+    deleteDrawing(drawingId: number): Observable<number> {
+      return this.http.delete<number>(this.BASE_URL + '/' + drawingId).pipe(catchError(this.handleError<number>('delete')));
     }
 
     private handleError<T>(request: string, result?: T): (error: Error) => Observable<T> {

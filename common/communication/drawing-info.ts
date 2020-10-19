@@ -4,7 +4,3 @@ export class DrawingInfo {
     tags: string[];
     metadata: string;
 }
-
-constructor() {
-
-}

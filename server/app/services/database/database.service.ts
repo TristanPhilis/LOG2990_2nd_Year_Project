@@ -36,11 +36,12 @@ export class DatabaseService {
         this.client.close();
     }
 
-    async getAllDrawings(): Promise<DrawingInfo[]> {
+    async getAllDrawings(): Promise<any[]> {
         return this.collection
             .find({})
             .toArray()
-            .then((drawings: DrawingInfo[]) => {
+            .then((drawings: any[]) => {
+                console.log(drawings[0]._id);
                 return drawings;
             })
             .catch((error: Error) => {
@@ -66,7 +67,7 @@ export class DatabaseService {
                 throw error;
             });
         } else {
-            throw new Error('Invalid course');
+            throw new Error('Invalid drawing');
         }
     }
 
@@ -75,7 +76,7 @@ export class DatabaseService {
             .findOneAndDelete({ id: drawingId })
             .then(() => {})
             .catch((error: Error) => {
-                throw new Error('Failed to delete course');
+                throw error;
             });
     }
 

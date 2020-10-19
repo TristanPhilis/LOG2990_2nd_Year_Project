@@ -22,7 +22,7 @@ export class CarouselComponent implements OnInit {
     sendDrawing(): void {
         const newDrawing: DrawingInfo = {
             id: 6,
-            name: 'era',
+            name: 'drawing1',
             tags: ['a'],
             metadata: '',
         };
@@ -40,6 +40,7 @@ export class CarouselComponent implements OnInit {
                 )
                 .subscribe(this.drawingsInfo);
         }
+        console.log(this.drawingsInfo);
     }
 
     goToPreviousDrawing(): void {
@@ -59,7 +60,9 @@ export class CarouselComponent implements OnInit {
     }
 
     deleteDrawing(drawingId: number): void {
-        if (this.basicService.deleteDrawing(drawingId) !== undefined) this.basicService.deleteDrawing(drawingId).subscribe();
+        if (this.basicService.deleteDrawing(drawingId) !== undefined) this.basicService.deleteDrawing(drawingId).subscribe((reponse: any)=> {
+          console.log(reponse);
+        });
     }
 
     getDrawingPosition(counter: number): number {
