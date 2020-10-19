@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Color, MAX_RBG_VALUE } from '@app/classes/color';
-import { ColorSelectionService } from '@app/services/color/color-selection-service';
 import { ValidatorService } from '@app/services/validator-service';
 
 @Component({
@@ -19,15 +19,19 @@ export class ColorPickerComponent implements OnInit {
         hex: ['', [this.validatorService.isValidHexColor()]],
     });
 
-    constructor(private fb: FormBuilder, private colorSelectionService: ColorSelectionService, private validatorService: ValidatorService) {
-        //
-    }
+    constructor(
+        private fb: FormBuilder,
+        private validatorService: ValidatorService,
+        public dialogRef: MatDialogRef<ColorPickerComponent>,
+        @Inject(MAT_DIALOG_DATA) public colorHistory: Color[],
+    ) {}
 
     ngOnInit(): void {
+        this.color = new Color(0, 0, 0);
         this.addFormsValueChangesBehaviour();
     }
 
-    addFormsValueChangesBehaviour(): void {
+    private addFormsValueChangesBehaviour(): void {
         this.colorForm.get('r')?.valueChanges.subscribe((newValue) => {
             if (this.colorForm.get('r')?.valid) {
                 const newColor = new Color(newValue, this.color.g, this.color.b);
@@ -59,12 +63,14 @@ export class ColorPickerComponent implements OnInit {
         });
     }
 
-    updateColorForm(fromHexFormControlChange: boolean): void {
+    private updateColorForm(fromHexFormControlChange: boolean): void {
         this.colorForm.setValue(
             {
                 r: this.color.r,
                 g: this.color.g,
                 b: this.color.b,
+                // When editing directly the hex value, we prevent showing the leading 0's
+                // so the editing is more fluid. Otherwise, deleting a number would automaticaly shift everything
                 hex: fromHexFormControlChange ? this.color.stripedHexString : this.color.hexString,
             },
             { emitEvent: false },
@@ -78,19 +84,9 @@ export class ColorPickerComponent implements OnInit {
 
     onSelect(): void {
         if (this.colorForm.valid) {
-            this.colorSelectionService.updateHistory(this.color);
-            this.colorSelectionService.selectNewColor(this.color);
-            this.colorSelectionService.showColorPicker = false;
+            this.dialogRef.close(this.color);
         } else {
             alert('Select a valid color');
         }
-    }
-
-    onCancel(): void {
-        this.colorSelectionService.showColorPicker = false;
-    }
-
-    get colorHistory(): Color[] {
-        return this.colorSelectionService.getcolorsHistory();
     }
 }

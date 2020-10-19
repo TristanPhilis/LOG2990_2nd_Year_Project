@@ -3,29 +3,28 @@
         <span>Primary</span>
         <div class="color-preview"
             [ngStyle]="{'background-color': primaryColor ? primaryColor.getRgbString() : 'white'}"
-            (click)="openColorPicker(0)"></div>
+            (click)="openColorPicker(true)">
+        </div>
     </div>
     <div class="slide-container">
-        <input type="range" min="1" max="100" value="100" (input)="onAlphaChange($event, 0)" />
+        <input type="range" min="1" max="100" value="100" (input)="onAlphaChange($event, true)" />
     </div>
     <div class="preview-container box-elem">
         <span>Secondary</span>
         <div class="color-preview"
             [ngStyle]="{'background-color': secondaryColor ? secondaryColor.getRgbString() : 'white'}"
-            (click)="openColorPicker(1)"></div>
-    </div>
-</div>
-<div class="slide-container">
-    <input type="range" min="1" max="100" value="100" (input)="onAlphaChange($event, 2)" />
-</div>
-<button (click)="swap()">Swap</button>
-<div class="color-history-wrapper box">
-    <ng-container *ngFor="let color of colorHistory">
-        <div class="color-choice" (mousedown)="onHistoryColorSelected($event, color)"
-            [ngStyle]="{'background-color': color.getRgbString()}">
+            (click)="openColorPicker(false)">
         </div>
-    </ng-container>
-</div>
-<div *ngIf="showColorPicker">
-    <app-color-picker></app-color-picker>
+    </div>
+    <div class="slide-container">
+        <input type="range" min="1" max="100" value="100" (input)="onAlphaChange($event, false)" />
+    </div>
+    <button (click)="swap()">Swap</button>
+    <div class="color-history-wrapper box">
+        <ng-container *ngFor="let color of colorHistory">
+            <div class="color-choice" (mousedown)="onHistoryColorSelected($event, color)"
+                [ngStyle]="{'background-color': color.getRgbString()}">
+            </div>
+        </ng-container>
+    </div>
 </div>
