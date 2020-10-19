@@ -59,7 +59,7 @@ export class LineService extends Tool {
     endLine(): void {
         const closingMinDistance = 20;
         const endCoord = this.getAdjustedCoord();
-        const diff = this.getDiff(this.initialCoord, endCoord);
+        const diff = this.getDiff(this.initialCoord, this.currentCoord);
         const closeShape = Math.abs(diff.x) <= closingMinDistance && Math.abs(diff.y) <= closingMinDistance;
         if (closeShape) {
             const ctx = this.drawingService.baseCtx;
