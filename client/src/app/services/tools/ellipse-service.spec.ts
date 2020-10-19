@@ -28,7 +28,7 @@ describe('EllipseServiceService', () => {
         service = TestBed.inject(EllipseService);
         drawEllipseSpy = spyOn<any>(service, 'drawEllipse').and.callThrough();
 
-        // Configuration du spy du service
+        // Spy service configuration
         // tslint:disable:no-string-literal
         service['drawingService'].baseCtx = baseCtxStub; // Jasmine doesnt copy properties with underlying data
         service['drawingService'].previewCtx = previewCtxStub;

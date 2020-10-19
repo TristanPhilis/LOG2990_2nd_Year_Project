@@ -1,7 +1,10 @@
 import { Component } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { Color } from '@app/classes/color';
+import { ColorPickerComponent } from '@app/components/sidebar//color-picker/color-picker.component';
 import { ColorSelectionService } from '@app/services/color/color-selection-service';
-import { ColorSelection, MouseButton } from '@app/shared/enum';
+import { PERCENT_MULTIPLIER } from '@app/shared/constant';
+import { MouseButton } from '@app/shared/enum';
 
 @Component({
     selector: 'app-sidebar-color-options',
@@ -9,7 +12,8 @@ import { ColorSelection, MouseButton } from '@app/shared/enum';
     styleUrls: ['./sidebar-color-options.component.scss'],
 })
 export class SidebarColorOptionsComponent {
-    constructor(private colorSelectionService: ColorSelectionService) {}
+    constructor(private colorSelectionService: ColorSelectionService, private dialog: MatDialog) {}
+    private isPrimaryColorOpened: boolean;
 
     swap(): void {
         this.colorSelectionService.swap();
@@ -17,32 +21,31 @@ export class SidebarColorOptionsComponent {
 
     // need any to acces target.valueAsNumber
     // tslint:disable-next-line:no-any
-    onAlphaChange(event: any, colorSelected: ColorSelection): void {
-        const precentageMultiplier = 0.01;
-        const newAlpha = event.target.valueAsNumber * precentageMultiplier;
-        console.log(newAlpha);
-        if (colorSelected === ColorSelection.primary) {
-            const newColor = new Color(this.primaryColor.r, this.primaryColor.g, this.primaryColor.b, newAlpha);
-            this.colorSelectionService.primaryColor = newColor;
-        } else {
-            const newColor = new Color(this.secondaryColor.r, this.secondaryColor.g, this.secondaryColor.b, newAlpha);
-            this.colorSelectionService.secondaryColor = newColor;
-        }
+    onAlphaChange(event: any, isPrimaryColor: boolean): void {
+        const newAlpha = event.target.valueAsNumber * PERCENT_MULTIPLIER;
+        const newColor = isPrimaryColor
+            ? new Color(this.primaryColor.r, this.primaryColor.g, this.primaryColor.b, newAlpha)
+            : new Color(this.secondaryColor.r, this.secondaryColor.g, this.secondaryColor.b, newAlpha);
+        this.colorSelectionService.selectNewColor(newColor, isPrimaryColor);
     }
 
     onHistoryColorSelected(event: MouseEvent, color: Color): void {
-        console.log(event);
         this.colorSelectionService.updateHistory(color);
-        if (event.buttons === MouseButton.Left) {
-            this.colorSelectionService.primaryColor = color;
-        } else if (event.buttons === MouseButton.Right) {
-            this.colorSelectionService.secondaryColor = color;
-        }
+        const changePrimaryColor = event.buttons === MouseButton.Left;
+        this.colorSelectionService.selectNewColor(color, changePrimaryColor);
     }
 
-    openColorPicker(colorSelected: ColorSelection): void {
-        this.colorSelectionService.selectedColor = colorSelected;
-        this.colorSelectionService.showColorPicker = true;
+    openColorPicker(isPrimaryColor: boolean): void {
+        this.isPrimaryColorOpened = isPrimaryColor;
+        const colorPickerRef = this.dialog.open(ColorPickerComponent, { data: this.colorHistory });
+
+        colorPickerRef.afterClosed().subscribe((color?: Color) => {
+            if (color) {
+                this.colorSelectionService.updateHistory(color);
+                this.colorSelectionService.selectNewColor(color, this.isPrimaryColorOpened);
+            }
+            this.isPrimaryColorOpened = false;
+        });
     }
 
     get colorHistory(): Color[] {
@@ -55,9 +58,5 @@ export class SidebarColorOptionsComponent {
 
     get secondaryColor(): Color {
         return this.colorSelectionService.secondaryColor;
-    }
-
-    get showColorPicker(): boolean {
-        return this.colorSelectionService.showColorPicker;
     }
 }

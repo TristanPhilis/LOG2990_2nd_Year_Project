@@ -13,7 +13,6 @@ describe('BrushService', () => {
     let baseCtxStub: CanvasRenderingContext2D;
     let previewCtxStub: CanvasRenderingContext2D;
     let drawBrushSpy: jasmine.Spy<any>;
-
     beforeEach(() => {
         baseCtxStub = canvasTestHelper.canvas.getContext('2d') as CanvasRenderingContext2D;
         previewCtxStub = canvasTestHelper.drawCanvas.getContext('2d') as CanvasRenderingContext2D;
@@ -25,7 +24,7 @@ describe('BrushService', () => {
         service = TestBed.inject(BrushService);
         drawBrushSpy = spyOn<any>(service, 'drawBrush').and.callThrough();
 
-        // Configuration du spy du service
+        // Service spy configuration
         // tslint:disable:no-string-literal
         service['drawingService'].baseCtx = baseCtxStub; // Jasmine doesnt copy properties with underlying data
         service['drawingService'].previewCtx = previewCtxStub;
@@ -106,21 +105,5 @@ describe('BrushService', () => {
         service.onMouseMove(mouseEvent);
         expect(drawServiceSpy.clearCanvas).not.toHaveBeenCalled();
         expect(drawBrushSpy).not.toHaveBeenCalled();
-    });
-
-    // Exemple de test d'intégration qui est quand même utile
-    it(' should change the pixel of the canvas ', () => {
-        mouseEvent = { offsetX: 0, offsetY: 0, buttons: 1 } as MouseEvent;
-        service.onMouseDown(mouseEvent);
-        mouseEvent = { offsetX: 1, offsetY: 0, buttons: 1 } as MouseEvent;
-        service.onMouseUp(mouseEvent);
-
-        // Premier pixel seulement
-        const imageData: ImageData = baseCtxStub.getImageData(0, 0, 1, 1);
-        expect(imageData.data[0]).toEqual(0); // R
-        expect(imageData.data[1]).toEqual(0); // G
-        expect(imageData.data[2]).toEqual(0); // B
-        // tslint:disable-next-line:no-magic-numbers
-        expect(imageData.data[3]).not.toEqual(0); // A
     });
 });

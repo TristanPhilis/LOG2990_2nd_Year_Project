@@ -9,17 +9,19 @@ import { MouseButton, Texture } from '@app/shared/enum';
 })
 export class BrushService extends Tool {
     private pathData: Vec2[];
-    // Todo: Attributs globaux
+    // Todo: Global Attributes
     // private color: string;
     // private opacity: number;
     private thickness: number;
     selectedTexture: Texture;
+    color: string;
 
     constructor(drawingService: DrawingService) {
         super(drawingService);
-        this.thickness = 1; // Remplacer par un observable
+        this.thickness = 1; // Replace with an observable
         this.clearPath();
         this.selectedTexture = Texture.one;
+        this.color = 'black';
     }
 
     set _thickness(newThickness: number) {
@@ -53,7 +55,7 @@ export class BrushService extends Tool {
         if (this.mouseDown && event.buttons === MouseButton.Left) {
             const mousePosition = this.getPositionFromMouse(event);
             this.pathData.push(mousePosition);
-            // On dessine sur le canvas de prévisualisation et on l'efface à chaque déplacement de la souris
+            // We draw on the preview canvas and erase it each time the mouse is moved
             this.drawBrush(this.drawingService.previewCtx, this.pathData);
         }
         if (this.mouseDown && !(event.buttons === MouseButton.Left)) {
@@ -74,6 +76,10 @@ export class BrushService extends Tool {
             ctx.lineTo(point.x, point.y);
         }
         ctx.stroke();
+        ctx.globalCompositeOperation = 'color';
+        ctx.strokeStyle = this.color;
+        ctx.stroke();
+        ctx.globalCompositeOperation = 'source-over';
     }
 
     private clearPath(): void {
