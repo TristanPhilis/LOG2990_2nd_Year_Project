@@ -83,10 +83,10 @@ export class IndexController {
                 .deleteDrawing(id)
                 .then(() => {
                     this.indexService.deleteDrawing(id);
-                    res.sendStatus(Httpstatus.NO_CONTENT).send();
+                    res.sendStatus(Httpstatus.StatusCodes.NO_CONTENT).send();
                 })
                 .catch((error: Error) => {
-                    res.status(Httpstatus.NOT_FOUND).send(error.message);
+                    res.status(Httpstatus.StatusCodes.NOT_FOUND).send(error.message);
                 });
         });
     }

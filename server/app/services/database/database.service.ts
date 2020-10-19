@@ -61,13 +61,13 @@ export class DatabaseService {
     }
 
     async addDrawing(drawing: DrawingInfo): Promise<void> {
-        // if (this.validateDrawing(drawing)) {
-        this.collection.insertOne(drawing).catch((error: Error) => {
-            throw error;
-        });
-        /* } else {
+        if (this.validateDrawing(drawing)) {
+            this.collection.insertOne(drawing).catch((error: Error) => {
+                throw error;
+            });
+        } else {
             throw new Error('Invalid course');
-        }*/
+        }
     }
 
     async deleteDrawing(drawingId: number): Promise<void> {
@@ -92,6 +92,20 @@ export class DatabaseService {
         drawings.forEach((drawing) => {
             this.addDrawing(drawing);
         });
+    }
+
+    private validateDrawing(drawing: DrawingInfo): boolean {
+        return this.validateId(drawing.id) && this.validateName(drawing.name) && this.validateTags(drawing.tags);
+    }
+
+    private validateId(id: number): boolean {
+        return true;
+    }
+    private validateName(name: string): boolean {
+        return true;
+    }
+    private validateTags(tags: string[]): boolean {
+        return true;
     }
 
     constructor() {

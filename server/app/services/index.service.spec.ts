@@ -2,49 +2,15 @@ import { TYPES } from '@app/types';
 import { DrawingInfo } from '@common/communication/drawing-info';
 import { expect } from 'chai';
 import { testingContainer } from '../../test/test-utils';
-// import { DateService } from './date.service';
 import { IndexService } from './index.service';
 
 describe('Index service', () => {
     let indexService: IndexService;
-    /*let dateService: Stubbed<DateService>;*/
 
     beforeEach(async () => {
         const [container] = await testingContainer();
-        /*container.rebind(TYPES.DateService).toConstantValue({
-            currentTime: sandbox.stub().resolves({
-                title: 'Time',
-                body: new Date(2020, 0, 10).toString(),
-            }),
-        });
-        dateService = container.get(TYPES.DateService);*/
         indexService = container.get<IndexService>(TYPES.IndexService);
     });
-
-    /*it('should return a simple message if #about is called', () => {
-        const expectedTitle = 'Basic Server About Page';
-        const expectedBody = 'Try calling helloWorld to get the time';
-        // const aboutMessage = indexService.about();
-        expect(aboutMessage.title).to.equals(expectedTitle);
-        expect(aboutMessage.body).to.equals(expectedBody);
-    });*/
-
-    /*it('should return Hello World as title', (done: Mocha.Done) => {
-        indexService.helloWorld().then((result: Message) => {
-            expect(result.title).to.equals('Hello world');
-            done();
-        });
-    });
-
-    it('should have a body that starts with "Time is"', (done: Mocha.Done) => {
-        indexService.helloWorld().then((result: Message) => {
-            expect(result.body)
-                .to.be.a('string')
-                .and.satisfy((body: string) => body.startsWith('Time is'));
-            done();
-        });
-    });*/
-
 
     it('should store a Drawing', (done: Mocha.Done) => {
         const newDrawing: DrawingInfo = { id: 996, name: '', tags: [], metadata: '' };
