@@ -1,4 +1,4 @@
- import { Application } from '@app/app';
+import { Application } from '@app/app';
 import { IndexService } from '@app/services/index.service';
 import { TYPES } from '@app/types';
 import { expect } from 'chai';
@@ -20,7 +20,7 @@ describe('IndexController', () => {
         container.rebind(TYPES.IndexService).toConstantValue({
             deleteDrawings: sandbox.stub().resolves(baseDrawing),
             storeDrawing: sandbox.stub().resolves(),
-            getAllDrawingss: sandbox.stub().resolves([baseDrawing, baseDrawing]),
+            getAllDrawings: sandbox.stub().resolves([baseDrawing, baseDrawing]),
         });
         indexService = container.get(TYPES.IndexService);
         app = container.get<Application>(TYPES.Application).app;
@@ -36,7 +36,7 @@ describe('IndexController', () => {
     });
 
     it('should store drawing in the array on valid post request to /send', async () => {
-        const drawing: DrawingInfo = { id: 996, name: '', tags: [], metadata: '' }
+        const drawing: DrawingInfo = { id: 997, name: '', tags: [], metadata: '' }
         return supertest(app).post('/api/index/send').send(drawing).set('Accept', 'application/json').expect(HTTP_STATUS_CREATED);
     });
 
