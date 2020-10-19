@@ -36,7 +36,7 @@ import { ToolOptionComponent } from './components/sidebar/tool-option/tool-optio
         AttributePanelComponent,
     ],
     imports: [BrowserModule, HttpClientModule, AppRoutingModule, ReactiveFormsModule, MatDialogModule, MatButtonModule, BrowserAnimationsModule],
-    entryComponents: [GuideComponent],
+    entryComponents: [GuideComponent, ColorPickerComponent],
     providers: [],
     bootstrap: [AppComponent],
 })

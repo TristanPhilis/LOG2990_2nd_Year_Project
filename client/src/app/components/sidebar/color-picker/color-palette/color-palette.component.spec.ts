@@ -58,6 +58,8 @@ describe('ColorPaletteComponent', () => {
     it('should emit color on hue change', () => {
         const newColor = new Color(1, 1, 1);
         // tslint:disable-next-line:no-string-literal
+        component['hue'] = newColor;
+        // tslint:disable-next-line:no-string-literal
         component['mouseCoord'] = { x: 0, y: 0 };
         component.ngOnChanges({
             hue: new SimpleChange(null, newColor, false),
@@ -83,20 +85,4 @@ describe('ColorPaletteComponent', () => {
         fixture.detectChanges();
         expect(colorChangeSpy).not.toHaveBeenCalled();
     });
-
-    /*it('Should show the right hue', () => {
-        // tslint:disable-next-line:no-magic-numbers
-        const newColor = new Color(255, 155, 0);
-        // tslint:disable-next-line:no-string-literal
-        component['hue'] = newColor;
-        component.draw();
-        // tslint:disable-next-line:no-string-literal
-        const ctx = component['paletteCtx'];
-        const pixelOffset = 0.1;
-        // tslint:disable-next-line:no-string-literal
-        const imageData = ctx.getImageData(component['paletteWidth'] - pixelOffset, pixelOffset, 1, 1);
-        expect(imageData.data[0]).toEqual(newColor.r);
-        expect(imageData.data[1]).toEqual(newColor.g);
-        expect(imageData.data[2]).toEqual(newColor.b);
-    });*/
 });
