@@ -1,5 +1,6 @@
 import { Component, HostListener } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { CreateNewDrawingComponent } from '@app/components/create-new-drawing/create-new-drawing.component';
 import { GuideComponent } from '@app/components/guide/guide.component';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ToolsService } from '@app/services/tools/tools-service';
@@ -18,6 +19,7 @@ export class SidebarComponent {
     sideBarToolsBottom: SidebarToolComponent[];
 
     showDrawingTools: boolean;
+    private isDialogOpen: boolean;
 
     constructor(private toolsService: ToolsService, private dialog: MatDialog, private drawingService: DrawingService) {
         this.sideBarToolsTop = [
@@ -64,8 +66,15 @@ export class SidebarComponent {
                 break;
             }
             case sidebarToolID.createNew: {
-                this.drawingService.clearCanvas(this.drawingService.baseCtx);
-                this.drawingService.clearCanvas(this.drawingService.previewCtx);
+                const dialogRef = this.dialog.open(CreateNewDrawingComponent);
+                this.isDialogOpen = true;
+                dialogRef.afterClosed().subscribe((result) => {
+                    console.log(`Dialog result: ${result}`);
+                    this.isDialogOpen = false;
+                });
+
+                // this.drawingService.clearCanvas(this.drawingService.baseCtx);
+                // this.drawingService.clearCanvas(this.drawingService.previewCtx);
                 break;
             }
             case sidebarToolID.openGuide: {
@@ -109,10 +118,17 @@ export class SidebarComponent {
 
     @HostListener('window: keyup', ['$event'])
     onKeyUp(event: KeyboardEvent): void {
+        if (this.isDialogOpen) {
+            return;
+        }
         const kbd: { [id: string]: callback } = {
             c: () => {
                 this.onButtonPress(sidebarToolID.tracing);
                 this.toolsService._currentDrawingTool = drawingToolId.pencilService;
+            },
+            w: () => {
+                this.onButtonPress(sidebarToolID.tracing);
+                this.toolsService._currentDrawingTool = drawingToolId.brushService;
             },
             e: () => this.onButtonPress(sidebarToolID.eraser),
             l: () => this.onButtonPress(sidebarToolID.line),

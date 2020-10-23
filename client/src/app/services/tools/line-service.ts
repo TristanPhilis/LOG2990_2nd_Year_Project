@@ -52,7 +52,7 @@ export class LineService extends Tool {
     endLine(): void {
         const closingMinDistance = 20;
         const endCoord = this.getAdjustedCoord();
-        const diff = this.getDiff(this.initialCoord, endCoord);
+        const diff = this.getDiff(this.initialCoord, this.currentCoord);
         const closeShape = Math.abs(diff.x) <= closingMinDistance && Math.abs(diff.y) <= closingMinDistance;
         if (closeShape) {
             const ctx = this.drawingService.baseCtx;
@@ -118,21 +118,17 @@ export class LineService extends Tool {
         } else if (angle > MIDDLE_SNAP_ANGLE + BASE_SNAP_ANGLE) {
             point = { x: startingPoint.x, y: this.currentCoord.y };
         } else {
-            point = this.getProjectedPoint(startingPoint, this.currentCoord, angle);
+            point = this.getProjectedPoint(startingPoint, angle);
         }
         return point;
     }
 
-    getProjectedPoint(startingPoint: Vec2, endPoint: Vec2, angle: number): Vec2 {
+    getProjectedPoint(startingPoint: Vec2, angle: number): Vec2 {
         const diff = this.getDiff(startingPoint, this.currentCoord);
-        // parameter angle is the angle between the line based on the two points and the positive x axis
-        // middle angle is between the line and the 45 degree line from the positive x axis
-        const middleAngle = MIDDLE_SNAP_ANGLE - angle;
-        const currentLineLenght = Math.sqrt(Math.pow(diff.x, 2) + Math.pow(diff.y, 2));
-        const projectedLineLenght = currentLineLenght * Math.cos(middleAngle);
+
         const projectedPoint = {
-            x: startingPoint.x + Math.cos(MIDDLE_SNAP_ANGLE) * projectedLineLenght * Math.sign(diff.x),
-            y: startingPoint.y + Math.sin(MIDDLE_SNAP_ANGLE) * projectedLineLenght * Math.sign(diff.y),
+            x: this.currentCoord.x,
+            y: startingPoint.y + Math.atan(MIDDLE_SNAP_ANGLE) * Math.abs(diff.x) * Math.sign(diff.y),
         };
         return projectedPoint;
     }

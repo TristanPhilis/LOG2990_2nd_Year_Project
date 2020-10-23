@@ -26,10 +26,6 @@ export class ColorPaletteComponent implements AfterViewInit, OnChanges {
     private isMouseDown: boolean;
     private mouseCoord: Vec2;
 
-    constructor() {
-        //
-    }
-
     ngAfterViewInit(): void {
         this.paletteCtx = this.paletteCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
         this.paletteWidth = this.paletteWrapper.nativeElement.clientWidth;
@@ -62,11 +58,7 @@ export class ColorPaletteComponent implements AfterViewInit, OnChanges {
 
     draw(): void {
         this.paletteCtx.clearRect(0, 0, this.paletteWidth, this.paletteHeight);
-        if (this.hue) {
-            this.paletteCtx.fillStyle = this.hue.getRgbString();
-        } else {
-            this.paletteCtx.fillStyle = 'rgba(255,255,255,1)';
-        }
+        this.paletteCtx.fillStyle = this.hue ? this.hue.getRgbString() : 'rgba(255,255,255,1)';
         this.paletteCtx.fillRect(0, 0, this.paletteWidth, this.paletteHeight);
         this.ApplyGradient();
         this.drawSelector();

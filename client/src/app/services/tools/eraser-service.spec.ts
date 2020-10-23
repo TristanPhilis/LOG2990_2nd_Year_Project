@@ -25,7 +25,7 @@ describe('EraserService', () => {
         service = TestBed.inject(EraserService);
         eraseLineSpy = spyOn<any>(service, 'eraseLine').and.callThrough();
 
-        // Configuration du spy du service
+        // Service spy configuration
         // tslint:disable:no-string-literal
         service['drawingService'].baseCtx = baseCtxStub; // Jasmine doesnt copy properties with underlying data
         service['drawingService'].previewCtx = previewCtxStub;
@@ -56,7 +56,7 @@ describe('EraserService', () => {
         const mouseEventRClick = {
             offsetX: 25,
             offsetY: 25,
-            button: 1, // TODO: Avoir ceci dans un enum accessible
+            button: 1,
         } as MouseEvent;
         service.onMouseDown(mouseEventRClick);
         expect(service.mouseDown).toEqual(false);

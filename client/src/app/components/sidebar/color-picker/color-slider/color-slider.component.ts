@@ -23,10 +23,6 @@ export class ColorSliderComponent implements AfterViewInit {
     private isMouseDown: boolean;
     private selectedHeight: number;
 
-    constructor() {
-        //
-    }
-
     ngAfterViewInit(): void {
         this.sliderCtx = this.sliderCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
         this.sliderWidth = this.sliderWrapper.nativeElement.clientWidth;

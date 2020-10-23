@@ -9,6 +9,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './components/app/app.component';
 import { AttributePanelComponent } from './components/attribute-panel/attribute-panel.component';
+import { CreateNewDrawingComponent } from './components/create-new-drawing/create-new-drawing.component';
 import { DrawingComponent } from './components/drawing/drawing.component';
 import { EditorComponent } from './components/editor/editor.component';
 import { GuideComponent } from './components/guide/guide.component';
@@ -35,6 +36,7 @@ import { ToolOptionComponent } from './components/sidebar/tool-option/tool-optio
         SidebarToolComponent,
         SidebarColorOptionsComponent,
         AttributePanelComponent,
+        CreateNewDrawingComponent,
     ],
     imports: [
         BrowserModule,
@@ -47,7 +49,7 @@ import { ToolOptionComponent } from './components/sidebar/tool-option/tool-optio
         MatSidenavModule,
         MatButtonModule,
     ],
-    entryComponents: [GuideComponent],
+    entryComponents: [GuideComponent, ColorPickerComponent],
     providers: [],
     bootstrap: [AppComponent],
 })

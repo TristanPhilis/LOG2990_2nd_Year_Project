@@ -24,7 +24,7 @@ describe('BrushService', () => {
         service = TestBed.inject(BrushService);
         drawBrushSpy = spyOn<any>(service, 'drawBrush').and.callThrough();
 
-        // Configuration du spy du service
+        // Service spy configuration
         // tslint:disable:no-string-literal
         service['drawingService'].baseCtx = baseCtxStub; // Jasmine doesnt copy properties with underlying data
         service['drawingService'].previewCtx = previewCtxStub;
