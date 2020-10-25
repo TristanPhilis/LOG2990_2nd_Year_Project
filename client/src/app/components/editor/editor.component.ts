@@ -114,9 +114,4 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
             this.canvasSize = { x: this.previewSize.x, y: this.previewSize.y };
         }
     }
-
-    toggleSidenav(): void {
-        this.toolAttributeSidenav.toggle();
-        console.log(this.toolAttributeSidenav);
-    }
 }
