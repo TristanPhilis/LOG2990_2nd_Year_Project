@@ -85,6 +85,11 @@ export class SidebarComponent {
                 this.toolsService._currentDrawingTool = drawingToolId.eraserService;
                 break;
             }
+            case sidebarToolID.selection: {
+                this.toolsService._selectedSideBarToolID = sidebarToolID.selection;
+                this.toolsService._currentDrawingTool = drawingToolId.rectangleSelectionService;
+                break;
+            }
             case sidebarToolID.createNew: {
                 const dialogRef = this.dialog.open(CreateNewDrawingComponent);
                 this.isDialogOpen = true;
