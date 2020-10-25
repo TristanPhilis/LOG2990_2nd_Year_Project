@@ -118,17 +118,17 @@ export class LineService extends Tool {
         } else if (angle > MIDDLE_SNAP_ANGLE + BASE_SNAP_ANGLE) {
             point = { x: startingPoint.x, y: this.currentCoord.y };
         } else {
-            point = this.getProjectedPoint(startingPoint, angle);
+            point = this.getProjectedPoint(startingPoint);
         }
         return point;
     }
 
-    getProjectedPoint(startingPoint: Vec2, angle: number): Vec2 {
+    getProjectedPoint(startingPoint: Vec2): Vec2 {
         const diff = this.getDiff(startingPoint, this.currentCoord);
 
         const projectedPoint = {
             x: this.currentCoord.x,
-            y: startingPoint.y + Math.atan(MIDDLE_SNAP_ANGLE) * Math.abs(diff.x) * Math.sign(diff.y),
+            y: startingPoint.y + Math.tan(MIDDLE_SNAP_ANGLE) * Math.abs(diff.x) * Math.sign(diff.y),
         };
         return projectedPoint;
     }
