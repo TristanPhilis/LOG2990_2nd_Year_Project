@@ -27,7 +27,7 @@ describe('DatabaseService', () => {
         db = client.db(await mongoServer.getDbName());
         databaseService.collection = db.collection('test');
 
-        testDrawing = {id:991, name: 'Test Drawing', tags: [''], metadata: '' };
+        testDrawing = { id: 991, name: 'Test Drawing', tags: [''], metadata: '' };
         databaseService.collection.insertOne(testDrawing);
     });
 
@@ -52,7 +52,7 @@ describe('DatabaseService', () => {
     });*/
 
     it('should insert a new drawing', async () => {
-        const secondDrawing: DrawingInfo = {id: 992, name: 'Test Drawing2', tags: [''], metadata: '' };
+        const secondDrawing: DrawingInfo = { id: 992, name: 'Test Drawing2', tags: [''], metadata: '' };
 
         await databaseService.addDrawing(secondDrawing);
         const drawing = await databaseService.collection.find({}).toArray();

@@ -9,8 +9,8 @@ export class IndexService {
         this.clientDrawings = [];
     }
 
-    storeDrawing(drawingInfo: DrawingInfo): void {
-        this.clientDrawings.push(drawingInfo);
+    storeDrawing(drawing: DrawingInfo): void {
+        this.clientDrawings.push(drawing);
     }
 
     getAllDrawings(): DrawingInfo[] {
@@ -19,7 +19,7 @@ export class IndexService {
 
     deleteDrawing(drawingId: number): DrawingInfo {
         let deletedDrawing: DrawingInfo;
-        deletedDrawing = {id: -1, name: 'drawingNotFound', tags:[''], metadata: ''};
+        deletedDrawing = { id: -1, name: 'drawingNotFound', tags: [''], metadata: '' };
         for (const clientDrawing of this.clientDrawings) {
             if (clientDrawing.id === drawingId) {
                 const index = this.clientDrawings.indexOf(clientDrawing);

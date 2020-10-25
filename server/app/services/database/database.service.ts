@@ -36,12 +36,11 @@ export class DatabaseService {
         this.client.close();
     }
 
-    async getAllDrawings(): Promise<any[]> {
+    async getAllDrawings(): Promise<DrawingInfo[]> {
         return this.collection
             .find({})
             .toArray()
-            .then((drawings: any[]) => {
-                console.log(drawings[0]._id);
+            .then((drawings: DrawingInfo[]) => {
                 return drawings;
             })
             .catch((error: Error) => {
@@ -82,11 +81,11 @@ export class DatabaseService {
 
     async populateDB() {
         const drawings: DrawingInfo[] = [
-            { id: 0, name: 'Drawing1', tags: ['a', 'c'], metadata: '' },
-            { id: 1, name: 'Drawing2', tags: ['b', 'c'], metadata: '' },
-            { id: 2, name: 'Drawing3', tags: ['a'], metadata: '' },
-            { id: 3, name: 'Drawing4', tags: ['a', 'c', 'd'], metadata: '' },
-            { id: 4, name: 'Drawing5', tags: ['a', 'b'], metadata: '' },
+            { id: 1, name: 'Drawing1', tags: ['a', 'c'], metadata: '' },
+            { id: 2, name: 'Drawing2', tags: ['b', 'c'], metadata: '' },
+            { id: 3, name: 'Drawing3', tags: ['a'], metadata: '' },
+            { id: 4, name: 'Drawing4', tags: ['a', 'c', 'd'], metadata: '' },
+            { id: 5, name: 'Drawing5', tags: ['a', 'b'], metadata: '' },
         ];
 
         console.log('THIS ADDS DATA TO THE DATABASE, DO NOT USE OTHERWISE');
@@ -102,6 +101,7 @@ export class DatabaseService {
     private validateId(id: number): boolean {
         return true;
     }
+
     private validateName(name: string): boolean {
         return true;
     }

@@ -50,7 +50,7 @@ export class IndexController {
             // Send the request to the service and send the response
             // const time: Message = await this.indexService.helloWorld();
             // res.json(time);
-            const id = parseInt(req.params.id, 10);
+            const id = parseInt(req.params.id);
             this.databaseService
                 .getDrawing(id)
                 .then((drawing: DrawingInfo) => {
@@ -67,7 +67,7 @@ export class IndexController {
             this.databaseService
                 .addDrawing(drawingInfo)
                 .then(() => {
-                    this.indexService.storeDrawing(drawingInfo);
+                    // this.indexService.storeDrawing(drawingInfo);
                     res.sendStatus(Httpstatus.StatusCodes.CREATED);
                 })
                 .catch((error: Error) => {
@@ -76,7 +76,7 @@ export class IndexController {
         });
 
         this.router.delete('/:id', (req: Request, res: Response, next: NextFunction) => {
-            const id = parseInt(req.params.id, 10);
+            const id = parseInt(req.params.id);
             this.databaseService
                 .deleteDrawing(id)
                 .then(() => {

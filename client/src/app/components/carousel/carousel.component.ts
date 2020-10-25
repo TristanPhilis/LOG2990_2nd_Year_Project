@@ -27,6 +27,7 @@ export class CarouselComponent implements OnInit {
             metadata: '',
         };
         if (this.basicService.postDrawing(newDrawing) !== undefined) this.basicService.postDrawing(newDrawing).subscribe();
+        this.drawingsInfo.value.push(newDrawing);
     }
 
     getAllDrawings(): void {
@@ -40,7 +41,7 @@ export class CarouselComponent implements OnInit {
                 )
                 .subscribe(this.drawingsInfo);
         }
-        console.log(this.drawingsInfo);
+        // console.log(this.drawingsInfo);
     }
 
     goToPreviousDrawing(): void {
@@ -60,9 +61,16 @@ export class CarouselComponent implements OnInit {
     }
 
     deleteDrawing(drawingId: number): void {
-        if (this.basicService.deleteDrawing(drawingId) !== undefined) this.basicService.deleteDrawing(drawingId).subscribe((reponse: any)=> {
-          console.log(reponse);
-        });
+        if (this.basicService.deleteDrawing(drawingId) !== undefined)
+            this.basicService.deleteDrawing(drawingId).subscribe((drawingId: number) => {
+                for (const drawingInfo of this.drawingsInfo.value) {
+                    if (drawingInfo.id === drawingId) {
+                        const index = this.drawingsInfo.value.indexOf(drawingInfo);
+                        this.drawingsInfo.value.splice(index, 1);
+                    }
+                }
+                // console.log(reponse);
+            });
     }
 
     getDrawingPosition(counter: number): number {

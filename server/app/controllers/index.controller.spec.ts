@@ -10,7 +10,7 @@ import * as Httpstatus from 'http-status-codes';
 // tslint:disable:no-any
 
 describe('IndexController', () => {
-    const baseDrawing: DrawingInfo = { id: 996, name: '', tags: [], metadata: '' };
+    const baseDrawing: DrawingInfo = {id: 996, name: '', tags: [], metadata: '' };
     let indexService: Stubbed<IndexService>;
     let app: Express.Application;
 
@@ -44,11 +44,11 @@ describe('IndexController', () => {
     });
 
     it('should return deletedDrawing from index service on valid delete request to root', async () => {
-        return supertest(app).del('/api/index/:id').set('Accept','application/json').expect(Httpstatus.StatusCodes.NO_CONTENT);
+        return supertest(app).del('/api/index/:id').set('Accept','application/json').expect(Httpstatus.StatusCodes.OK);
     });
 
     it('should store drawing in the array on valid post request to /send', async () => {
-        const drawing: DrawingInfo = { id: 997, name: '', tags: [], metadata: '' };
+        const drawing: DrawingInfo = {id: 997, name: '', tags: [], metadata: '' };
         return supertest(app).post('/api/index/send').send(drawing).set('Accept', 'application/json').expect(Httpstatus.StatusCodes.CREATED);
     });
 
@@ -62,5 +62,5 @@ describe('IndexController', () => {
             });
     });
 
-    it('should return an appropriate error')
+    // it('should return an appropriate error')
 });
