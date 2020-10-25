@@ -46,21 +46,41 @@ export class SidebarComponent {
     onButtonPress(id: sidebarToolID): void {
         switch (id) {
             case sidebarToolID.tracing: {
+                if (this.toolsService._selectedSideBarToolID === sidebarToolID.tracing && this.toolsService.toolSidenavToogle.getValue() === true) {
+                    this.toolsService.closeToolSidenav();
+                } else {
+                    this.toolsService.openToolSidenav();
+                }
                 this.toolsService._selectedSideBarToolID = sidebarToolID.tracing;
                 this.toolsService._currentDrawingTool = drawingToolId.pencilService;
                 break;
             }
             case sidebarToolID.shapes: {
+                if (this.toolsService._selectedSideBarToolID === sidebarToolID.shapes && this.toolsService.toolSidenavToogle.getValue() === true) {
+                    this.toolsService.closeToolSidenav();
+                } else {
+                    this.toolsService.openToolSidenav();
+                }
                 this.toolsService._selectedSideBarToolID = sidebarToolID.shapes;
                 this.toolsService._currentDrawingTool = drawingToolId.rectangleService;
                 break;
             }
             case sidebarToolID.line: {
+                if (this.toolsService._selectedSideBarToolID === sidebarToolID.line && this.toolsService.toolSidenavToogle.getValue() === true) {
+                    this.toolsService.closeToolSidenav();
+                } else {
+                    this.toolsService.openToolSidenav();
+                }
                 this.toolsService._selectedSideBarToolID = sidebarToolID.line;
                 this.toolsService._currentDrawingTool = drawingToolId.lineService;
                 break;
             }
             case sidebarToolID.eraser: {
+                if (this.toolsService._selectedSideBarToolID === sidebarToolID.eraser && this.toolsService.toolSidenavToogle.getValue() === true) {
+                    this.toolsService.closeToolSidenav();
+                } else {
+                    this.toolsService.openToolSidenav();
+                }
                 this.toolsService._selectedSideBarToolID = sidebarToolID.eraser;
                 this.toolsService._currentDrawingTool = drawingToolId.eraserService;
                 break;
@@ -84,6 +104,9 @@ export class SidebarComponent {
                     console.log(`Dialog result: ${result}`);
                 });
                 break;
+            }
+            default: {
+                this.toolsService.closeToolSidenav();
             }
         }
     }
