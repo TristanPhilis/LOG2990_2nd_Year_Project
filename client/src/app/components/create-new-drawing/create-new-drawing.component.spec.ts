@@ -1,4 +1,5 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { MatDialogModule } from '@angular/material/dialog';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { CreateNewDrawingComponent } from './create-new-drawing.component';
 
@@ -8,14 +9,12 @@ describe('CreateNewDrawingComponent', () => {
     let drawServiceSpy: jasmine.SpyObj<DrawingService>;
 
     beforeEach(async(() => {
+        drawServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas']);
         TestBed.configureTestingModule({
             declarations: [CreateNewDrawingComponent],
-        }).compileComponents();
-        drawServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas']);
-
-        TestBed.configureTestingModule({
             providers: [{ provide: DrawingService, useValue: drawServiceSpy }],
-        });
+            imports: [MatDialogModule],
+        }).compileComponents();
     }));
 
     beforeEach(() => {

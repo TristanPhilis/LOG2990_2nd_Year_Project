@@ -193,7 +193,7 @@ describe('LineService', () => {
         service.currentCoord = { x: 2, y: 2.1 };
         expectedPoint = { x: 2, y: 2 };
         const result = service.getSnappedCoord();
-        expect(result.x).toBeCloseTo(expectedPoint.x, 1);
+        expect(result.x).toEqual(expectedPoint.x);
         expect(result.y).toBeCloseTo(expectedPoint.y, 1);
     });
 

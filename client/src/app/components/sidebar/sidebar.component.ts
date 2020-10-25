@@ -2,6 +2,7 @@ import { Component, HostListener } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { CreateNewDrawingComponent } from '@app/components/create-new-drawing/create-new-drawing.component';
 import { GuideComponent } from '@app/components/guide/guide.component';
+import { ExportPopupComponent } from '@app/components/popup/export-popup/export-popup.component';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ToolsService } from '@app/services/tools/tools-service';
 import { drawingToolId, sidebarToolID } from '@app/shared/enum';
@@ -66,22 +67,26 @@ export class SidebarComponent {
                 break;
             }
             case sidebarToolID.createNew: {
-                const dialogRef = this.dialog.open(CreateNewDrawingComponent);
                 this.isDialogOpen = true;
-                dialogRef.afterClosed().subscribe((result) => {
-                    console.log(`Dialog result: ${result}`);
+                const dialogRef = this.dialog.open(CreateNewDrawingComponent);
+                dialogRef.afterClosed().subscribe(() => {
                     this.isDialogOpen = false;
                 });
-
-                // this.drawingService.clearCanvas(this.drawingService.baseCtx);
-                // this.drawingService.clearCanvas(this.drawingService.previewCtx);
                 break;
             }
             case sidebarToolID.openGuide: {
+                this.isDialogOpen = true;
                 const dialogRef = this.dialog.open(GuideComponent);
-
-                dialogRef.afterClosed().subscribe((result) => {
-                    console.log(`Dialog result: ${result}`);
+                dialogRef.afterClosed().subscribe(() => {
+                    this.isDialogOpen = false;
+                });
+                break;
+            }
+            case sidebarToolID.exportCurrent: {
+                this.isDialogOpen = true;
+                const dialogRef = this.dialog.open(ExportPopupComponent);
+                dialogRef.afterClosed().subscribe(() => {
+                    this.isDialogOpen = false;
                 });
                 break;
             }
@@ -107,6 +112,9 @@ export class SidebarComponent {
             'C-o': () => {
                 this.drawingService.clearCanvas(this.drawingService.baseCtx);
                 this.drawingService.clearCanvas(this.drawingService.previewCtx);
+            },
+            'C-e': () => {
+                this.onButtonPress(sidebarToolID.exportCurrent);
             },
         };
         const func: callback | undefined = kbd[keys];
