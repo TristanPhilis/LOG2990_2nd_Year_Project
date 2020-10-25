@@ -1,6 +1,6 @@
 export enum sidebarToolID {
     move,
-    rectangleSelection,
+    selection,
     tracing,
     shapes,
     line,
@@ -23,6 +23,7 @@ export enum drawingToolId {
     eraserService,
     lineService,
     brushService,
+    rectangleSelectionService,
 }
 
 export enum MouseButton {
