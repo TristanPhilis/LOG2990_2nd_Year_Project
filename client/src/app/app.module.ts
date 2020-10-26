@@ -2,6 +2,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
@@ -10,6 +11,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './components/app/app.component';
 import { AttributePanelComponent } from './components/attribute-panel/attribute-panel.component';
+import { CarouselComponent } from './components/carousel/carousel.component';
 import { CreateNewDrawingComponent } from './components/create-new-drawing/create-new-drawing.component';
 import { DrawingComponent } from './components/drawing/drawing.component';
 import { EditorComponent } from './components/editor/editor.component';
@@ -23,7 +25,6 @@ import { SidebarColorOptionsComponent } from './components/sidebar/color-picker/
 import { SidebarToolComponent } from './components/sidebar/sidebar-tool/sidebar-tool.component';
 import { SidebarComponent } from './components/sidebar/sidebar.component';
 import { ToolOptionComponent } from './components/sidebar/tool-option/tool-option.component';
-import { CarouselComponent } from './components/carousel/carousel.component';
 
 @NgModule({
     declarations: [
@@ -43,7 +44,18 @@ import { CarouselComponent } from './components/carousel/carousel.component';
         CreateNewDrawingComponent,
         SavePopupComponent,
     ],
-    imports: [BrowserModule, HttpClientModule, AppRoutingModule, ReactiveFormsModule, MatIconModule, MatInputModule, MatDialogModule, MatButtonModule, BrowserAnimationsModule],
+    imports: [
+        BrowserModule,
+        HttpClientModule,
+        AppRoutingModule,
+        ReactiveFormsModule,
+        MatCardModule,
+        MatIconModule,
+        MatInputModule,
+        MatDialogModule,
+        MatButtonModule,
+        BrowserAnimationsModule,
+    ],
     entryComponents: [GuideComponent, CarouselComponent],
     providers: [],
     bootstrap: [AppComponent],

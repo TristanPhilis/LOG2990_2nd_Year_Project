@@ -1,22 +1,22 @@
 <div>
         <ng-container *ngIf="drawingsInfo.value.length > 0">
-        <div>{{drawingsInfo.value[getDrawingPosition(drawingCounter - 1)].name}} {{drawingsInfo.value[((drawingCounter - 1) % drawingsInfo.value.length + drawingsInfo.value.length) % drawingsInfo.value.length].tags}}</div>
-        <button mat-raised-button (click)="deleteDrawing(drawingsInfo.value[getDrawingPosition(drawingCounter - 1)].id)">Delete drawing</button>
-        <div class = "server-message">{{drawingsInfo.value[getDrawingPosition(drawingCounter)].name}} {{drawingsInfo.value[drawingCounter % drawingsInfo.value.length].tags}}
-        <button mat-raised-button (click)="deleteDrawing(drawingsInfo.value[getDrawingPosition(drawingCounter)].id)">Delete drawing</button></div>
-        <div>{{drawingsInfo.value[getDrawingPosition(drawingCounter + 1)].name}} {{drawingsInfo.value[(drawingCounter + 1) % drawingsInfo.value.length].tags}}</div>
-        <button mat-raised-button (click)="deleteDrawing(drawingsInfo.value[getDrawingPosition(drawingCounter + 1)].id)">Delete drawing</button>
-        </ng-container><br>
-        <button class="button" (click)="getAllDrawings()">Récuper les dessins du serveur</button><br><br><br><br>
+        <button mat-raised-button (click)="goToPreviousDrawing()" >Previous</button>
+        <li *ngFor="let currentDrawing of currentDrawings.value; let i = index">
+        <mat-card class="example-card">
+        <mat-card-header>
+        <div mat-card-avatar class="example-header-image"></div>
+        <mat-card-title><p>{{currentDrawing?.name}}</p></mat-card-title>
+        <mat-card-subtitle><p *ngFor="let tag of currentDrawing?.tags">{{tag}}</p></mat-card-subtitle>
+        </mat-card-header>
+        <img mat-card-image src={{currentDrawing?.metadata}}>
+        </mat-card><br><br>
+        <button mat-raised-button (click)="deleteDrawing(drawingsInfo.value[getDrawingPosition(drawingCounter + i - 1)].id)">
+        Delete drawing</button>
+        </li>
+        <button mat-raised-button (click)="goToNextDrawing()" >Next</button><br><br><br>
+      </ng-container>
         Filtrer les dessins:<br>
         Nom:<input>
         Tags:<input>
-        <button class="button" (click)="sendDrawing()">Envoyer un dessin au serveur</button>
-        <button mat-raised-button (click)="goToPreviousDrawing()" >Previous</button>
-        <button mat-raised-button (click)="goToNextDrawing()" >Next</button>
 
-        <ng-container *ngFor="let drawingInfo of drawingsInfo.value">
-        <p>{{drawingInfo.name}}</p>
-        <p>{{drawingInfo.tags}}</p>
-        </ng-container>
 </div>

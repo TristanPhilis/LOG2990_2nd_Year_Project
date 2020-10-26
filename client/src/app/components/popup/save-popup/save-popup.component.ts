@@ -35,11 +35,11 @@ export class SavePopupComponent implements OnInit {
 
     saveDrawing(): void {
         const drawing: DrawingInfo = {
-            id: -1,
+            id: this.webRequestService.nextDrawingId,
             name: this.nameInput.value.toString(),
             tags: this.tags,
             metadata: this.drawingService.getImageURL(),
         };
-        this.webRequestService.postDrawing(drawing);
+        this.webRequestService.postDrawing(drawing).subscribe();
     }
 }
