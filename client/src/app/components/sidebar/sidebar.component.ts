@@ -27,7 +27,7 @@ export class SidebarComponent {
     constructor(private toolsService: ToolsService, private dialog: MatDialog, private drawingService: DrawingService) {
         this.sideBarToolsTop = [
             { id: sidebarToolID.move, name: 'Select & Move' },
-            { id: sidebarToolID.rectangleSelection, name: 'Rectangle Selection' },
+            { id: sidebarToolID.selection, name: 'selection' },
             { id: sidebarToolID.tracing, name: 'Tracing' },
             { id: sidebarToolID.shapes, name: 'Shapes' },
             { id: sidebarToolID.line, name: 'Line' },
