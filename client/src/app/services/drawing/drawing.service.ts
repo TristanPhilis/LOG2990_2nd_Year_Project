@@ -20,6 +20,11 @@ export class DrawingService {
         this.baseCtx.putImageData(imageData, 0, 0);
     }
 
+    fillWhiteBackground(): void {
+        this.baseCtx.fillStyle = 'white';
+        this.baseCtx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+    }
+
     clearCanvas(context: CanvasRenderingContext2D): void {
         context.clearRect(0, 0, this.canvas.width, this.canvas.height);
     }

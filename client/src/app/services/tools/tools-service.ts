@@ -7,6 +7,8 @@ import { LineService } from '@app/services/tools/line-service';
 import { PencilService } from '@app/services/tools/pencil-service';
 import { RectangleService } from '@app/services/tools/rectangle-service';
 import { drawingToolId, sidebarToolID } from '@app/shared/enum';
+import { BehaviorSubject } from 'rxjs';
+import { RectangleSelectorService } from './rectangle-selector-service';
 
 @Injectable({
     providedIn: 'root',
@@ -17,6 +19,7 @@ export class ToolsService {
 
     private selectedSideBarToolID: sidebarToolID;
     private currentDrawingToolID: drawingToolId;
+    public toolSidenavToogle: BehaviorSubject<boolean> = new BehaviorSubject(false);
 
     constructor(
         pencilService: PencilService,
@@ -25,9 +28,10 @@ export class ToolsService {
         eraserService: EraserService,
         lineService: LineService,
         brushService: BrushService,
+        rectangleSelectionService: RectangleSelectorService,
     ) {
         this.currentDrawingTool = pencilService;
-        this.tools = [pencilService, rectangleService, ellipseService, eraserService, lineService, brushService];
+        this.tools = [pencilService, rectangleService, ellipseService, eraserService, lineService, brushService, rectangleSelectionService];
     }
 
     set _currentDrawingTool(newToolID: drawingToolId) {
@@ -49,5 +53,17 @@ export class ToolsService {
 
     set _selectedSideBarToolID(id: sidebarToolID) {
         this.selectedSideBarToolID = id;
+    }
+
+    toggleToolSidenav(): void {
+        this.toolSidenavToogle.next(!this.toolSidenavToogle.getValue());
+    }
+
+    openToolSidenav(): void {
+        this.toolSidenavToogle.next(true);
+    }
+
+    closeToolSidenav(): void {
+        this.toolSidenavToogle.next(false);
     }
 }

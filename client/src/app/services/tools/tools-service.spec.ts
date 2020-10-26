@@ -1,6 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { drawingToolId } from '@app/shared/enum';
+import { ColorSelectionService } from '../color/color-selection-service';
 import { PencilService } from './pencil-service';
 import { ToolsService } from './tools-service';
 
@@ -9,7 +10,7 @@ describe('ToolsService', () => {
     let pencilStub: PencilService;
 
     beforeEach(() => {
-        pencilStub = new PencilService({} as DrawingService);
+        pencilStub = new PencilService({} as DrawingService, {} as ColorSelectionService);
         TestBed.configureTestingModule({
             providers: [{ provide: PencilService, useValue: pencilStub }],
         });

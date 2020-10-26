@@ -1,31 +1,20 @@
 import { Injectable } from '@angular/core';
 import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
+import { ColorSelectionService } from '@app/services/color/color-selection-service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
-import { MouseButton } from '@app/shared/enum';
+import { ColorSelection, MouseButton } from '@app/shared/enum';
 
 @Injectable({
     providedIn: 'root',
 })
 export class PencilService extends Tool {
     private pathData: Vec2[];
-    // Todo: Global AttributesS
-    // private color: string;
-    // private opacity: number;
-    private thickness: number;
 
-    constructor(drawingService: DrawingService) {
+    constructor(drawingService: DrawingService, private colorSelectionService: ColorSelectionService) {
         super(drawingService);
-        this.thickness = 1;
+        this.size = 1;
         this.clearPath();
-    }
-
-    set _thickness(newThickness: number) {
-        this.thickness = newThickness;
-    }
-
-    get _thickness(): number {
-        return this.thickness;
     }
 
     onMouseDown(event: MouseEvent): void {
@@ -62,8 +51,14 @@ export class PencilService extends Tool {
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
         ctx.beginPath();
         ctx.lineCap = 'round';
-        ctx.lineWidth = this.thickness;
-        ctx.strokeStyle = 'black';
+        ctx.lineWidth = this.size!;
+
+        if (this.colorSelection === ColorSelection.primary) {
+            ctx.strokeStyle = this.colorSelectionService.primaryColor.getRgbString();
+        } else if (this.colorSelection === ColorSelection.secondary) {
+            ctx.strokeStyle = this.colorSelectionService.secondaryColor.getRgbString();
+        }
+
         for (const point of path) {
             ctx.lineTo(point.x, point.y);
         }

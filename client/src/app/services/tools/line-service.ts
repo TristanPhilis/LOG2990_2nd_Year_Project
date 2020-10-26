@@ -1,8 +1,10 @@
 import { Injectable } from '@angular/core';
 import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
+import { ColorSelectionService } from '@app/services/color/color-selection-service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { BACKSPACE_KEY, BASE_SNAP_ANGLE, ESCAPE_KEY, MIDDLE_SNAP_ANGLE, SHIFT_KEY } from '@app/shared/constant';
+import { ColorSelection } from '@app/shared/enum';
 
 @Injectable({
     providedIn: 'root',
@@ -12,21 +14,12 @@ export class LineService extends Tool {
     lineStarted: boolean;
     currentCoord: Vec2;
     initialCoord: Vec2;
-    private thickness: number;
 
-    constructor(drawingService: DrawingService) {
+    constructor(drawingService: DrawingService, private colorSelectionService: ColorSelectionService) {
         super(drawingService);
-        this.thickness = 0;
+        this.size = 0;
         this.clearPath();
         this.lineStarted = false;
-    }
-
-    set _thickness(newThickness: number) {
-        this.thickness = newThickness;
-    }
-
-    get _thickness(): number {
-        return this.thickness;
     }
 
     onMouseClick(event: MouseEvent): void {
@@ -59,7 +52,7 @@ export class LineService extends Tool {
     endLine(): void {
         const closingMinDistance = 20;
         const endCoord = this.getAdjustedCoord();
-        const diff = this.getDiff(this.initialCoord, endCoord);
+        const diff = this.getDiff(this.initialCoord, this.currentCoord);
         const closeShape = Math.abs(diff.x) <= closingMinDistance && Math.abs(diff.y) <= closingMinDistance;
         if (closeShape) {
             const ctx = this.drawingService.baseCtx;
@@ -125,21 +118,17 @@ export class LineService extends Tool {
         } else if (angle > MIDDLE_SNAP_ANGLE + BASE_SNAP_ANGLE) {
             point = { x: startingPoint.x, y: this.currentCoord.y };
         } else {
-            point = this.getProjectedPoint(startingPoint, this.currentCoord, angle);
+            point = this.getProjectedPoint(startingPoint);
         }
         return point;
     }
 
-    getProjectedPoint(startingPoint: Vec2, endPoint: Vec2, angle: number): Vec2 {
+    getProjectedPoint(startingPoint: Vec2): Vec2 {
         const diff = this.getDiff(startingPoint, this.currentCoord);
-        // parameter angle is the angle between the line based on the two points and the positive x axis
-        // middle angle is between the line and the 45 degree line from the positive x axis
-        const middleAngle = MIDDLE_SNAP_ANGLE - angle;
-        const currentLineLenght = Math.sqrt(Math.pow(diff.x, 2) + Math.pow(diff.y, 2));
-        const projectedLineLenght = currentLineLenght * Math.cos(middleAngle);
+
         const projectedPoint = {
-            x: startingPoint.x + Math.cos(MIDDLE_SNAP_ANGLE) * projectedLineLenght * Math.sign(diff.x),
-            y: startingPoint.y + Math.sin(MIDDLE_SNAP_ANGLE) * projectedLineLenght * Math.sign(diff.y),
+            x: this.currentCoord.x,
+            y: startingPoint.y + Math.tan(MIDDLE_SNAP_ANGLE) * Math.abs(diff.x) * Math.sign(diff.y),
         };
         return projectedPoint;
     }
@@ -150,7 +139,13 @@ export class LineService extends Tool {
         ctx.beginPath();
 
         ctx.moveTo(this.initialCoord.x, this.initialCoord.y);
-        ctx.lineWidth = this.thickness;
+        ctx.lineWidth = this.size!;
+        if (this.colorSelection === ColorSelection.primary) {
+            ctx.strokeStyle = this.colorSelectionService.primaryColor.getRgbString();
+        } else if (this.colorSelection === ColorSelection.secondary) {
+            ctx.strokeStyle = this.colorSelectionService.secondaryColor.getRgbString();
+        }
+
         for (const point of this.pathData) {
             ctx.lineTo(point.x, point.y);
         }

@@ -1,12 +1,12 @@
 <div class="container">
     <div>
         <li *ngFor="let sidebarTool of sideBarToolsTop" class="sidebar-container-top">
-            <button (click)="onButtonPress(sidebarTool.id)">{{ sidebarTool.name }}</button>
+            <button mat-flat-button (click)="onButtonPress(sidebarTool.id)">{{ sidebarTool.name }}</button>
         </li>
     </div>
     <div>
         <li *ngFor="let sidebarTool of sideBarToolsBottom" class="sidebar-container-bottom">
-            <button (click)="onButtonPress(sidebarTool.id)">{{ sidebarTool.name }}</button>
+            <button mat-flat-button (click)="onButtonPress(sidebarTool.id)">{{ sidebarTool.name }}</button>
         </li>
     </div>
 </div>

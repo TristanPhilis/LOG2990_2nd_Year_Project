@@ -9,21 +9,12 @@ import { MouseButton } from '@app/shared/enum';
 })
 export class EraserService extends Tool {
     private pathData: Vec2[];
-    private thickness: number;
     private five: number = 5;
 
     constructor(drawingService: DrawingService) {
         super(drawingService);
-        this.thickness = this.five; // Replace by an oberversable
+        this.size = this.five; // Remplacer par un observable
         this.clearPath();
-    }
-
-    set _thickness(newThickness: number) {
-        this.thickness = newThickness;
-    }
-
-    get _thickness(): number {
-        return this.thickness;
     }
 
     onMouseDown(event: MouseEvent): void {
@@ -61,7 +52,7 @@ export class EraserService extends Tool {
         ctx.globalCompositeOperation = 'destination-out';
         ctx.beginPath();
         ctx.lineCap = 'round';
-        ctx.lineWidth = this.thickness;
+        ctx.lineWidth = this.size!;
         for (const point of path) {
             ctx.lineTo(point.x, point.y);
         }

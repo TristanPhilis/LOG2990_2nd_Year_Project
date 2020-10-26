@@ -23,6 +23,7 @@ export enum drawingToolId {
     eraserService,
     lineService,
     brushService,
+    rectangleSelectionService,
 }
 
 export enum MouseButton {
@@ -51,4 +52,14 @@ export enum TraceTypes {
 export enum ColorSelection {
     primary,
     secondary,
+}
+
+export enum JointSelection {
+    normal,
+    dot,
+}
+
+export enum SelectionType {
+    rectangle,
+    ellipse,
 }

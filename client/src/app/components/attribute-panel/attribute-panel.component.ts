@@ -7,7 +7,7 @@ import { LineService } from '@app/services/tools/line-service';
 import { PencilService } from '@app/services/tools/pencil-service';
 import { RectangleService } from '@app/services/tools/rectangle-service';
 import { ToolsService } from '@app/services/tools/tools-service';
-import { drawingToolId, sidebarToolID, TraceTypes } from '@app/shared/enum';
+import { drawingToolId, sidebarToolID, Texture, TraceTypes } from '@app/shared/enum';
 // tslint:disable:no-any
 
 @Component({
@@ -20,6 +20,7 @@ export class AttributePanelComponent {
     tracingTools: ToolOptionComponent[];
     shapesTools: ToolOptionComponent[];
     tracingTypes: ToolOptionComponent[];
+    textures: ToolOptionComponent[];
 
     constructor(
         public toolsService: ToolsService,
@@ -31,17 +32,24 @@ export class AttributePanelComponent {
         private brushService: BrushService,
     ) {
         this.tracingTools = [
-            { id: drawingToolId.pencilService, name: 'Pencil', thickness: 10, color: 'dark' },
-            { id: drawingToolId.brushService, name: 'Brush', thickness: 10, color: 'dark' },
+            { id: drawingToolId.pencilService, name: 'Pencil' },
+            { id: drawingToolId.brushService, name: 'Brush' },
         ];
         this.shapesTools = [
-            { id: drawingToolId.rectangleService, name: 'Rectangle', thickness: 10, color: 'dark' },
-            { id: drawingToolId.ellipseService, name: 'Ellipse', thickness: 10, color: 'dark' },
+            { id: drawingToolId.rectangleService, name: 'Rectangle' },
+            { id: drawingToolId.ellipseService, name: 'Ellipse' },
         ];
         this.tracingTypes = [
             { id: TraceTypes.fill, name: 'Fill' },
             { id: TraceTypes.stroke, name: 'Stroke' },
             { id: TraceTypes.fillAndStroke, name: 'Fill and Stroke' },
+        ];
+        this.textures = [
+            { id: Texture.one, name: 'Texture One' },
+            { id: Texture.two, name: 'Texture Two' },
+            { id: Texture.three, name: 'Texture Three' },
+            { id: Texture.four, name: 'Texture Four' },
+            { id: Texture.five, name: 'Texture Five' },
         ];
     }
 
@@ -49,20 +57,26 @@ export class AttributePanelComponent {
         return sidebarToolID;
     }
 
+    get drawingToolId(): typeof drawingToolId {
+        return drawingToolId;
+    }
+
     handleChange(selectedTool: drawingToolId): void {
         this.toolsService._currentDrawingTool = Number(selectedTool);
     }
 
-    handleTraceTypeChange(event: any): void {
-        switch (this.toolsService._selectedSideBarToolID) {
+    handleTraceTypeChange(traceType: TraceTypes): void {
+        switch (
+            this.toolsService._selectedSideBarToolID // Remplacer avec if
+        ) {
             case sidebarToolID.shapes: {
                 switch (this.toolsService._currentDrawingToolID) {
                     case drawingToolId.rectangleService: {
-                        this.rectangleService._traceType = event.target.value;
+                        this.rectangleService._traceType = Number(traceType);
                         break;
                     }
                     case drawingToolId.ellipseService: {
-                        // this.ellipseService._traceType = type;
+                        this.ellipseService.traceType = Number(traceType);
                         break;
                     }
                 }
@@ -73,16 +87,17 @@ export class AttributePanelComponent {
 
     // need any to acces target.valueAsNumber
     // tslint:disable-next-line:no-any
-    sliderChange(event: any): void {
+    sliderChange(size: number): void {
+        // mettre dans toolsService en evitant le switch case
         switch (this.toolsService._selectedSideBarToolID) {
             case sidebarToolID.tracing: {
                 switch (this.toolsService._currentDrawingToolID) {
                     case drawingToolId.pencilService: {
-                        this.pencilService._thickness = event.target.value;
+                        this.pencilService.size = size;
                         break;
                     }
                     case drawingToolId.brushService: {
-                        this.brushService._thickness = event.target.value;
+                        this.brushService.size = size;
                     }
                 }
                 break;
@@ -90,22 +105,47 @@ export class AttributePanelComponent {
             case sidebarToolID.shapes: {
                 switch (this.toolsService._currentDrawingToolID) {
                     case drawingToolId.rectangleService: {
-                        this.rectangleService._thickness = event.target.value;
+                        this.rectangleService.size = size;
                         break;
                     }
                     case drawingToolId.ellipseService: {
-                        this.ellipseService._thickness = event.target.value;
+                        this.ellipseService.size = size;
                         break;
                     }
                 }
                 break;
             }
             case sidebarToolID.line: {
-                this.lineService._thickness = event.target.value;
+                this.lineService.size = size;
                 break;
             }
             case sidebarToolID.eraser: {
-                this.eraserService._thickness = event.target.value;
+                this.eraserService.size = size;
+                break;
+            }
+        }
+    }
+
+    handleTextureChange(texture: Texture): void {
+        switch (texture) {
+            case Texture.one: {
+                this.brushService.selectedTexture = Texture.one;
+                break;
+            }
+            case Texture.two: {
+                this.brushService.selectedTexture = Texture.two;
+                break;
+            }
+            case Texture.three: {
+                this.brushService.selectedTexture = Texture.three;
+                break;
+            }
+            case Texture.four: {
+                this.brushService.selectedTexture = Texture.four;
+                break;
+            }
+            case Texture.five: {
+                this.brushService.selectedTexture = Texture.five;
                 break;
             }
         }

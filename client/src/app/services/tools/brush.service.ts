@@ -3,33 +3,21 @@ import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { MouseButton, Texture } from '@app/shared/enum';
+import { ColorSelectionService } from '../color/color-selection-service';
 
 @Injectable({
     providedIn: 'root',
 })
 export class BrushService extends Tool {
     private pathData: Vec2[];
-    // Todo: Global Attributes
-    // private color: string;
-    // private opacity: number;
-    private thickness: number;
     selectedTexture: Texture;
-    color: string;
 
-    constructor(drawingService: DrawingService) {
+    constructor(drawingService: DrawingService, colorSelectionService: ColorSelectionService) {
         super(drawingService);
-        this.thickness = 1; // Replace with an observable
+        this.size = 1; // Remplacer par un observable
         this.clearPath();
         this.selectedTexture = Texture.one;
         this.color = 'black';
-    }
-
-    set _thickness(newThickness: number) {
-        this.thickness = newThickness;
-    }
-
-    get _thickness(): number {
-        return this.thickness;
     }
 
     onMouseDown(event: MouseEvent): void {
@@ -64,10 +52,11 @@ export class BrushService extends Tool {
     }
 
     private drawBrush(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
+        console.log(this.selectedTexture);
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
         ctx.beginPath();
         ctx.lineCap = 'round';
-        ctx.lineWidth = this.thickness;
+        ctx.lineWidth = this.size!;
         const image = new Image(1, 1);
         image.src = this.selectedTexture;
         const pattern = ctx.createPattern(image, 'repeat');
@@ -77,7 +66,7 @@ export class BrushService extends Tool {
         }
         ctx.stroke();
         ctx.globalCompositeOperation = 'color';
-        ctx.strokeStyle = this.color;
+        ctx.strokeStyle = this.color!;
         ctx.stroke();
         ctx.globalCompositeOperation = 'source-over';
     }

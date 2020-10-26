@@ -12,6 +12,7 @@ describe('ColorSelectionServiceService', () => {
     beforeEach(() => {
         TestBed.configureTestingModule({});
         service = TestBed.inject(ColorSelectionService);
+        // disabling magic-number to assign random rgb values
         // tslint:disable:no-magic-numbers
         primaryColor = new Color(150, 34, 200);
         secondaryColor = new Color(200, 200, 200);
@@ -59,6 +60,16 @@ describe('ColorSelectionServiceService', () => {
         service.secondaryColor = secondaryColor;
         service.swap();
         expect(service.primaryColor).toEqual(secondaryColor);
+        expect(service.secondaryColor).toEqual(primaryColor);
+    });
+
+    it('selectNewColor should change the primary color when second param is true', () => {
+        service.selectNewColor(secondaryColor, true);
+        expect(service.primaryColor).toEqual(secondaryColor);
+    });
+
+    it('selectNewColor should change the secondary color when second param is false', () => {
+        service.selectNewColor(primaryColor, false);
         expect(service.secondaryColor).toEqual(primaryColor);
     });
 });
