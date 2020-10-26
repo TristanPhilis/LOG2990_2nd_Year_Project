@@ -110,17 +110,20 @@ export class SidebarComponent {
                 break;
             }
             case sidebarToolID.openCarrousel: {
-                const dialogRef = this.dialog.open(CarouselComponent);
-
-                dialogRef.afterClosed().subscribe((result) => {
-                    console.log(`Dialog result: ${result}`);
-                });
-                break;
+              this.isDialogOpen = true;
+              const dialogRef = this.dialog.open(CarouselComponent);
+              dialogRef.afterClosed().subscribe(() => {
+                  this.isDialogOpen = false;
+              });
+              break;
             }
             case sidebarToolID.saveCurrent: {
-                const dialogRef = this.dialog.open(SavePopupComponent);
-                this.isDialogOpen = true;
-                break;
+              this.isDialogOpen = true;
+              const dialogRef = this.dialog.open(SavePopupComponent);
+              dialogRef.afterClosed().subscribe(() => {
+                  this.isDialogOpen = false;
+              });
+              break;
             }
             case sidebarToolID.exportCurrent: {
                 this.isDialogOpen = true;
