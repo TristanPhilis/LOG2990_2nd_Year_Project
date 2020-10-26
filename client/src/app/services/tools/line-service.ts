@@ -48,12 +48,12 @@ export class LineService extends Tool {
         }
     }
 
-    onMouseDoubleClick(event: MouseEvent, undoRedo: UndoRedoService): void {
+    onMouseDoubleClick(undoRedo: UndoRedoService): void {
+        undoRedo.undoPile.push({ path: this.pathData, id: 'line' });
         if (this.lineStarted) {
-            const onMouseclickTriggerAdjustment = 2;
-            this.pathData.splice(this.pathData.length - onMouseclickTriggerAdjustment, onMouseclickTriggerAdjustment);
+            // const onMouseclickTriggerAdjustment = 2;
+            // this.pathData.splice(this.pathData.length - onMouseclickTriggerAdjustment, onMouseclickTriggerAdjustment);
             this.drawLine(this.drawingService.baseCtx);
-            undoRedo.undoPile.push({ path: this.pathData });
             this.endLine();
         }
     }
