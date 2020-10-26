@@ -63,6 +63,7 @@ export class IndexController {
         });
 
         this.router.post('/send', (req: Request, res: Response, next: NextFunction) => {
+            console.log('hi');
             const drawingInfo: DrawingInfo = req.body;
             this.databaseService
                 .addDrawing(drawingInfo)
