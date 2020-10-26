@@ -1,5 +1,6 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatDialogModule } from '@angular/material/dialog';
+import { MatSidenavModule } from '@angular/material/sidenav';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AttributePanelComponent } from '@app/components/attribute-panel/attribute-panel.component';
@@ -21,7 +22,7 @@ describe('EditorComponent', () => {
 
     beforeEach(async(() => {
         TestBed.configureTestingModule({
-            imports: [MatDialogModule, BrowserModule, BrowserAnimationsModule],
+            imports: [MatDialogModule, BrowserModule, BrowserAnimationsModule, MatSidenavModule],
             declarations: [EditorComponent, MockComponents(SidebarComponent, AttributePanelComponent, DrawingComponent)],
         }).compileComponents();
     }));

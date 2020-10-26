@@ -10,9 +10,6 @@
         </mat-sidenav>
     </mat-sidenav-container>
 
-    <!-- <div>
-        <app-sidebar-color-options></app-sidebar-color-options>
-    </div> -->
     <div #workzone class="drawing-container">
         <app-drawing [canvasSize]="canvasSize" class="drawing" tabindex="0"></app-drawing>
         <div #bottomAnchor id="bottomAnchor" class="anchor" (mousedown)="onMouseDown($event, 0)"></div>

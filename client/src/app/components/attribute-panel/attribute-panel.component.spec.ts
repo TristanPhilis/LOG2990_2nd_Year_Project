@@ -7,6 +7,14 @@ describe('AttributePanelComponent', () => {
     let component: AttributePanelComponent;
     let fixture: ComponentFixture<AttributePanelComponent>;
 
+    // let toolsServiceSpy: jasmine.SpyObj<ToolsService>;
+    // let pencilServiceSpy: jasmine.SpyObj<PencilService>;
+    // let rectangleService: jasmine.SpyObj<ToolsService>;
+    // let ellipseService: jasmine.SpyObj<ToolsService>;
+    // let lineService: jasmine.SpyObj<ToolsService>;
+    // let eraserService: jasmine.SpyObj<ToolsService>;
+    // let brushService: jasmine.SpyObj<ToolsService>;
+
     beforeEach(async(() => {
         TestBed.configureTestingModule({
             declarations: [AttributePanelComponent, MockComponent(SidebarColorOptionsComponent)],
@@ -22,4 +30,6 @@ describe('AttributePanelComponent', () => {
     it('should create', () => {
         expect(component).toBeTruthy();
     });
+
+    it('Should change the current drawing tool', () => {});
 });

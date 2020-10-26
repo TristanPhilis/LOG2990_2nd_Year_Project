@@ -66,7 +66,9 @@ export class AttributePanelComponent {
     }
 
     handleTraceTypeChange(traceType: TraceTypes): void {
-        switch (this.toolsService._selectedSideBarToolID) {
+        switch (
+            this.toolsService._selectedSideBarToolID // Remplacer avec if
+        ) {
             case sidebarToolID.shapes: {
                 switch (this.toolsService._currentDrawingToolID) {
                     case drawingToolId.rectangleService: {
@@ -86,6 +88,7 @@ export class AttributePanelComponent {
     // need any to acces target.valueAsNumber
     // tslint:disable-next-line:no-any
     sliderChange(size: number): void {
+        // mettre dans toolsService en evitant le switch case
         switch (this.toolsService._selectedSideBarToolID) {
             case sidebarToolID.tracing: {
                 switch (this.toolsService._currentDrawingToolID) {
