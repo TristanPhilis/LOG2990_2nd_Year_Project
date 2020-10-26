@@ -29,8 +29,14 @@ export class RectangleSelectorService extends Tool {
     }
 
     onMouseUp(event: MouseEvent): void {
-        if (this.isAreaSelected) {
+        if (this.mouseDown && !this.isAreaSelected) {
+            this.selectArea(this.drawingService.baseCtx);
+            this.isAreaSelected = true;
+            this.mouseDown = false;
+        }
+        if (this.mouseDown && this.isAreaSelected) {
             this.moveSelection(this.drawingService.baseCtx);
+            this.isAreaSelected = false;
         }
         this.mouseDown = false;
     }
@@ -41,7 +47,7 @@ export class RectangleSelectorService extends Tool {
             this.rectangleSelection(this.drawingService.previewCtx);
         }
         if (this.mouseDown && !(event.buttons === MouseButton.Left) && !this.isAreaSelected) {
-            this.rectangleSelection(this.drawingService.baseCtx);
+            this.selectArea(this.drawingService.baseCtx);
             this.mouseDown = false;
         }
 
@@ -64,7 +70,6 @@ export class RectangleSelectorService extends Tool {
 
         ctx.strokeStyle = '#111155';
         // tslint:disable-next-line: no-magic-numbers
-        this.selectedArea = ctx.getImageData(this.initialCoord.x, this.initialCoord.y, width, height);
         ctx.setLineDash([5, 15]);
         ctx.rect(this.initialCoord.x, this.initialCoord.y, width, height);
         ctx.stroke();
@@ -75,14 +80,26 @@ export class RectangleSelectorService extends Tool {
         this.savedInitialCoords = this.initialCoord;
     }
 
+    private selectArea(ctx: CanvasRenderingContext2D): void {
+        this.drawingService.clearCanvas(this.drawingService.previewCtx);
+
+        const width = this.mouseDownCoord.x - this.initialCoord.x;
+        const height = this.mouseDownCoord.y - this.initialCoord.y;
+
+        this.selectedArea = ctx.getImageData(this.initialCoord.x, this.initialCoord.y, width, height);
+
+        this.savedHeight = height;
+        this.savedWidth = width;
+        this.savedInitialCoords = this.initialCoord;
+    }
+
     private moveSelection(ctx: CanvasRenderingContext2D): void {
+        this.drawingService.clearCanvas(this.drawingService.previewCtx);
         ctx.beginPath();
-        ctx.globalCompositeOperation = 'source-out';
+        ctx.globalCompositeOperation = 'destination-out';
         ctx.rect(this.savedInitialCoords.x, this.savedInitialCoords.y, this.savedWidth, this.savedHeight);
         ctx.fill();
-
         ctx.globalCompositeOperation = 'source-over';
         ctx.putImageData(this.selectedArea, this.mouseDownCoord.x, this.mouseDownCoord.y);
-        
     }
 }
