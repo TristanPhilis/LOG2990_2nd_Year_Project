@@ -25,6 +25,9 @@ export class RectangleSelectorService extends Tool {
             const currentCoord = this.getPositionFromMouse(event);
             this.initialCoord = currentCoord;
             this.mouseDownCoord = currentCoord;
+            if (this.isAreaSelected) {
+                this.clearSelectedArea(this.drawingService.baseCtx);
+            }
         }
     }
 
@@ -35,6 +38,7 @@ export class RectangleSelectorService extends Tool {
             this.mouseDown = false;
         }
         if (this.mouseDown && this.isAreaSelected) {
+            this.clearSelectedArea(this.drawingService.baseCtx);
             this.moveSelection(this.drawingService.baseCtx);
             this.isAreaSelected = false;
         }
@@ -90,16 +94,27 @@ export class RectangleSelectorService extends Tool {
 
         this.savedHeight = height;
         this.savedWidth = width;
-        this.savedInitialCoords = this.initialCoord;
     }
 
     private moveSelection(ctx: CanvasRenderingContext2D): void {
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
+        ctx.globalCompositeOperation = 'source-over';
+        let movingCoordX: number;
+        let movingCoordY: number;
+        const differenceX = this.mouseDownCoord.x - (this.savedInitialCoords.x + this.savedWidth / 2);
+        const differenceY = this.mouseDownCoord.y - (this.savedInitialCoords.y + this.savedHeight / 2);
+
+        movingCoordX = this.savedInitialCoords.x + differenceX;
+        movingCoordY = this.savedInitialCoords.y + differenceY;
+
+        ctx.putImageData(this.selectedArea, movingCoordX, movingCoordY);
+    }
+
+    private clearSelectedArea(ctx: CanvasRenderingContext2D): void {
         ctx.beginPath();
         ctx.globalCompositeOperation = 'destination-out';
         ctx.rect(this.savedInitialCoords.x, this.savedInitialCoords.y, this.savedWidth, this.savedHeight);
         ctx.fill();
         ctx.globalCompositeOperation = 'source-over';
-        ctx.putImageData(this.selectedArea, this.mouseDownCoord.x, this.mouseDownCoord.y);
     }
 }
