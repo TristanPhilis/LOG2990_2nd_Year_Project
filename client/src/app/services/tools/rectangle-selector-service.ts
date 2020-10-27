@@ -14,6 +14,7 @@ export class RectangleSelectorService extends Tool {
     savedWidth: number;
     savedHeight: number;
     savedInitialCoords: Vec2;
+    imageLocation: Vec2;
 
     constructor(drawingService: DrawingService) {
         super(drawingService);
@@ -82,6 +83,7 @@ export class RectangleSelectorService extends Tool {
         this.savedHeight = height;
         this.savedWidth = width;
         this.savedInitialCoords = this.initialCoord;
+        this.imageLocation = this.savedInitialCoords;
     }
 
     private selectArea(ctx: CanvasRenderingContext2D): void {
@@ -99,13 +101,12 @@ export class RectangleSelectorService extends Tool {
     private moveSelection(ctx: CanvasRenderingContext2D): void {
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
         ctx.globalCompositeOperation = 'source-over';
-        let movingCoordX: number;
-        let movingCoordY: number;
+
         const differenceX = this.mouseDownCoord.x - (this.savedInitialCoords.x + this.savedWidth / 2);
         const differenceY = this.mouseDownCoord.y - (this.savedInitialCoords.y + this.savedHeight / 2);
 
-        movingCoordX = this.savedInitialCoords.x + differenceX;
-        movingCoordY = this.savedInitialCoords.y + differenceY;
+        const movingCoordX = this.savedInitialCoords.x + differenceX;
+        const movingCoordY = this.savedInitialCoords.y + differenceY;
 
         ctx.putImageData(this.selectedArea, movingCoordX, movingCoordY);
     }
@@ -116,5 +117,34 @@ export class RectangleSelectorService extends Tool {
         ctx.rect(this.savedInitialCoords.x, this.savedInitialCoords.y, this.savedWidth, this.savedHeight);
         ctx.fill();
         ctx.globalCompositeOperation = 'source-over';
+    }
+
+    onKeyDown(event: KeyboardEvent): void {
+        if (this.isAreaSelected) {
+            switch (event.key) {
+                case 'ArrowDown':
+                    // tslint:disable-next-line: no-magic-numbers
+                    this.imageLocation.y += 10;
+                    this.drawingService.baseCtx.putImageData(this.selectedArea, this.imageLocation.x, this.imageLocation.y);
+                    break;
+                case 'ArrowUp':
+                    // tslint:disable-next-line: no-magic-numbers
+                    this.imageLocation.y -= 10;
+                    this.drawingService.baseCtx.putImageData(this.selectedArea, this.imageLocation.x, this.imageLocation.y);
+                    break;
+                case 'ArrowLeft':
+                    // tslint:disable-next-line: no-magic-numbers
+                    this.imageLocation.x -= 10;
+                    this.drawingService.baseCtx.putImageData(this.selectedArea, this.imageLocation.x, this.imageLocation.y);
+                    break;
+                case 'ArrowRight':
+                    // tslint:disable-next-line: no-magic-numbers
+                    this.imageLocation.x += 10;
+                    this.drawingService.baseCtx.putImageData(this.selectedArea, this.imageLocation.x, this.imageLocation.y);
+                    break;
+                default:
+                    return;
+            }
+        }
     }
 }
