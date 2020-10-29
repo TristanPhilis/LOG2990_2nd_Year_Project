@@ -4,17 +4,20 @@ import { Vec2 } from '@app/classes/vec2';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { SHIFT_KEY } from '@app/shared/constant';
 import { MouseButton, TraceTypes } from '@app/shared/enum';
+import { UndoRedoService } from './undoRedo-service';
 
 @Injectable({
     providedIn: 'root',
 })
 export class RectangleService extends Tool {
     initialCoord: Vec2;
+    private pathData: Vec2[];
     private thickness: number;
     private traceType: number;
 
     constructor(drawingService: DrawingService) {
         super(drawingService);
+        this.clearPath();
         this.thickness = 0;
         this.traceType = 0;
     }
@@ -41,20 +44,24 @@ export class RectangleService extends Tool {
             const currentCoord = this.getPositionFromMouse(event);
             this.initialCoord = currentCoord;
             this.mouseDownCoord = currentCoord;
+            this.pathData.push(this.mouseDownCoord);
         }
     }
 
-    onMouseUp(event: MouseEvent): void {
+    onMouseUp(event: MouseEvent, undoRedo: UndoRedoService): void {
         if (this.mouseDown) {
+            undoRedo.undoPile.push({ path: this.pathData, id: 'rectangle' });
             this.drawRectangle(this.drawingService.baseCtx);
         }
         this.mouseDown = false;
+        this.clearPath();
     }
 
     onMouseMove(event: MouseEvent): void {
         if (this.mouseDown && event.buttons === MouseButton.Left) {
             this.mouseDownCoord = this.getPositionFromMouse(event);
             this.drawRectangle(this.drawingService.previewCtx);
+            this.pathData.push(this.mouseDownCoord);
         }
         if (this.mouseDown && !(event.buttons === MouseButton.Left)) {
             this.drawRectangle(this.drawingService.baseCtx);
@@ -80,7 +87,7 @@ export class RectangleService extends Tool {
         }
     }
 
-    private drawRectangle(ctx: CanvasRenderingContext2D): void {
+    drawRectangle(ctx: CanvasRenderingContext2D): void {
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
         ctx.beginPath();
         // tslint:disable-next-line: prefer-const
@@ -111,5 +118,8 @@ export class RectangleService extends Tool {
             default:
                 ctx.fill();
         }
+    }
+    private clearPath(): void {
+        this.pathData = [];
     }
 }

@@ -3,6 +3,7 @@ import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { MouseButton, Texture } from '@app/shared/enum';
+import { UndoRedoService } from './undoRedo-service';
 
 @Injectable({
     providedIn: 'root',
@@ -41,8 +42,9 @@ export class BrushService extends Tool {
         }
     }
 
-    onMouseUp(event: MouseEvent): void {
+    onMouseUp(event: MouseEvent, undoRedo: UndoRedoService): void {
         if (this.mouseDown) {
+            undoRedo.undoPile.push({ path: this.pathData, id: 'brush' });
             const mousePosition = this.getPositionFromMouse(event);
             this.pathData.push(mousePosition);
             this.drawBrush(this.drawingService.baseCtx, this.pathData);
@@ -63,7 +65,7 @@ export class BrushService extends Tool {
         }
     }
 
-    private drawBrush(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
+    drawBrush(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
         ctx.beginPath();
         ctx.lineCap = 'round';

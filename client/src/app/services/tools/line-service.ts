@@ -49,8 +49,8 @@ export class LineService extends Tool {
     }
 
     onMouseDoubleClick(undoRedo: UndoRedoService): void {
-        undoRedo.undoPile.push({ path: this.pathData, id: 'line' });
         if (this.lineStarted) {
+            undoRedo.undoPile.push({ path: this.pathData, id: 'line' });
             // const onMouseclickTriggerAdjustment = 2;
             // this.pathData.splice(this.pathData.length - onMouseclickTriggerAdjustment, onMouseclickTriggerAdjustment);
             this.drawLine(this.drawingService.baseCtx);
@@ -146,7 +146,7 @@ export class LineService extends Tool {
         return projectedPoint;
     }
 
-    private drawLine(ctx: CanvasRenderingContext2D): void {
+    drawLine(ctx: CanvasRenderingContext2D): void {
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
         const adjustedCoord = this.getAdjustedCoord();
         ctx.beginPath();

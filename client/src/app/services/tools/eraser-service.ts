@@ -3,6 +3,7 @@ import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { MouseButton } from '@app/shared/enum';
+import { UndoRedoService } from './undoRedo-service';
 
 // Ceci est une implémentation de base de l'outil Crayon pour aider à débuter le projet
 // L'implémentation ici ne couvre pas tous les critères d'accepetation du projet
@@ -39,11 +40,12 @@ export class EraserService extends Tool {
         }
     }
 
-    onMouseUp(event: MouseEvent): void {
+    onMouseUp(event: MouseEvent, undoRedo: UndoRedoService): void {
         if (this.mouseDown) {
             const mousePosition = this.getPositionFromMouse(event);
             this.pathData.push(mousePosition);
             this.eraseLine(this.drawingService.baseCtx, this.pathData);
+            undoRedo.undoPile.push({ path: this.pathData, id: 'erase' });
         }
         this.mouseDown = false;
         this.clearPath();
@@ -61,7 +63,7 @@ export class EraserService extends Tool {
         }
     }
 
-    private eraseLine(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
+    eraseLine(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
         ctx.globalCompositeOperation = 'destination-out';
         ctx.beginPath();
         ctx.lineCap = 'round';
