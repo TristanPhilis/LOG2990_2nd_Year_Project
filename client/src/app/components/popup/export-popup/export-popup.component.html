@@ -1,0 +1,29 @@
+<h1 mat-dialog-title align="center">Exporter mon dessin</h1>
+<div class="container" mat-dialog-content>
+    <div class=column>
+        <mat-radio-group class="type-container" (change)="fileType = $event.value">
+            <p>Choisir le type de fichier</p>
+            <mat-radio-button class="radio-button" value="png" [checked]="true">png</mat-radio-button>
+            <mat-radio-button class="radio-button" value="jpeg">jpeg</mat-radio-button>
+        </mat-radio-group>
+        <mat-form-field>
+            <mat-label>Nom du fichier</mat-label>
+            <input matInput [formControl]="nameInput" autocomplete="off">
+            <span matSuffix>.{{fileType}}</span>
+            <mat-error *ngIf="nameInput.invalid">Le champ nom est requis</mat-error>
+        </mat-form-field>
+        <mat-radio-group class="filter-container" (change)="updateFilter($event.value)">
+            <p>Appliquer un filtre</p>
+            <mat-radio-button class="radio-button" *ngFor="let filter of filterOptions;" [value]="filter.value">
+                {{filter.name}}
+            </mat-radio-button>
+        </mat-radio-group>
+    </div>
+    <div class="preview-container">
+        <canvas id="canvas" #previewCanvas></canvas>
+    </div>
+</div>
+<div mat-dialog-actions>
+    <button mat-raised-button (click)="exportDrawing()" mat-dialog-close [disabled]="nameInput.invalid">Exporter</button>
+    <button mat-raised-button mat-dialog-close>Annuler</button>
+</div>

@@ -1,6 +1,8 @@
 import { Component, HostListener } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { CreateNewDrawingComponent } from '@app/components/create-new-drawing/create-new-drawing.component';
 import { GuideComponent } from '@app/components/guide/guide.component';
+import { ExportPopupComponent } from '@app/components/popup/export-popup/export-popup.component';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ToolsService } from '@app/services/tools/tools-service';
 import { UndoRedoService } from '@app/services/tools/undoRedo-service';
@@ -19,6 +21,7 @@ export class SidebarComponent {
     sideBarToolsBottom: SidebarToolComponent[];
 
     showDrawingTools: boolean;
+    private isDialogOpen: boolean;
 
     constructor(
         private toolsService: ToolsService,
@@ -83,15 +86,26 @@ export class SidebarComponent {
             }
             case sidebarToolID.createNew: {
                 this.undoRedo.clearPile();
-                this.drawingService.clearCanvas(this.drawingService.baseCtx);
-                this.drawingService.clearCanvas(this.drawingService.previewCtx);
+                this.isDialogOpen = true;
+                const dialogRef = this.dialog.open(CreateNewDrawingComponent);
+                dialogRef.afterClosed().subscribe(() => {
+                    this.isDialogOpen = false;
+                });
                 break;
             }
             case sidebarToolID.openGuide: {
+                this.isDialogOpen = true;
                 const dialogRef = this.dialog.open(GuideComponent);
-
-                dialogRef.afterClosed().subscribe((result) => {
-                    console.log(`Dialog result: ${result}`);
+                dialogRef.afterClosed().subscribe(() => {
+                    this.isDialogOpen = false;
+                });
+                break;
+            }
+            case sidebarToolID.exportCurrent: {
+                this.isDialogOpen = true;
+                const dialogRef = this.dialog.open(ExportPopupComponent);
+                dialogRef.afterClosed().subscribe(() => {
+                    this.isDialogOpen = false;
                 });
                 break;
             }
@@ -118,6 +132,9 @@ export class SidebarComponent {
                 this.drawingService.clearCanvas(this.drawingService.baseCtx);
                 this.drawingService.clearCanvas(this.drawingService.previewCtx);
             },
+            'C-e': () => {
+                this.onButtonPress(sidebarToolID.exportCurrent);
+            },
         };
         const func: callback | undefined = kbd[keys];
         if (func) {
@@ -128,10 +145,17 @@ export class SidebarComponent {
 
     @HostListener('window: keyup', ['$event'])
     onKeyUp(event: KeyboardEvent): void {
+        if (this.isDialogOpen) {
+            return;
+        }
         const kbd: { [id: string]: callback } = {
             c: () => {
                 this.onButtonPress(sidebarToolID.tracing);
                 this.toolsService._currentDrawingTool = drawingToolId.pencilService;
+            },
+            w: () => {
+                this.onButtonPress(sidebarToolID.tracing);
+                this.toolsService._currentDrawingTool = drawingToolId.brushService;
             },
             e: () => this.onButtonPress(sidebarToolID.eraser),
             l: () => this.onButtonPress(sidebarToolID.line),

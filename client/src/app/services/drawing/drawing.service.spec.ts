@@ -13,6 +13,11 @@ describe('DrawingService', () => {
         service.previewCtx = canvasTestHelper.drawCanvas.getContext('2d') as CanvasRenderingContext2D;
     });
 
+    afterEach(() => {
+        canvasTestHelper.canvas.getContext('2d')?.clearRect(0, 0, canvasTestHelper.canvas.width, canvasTestHelper.canvas.height);
+        canvasTestHelper.drawCanvas.getContext('2d')?.clearRect(0, 0, canvasTestHelper.canvas.width, canvasTestHelper.canvas.height);
+    });
+
     it('should be created', () => {
         expect(service).toBeTruthy();
     });
@@ -21,6 +26,15 @@ describe('DrawingService', () => {
         service.clearCanvas(service.baseCtx);
         const pixelBuffer = new Uint32Array(service.baseCtx.getImageData(0, 0, service.canvas.width, service.canvas.height).data.buffer);
         const hasColoredPixels = pixelBuffer.some((color) => color !== 0);
+        expect(hasColoredPixels).toEqual(false);
+    });
+
+    it('Background should be white', () => {
+        service.clearCanvas(service.baseCtx);
+        service.fillWhiteBackground();
+        const pixelBuffer = new Uint32Array(service.baseCtx.getImageData(0, 0, service.canvas.width, service.canvas.height).data.buffer);
+        const white = 0xffffffff;
+        const hasColoredPixels = pixelBuffer.some((color) => color !== white);
         expect(hasColoredPixels).toEqual(false);
     });
 

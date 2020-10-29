@@ -12,7 +12,7 @@ import { UndoRedoService } from '@app/services/tools/undoRedo-service';
 })
 export class DrawingComponent implements AfterViewInit, OnChanges {
     @ViewChild('baseCanvas', { static: false }) baseCanvas: ElementRef<HTMLCanvasElement>;
-    // On utilise ce canvas pour dessiner sans affecter le dessin final
+    // We use this canvas to draw without affecting the final drawing
     @ViewChild('previewCanvas', { static: false }) previewCanvas: ElementRef<HTMLCanvasElement>;
 
     private baseCtx: CanvasRenderingContext2D;
@@ -29,6 +29,7 @@ export class DrawingComponent implements AfterViewInit, OnChanges {
         this.drawingService.baseCtx = this.baseCtx;
         this.drawingService.previewCtx = this.previewCtx;
         this.drawingService.canvas = this.baseCanvas.nativeElement;
+        this.drawingService.fillWhiteBackground();
     }
 
     ngOnChanges(changes: SimpleChanges): void {
@@ -45,6 +46,7 @@ export class DrawingComponent implements AfterViewInit, OnChanges {
         this.baseCanvas.nativeElement.height = this.height;
         this.previewCanvas.nativeElement.width = this.width;
         this.previewCanvas.nativeElement.height = this.height;
+        this.drawingService.fillWhiteBackground();
         this.drawingService.setImageData(savedImageData);
     }
 

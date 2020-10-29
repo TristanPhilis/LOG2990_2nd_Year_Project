@@ -1,0 +1,5 @@
+<p>Cette action effacera le canvas</p>
+<mat-dialog-actions align="end">
+    <button mat-button mat-dialog-close>Annuler</button>
+    <button mat-button (click)="this.clearCanvas()" [mat-dialog-close]="true">Accepter</button>
+</mat-dialog-actions>
