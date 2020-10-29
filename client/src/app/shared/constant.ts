@@ -2,7 +2,13 @@ export const MIN_CANVAS_SIZE = 250;
 export const SHIFT_KEY = 'Shift';
 export const BACKSPACE_KEY = 'Backspace';
 export const ESCAPE_KEY = 'Escape';
-
+export const DEPLACEMENT = 3;
+export const DASHLINE_EMPTY = 5;
+export const DASHLINE_FULL = 15;
+export const ARROW_UP = 38;
+export const ARROW_DOWN = 40;
+export const ARROW_LEFT = 37;
+export const ARROW_RIGHT = 39;
 export const PERCENT_MULTIPLIER = 0.01;
 export const MIDDLE_ANGLE_SNAP_DIVIDER = 4;
 export const BASE_ANGLE_SNAP_DIVIDER = 8;

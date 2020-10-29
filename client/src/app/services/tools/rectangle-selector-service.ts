@@ -1,8 +1,11 @@
-import { Injectable } from '@angular/core';
+import { Injectable, HostListener } from '@angular/core';
 import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { DASHLINE_EMPTY, DASHLINE_FULL, DEPLACEMENT } from '@app/shared/constant';
 import { MouseButton } from '@app/shared/enum';
+
+declare type callback = () => void;
 
 @Injectable({
     providedIn: 'root',
@@ -74,8 +77,8 @@ export class RectangleSelectorService extends Tool {
         const height = this.mouseDownCoord.y - this.initialCoord.y;
 
         ctx.strokeStyle = '#111155';
-        // tslint:disable-next-line: no-magic-numbers
-        ctx.setLineDash([5, 15]);
+
+        ctx.setLineDash([DASHLINE_EMPTY, DASHLINE_FULL]);
         ctx.rect(this.initialCoord.x, this.initialCoord.y, width, height);
         ctx.stroke();
         ctx.setLineDash([]);
@@ -96,6 +99,7 @@ export class RectangleSelectorService extends Tool {
 
         this.savedHeight = height;
         this.savedWidth = width;
+        this.savedInitialCoords = this.initialCoord;
     }
 
     private moveSelection(ctx: CanvasRenderingContext2D): void {
@@ -119,32 +123,53 @@ export class RectangleSelectorService extends Tool {
         ctx.globalCompositeOperation = 'source-over';
     }
 
+    private getComposedKey(event: KeyboardEvent): string {
+        let keys = '';
+        if (event.key === 'ArrowDown') {
+            keys += 'D-';
+        }
+        if (event.key === 'ArrowUp') {
+            keys += 'U-';
+        }
+        if (event.key === 'ArrowLeft') {
+            keys += 'L-';
+        }
+        if (event.key === 'ArrowRight') {
+            keys += 'R-';
+        }
+        keys += event.key.toLowerCase();
+        return keys;
+    }
+
+    @HostListener('window: keydown', ['$event'])
     onKeyDown(event: KeyboardEvent): void {
-        if (this.isAreaSelected) {
-            switch (event.key) {
-                case 'ArrowDown':
-                    // tslint:disable-next-line: no-magic-numbers
-                    this.imageLocation.y += 10;
-                    this.drawingService.baseCtx.putImageData(this.selectedArea, this.imageLocation.x, this.imageLocation.y);
-                    break;
-                case 'ArrowUp':
-                    // tslint:disable-next-line: no-magic-numbers
-                    this.imageLocation.y -= 10;
-                    this.drawingService.baseCtx.putImageData(this.selectedArea, this.imageLocation.x, this.imageLocation.y);
-                    break;
-                case 'ArrowLeft':
-                    // tslint:disable-next-line: no-magic-numbers
-                    this.imageLocation.x -= 10;
-                    this.drawingService.baseCtx.putImageData(this.selectedArea, this.imageLocation.x, this.imageLocation.y);
-                    break;
-                case 'ArrowRight':
-                    // tslint:disable-next-line: no-magic-numbers
-                    this.imageLocation.x += 10;
-                    this.drawingService.baseCtx.putImageData(this.selectedArea, this.imageLocation.x, this.imageLocation.y);
-                    break;
-                default:
-                    return;
-            }
+        const keys: string = this.getComposedKey(event);
+        const kbd: { [id: string]: callback } = {
+            'D-arrowleft': () => {
+                this.imageLocation.y += DEPLACEMENT;
+                this.imageLocation.x -= DEPLACEMENT;
+                this.drawingService.baseCtx.putImageData(this.selectedArea, this.imageLocation.x, this.imageLocation.y);
+            },
+            'D-ArrowRight': () => {
+                this.imageLocation.y += DEPLACEMENT;
+                this.imageLocation.x += DEPLACEMENT;
+                this.drawingService.baseCtx.putImageData(this.selectedArea, this.imageLocation.x, this.imageLocation.y);
+            },
+            'U-ArrowLeft': () => {
+                this.imageLocation.x -= DEPLACEMENT;
+                this.imageLocation.x -= DEPLACEMENT;
+                this.drawingService.baseCtx.putImageData(this.selectedArea, this.imageLocation.x, this.imageLocation.y);
+            },
+            'U-ArrowRight': () => {
+                this.imageLocation.x -= DEPLACEMENT;
+                this.imageLocation.x += DEPLACEMENT;
+                this.drawingService.baseCtx.putImageData(this.selectedArea, this.imageLocation.x, this.imageLocation.y);
+            },
+        };
+        const func: callback | undefined = kbd[keys];
+        if (func) {
+            // event.preventDefault();
+            func();
         }
     }
 }
