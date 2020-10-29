@@ -47,29 +47,40 @@ export class UndoRedoService extends Tool {
     }
 
     draw(): void {
-        if (this.undoPile.length <= 0 || this.redoPile.length <= 0) {
-            console.log('tes');
+        if (this.undoPile.length < 0 || this.redoPile.length < 0) {
             return;
         }
         this.drawingService.clearCanvas(this.drawingService.baseCtx);
         for (var i = 0; i < this.undoPile.length; i++) {
             const pt = this.undoPile[i];
-            if (pt.id == 'line') {
-                this.lineService.drawLine(this.drawingService.baseCtx);
-            } else if (pt.id == 'brush') {
-                this.brushService.drawBrush(this.drawingService.baseCtx, pt.path);
-            } else if (pt.id == 'pencil') {
-                this.pencilService.drawLine(this.drawingService.baseCtx, pt.path);
-            } else if (pt.id == 'erase') {
-                this.eraserService.eraseLine(this.drawingService.baseCtx, pt.path);
-            } else if (pt.id == 'rectangle') {
-                this.rectangleService.drawRectangle(this.drawingService.baseCtx);
-            } else if (pt.id == 'ellipse') {
-                this.ellipseService.drawEllipse(this.drawingService.baseCtx);
+            switch (pt.id) {
+                case 'line': {
+                    this.lineService.drawLine(this.drawingService.baseCtx);
+                    // break;
+                }
+                case 'brush': {
+                    this.brushService.drawBrush(this.drawingService.baseCtx, pt.path);
+                    break;
+                }
+                case 'pencil': {
+                    this.pencilService.drawLine(this.drawingService.baseCtx, pt.path);
+                    break;
+                }
+                case 'erase': {
+                    this.eraserService.eraseLine(this.drawingService.baseCtx, pt.path);
+                    break;
+                }
+                case 'rectangle': {
+                    this.rectangleService.drawRectangle(this.drawingService.baseCtx);
+                    break;
+                }
+                case 'ellipse': {
+                    this.ellipseService.drawEllipse(this.drawingService.baseCtx);
+                    break;
+                }
             }
         }
-        console.log('this.undoPile', this.undoPile);
-        console.log('this.redoPile', this.redoPile);
+        console.log(i);
     }
 
     clearPile() {

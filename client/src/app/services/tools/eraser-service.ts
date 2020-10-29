@@ -41,7 +41,7 @@ export class EraserService extends Tool {
             const mousePosition = this.getPositionFromMouse(event);
             this.pathData.push(mousePosition);
             this.eraseLine(this.drawingService.baseCtx, this.pathData);
-            undoRedo.undoPile.push({ path: this.pathData, id: 'erase' });
+            undoRedo.undoPile.push({ path: this.pathData, id: 'erase', thickness: this._thickness });
         }
         this.mouseDown = false;
         this.clearPath();

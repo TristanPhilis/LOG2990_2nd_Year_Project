@@ -50,7 +50,7 @@ export class LineService extends Tool {
 
     onMouseDoubleClick(undoRedo: UndoRedoService): void {
         if (this.lineStarted) {
-            undoRedo.undoPile.push({ path: this.pathData, id: 'line' });
+            undoRedo.undoPile.push({ path: this.pathData, id: 'line', thickness: this._thickness });
             // const onMouseclickTriggerAdjustment = 2;
             // this.pathData.splice(this.pathData.length - onMouseclickTriggerAdjustment, onMouseclickTriggerAdjustment);
             this.drawLine(this.drawingService.baseCtx);

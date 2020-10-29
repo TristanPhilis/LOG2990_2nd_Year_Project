@@ -44,13 +44,14 @@ export class RectangleService extends Tool {
             const currentCoord = this.getPositionFromMouse(event);
             this.initialCoord = currentCoord;
             this.mouseDownCoord = currentCoord;
-            this.pathData.push(this.mouseDownCoord);
+            this.pathData.push(currentCoord);
         }
     }
 
     onMouseUp(event: MouseEvent, undoRedo: UndoRedoService): void {
         if (this.mouseDown) {
-            undoRedo.undoPile.push({ path: this.pathData, id: 'rectangle' });
+            this.pathData.push(this.mouseDownCoord);
+            undoRedo.undoPile.push({ path: this.pathData, id: 'rectangle', thickness: this._thickness, traceType: this._traceType });
             this.drawRectangle(this.drawingService.baseCtx);
         }
         this.mouseDown = false;
@@ -61,7 +62,6 @@ export class RectangleService extends Tool {
         if (this.mouseDown && event.buttons === MouseButton.Left) {
             this.mouseDownCoord = this.getPositionFromMouse(event);
             this.drawRectangle(this.drawingService.previewCtx);
-            this.pathData.push(this.mouseDownCoord);
         }
         if (this.mouseDown && !(event.buttons === MouseButton.Left)) {
             this.drawRectangle(this.drawingService.baseCtx);

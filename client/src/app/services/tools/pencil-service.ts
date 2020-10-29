@@ -40,7 +40,7 @@ export class PencilService extends Tool {
 
     onMouseUp(event: MouseEvent, undoRedo: UndoRedoService): void {
         if (this.mouseDown) {
-            undoRedo.undoPile.push({ path: this.pathData, id: 'pencil' });
+            undoRedo.undoPile.push({ path: this.pathData, id: 'pencil', thickness: this._thickness });
             const mousePosition = this.getPositionFromMouse(event);
             this.pathData.push(mousePosition);
             this.drawLine(this.drawingService.baseCtx, this.pathData);

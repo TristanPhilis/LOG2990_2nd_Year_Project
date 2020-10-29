@@ -44,7 +44,7 @@ export class BrushService extends Tool {
 
     onMouseUp(event: MouseEvent, undoRedo: UndoRedoService): void {
         if (this.mouseDown) {
-            undoRedo.undoPile.push({ path: this.pathData, id: 'brush' });
+            undoRedo.undoPile.push({ path: this.pathData, id: 'brush', thickness: this._thickness });
             const mousePosition = this.getPositionFromMouse(event);
             this.pathData.push(mousePosition);
             this.drawBrush(this.drawingService.baseCtx, this.pathData);

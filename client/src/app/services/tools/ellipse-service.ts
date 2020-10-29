@@ -34,7 +34,7 @@ export class EllipseService extends Tool {
             const currentPosition = this.getPositionFromMouse(event);
             this.initialCoord = currentPosition;
             this.mouseDownCoord = currentPosition;
-            this.pathData.push(this.mouseDownCoord);
+            this.pathData.push(this.initialCoord);
         }
     }
 
@@ -42,7 +42,6 @@ export class EllipseService extends Tool {
         if (this.mouseDown && event.buttons === MouseButton.Left) {
             this.mouseDownCoord = this.getPositionFromMouse(event);
             this.drawEllipse(this.drawingService.previewCtx);
-            this.pathData.push(this.mouseDownCoord);
         }
         if (this.mouseDown && !(event.buttons === MouseButton.Left)) {
             this.mouseDown = false;
@@ -52,7 +51,8 @@ export class EllipseService extends Tool {
 
     onMouseUp(event: MouseEvent, undoRedo: UndoRedoService): void {
         if (this.mouseDown) {
-            undoRedo.undoPile.push({ path: this.pathData, id: 'ellipse' });
+            this.pathData.push(this.mouseDownCoord);
+            undoRedo.undoPile.push({ path: this.pathData, id: 'ellipse', thickness: this._thickness });
             this.drawEllipse(this.drawingService.baseCtx);
         }
         this.mouseDown = false;
