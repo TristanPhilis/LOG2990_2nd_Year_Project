@@ -24,6 +24,7 @@ export enum drawingToolId {
     lineService,
     brushService,
     rectangleSelectionService,
+    ellipseSelectionService,
 }
 
 export enum MouseButton {

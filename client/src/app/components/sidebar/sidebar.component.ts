@@ -89,6 +89,11 @@ export class SidebarComponent {
                 break;
             }
             case sidebarToolID.selection: {
+                if (this.toolsService._selectedSideBarToolID === sidebarToolID.selection && this.toolsService.toolSidenavToogle.getValue() === true) {
+                    this.toolsService.closeToolSidenav();
+                } else {
+                    this.toolsService.openToolSidenav();
+                }
                 this.toolsService._selectedSideBarToolID = sidebarToolID.selection;
                 this.toolsService._currentDrawingTool = drawingToolId.rectangleSelectionService;
                 break;
@@ -189,6 +194,10 @@ export class SidebarComponent {
             r: () => {
                 this.onButtonPress(sidebarToolID.selection);
                 this.toolsService._currentDrawingTool = drawingToolId.rectangleSelectionService;
+            },
+            s: () => {
+                this.onButtonPress(sidebarToolID.selection);
+                this.toolsService._currentDrawingTool = drawingToolId.ellipseSelectionService;
             },
             1: () => {
                 this.onButtonPress(sidebarToolID.shapes);
