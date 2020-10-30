@@ -6,25 +6,24 @@ import { Component } from '@angular/core';
     styleUrls: ['./guide.component.scss'],
 })
 export class GuideComponent {
-    // tslint:disable-next-line: no-any
-    tabcontent: any;
-    // tslint:disable-next-line: no-any
-    tablinks: any;
+    tabElement: HTMLElement | null;
+    tabContent: HTMLCollectionOf<HTMLElement>;
+    tabLinks: HTMLCollectionOf<HTMLElement>;
     openTab(tab: string): void {
         let i: number;
-        // tslint:disable-next-line: no-non-null-assertion
-        const myAbsolutelyNotNullElement = window.document.getElementById(tab)!;
-        this.tabcontent = document.getElementsByClassName('tabcontent');
-        for (i = 0; i < this.tabcontent.length; i++) {
-            this.tabcontent[i].style.display = 'none';
+
+        this.tabElement = document.getElementById(tab);
+        this.tabContent = document.getElementsByClassName('tabcontent') as HTMLCollectionOf<HTMLElement>;
+        for (i = 0; i < this.tabContent.length; i++) {
+            this.tabContent[i].style.display = 'none';
         }
 
-        this.tablinks = document.getElementsByClassName('tablinks');
-        for (i = 0; i < this.tablinks.length; i++) {
-            this.tablinks[i].className = this.tablinks[i].className.replace(' active', '');
+        const tablinks = document.getElementsByClassName('tablinks') as HTMLCollectionOf<HTMLElement>;
+        for (i = 0; i < tablinks.length; i++) {
+            tablinks[i].className = tablinks[i].className.replace(' active', '');
         }
-        if (myAbsolutelyNotNullElement !== null) {
-            myAbsolutelyNotNullElement.style.display = 'block';
+        if (this.tabElement !== null) {
+            this.tabElement.style.display = 'block';
         }
     }
 }

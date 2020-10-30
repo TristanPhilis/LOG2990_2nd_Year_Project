@@ -59,11 +59,6 @@ describe('SidebarComponent', () => {
         expect(drawServiceSpy.clearCanvas).toHaveBeenCalled();
     });
 
-    it('onButtonPress should set createNew', () => {
-        component.onButtonPress(sidebarToolID.createNew);
-        expect(drawServiceSpy.clearCanvas).toHaveBeenCalled();
-    });
-
     it('onButtonPress should set openGuide', () => {
         component.onButtonPress(sidebarToolID.openGuide);
         expect(dialogSpy.open).toHaveBeenCalled();

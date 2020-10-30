@@ -49,8 +49,3 @@ export enum TraceTypes {
     stroke,
     fillAndStroke,
 }
-
-export enum ColorSelection {
-    primary,
-    secondary,
-}

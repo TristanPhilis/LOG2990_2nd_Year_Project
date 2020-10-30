@@ -26,7 +26,7 @@ describe('LineService', () => {
         service = TestBed.inject(LineService);
         drawLineSpy = spyOn<any>(service, 'drawLine').and.callThrough();
 
-        // Configuration du spy du service
+        // Spy Service configuration
         // tslint:disable:no-string-literal
         service['drawingService'].baseCtx = baseCtxStub; // Jasmine doesnt copy properties with underlying data
         service['drawingService'].previewCtx = previewCtxStub;
@@ -193,7 +193,7 @@ describe('LineService', () => {
         service.currentCoord = { x: 2, y: 2.1 };
         expectedPoint = { x: 2, y: 2 };
         const result = service.getSnappedCoord();
-        expect(result.x).toBeCloseTo(expectedPoint.x, 1);
+        expect(result.x).toEqual(expectedPoint.x);
         expect(result.y).toBeCloseTo(expectedPoint.y, 1);
     });
 
