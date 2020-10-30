@@ -186,6 +186,10 @@ export class SidebarComponent {
             },
             e: () => this.onButtonPress(sidebarToolID.eraser),
             l: () => this.onButtonPress(sidebarToolID.line),
+            r: () => {
+                this.onButtonPress(sidebarToolID.selection);
+                this.toolsService._currentDrawingTool = drawingToolId.rectangleSelectionService;
+            },
             1: () => {
                 this.onButtonPress(sidebarToolID.shapes);
                 this.toolsService._currentDrawingTool = drawingToolId.rectangleService;

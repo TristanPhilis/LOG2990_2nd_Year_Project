@@ -1,11 +1,9 @@
-import { Injectable, HostListener } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
 import { DrawingService } from '@app/services/drawing/drawing.service';
-import { DASHLINE_EMPTY, DASHLINE_FULL, DEPLACEMENT } from '@app/shared/constant';
+import { DASHLINE_EMPTY, DASHLINE_FULL, DEPLACEMENT, ESCAPE_KEY, SHIFT_KEY } from '@app/shared/constant';
 import { MouseButton } from '@app/shared/enum';
-
-declare type callback = () => void;
 
 @Injectable({
     providedIn: 'root',
@@ -17,7 +15,8 @@ export class RectangleSelectorService extends Tool {
     savedWidth: number;
     savedHeight: number;
     savedInitialCoords: Vec2;
-    imageLocation: Vec2;
+    imageLocation: Vec2 = { x: 0, y: 0 };
+    shiftDown: boolean;
 
     constructor(drawingService: DrawingService) {
         super(drawingService);
@@ -30,46 +29,47 @@ export class RectangleSelectorService extends Tool {
             this.initialCoord = currentCoord;
             this.mouseDownCoord = currentCoord;
             if (this.isAreaSelected) {
-                this.clearSelectedArea(this.drawingService.baseCtx);
+                this.clearSelectedArea();
+            } else {
+                this.savedInitialCoords = currentCoord;
             }
         }
     }
 
     onMouseUp(event: MouseEvent): void {
-        if (this.mouseDown && !this.isAreaSelected) {
-            this.selectArea(this.drawingService.baseCtx);
+        if (this.mouseDown) {
+            if (!this.isAreaSelected) {
+                this.selectArea(this.drawingService.previewCtx);
+                this.copyArea(this.drawingService.baseCtx);
+            }
             this.isAreaSelected = true;
             this.mouseDown = false;
         }
-        if (this.mouseDown && this.isAreaSelected) {
-            this.clearSelectedArea(this.drawingService.baseCtx);
-            this.moveSelection(this.drawingService.baseCtx);
-            this.isAreaSelected = false;
-        }
-        this.mouseDown = false;
     }
 
     onMouseMove(event: MouseEvent): void {
         if (this.mouseDown && event.buttons === MouseButton.Left && !this.isAreaSelected) {
             this.mouseDownCoord = this.getPositionFromMouse(event);
-            this.rectangleSelection(this.drawingService.previewCtx);
+            this.selectArea(this.drawingService.previewCtx);
         }
+
         if (this.mouseDown && !(event.buttons === MouseButton.Left) && !this.isAreaSelected) {
-            this.selectArea(this.drawingService.baseCtx);
+            this.selectArea(this.drawingService.previewCtx);
             this.mouseDown = false;
+            this.isAreaSelected = true;
         }
 
         if (this.mouseDown && event.buttons === MouseButton.Left && this.isAreaSelected) {
             this.mouseDownCoord = this.getPositionFromMouse(event);
-            this.moveSelection(this.drawingService.previewCtx);
+            this.moveSelectionWithMouse(this.drawingService.previewCtx);
         }
+
         if (this.mouseDown && !(event.buttons === MouseButton.Left) && this.isAreaSelected) {
-            this.moveSelection(this.drawingService.baseCtx);
-            this.mouseDown = false;
+            this.placeImage();
         }
     }
 
-    private rectangleSelection(ctx: CanvasRenderingContext2D): void {
+    private selectArea(ctx: CanvasRenderingContext2D): void {
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
         ctx.beginPath();
 
@@ -79,97 +79,129 @@ export class RectangleSelectorService extends Tool {
         ctx.strokeStyle = '#111155';
 
         ctx.setLineDash([DASHLINE_EMPTY, DASHLINE_FULL]);
-        ctx.rect(this.initialCoord.x, this.initialCoord.y, width, height);
+        if (this.shiftDown) {
+            const squareSize = Math.min(Math.abs(width), Math.abs(height));
+            this.savedHeight = squareSize * Math.sign(height);
+            this.savedWidth = squareSize * Math.sign(width);
+            ctx.rect(this.initialCoord.x, this.initialCoord.y, squareSize * Math.sign(width), squareSize * Math.sign(height));
+        } else {
+            this.savedHeight = height;
+            this.savedWidth = width;
+            ctx.rect(this.initialCoord.x, this.initialCoord.y, width, height);
+        }
+
         ctx.stroke();
         ctx.setLineDash([]);
-        this.selectedArea = ctx.getImageData(this.initialCoord.x, this.initialCoord.y, width, height);
-        this.savedHeight = height;
-        this.savedWidth = width;
-        this.savedInitialCoords = this.initialCoord;
-        this.imageLocation = this.savedInitialCoords;
+
+        if (this.savedWidth > 0) {
+            this.imageLocation.x = this.initialCoord.x;
+        } else {
+            this.imageLocation.x = this.mouseDownCoord.x;
+        }
+        if (this.savedHeight > 0){
+            this.imageLocation.y = this.initialCoord.y;
+        } else {
+            this.imageLocation.y = this.mouseDownCoord.y;
+        }
     }
 
-    private selectArea(ctx: CanvasRenderingContext2D): void {
+    private copyArea(ctx: CanvasRenderingContext2D): void {
+        this.selectedArea = ctx.getImageData(this.imageLocation.x, this.imageLocation.y, Math.abs(this.savedWidth), Math.abs(this.savedHeight));
+    }
+
+    private moveSelectionWithMouse(ctx: CanvasRenderingContext2D): void {
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
 
-        const width = this.mouseDownCoord.x - this.initialCoord.x;
-        const height = this.mouseDownCoord.y - this.initialCoord.y;
+        let differenceX: number;
+        let differenceY: number;
+        const imageMiddleX = this.imageLocation.x + this.savedWidth / 2;
+        const imageMiddleY = this.imageLocation.y + this.savedHeight / 2;
 
-        this.selectedArea = ctx.getImageData(this.initialCoord.x, this.initialCoord.y, width, height);
+        differenceX = this.mouseDownCoord.x - imageMiddleX;
+        differenceY = this.mouseDownCoord.y - imageMiddleY;
 
-        this.savedHeight = height;
-        this.savedWidth = width;
-        this.savedInitialCoords = this.initialCoord;
-    }
+        this.imageLocation.x += differenceX;
+        this.imageLocation.y += differenceY;
 
-    private moveSelection(ctx: CanvasRenderingContext2D): void {
-        this.drawingService.clearCanvas(this.drawingService.previewCtx);
-        ctx.globalCompositeOperation = 'source-over';
+        ctx.putImageData(this.selectedArea, this.imageLocation.x, this.imageLocation.y);
 
-        const differenceX = this.mouseDownCoord.x - (this.savedInitialCoords.x + this.savedWidth / 2);
-        const differenceY = this.mouseDownCoord.y - (this.savedInitialCoords.y + this.savedHeight / 2);
-
-        const movingCoordX = this.savedInitialCoords.x + differenceX;
-        const movingCoordY = this.savedInitialCoords.y + differenceY;
-
-        ctx.putImageData(this.selectedArea, movingCoordX, movingCoordY);
-    }
-
-    private clearSelectedArea(ctx: CanvasRenderingContext2D): void {
         ctx.beginPath();
-        ctx.globalCompositeOperation = 'destination-out';
-        ctx.rect(this.savedInitialCoords.x, this.savedInitialCoords.y, this.savedWidth, this.savedHeight);
-        ctx.fill();
-        ctx.globalCompositeOperation = 'source-over';
+        ctx.strokeStyle = '#111155';
+
+        ctx.setLineDash([DASHLINE_EMPTY, DASHLINE_FULL]);
+
+        ctx.rect(this.imageLocation.x, this.imageLocation.y, this.savedWidth, this.savedHeight);
+
+        ctx.stroke();
+        ctx.setLineDash([]);
     }
 
-    private getComposedKey(event: KeyboardEvent): string {
-        let keys = '';
-        if (event.key === 'ArrowDown') {
-            keys += 'D-';
-        }
-        if (event.key === 'ArrowUp') {
-            keys += 'U-';
-        }
-        if (event.key === 'ArrowLeft') {
-            keys += 'L-';
-        }
-        if (event.key === 'ArrowRight') {
-            keys += 'R-';
-        }
-        keys += event.key.toLowerCase();
-        return keys;
+    private moveSelectionWithArrows(ctx: CanvasRenderingContext2D): void {
+        this.drawingService.clearCanvas(this.drawingService.previewCtx);
+
+        ctx.putImageData(this.selectedArea, this.imageLocation.x, this.imageLocation.y);
+
+        ctx.beginPath();
+        ctx.strokeStyle = '#111155';
+
+        ctx.setLineDash([DASHLINE_EMPTY, DASHLINE_FULL]);
+
+        ctx.rect(this.imageLocation.x, this.imageLocation.y, this.savedWidth, this.savedHeight);
+
+        ctx.stroke();
+        ctx.setLineDash([]);
     }
 
-    @HostListener('window: keydown', ['$event'])
+    private clearSelectedArea(): void {
+        this.drawingService.baseCtx.rect(this.savedInitialCoords.x, this.savedInitialCoords.y, this.savedWidth, this.savedHeight);
+        this.drawingService.baseCtx.globalCompositeOperation = 'destination-out';
+        this.drawingService.baseCtx.fill();
+        this.drawingService.baseCtx.globalCompositeOperation = 'source-over';
+    }
+
+    placeImage(): void {
+        this.drawingService.clearCanvas(this.drawingService.previewCtx);
+        if (this.isAreaSelected) {
+            this.drawingService.baseCtx.putImageData(this.selectedArea, this.imageLocation.x, this.imageLocation.y);
+        }
+        this.isAreaSelected = false;
+    }
+
+    onKeyUp(event: KeyboardEvent): void {
+        if (event.key === ESCAPE_KEY) {
+            this.placeImage();
+        }
+        if (event.key === SHIFT_KEY) {
+            this.shiftDown = false;
+            if (this.mouseDown) {
+                this.selectArea(this.drawingService.previewCtx);
+            }
+        }
+    }
+
     onKeyDown(event: KeyboardEvent): void {
-        const keys: string = this.getComposedKey(event);
-        const kbd: { [id: string]: callback } = {
-            'D-arrowleft': () => {
+        if (event.key === SHIFT_KEY) {
+            this.shiftDown = true;
+            if (this.mouseDown) {
+                this.selectArea(this.drawingService.previewCtx);
+            }
+        } else if (this.isAreaSelected) {
+            if (event.key === 'ArrowDown') {
                 this.imageLocation.y += DEPLACEMENT;
+                this.moveSelectionWithArrows(this.drawingService.previewCtx);
+            }
+            if (event.key === 'ArrowUp') {
+                this.imageLocation.y -= DEPLACEMENT;
+                this.moveSelectionWithArrows(this.drawingService.previewCtx);
+            }
+            if (event.key === 'ArrowLeft') {
                 this.imageLocation.x -= DEPLACEMENT;
-                this.drawingService.baseCtx.putImageData(this.selectedArea, this.imageLocation.x, this.imageLocation.y);
-            },
-            'D-ArrowRight': () => {
-                this.imageLocation.y += DEPLACEMENT;
+                this.moveSelectionWithArrows(this.drawingService.previewCtx);
+            }
+            if (event.key === 'ArrowRight') {
                 this.imageLocation.x += DEPLACEMENT;
-                this.drawingService.baseCtx.putImageData(this.selectedArea, this.imageLocation.x, this.imageLocation.y);
-            },
-            'U-ArrowLeft': () => {
-                this.imageLocation.x -= DEPLACEMENT;
-                this.imageLocation.x -= DEPLACEMENT;
-                this.drawingService.baseCtx.putImageData(this.selectedArea, this.imageLocation.x, this.imageLocation.y);
-            },
-            'U-ArrowRight': () => {
-                this.imageLocation.x -= DEPLACEMENT;
-                this.imageLocation.x += DEPLACEMENT;
-                this.drawingService.baseCtx.putImageData(this.selectedArea, this.imageLocation.x, this.imageLocation.y);
-            },
-        };
-        const func: callback | undefined = kbd[keys];
-        if (func) {
-            // event.preventDefault();
-            func();
+                this.moveSelectionWithArrows(this.drawingService.previewCtx);
+            }
         }
     }
 }
