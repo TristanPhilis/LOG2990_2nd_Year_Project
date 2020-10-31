@@ -5,7 +5,6 @@ import { GuideComponent } from '@app/components/guide/guide.component';
 import { ExportPopupComponent } from '@app/components/popup/export-popup/export-popup.component';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ToolsService } from '@app/services/tools/tools-service';
-import { UndoRedoService } from '@app/services/tools/undoRedo-service';
 import { drawingToolId, sidebarToolID } from '@app/shared/enum';
 import { SidebarToolComponent } from './sidebar-tool/sidebar-tool.component';
 
@@ -23,12 +22,7 @@ export class SidebarComponent {
     showDrawingTools: boolean;
     private isDialogOpen: boolean;
 
-    constructor(
-        private toolsService: ToolsService,
-        private dialog: MatDialog,
-        private drawingService: DrawingService,
-        private undoRedo: UndoRedoService,
-    ) {
+    constructor(private toolsService: ToolsService, private dialog: MatDialog, private drawingService: DrawingService) {
         this.sideBarToolsTop = [
             { id: sidebarToolID.move, name: 'Select & Move' },
             { id: sidebarToolID.selection, name: 'Selection' },
@@ -40,8 +34,6 @@ export class SidebarComponent {
             { id: sidebarToolID.stamp, name: 'Stamp' },
             { id: sidebarToolID.pipette, name: 'Pipette' },
             { id: sidebarToolID.eraser, name: 'Eraser' },
-            { id: sidebarToolID.undo, name: 'undo' },
-            { id: sidebarToolID.redo, name: 'Redo' },
         ];
         this.sideBarToolsBottom = [
             { id: sidebarToolID.createNew, name: 'New Drawing' },
@@ -74,18 +66,8 @@ export class SidebarComponent {
                 this.toolsService._currentDrawingTool = drawingToolId.eraserService;
                 break;
             }
-            case sidebarToolID.undo: {
-                this.toolsService._selectedSideBarToolID = sidebarToolID.undo;
-                // this.toolsService. = this.undoRedo.undo();
-                console.log(this.undoRedo.undoPile);
-                break;
-            }
-            case sidebarToolID.redo: {
-                this.toolsService._selectedSideBarToolID = sidebarToolID.redo;
-                break;
-            }
+
             case sidebarToolID.createNew: {
-                this.undoRedo.clearPile();
                 this.isDialogOpen = true;
                 const dialogRef = this.dialog.open(CreateNewDrawingComponent);
                 dialogRef.afterClosed().subscribe(() => {

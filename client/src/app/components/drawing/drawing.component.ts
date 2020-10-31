@@ -3,7 +3,6 @@ import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ToolsService } from '@app/services/tools/tools-service';
-import { UndoRedoService } from '@app/services/tools/undoRedo-service';
 
 @Component({
     selector: 'app-drawing',
@@ -21,7 +20,7 @@ export class DrawingComponent implements AfterViewInit, OnChanges {
     @Input()
     private canvasSize: Vec2;
 
-    constructor(private drawingService: DrawingService, private toolsService: ToolsService, private drawingPile: UndoRedoService) {}
+    constructor(private drawingService: DrawingService, private toolsService: ToolsService) {}
 
     ngAfterViewInit(): void {
         this.baseCtx = this.baseCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
@@ -72,7 +71,7 @@ export class DrawingComponent implements AfterViewInit, OnChanges {
 
     @HostListener('dblclick', ['$event'])
     onMouseDoubleClick(event: MouseEvent): void {
-        this.currentTool.onMouseDoubleClick(event, this.drawingPile);
+        this.currentTool.onMouseDoubleClick(event);
     }
 
     @HostListener('keydown', ['$event'])

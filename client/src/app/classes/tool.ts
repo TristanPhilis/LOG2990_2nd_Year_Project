@@ -1,5 +1,4 @@
 import { DrawingService } from '@app/services/drawing/drawing.service';
-import { UndoRedoService } from '@app/services/tools/undoRedo-service';
 import { Vec2 } from './vec2';
 
 // This is justified since we have functions that will be managed by the child classes.
@@ -20,7 +19,7 @@ export abstract class Tool {
 
     onMouseClick(event: MouseEvent): void {}
 
-    onMouseDoubleClick(event: MouseEvent, pile: UndoRedoService): void {}
+    onMouseDoubleClick(event: MouseEvent): void {}
 
     onKeyDown(event: KeyboardEvent): void {}
 
