@@ -16,7 +16,7 @@ export class RectangleSelectorService extends Tool {
     shiftDown: boolean;
     selectedBox: BoundingBox;
     selectionBox: SelectionBox;
-    dragginAnchorRelativePosition: Vec2;
+    draggingAnchorRelativePosition: Vec2;
 
     constructor(drawingService: DrawingService) {
         super(drawingService);
@@ -31,16 +31,16 @@ export class RectangleSelectorService extends Tool {
             const currentCoord = this.getPositionFromMouse(event);
             if (this.isAreaSelected) {
                 if (this.selectedBox.isInBox(currentCoord)) {
-                    this.dragginAnchorRelativePosition = {
+                    this.draggingAnchorRelativePosition = {
                         x: currentCoord.x - this.selectedBox.position.x,
                         y: currentCoord.y - this.selectedBox.position.y,
                     };
                 } else {
-                    this.mouseDown = false;
                     this.placeImage();
+                    this.initializeSelectionBox(currentCoord);
                 }
             } else {
-                this.selectionBox.setAnchor(currentCoord);
+                this.initializeSelectionBox(currentCoord);
             }
         }
     }
@@ -50,7 +50,6 @@ export class RectangleSelectorService extends Tool {
             if (!this.isAreaSelected) {
                 this.initializeSelectedBox();
             }
-            this.isAreaSelected = true;
             this.mouseDown = false;
         }
     }
@@ -58,13 +57,12 @@ export class RectangleSelectorService extends Tool {
     onMouseMove(event: MouseEvent): void {
         if (this.mouseDown && event.buttons === MouseButton.Left && !this.isAreaSelected) {
             const currentCoord = this.getPositionFromMouse(event);
-            this.selectionBox.update(currentCoord);
+            this.selectionBox.updateOpposingCorner(currentCoord);
             this.drawSelectionBox();
         }
 
         if (this.mouseDown && !(event.buttons === MouseButton.Left) && !this.isAreaSelected) {
             this.initializeSelectedBox();
-            this.isAreaSelected = true;
             this.mouseDown = false;
         }
 
@@ -75,10 +73,18 @@ export class RectangleSelectorService extends Tool {
         }
     }
 
+    private initializeSelectionBox(coord: Vec2): void {
+        this.selectionBox.setAnchor(coord);
+        this.selectionBox.updateOpposingCorner(coord);
+    }
+
     private initializeSelectedBox(): void {
         this.selectedBox.updateFromSelectionBox(this.selectionBox, this.shiftDown);
-        this.copyArea(this.drawingService.baseCtx);
-        this.updateSelectedAreaPreview();
+        this.isAreaSelected = this.selectedBox.width > 0 && this.selectedBox.heigth > 0;
+        if (this.isAreaSelected) {
+            this.copyArea(this.drawingService.baseCtx);
+            this.updateSelectedAreaPreview();
+        }
     }
 
     private drawSelectedBox(): void {
@@ -116,11 +122,11 @@ export class RectangleSelectorService extends Tool {
 
     private translateSelectedBoxFromMouseMove(coord: Vec2): void {
         const distanceFromLeft = coord.x - this.selectedBox.left;
-        const xTranslate = distanceFromLeft - this.dragginAnchorRelativePosition.x;
+        const xTranslate = distanceFromLeft - this.draggingAnchorRelativePosition.x;
         this.selectedBox.translateX(xTranslate);
 
         const distanceFromTop = coord.y - this.selectedBox.top;
-        const yTranslate = distanceFromTop - this.dragginAnchorRelativePosition.y;
+        const yTranslate = distanceFromTop - this.draggingAnchorRelativePosition.y;
         this.selectedBox.translateY(yTranslate);
     }
 
@@ -128,15 +134,6 @@ export class RectangleSelectorService extends Tool {
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
         this.drawSelectedBox();
         this.drawingService.previewCtx.putImageData(this.selectedImageData, this.selectedBox.position.x, this.selectedBox.position.y);
-    }
-
-    placeImage(): void {
-        this.drawingService.clearCanvas(this.drawingService.previewCtx);
-        if (this.isAreaSelected) {
-            const ctx = this.drawingService.baseCtx;
-            ctx.putImageData(this.selectedImageData, this.selectedBox.position.x, this.selectedBox.position.y);
-        }
-        this.isAreaSelected = false;
     }
 
     onKeyUp(event: KeyboardEvent): void {
@@ -175,6 +172,16 @@ export class RectangleSelectorService extends Tool {
                 this.updateSelectedAreaPreview();
             }
         }
+    }
+
+    placeImage(): void {
+        this.drawingService.clearCanvas(this.drawingService.previewCtx);
+        if (this.isAreaSelected) {
+            const ctx = this.drawingService.baseCtx;
+            ctx.putImageData(this.selectedImageData, this.selectedBox.position.x, this.selectedBox.position.y);
+        }
+        this.isAreaSelected = false;
+        this.selectedImageData = { data: new Uint8ClampedArray(), width: 0, height: 0 };
     }
 
     private copyArea(ctx: CanvasRenderingContext2D): void {

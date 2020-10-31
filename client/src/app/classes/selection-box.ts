@@ -8,7 +8,7 @@ export class SelectionBox {
         this.anchor = coord;
     }
 
-    update(coord: Vec2): void {
+    updateOpposingCorner(coord: Vec2): void {
         this.opposingCorner = coord;
     }
 
