@@ -20,7 +20,7 @@ export abstract class Tool {
 
     onMouseClick(event: MouseEvent): void {}
 
-    onMouseDoubleClick(pile: UndoRedoService): void {}
+    onMouseDoubleClick(event: MouseEvent, pile: UndoRedoService): void {}
 
     onKeyDown(event: KeyboardEvent): void {}
 

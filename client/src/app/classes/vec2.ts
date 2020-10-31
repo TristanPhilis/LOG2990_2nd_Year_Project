@@ -4,5 +4,4 @@ export interface Vec2 {
 }
 export interface UndoRedoPile {
     path: Vec2[];
-    id: string;
 }

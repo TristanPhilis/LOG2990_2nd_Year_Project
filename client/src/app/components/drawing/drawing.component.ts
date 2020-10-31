@@ -72,7 +72,7 @@ export class DrawingComponent implements AfterViewInit, OnChanges {
 
     @HostListener('dblclick', ['$event'])
     onMouseDoubleClick(event: MouseEvent): void {
-        this.currentTool.onMouseDoubleClick(this.drawingPile);
+        this.currentTool.onMouseDoubleClick(event, this.drawingPile);
     }
 
     @HostListener('keydown', ['$event'])

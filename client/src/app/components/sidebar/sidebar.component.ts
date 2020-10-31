@@ -76,12 +76,12 @@ export class SidebarComponent {
             }
             case sidebarToolID.undo: {
                 this.toolsService._selectedSideBarToolID = sidebarToolID.undo;
-                this.undoRedo.undo();
+                // this.toolsService. = this.undoRedo.undo();
+                console.log(this.undoRedo.undoPile);
                 break;
             }
             case sidebarToolID.redo: {
                 this.toolsService._selectedSideBarToolID = sidebarToolID.redo;
-                this.undoRedo.redo();
                 break;
             }
             case sidebarToolID.createNew: {
