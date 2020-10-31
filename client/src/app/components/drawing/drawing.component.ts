@@ -28,7 +28,7 @@ export class DrawingComponent implements AfterViewInit, OnChanges {
         this.drawingService.baseCtx = this.baseCtx;
         this.drawingService.previewCtx = this.previewCtx;
         this.drawingService.canvas = this.baseCanvas.nativeElement;
-        this.drawingService.fillWhiteBackground();
+        this.drawingService.fillCanvas('white');
     }
 
     ngOnChanges(changes: SimpleChanges): void {
@@ -45,7 +45,7 @@ export class DrawingComponent implements AfterViewInit, OnChanges {
         this.baseCanvas.nativeElement.height = this.height;
         this.previewCanvas.nativeElement.width = this.width;
         this.previewCanvas.nativeElement.height = this.height;
-        this.drawingService.fillWhiteBackground();
+        this.drawingService.fillCanvas('white');
         this.drawingService.setImageData(savedImageData);
     }
 

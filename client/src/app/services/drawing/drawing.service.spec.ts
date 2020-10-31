@@ -36,7 +36,7 @@ describe('DrawingService', () => {
 
     it('Background should be white', () => {
         service.clearCanvas(service.baseCtx);
-        service.fillWhiteBackground();
+        service.fillCanvas('white');
         const pixelBuffer = new Uint32Array(service.baseCtx.getImageData(0, 0, service.canvas.width, service.canvas.height).data.buffer);
         const white = 0xffffffff;
         const hasColoredPixels = pixelBuffer.some((color) => color !== white);

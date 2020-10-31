@@ -9,6 +9,7 @@ export const ARROW_UP = 38;
 export const ARROW_DOWN = 40;
 export const ARROW_LEFT = 37;
 export const ARROW_RIGHT = 39;
+export const NEGATIVE_MULTIPLIER = -1;
 export const PERCENT_MULTIPLIER = 0.01;
 export const MIDDLE_ANGLE_SNAP_DIVIDER = 4;
 export const BASE_ANGLE_SNAP_DIVIDER = 8;

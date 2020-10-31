@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { BoundingBox } from '@app/classes/bounding-box';
 
 @Injectable({
     providedIn: 'root',
@@ -20,9 +21,13 @@ export class DrawingService {
         this.baseCtx.putImageData(imageData, 0, 0);
     }
 
-    fillWhiteBackground(): void {
-        this.baseCtx.fillStyle = 'white';
-        this.baseCtx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+    fillCanvas(color: string, region?: BoundingBox): void {
+        this.baseCtx.fillStyle = color;
+        if (region) {
+            this.baseCtx.fillRect(region.position.x, region.position.y, region.width, region.heigth);
+        } else {
+            this.baseCtx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+        }
     }
 
     clearCanvas(context: CanvasRenderingContext2D): void {
