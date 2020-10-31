@@ -80,7 +80,7 @@ export class RectangleSelectorService extends Tool {
 
     private initializeSelectedBox(): void {
         this.selectedBox.updateFromSelectionBox(this.selectionBox, this.shiftDown);
-        this.isAreaSelected = this.selectedBox.width > 0 && this.selectedBox.heigth > 0;
+        this.isAreaSelected = this.selectedBox.width > 0 && this.selectedBox.height > 0;
         if (this.isAreaSelected) {
             this.copyArea(this.drawingService.baseCtx);
             this.updateSelectedAreaPreview();
@@ -93,7 +93,7 @@ export class RectangleSelectorService extends Tool {
         ctx.beginPath();
         ctx.strokeStyle = '#111155';
         ctx.setLineDash([DASHLINE_EMPTY, DASHLINE_FULL]);
-        ctx.rect(this.selectedBox.position.x, this.selectedBox.position.y, this.selectedBox.width, this.selectedBox.heigth);
+        ctx.rect(this.selectedBox.position.x, this.selectedBox.position.y, this.selectedBox.width, this.selectedBox.height);
         ctx.stroke();
         ctx.setLineDash([]);
     }
@@ -109,7 +109,7 @@ export class RectangleSelectorService extends Tool {
             const squareSize = this.selectionBox.squareSize;
             ctx.rect(this.selectionBox.squarePosition.x, this.selectionBox.squarePosition.y, squareSize, squareSize);
         } else {
-            ctx.rect(this.selectionBox.position.x, this.selectionBox.position.y, this.selectionBox.width, this.selectionBox.heigth);
+            ctx.rect(this.selectionBox.position.x, this.selectionBox.position.y, this.selectionBox.width, this.selectionBox.height);
         }
 
         ctx.stroke();
@@ -189,7 +189,7 @@ export class RectangleSelectorService extends Tool {
             this.selectedBox.position.x,
             this.selectedBox.position.y,
             this.selectedBox.width,
-            this.selectedBox.heigth,
+            this.selectedBox.height,
         );
         this.clearBaseCanvasSelectedArea();
         this.updateSelectedAreaPreview();

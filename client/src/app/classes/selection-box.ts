@@ -1,8 +1,8 @@
 import { Vec2 } from './vec2';
 
 export class SelectionBox {
-    anchor: Vec2;
-    opposingCorner: Vec2;
+    private anchor: Vec2;
+    private opposingCorner: Vec2;
 
     setAnchor(coord: Vec2): void {
         this.anchor = coord;
@@ -29,14 +29,14 @@ export class SelectionBox {
     }
 
     get squareSize(): number {
-        return Math.min(this.width, this.heigth);
+        return Math.min(this.width, this.height);
     }
 
     get width(): number {
         return Math.abs(this.anchor.x - this.opposingCorner.x);
     }
 
-    get heigth(): number {
+    get height(): number {
         return Math.abs(this.anchor.y - this.opposingCorner.y);
     }
 }

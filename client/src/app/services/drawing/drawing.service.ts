@@ -24,7 +24,7 @@ export class DrawingService {
     fillCanvas(color: string, region?: BoundingBox): void {
         this.baseCtx.fillStyle = color;
         if (region) {
-            this.baseCtx.fillRect(region.position.x, region.position.y, region.width, region.heigth);
+            this.baseCtx.fillRect(region.position.x, region.position.y, region.width, region.height);
         } else {
             this.baseCtx.fillRect(0, 0, this.canvas.width, this.canvas.height);
         }

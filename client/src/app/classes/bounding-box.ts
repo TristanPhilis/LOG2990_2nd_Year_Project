@@ -24,7 +24,7 @@ export class BoundingBox {
             this.top = selectionBox.position.y;
             this.left = selectionBox.position.x;
             this.right = this.left + selectionBox.width;
-            this.bottom = this.top + selectionBox.heigth;
+            this.bottom = this.top + selectionBox.height;
         }
     }
 
@@ -67,7 +67,7 @@ export class BoundingBox {
         return this.right - this.left;
     }
 
-    get heigth(): number {
+    get height(): number {
         return this.bottom - this.top;
     }
 }
