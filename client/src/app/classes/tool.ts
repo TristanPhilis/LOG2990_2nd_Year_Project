@@ -14,13 +14,13 @@ export abstract class Tool {
 
     onMouseDown(event: MouseEvent): void {}
 
-    onMouseUp(event: MouseEvent, undoRedo: UndoRedoService): void {}
+    onMouseUp(event: MouseEvent): void {}
 
     onMouseMove(event: MouseEvent): void {}
 
     onMouseClick(event: MouseEvent): void {}
 
-    onMouseDoubleClick(undoRedo: UndoRedoService): void {}
+    onMouseDoubleClick(pile: UndoRedoService): void {}
 
     onKeyDown(event: KeyboardEvent): void {}
 

@@ -62,7 +62,7 @@ export class DrawingComponent implements AfterViewInit, OnChanges {
 
     @HostListener('mouseup', ['$event'])
     onMouseUp(event: MouseEvent): void {
-        this.currentTool.onMouseUp(event, this.drawingPile);
+        this.currentTool.onMouseUp(event);
     }
 
     @HostListener('click', ['$event'])

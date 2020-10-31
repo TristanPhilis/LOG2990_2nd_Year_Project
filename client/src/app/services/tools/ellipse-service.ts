@@ -4,7 +4,6 @@ import { Vec2 } from '@app/classes/vec2';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { SHIFT_KEY } from '@app/shared/constant';
 import { MouseButton } from '@app/shared/enum';
-import { UndoRedoService } from './undoRedo-service';
 
 @Injectable({
     providedIn: 'root',
@@ -13,7 +12,6 @@ export class EllipseService extends Tool {
     initialCoord: Vec2;
 
     private thickness: number;
-    private pathData: Vec2[];
 
     constructor(drawingService: DrawingService) {
         super(drawingService);
@@ -34,7 +32,6 @@ export class EllipseService extends Tool {
             const currentPosition = this.getPositionFromMouse(event);
             this.initialCoord = currentPosition;
             this.mouseDownCoord = currentPosition;
-            this.pathData.push(this.mouseDownCoord);
         }
     }
 
@@ -42,7 +39,6 @@ export class EllipseService extends Tool {
         if (this.mouseDown && event.buttons === MouseButton.Left) {
             this.mouseDownCoord = this.getPositionFromMouse(event);
             this.drawEllipse(this.drawingService.previewCtx);
-            this.pathData.push(this.mouseDownCoord);
         }
         if (this.mouseDown && !(event.buttons === MouseButton.Left)) {
             this.mouseDown = false;
@@ -50,13 +46,11 @@ export class EllipseService extends Tool {
         }
     }
 
-    onMouseUp(event: MouseEvent, undoRedo: UndoRedoService): void {
+    onMouseUp(event: MouseEvent): void {
         if (this.mouseDown) {
-            undoRedo.undoPile.push({ path: this.pathData, id: 'ellipse' });
             this.drawEllipse(this.drawingService.baseCtx);
         }
         this.mouseDown = false;
-        this.clearPath();
     }
 
     onKeyUp(event: KeyboardEvent): void {
@@ -77,7 +71,7 @@ export class EllipseService extends Tool {
         }
     }
 
-    drawEllipse(ctx: CanvasRenderingContext2D): void {
+    private drawEllipse(ctx: CanvasRenderingContext2D): void {
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
         ctx.beginPath();
         const xRadius = (this.mouseDownCoord.x - this.initialCoord.x) / 2;
@@ -96,8 +90,5 @@ export class EllipseService extends Tool {
         }
 
         ctx.stroke(); // Stroke for now, has to be dynamic to fill for example
-    }
-    private clearPath(): void {
-        this.pathData = [];
     }
 }
