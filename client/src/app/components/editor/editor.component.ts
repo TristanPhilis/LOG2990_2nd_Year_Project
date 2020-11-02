@@ -1,5 +1,6 @@
 import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, HostListener, ViewChild } from '@angular/core';
 import { Vec2 } from '@app/classes/vec2';
+import { DrawingService } from '@app/services/drawing/drawing.service';
 import { MIN_CANVAS_SIZE } from '@app/shared/constant';
 import { MouseButton } from '@app/shared/enum';
 
@@ -34,7 +35,7 @@ export class EditorComponent implements AfterViewInit {
     resizeX: boolean;
     resizeY: boolean;
 
-    constructor(private cd: ChangeDetectorRef) {}
+    constructor(private cd: ChangeDetectorRef, private drawingService: DrawingService) {}
 
     ngAfterViewInit(): void {
         this.workzoneRect = this.workzone.nativeElement.getBoundingClientRect();
@@ -45,6 +46,10 @@ export class EditorComponent implements AfterViewInit {
         this.previewSize = this.canvasSize;
         this.setAnchorPosition();
         this.cd.detectChanges();
+        if (this.drawingService.drawingToLoad !== (undefined && '')) {
+            this.drawingService.loadDrawing(this.drawingService.baseCtx);
+            this.drawingService.drawingToLoad = '';
+        }
     }
 
     setAnchorPosition(): void {

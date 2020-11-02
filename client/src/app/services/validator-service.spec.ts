@@ -37,4 +37,19 @@ describe('ValidatorService.TsService', () => {
         expect(hexColorValidator(new FormControl('FFFFFFF'))).toEqual({ input: 'FFFFFFF' });
         expect(hexColorValidator(new FormControl('FA3G86'))).toEqual({ input: 'FA3G86' });
     });
+
+    it('tagValidator should return null if valid tag', () => {
+        const tagValidator = service.isValidTag();
+        expect(tagValidator(new FormControl('AF5E'))).toBeNull();
+        expect(tagValidator(new FormControl('a764f'))).toBeNull();
+        expect(tagValidator(new FormControl('b'))).toBeNull();
+    });
+
+    it('hexColorValidator should return object if invalid color', () => {
+        const tagValidator = service.isValidTag();
+        expect(tagValidator(new FormControl('65fg'))).toEqual({ input: '65fg' });
+        expect(tagValidator(new FormControl('FFFFFF'))).toEqual({ input: 'FFFFFF' });
+        expect(tagValidator(new FormControl(''))).toEqual({ input: '' });
+        expect(tagValidator(new FormControl('df!'))).toEqual({ input: 'df!' });
+    });
 });

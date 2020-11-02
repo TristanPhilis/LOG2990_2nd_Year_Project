@@ -3,27 +3,18 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterTestingModule } from '@angular/router/testing';
-import { IndexService } from '@app/services/index/index.service';
-import { of } from 'rxjs';
 import { MainPageComponent } from './main-page.component';
 
-import SpyObj = jasmine.SpyObj;
 import { MatDialogModule } from '@angular/material/dialog';
 
 describe('MainPageComponent', () => {
     let component: MainPageComponent;
     let fixture: ComponentFixture<MainPageComponent>;
-    let indexServiceSpy: SpyObj<IndexService>;
 
     beforeEach(async(() => {
-        indexServiceSpy = jasmine.createSpyObj('IndexService', ['basicGet', 'basicPost']);
-        indexServiceSpy.basicGet.and.returnValue(of({ title: '', body: '' }));
-        indexServiceSpy.basicPost.and.returnValue(of());
-
         TestBed.configureTestingModule({
             imports: [RouterTestingModule, HttpClientModule, MatDialogModule, BrowserModule, BrowserAnimationsModule],
             declarations: [MainPageComponent],
-            providers: [{ provide: IndexService, useValue: indexServiceSpy }],
         }).compileComponents();
     }));
 
@@ -39,15 +30,5 @@ describe('MainPageComponent', () => {
 
     it("should have as title 'LOG2990'", () => {
         expect(component.title).toEqual('LOG2990');
-    });
-
-    it('should call basicGet when calling getMessagesFromServer', () => {
-        component.getMessagesFromServer();
-        expect(indexServiceSpy.basicGet).toHaveBeenCalled();
-    });
-
-    it('should call basicPost when calling sendTimeToServer', () => {
-        component.sendTimeToServer();
-        expect(indexServiceSpy.basicPost).toHaveBeenCalled();
     });
 });

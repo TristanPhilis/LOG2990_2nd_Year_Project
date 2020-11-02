@@ -17,6 +17,10 @@ export class ValidatorService {
         return this.isValidHexColorFunction;
     }
 
+    isValidTag(): ValidatorFn {
+        return this.isValidTagFunction;
+    }
+
     // Course note extract
     /**
      * Validate that form input is a number (Extrait note de cour)
@@ -32,6 +36,15 @@ export class ValidatorService {
 
     private isValidHexColorFunction(control: FormControl): { [key: string]: boolean } | null {
         const regEx = /^[\da-fA-F]{1,6}$/;
+        if (regEx.test(control.value)) {
+            return null;
+        } else {
+            return { input: control.value };
+        }
+    }
+
+    private isValidTagFunction(control: FormControl): { [key: string]: boolean } | null {
+        const regEx = /^[a-z][a-z0-9]{0,4}$/i;
         if (regEx.test(control.value)) {
             return null;
         } else {
