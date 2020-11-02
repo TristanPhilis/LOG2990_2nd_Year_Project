@@ -22,5 +22,23 @@
             "it('$1', () => {$0});"
         ],
         "description": "test format"
-    }
+    },
+
+    "no magic number": {
+        "scope": "javascript,typescript",
+        "prefix": "nomagic",
+        "body": [
+            "// tslint:disable-next-line:no-magic-numbers"
+        ],
+        "description": "disable tslint no magic number rule"
+    },
+
+    "no string litteral": {
+        "scope": "javascript,typescript",
+        "prefix": "nostring",
+        "body": [
+            "// tslint:disable-next-line:no-string-literal"
+        ],
+        "description": "disable tslint no string literal rule"
+    },
 }

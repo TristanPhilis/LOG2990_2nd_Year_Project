@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Tool } from '@app/classes/tool';
 import { BrushService } from '@app/services/tools/brush.service';
+import { BucketService } from '@app/services/tools/bucket-service';
 import { EllipseService } from '@app/services/tools/ellipse-service';
 import { EraserService } from '@app/services/tools/eraser-service';
 import { LineService } from '@app/services/tools/line-service';
@@ -25,9 +26,10 @@ export class ToolsService {
         eraserService: EraserService,
         lineService: LineService,
         brushService: BrushService,
+        bucketService: BucketService,
     ) {
         this.currentDrawingTool = pencilService;
-        this.tools = [pencilService, rectangleService, ellipseService, eraserService, lineService, brushService];
+        this.tools = [pencilService, rectangleService, ellipseService, eraserService, lineService, brushService, bucketService];
     }
 
     set _currentDrawingTool(newToolID: drawingToolId) {

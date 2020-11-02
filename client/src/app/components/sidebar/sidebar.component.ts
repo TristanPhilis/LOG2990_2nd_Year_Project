@@ -70,7 +70,11 @@ export class SidebarComponent {
                 this.toolsService._currentDrawingTool = drawingToolId.eraserService;
                 break;
             }
-
+            case sidebarToolID.paintBucket: {
+                this.toolsService._selectedSideBarToolID = sidebarToolID.paintBucket;
+                this.toolsService._currentDrawingTool = drawingToolId.bucketService;
+                break;
+            }
             case sidebarToolID.createNew: {
                 this.isDialogOpen = true;
                 const dialogRef = this.dialog.open(CreateNewDrawingComponent);
@@ -160,6 +164,7 @@ export class SidebarComponent {
                 this.onButtonPress(sidebarToolID.tracing);
                 this.toolsService._currentDrawingTool = drawingToolId.brushService;
             },
+            b: () => this.onButtonPress(sidebarToolID.paintBucket),
             e: () => this.onButtonPress(sidebarToolID.eraser),
             l: () => this.onButtonPress(sidebarToolID.line),
             1: () => {
