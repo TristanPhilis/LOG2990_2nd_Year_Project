@@ -3,7 +3,7 @@ import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { SHIFT_KEY } from '@app/shared/constant';
-import { MouseButton, TraceTypes } from '@app/shared/enum';
+import { drawingToolId, MouseButton, TraceTypes } from '@app/shared/enum';
 import { UndoRedoService } from './undoRedo-service';
 
 @Injectable({
@@ -37,6 +37,9 @@ export class RectangleService extends Tool {
     get _traceType(): number {
         return this.traceType;
     }
+    get pathdata(): Vec2[] {
+        return this.pathData;
+    }
 
     onMouseDown(event: MouseEvent): void {
         this.mouseDown = event.buttons === MouseButton.Left;
@@ -51,8 +54,13 @@ export class RectangleService extends Tool {
     onMouseUp(event: MouseEvent, undoRedo: UndoRedoService): void {
         if (this.mouseDown) {
             this.pathData.push(this.mouseDownCoord);
-            undoRedo.undoPile.push({ path: this.pathData, id: 'rectangle', thickness: this._thickness, traceType: this._traceType });
-            this.drawRectangle(this.drawingService.baseCtx);
+            undoRedo.undoPile.push({
+                path: this.pathData,
+                id: drawingToolId.rectangleService,
+                thickness: this._thickness,
+                traceType: this._traceType,
+            });
+            this.draw(this.drawingService.baseCtx, this.pathData);
         }
         this.mouseDown = false;
         this.clearPath();
@@ -61,10 +69,12 @@ export class RectangleService extends Tool {
     onMouseMove(event: MouseEvent): void {
         if (this.mouseDown && event.buttons === MouseButton.Left) {
             this.mouseDownCoord = this.getPositionFromMouse(event);
-            this.drawRectangle(this.drawingService.previewCtx);
+            this.pathData.push(this.mouseDownCoord);
+            this.draw(this.drawingService.previewCtx, this.pathData);
+            this.pathData.pop();
         }
         if (this.mouseDown && !(event.buttons === MouseButton.Left)) {
-            this.drawRectangle(this.drawingService.baseCtx);
+            this.draw(this.drawingService.baseCtx, this.pathData);
             this.mouseDown = false;
         }
     }
@@ -73,7 +83,7 @@ export class RectangleService extends Tool {
         if (event.key === SHIFT_KEY) {
             this.shiftDown = false;
             if (this.mouseDown) {
-                this.drawRectangle(this.drawingService.previewCtx);
+                this.draw(this.drawingService.previewCtx, this.pathData);
             }
         }
     }
@@ -82,26 +92,26 @@ export class RectangleService extends Tool {
         if (event.key === SHIFT_KEY) {
             this.shiftDown = true;
             if (this.mouseDown) {
-                this.drawRectangle(this.drawingService.previewCtx);
+                this.draw(this.drawingService.previewCtx, this.pathData);
             }
         }
     }
 
-    drawRectangle(ctx: CanvasRenderingContext2D): void {
+    draw(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
         ctx.beginPath();
         // tslint:disable-next-line: prefer-const
 
-        const width = this.mouseDownCoord.x - this.initialCoord.x;
-        const height = this.mouseDownCoord.y - this.initialCoord.y;
+        const width = path[1].x - path[0].x;
+        const height = path[1].y - path[0].y;
 
         ctx.lineWidth = this.thickness;
 
         if (this.shiftDown) {
             const squareSize = Math.min(Math.abs(width), Math.abs(height));
-            ctx.rect(this.initialCoord.x, this.initialCoord.y, squareSize * Math.sign(width), squareSize * Math.sign(height));
+            ctx.rect(path[0].x, path[0].y, squareSize * Math.sign(width), squareSize * Math.sign(height));
         } else {
-            ctx.rect(this.initialCoord.x, this.initialCoord.y, width, height);
+            ctx.rect(path[0].x, path[0].y, width, height);
         }
 
         switch (this.traceType) {

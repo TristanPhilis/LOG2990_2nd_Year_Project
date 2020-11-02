@@ -135,6 +135,9 @@ export class SidebarComponent {
             'C-e': () => {
                 this.onButtonPress(sidebarToolID.exportCurrent);
             },
+            'C-z': () => {
+                this.undoRedo.undo();
+            },
         };
         const func: callback | undefined = kbd[keys];
         if (func) {

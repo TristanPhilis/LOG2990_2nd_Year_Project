@@ -1,13 +1,15 @@
 import { Injectable } from '@angular/core';
+import { UndoRedoPile } from '@app/classes/pile';
 import { Tool } from '@app/classes/tool';
-import { UndoRedoPile } from '@app/classes/vec2';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { PencilService } from '@app/services/tools/pencil-service';
+import { drawingToolId } from '@app/shared/enum';
 import { BrushService } from './brush.service';
 import { EllipseService } from './ellipse-service';
 import { EraserService } from './eraser-service';
 import { LineService } from './line-service';
 import { RectangleService } from './rectangle-service';
+// import { ToolsService } from './tools-service';
 
 @Injectable({
     providedIn: 'root',
@@ -24,7 +26,8 @@ export class UndoRedoService extends Tool {
         private lineService: LineService,
         private eraserService: EraserService,
         private brushService: BrushService,
-    ) {
+    ) // private toolsService: ToolsService,
+    {
         super(drawingService);
 
         this.clearPile();
@@ -34,7 +37,41 @@ export class UndoRedoService extends Tool {
         const lastIn = this.undoPile.pop();
         if (lastIn !== undefined) {
             this.redoPile.push(lastIn);
-            this.draw();
+
+            if (this.undoPile.length < 0) {
+                return;
+            }
+            this.drawingService.clearCanvas(this.drawingService.baseCtx); ///
+            for (var i = 0; i < this.undoPile.length; i++) {
+                const pt = this.undoPile[i];
+                // this.toolsService.currentDrawingTool.draw(this.drawingService.baseCtx, pt.path);
+                switch (pt.id) {
+                    case drawingToolId.lineService: {
+                        this.lineService.draw(this.drawingService.baseCtx, pt.path);
+                        break;
+                    }
+                    case drawingToolId.pencilService: {
+                        this.pencilService.draw(this.drawingService.baseCtx, pt.path);
+                        break;
+                    }
+                    case drawingToolId.brushService: {
+                        this.brushService.draw(this.drawingService.baseCtx, pt.path);
+                        break;
+                    }
+                    case drawingToolId.eraserService: {
+                        this.eraserService.draw(this.drawingService.baseCtx, pt.path);
+                        break;
+                    }
+                    case drawingToolId.rectangleService: {
+                        this.rectangleService.draw(this.drawingService.baseCtx, pt.path);
+                        break;
+                    }
+                    case drawingToolId.ellipseService: {
+                        this.ellipseService.draw(this.drawingService.baseCtx, pt.path);
+                        break;
+                    }
+                }
+            }
         }
     }
 
@@ -42,45 +79,40 @@ export class UndoRedoService extends Tool {
         const lastIn = this.redoPile.pop();
         if (lastIn !== undefined) {
             this.undoPile.push(lastIn);
-            this.draw();
-        }
-    }
-
-    draw(): void {
-        if (this.undoPile.length < 0 || this.redoPile.length < 0) {
-            return;
-        }
-        this.drawingService.clearCanvas(this.drawingService.baseCtx);
-        for (var i = 0; i < this.undoPile.length; i++) {
-            const pt = this.undoPile[i];
-            switch (pt.id) {
-                case 'line': {
-                    this.lineService.drawLine(this.drawingService.baseCtx);
-                    // break;
-                }
-                case 'brush': {
-                    this.brushService.drawBrush(this.drawingService.baseCtx, pt.path);
-                    break;
-                }
-                case 'pencil': {
-                    this.pencilService.drawLine(this.drawingService.baseCtx, pt.path);
-                    break;
-                }
-                case 'erase': {
-                    this.eraserService.eraseLine(this.drawingService.baseCtx, pt.path);
-                    break;
-                }
-                case 'rectangle': {
-                    this.rectangleService.drawRectangle(this.drawingService.baseCtx);
-                    break;
-                }
-                case 'ellipse': {
-                    this.ellipseService.drawEllipse(this.drawingService.baseCtx);
-                    break;
+            if (this.redoPile.length < 0 || this.undoPile.length < 0) {
+                return;
+            }
+            for (var i = 0; i < this.undoPile.length; i++) {
+                const pt = this.undoPile[i];
+                // this.toolsService.currentDrawingTool.draw(this.drawingService.baseCtx, pt.path);
+                switch (pt.id) {
+                    case drawingToolId.lineService: {
+                        this.lineService.draw(this.drawingService.baseCtx, pt.path);
+                        break;
+                    }
+                    case drawingToolId.brushService: {
+                        this.brushService.draw(this.drawingService.baseCtx, pt.path);
+                        break;
+                    }
+                    case drawingToolId.pencilService: {
+                        this.pencilService.draw(this.drawingService.baseCtx, pt.path);
+                        break;
+                    }
+                    case drawingToolId.eraserService: {
+                        this.eraserService.draw(this.drawingService.baseCtx, pt.path);
+                        break;
+                    }
+                    case drawingToolId.rectangleService: {
+                        this.rectangleService.draw(this.drawingService.baseCtx, pt.path);
+                        break;
+                    }
+                    case drawingToolId.ellipseService: {
+                        this.ellipseService.draw(this.drawingService.baseCtx, pt.path);
+                        break;
+                    }
                 }
             }
         }
-        console.log(i);
     }
 
     clearPile() {

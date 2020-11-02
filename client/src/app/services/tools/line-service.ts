@@ -4,6 +4,7 @@ import { Vec2 } from '@app/classes/vec2';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { UndoRedoService } from '@app/services/tools/undoRedo-service';
 import { BACKSPACE_KEY, BASE_SNAP_ANGLE, ESCAPE_KEY, MIDDLE_SNAP_ANGLE, SHIFT_KEY } from '@app/shared/constant';
+import { drawingToolId } from '@app/shared/enum';
 
 @Injectable({
     providedIn: 'root',
@@ -32,42 +33,45 @@ export class LineService extends Tool {
 
     onMouseClick(event: MouseEvent): void {
         if (this.lineStarted) {
-            const adjustedCoord = this.getAdjustedCoord();
+            const adjustedCoord = this.getAdjustedCoord(this.pathData);
             this.pathData.push(adjustedCoord);
         } else {
             this.lineStarted = true;
             this.initialCoord = this.getPositionFromMouse(event);
             this.currentCoord = this.initialCoord;
+            this.pathData.push(this.currentCoord);
         }
     }
 
     onMouseMove(event: MouseEvent): void {
         if (this.lineStarted) {
             this.currentCoord = this.getPositionFromMouse(event);
-            this.drawLine(this.drawingService.previewCtx);
+            this.pathData.push(this.currentCoord);
+            this.draw(this.drawingService.previewCtx, this.pathData);
+            this.pathData.pop();
         }
     }
 
     onMouseDoubleClick(undoRedo: UndoRedoService): void {
         if (this.lineStarted) {
-            undoRedo.undoPile.push({ path: this.pathData, id: 'line', thickness: this._thickness });
+            undoRedo.undoPile.push({ path: this.pathData, id: drawingToolId.lineService, thickness: this._thickness, traceType: 0 });
             // const onMouseclickTriggerAdjustment = 2;
             // this.pathData.splice(this.pathData.length - onMouseclickTriggerAdjustment, onMouseclickTriggerAdjustment);
-            this.drawLine(this.drawingService.baseCtx);
-            this.endLine();
+            this.draw(this.drawingService.baseCtx, this.pathData);
+            this.endLine(this.pathData);
         }
     }
 
-    endLine(): void {
+    endLine(path: Vec2[]): void {
         const closingMinDistance = 20;
-        const endCoord = this.getAdjustedCoord();
-        const diff = this.getDiff(this.initialCoord, this.currentCoord);
+        const endCoord = this.getAdjustedCoord(path);
+        const diff = this.getDiff(path[0], path[path.length - 1]);
         const closeShape = Math.abs(diff.x) <= closingMinDistance && Math.abs(diff.y) <= closingMinDistance;
         if (closeShape) {
             const ctx = this.drawingService.baseCtx;
             ctx.beginPath();
             ctx.moveTo(endCoord.x, endCoord.y);
-            ctx.lineTo(this.initialCoord.x, this.initialCoord.y);
+            ctx.lineTo(path[0].x, path[0].y);
             ctx.stroke();
         }
         this.clearPath();
@@ -78,7 +82,7 @@ export class LineService extends Tool {
         if (event.key === SHIFT_KEY) {
             this.shiftDown = false;
             if (this.lineStarted) {
-                this.drawLine(this.drawingService.previewCtx);
+                this.draw(this.drawingService.previewCtx, this.pathData);
             }
         }
     }
@@ -89,14 +93,14 @@ export class LineService extends Tool {
                 if (this.shiftDown !== true) {
                     this.shiftDown = true;
                     if (this.lineStarted) {
-                        this.drawLine(this.drawingService.previewCtx);
+                        this.draw(this.drawingService.previewCtx, this.pathData);
                     }
                 }
                 break;
             case BACKSPACE_KEY:
                 this.pathData.pop();
                 if (this.lineStarted) {
-                    this.drawLine(this.drawingService.previewCtx);
+                    this.draw(this.drawingService.previewCtx, this.pathData);
                 }
                 break;
             case ESCAPE_KEY:
@@ -112,13 +116,13 @@ export class LineService extends Tool {
         return Math.atan(Math.abs(diff.y) / Math.abs(diff.x));
     }
 
-    getAdjustedCoord(): Vec2 {
-        return this.shiftDown ? this.getSnappedCoord() : this.currentCoord;
+    getAdjustedCoord(path: Vec2[]): Vec2 {
+        return this.shiftDown ? this.getSnappedCoord(path) : this.currentCoord;
     }
 
-    getSnappedCoord(): Vec2 {
-        const nPoints = this.pathData.length;
-        const startingPoint = nPoints > 0 ? this.pathData[nPoints - 1] : this.initialCoord;
+    getSnappedCoord(path: Vec2[]): Vec2 {
+        const nPoints = path.length;
+        const startingPoint = nPoints > 0 ? path[nPoints - 1] : path[0];
         const angle = this.calculateAngle(startingPoint, this.currentCoord);
 
         let point = { x: 0, y: 0 };
@@ -142,12 +146,11 @@ export class LineService extends Tool {
         return projectedPoint;
     }
 
-    drawLine(ctx: CanvasRenderingContext2D): void {
+    draw(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
-        const adjustedCoord = this.getAdjustedCoord();
+        const adjustedCoord = this.getAdjustedCoord(path);
         ctx.beginPath();
-
-        ctx.moveTo(this.initialCoord.x, this.initialCoord.y);
+        ctx.lineTo(path[0].x, path[0].y);
         ctx.lineWidth = this.thickness;
         for (const point of this.pathData) {
             ctx.lineTo(point.x, point.y);

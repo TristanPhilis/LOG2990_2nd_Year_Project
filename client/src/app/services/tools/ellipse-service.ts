@@ -3,7 +3,7 @@ import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { SHIFT_KEY } from '@app/shared/constant';
-import { MouseButton } from '@app/shared/enum';
+import { drawingToolId, MouseButton } from '@app/shared/enum';
 import { UndoRedoService } from './undoRedo-service';
 
 @Injectable({
@@ -17,6 +17,7 @@ export class EllipseService extends Tool {
 
     constructor(drawingService: DrawingService) {
         super(drawingService);
+        this.clearPath();
         this.thickness = 0;
     }
 
@@ -41,19 +42,21 @@ export class EllipseService extends Tool {
     onMouseMove(event: MouseEvent): void {
         if (this.mouseDown && event.buttons === MouseButton.Left) {
             this.mouseDownCoord = this.getPositionFromMouse(event);
-            this.drawEllipse(this.drawingService.previewCtx);
+            this.pathData.push(this.mouseDownCoord);
+            this.draw(this.drawingService.previewCtx, this.pathData);
+            this.pathData.pop();
         }
         if (this.mouseDown && !(event.buttons === MouseButton.Left)) {
             this.mouseDown = false;
-            this.drawEllipse(this.drawingService.baseCtx);
+            this.draw(this.drawingService.baseCtx, this.pathData);
         }
     }
 
     onMouseUp(event: MouseEvent, undoRedo: UndoRedoService): void {
         if (this.mouseDown) {
             this.pathData.push(this.mouseDownCoord);
-            undoRedo.undoPile.push({ path: this.pathData, id: 'ellipse', thickness: this._thickness });
-            this.drawEllipse(this.drawingService.baseCtx);
+            undoRedo.undoPile.push({ path: this.pathData, id: drawingToolId.ellipseService, thickness: this._thickness, traceType: 0 });
+            this.draw(this.drawingService.baseCtx, this.pathData);
         }
         this.mouseDown = false;
         this.clearPath();
@@ -63,7 +66,7 @@ export class EllipseService extends Tool {
         if (event.key === SHIFT_KEY) {
             this.shiftDown = false;
             if (this.mouseDown) {
-                this.drawEllipse(this.drawingService.previewCtx);
+                this.draw(this.drawingService.previewCtx, this.pathData);
             }
         }
     }
@@ -72,26 +75,26 @@ export class EllipseService extends Tool {
         if (event.key === SHIFT_KEY) {
             this.shiftDown = true;
             if (this.mouseDown) {
-                this.drawEllipse(this.drawingService.previewCtx);
+                this.draw(this.drawingService.previewCtx, this.pathData);
             }
         }
     }
 
-    drawEllipse(ctx: CanvasRenderingContext2D): void {
+    draw(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
         ctx.beginPath();
-        const xRadius = (this.mouseDownCoord.x - this.initialCoord.x) / 2;
-        const yRadius = (this.mouseDownCoord.y - this.initialCoord.y) / 2;
+        const xRadius = (path[1].x - path[0].x) / 2;
+        const yRadius = (path[1].y - path[0].y) / 2;
         ctx.lineWidth = this.thickness;
 
         if (this.shiftDown) {
             const smallestRadius = Math.min(Math.abs(xRadius), Math.abs(yRadius));
-            const xMiddle = this.initialCoord.x + smallestRadius * Math.sign(xRadius);
-            const yMiddle = this.initialCoord.y + smallestRadius * Math.sign(yRadius);
+            const xMiddle = path[0].x + smallestRadius * Math.sign(xRadius);
+            const yMiddle = path[0].y + smallestRadius * Math.sign(yRadius);
             ctx.arc(xMiddle, yMiddle, smallestRadius, 0, 2 * Math.PI);
         } else {
-            const xMiddle = this.initialCoord.x + xRadius;
-            const yMiddle = this.initialCoord.y + yRadius;
+            const xMiddle = path[0].x + xRadius;
+            const yMiddle = path[0].y + yRadius;
             ctx.ellipse(xMiddle, yMiddle, Math.abs(xRadius), Math.abs(yRadius), 0, 0, 2 * Math.PI);
         }
 

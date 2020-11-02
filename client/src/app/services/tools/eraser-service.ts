@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
 import { DrawingService } from '@app/services/drawing/drawing.service';
-import { MouseButton } from '@app/shared/enum';
+import { drawingToolId, MouseButton } from '@app/shared/enum';
 import { UndoRedoService } from './undoRedo-service';
 
 @Injectable({
@@ -40,8 +40,8 @@ export class EraserService extends Tool {
         if (this.mouseDown) {
             const mousePosition = this.getPositionFromMouse(event);
             this.pathData.push(mousePosition);
-            this.eraseLine(this.drawingService.baseCtx, this.pathData);
-            undoRedo.undoPile.push({ path: this.pathData, id: 'erase', thickness: this._thickness });
+            this.draw(this.drawingService.baseCtx, this.pathData);
+            undoRedo.undoPile.push({ path: this.pathData, id: drawingToolId.eraserService, thickness: this._thickness, traceType: 0 });
         }
         this.mouseDown = false;
         this.clearPath();
@@ -51,15 +51,15 @@ export class EraserService extends Tool {
         if (this.mouseDown && event.buttons === MouseButton.Left) {
             const mousePosition = this.getPositionFromMouse(event);
             this.pathData.push(mousePosition);
-            this.eraseLine(this.drawingService.previewCtx, this.pathData);
-            this.eraseLine(this.drawingService.baseCtx, this.pathData);
+            this.draw(this.drawingService.previewCtx, this.pathData);
+            this.draw(this.drawingService.baseCtx, this.pathData);
         }
         if (this.mouseDown && !(event.buttons === MouseButton.Left)) {
-            this.eraseLine(this.drawingService.baseCtx, this.pathData);
+            this.draw(this.drawingService.baseCtx, this.pathData);
         }
     }
 
-    eraseLine(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
+    draw(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
         ctx.globalCompositeOperation = 'destination-out';
         ctx.beginPath();
         ctx.lineCap = 'round';

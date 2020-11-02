@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
 import { DrawingService } from '@app/services/drawing/drawing.service';
-import { MouseButton } from '@app/shared/enum';
+import { drawingToolId, MouseButton } from '@app/shared/enum';
 import { UndoRedoService } from './undoRedo-service';
 
 @Injectable({
@@ -40,10 +40,10 @@ export class PencilService extends Tool {
 
     onMouseUp(event: MouseEvent, undoRedo: UndoRedoService): void {
         if (this.mouseDown) {
-            undoRedo.undoPile.push({ path: this.pathData, id: 'pencil', thickness: this._thickness });
+            undoRedo.undoPile.push({ path: this.pathData, id: drawingToolId.pencilService, thickness: this._thickness, traceType: 0 });
             const mousePosition = this.getPositionFromMouse(event);
             this.pathData.push(mousePosition);
-            this.drawLine(this.drawingService.baseCtx, this.pathData);
+            this.draw(this.drawingService.baseCtx, this.pathData);
         }
         this.mouseDown = false;
         this.clearPath();
@@ -53,14 +53,14 @@ export class PencilService extends Tool {
         if (this.mouseDown && event.buttons === MouseButton.Left) {
             const mousePosition = this.getPositionFromMouse(event);
             this.pathData.push(mousePosition);
-            this.drawLine(this.drawingService.previewCtx, this.pathData);
+            this.draw(this.drawingService.previewCtx, this.pathData);
         }
         if (this.mouseDown && !(event.buttons === MouseButton.Left)) {
-            this.drawLine(this.drawingService.baseCtx, this.pathData);
+            this.draw(this.drawingService.baseCtx, this.pathData);
         }
     }
 
-    drawLine(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
+    draw(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
         ctx.beginPath();
         ctx.lineCap = 'round';

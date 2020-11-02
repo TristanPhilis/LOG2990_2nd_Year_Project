@@ -61,8 +61,9 @@ export class DrawingComponent implements AfterViewInit, OnChanges {
     }
 
     @HostListener('mouseup', ['$event'])
-    onMouseUp(event: MouseEvent): void {
+    onMouseUp(event: MouseEvent, undoRedo: UndoRedoService): void {
         this.currentTool.onMouseUp(event, this.drawingPile);
+        // this.currentTool.onMouseUp(event,this.drawingPile, this., this.toolsService._currentDrawingTool, 0, 0);
     }
 
     @HostListener('click', ['$event'])
@@ -71,8 +72,9 @@ export class DrawingComponent implements AfterViewInit, OnChanges {
     }
 
     @HostListener('dblclick', ['$event'])
-    onMouseDoubleClick(event: MouseEvent): void {
+    onMouseDoubleClick(undoRedo: UndoRedoService): void {
         this.currentTool.onMouseDoubleClick(this.drawingPile);
+        // this.currentTool.onMouseDoubleClick(this.drawingPile, this., this.toolsService._currentDrawingTool, 0, 0);
     }
 
     @HostListener('keydown', ['$event'])

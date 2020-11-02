@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
 import { DrawingService } from '@app/services/drawing/drawing.service';
-import { MouseButton, Texture } from '@app/shared/enum';
+import { drawingToolId, MouseButton, Texture } from '@app/shared/enum';
 import { UndoRedoService } from './undoRedo-service';
 
 @Injectable({
@@ -44,10 +44,10 @@ export class BrushService extends Tool {
 
     onMouseUp(event: MouseEvent, undoRedo: UndoRedoService): void {
         if (this.mouseDown) {
-            undoRedo.undoPile.push({ path: this.pathData, id: 'brush', thickness: this._thickness });
+            undoRedo.undoPile.push({ path: this.pathData, id: drawingToolId.brushService, thickness: this._thickness, traceType: 0 });
             const mousePosition = this.getPositionFromMouse(event);
             this.pathData.push(mousePosition);
-            this.drawBrush(this.drawingService.baseCtx, this.pathData);
+            this.draw(this.drawingService.baseCtx, this.pathData);
         }
         this.mouseDown = false;
         this.clearPath();
@@ -58,14 +58,14 @@ export class BrushService extends Tool {
             const mousePosition = this.getPositionFromMouse(event);
             this.pathData.push(mousePosition);
             // We draw on the preview canvas and erase it each time the mouse is moved
-            this.drawBrush(this.drawingService.previewCtx, this.pathData);
+            this.draw(this.drawingService.previewCtx, this.pathData);
         }
         if (this.mouseDown && !(event.buttons === MouseButton.Left)) {
-            this.drawBrush(this.drawingService.baseCtx, this.pathData);
+            this.draw(this.drawingService.baseCtx, this.pathData);
         }
     }
 
-    drawBrush(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
+    draw(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
         ctx.beginPath();
         ctx.lineCap = 'round';
