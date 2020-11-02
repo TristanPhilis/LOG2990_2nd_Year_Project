@@ -2,9 +2,9 @@ import { Injectable } from '@angular/core';
 import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
 import { DrawingService } from '@app/services/drawing/drawing.service';
-import { UndoRedoService } from '@app/services/tools/undoRedo-service';
 import { BACKSPACE_KEY, BASE_SNAP_ANGLE, ESCAPE_KEY, MIDDLE_SNAP_ANGLE, SHIFT_KEY } from '@app/shared/constant';
 import { drawingToolId } from '@app/shared/enum';
+import { UndoRedoService } from './undoRedo-service';
 
 @Injectable({
     providedIn: 'root',
