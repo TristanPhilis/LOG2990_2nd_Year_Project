@@ -29,6 +29,11 @@ describe('DrawingService', () => {
         expect(hasColoredPixels).toEqual(false);
     });
 
+    it('getDataUrl should return the url', () => {
+        const url = service.getImageURL();
+        expect(url).toBeTruthy();
+    });
+
     it('Background should be white', () => {
         service.clearCanvas(service.baseCtx);
         service.fillWhiteBackground();

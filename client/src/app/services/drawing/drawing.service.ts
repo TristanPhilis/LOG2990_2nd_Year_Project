@@ -7,9 +7,14 @@ export class DrawingService {
     baseCtx: CanvasRenderingContext2D;
     previewCtx: CanvasRenderingContext2D;
     canvas: HTMLCanvasElement;
+    drawingToLoad: string;
 
     getImageData(): ImageData {
         return this.baseCtx.getImageData(0, 0, this.canvas.width, this.canvas.height);
+    }
+
+    getImageURL(): string {
+        return this.canvas.toDataURL();
     }
 
     setImageData(imageData: ImageData): void {
@@ -23,5 +28,15 @@ export class DrawingService {
 
     clearCanvas(context: CanvasRenderingContext2D): void {
         context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    }
+
+    loadDrawing(context: CanvasRenderingContext2D): void {
+        const image = new Image();
+        image.src = this.drawingToLoad;
+        context.drawImage(image, 0, 0);
+    }
+
+    sendDrawing(drawing: string): void {
+        this.drawingToLoad = drawing;
     }
 }

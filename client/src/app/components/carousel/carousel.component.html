@@ -1,0 +1,32 @@
+<div class = "dialog">
+        <ng-container *ngIf="drawingsInfo.value.length > 0; else elseBlock">
+        <li  *ngFor="let currentDrawing of currentDrawings; let i = index">
+        <button class="load" mat-raised-button mat-dialog-close routerLink="/editor" routerLinkActive="active" (click)="loadDrawing(currentDrawing)">
+          <mat-card class="example-card">
+          <mat-card-header>
+          <div mat-card-avatar class="example-header-image"></div>
+          <mat-card-title><p>{{currentDrawing?.name}}</p></mat-card-title>
+          <mat-card-subtitle><li *ngFor="let tag of currentDrawing?.tags">
+          <mat-icon>
+          label
+          </mat-icon>{{tag}}</li></mat-card-subtitle>
+          </mat-card-header>
+          <img class = "drawing" mat-card-image src={{currentDrawing?.metadata}}>
+          </mat-card>
+        </button>
+          <button mat-raised-button (click)="deleteDrawing(drawingsInfo.value[getDrawingPosition(drawingCounter + i - 1)].id)">
+          <mat-icon>
+          delete
+          </mat-icon></button>
+        </li>
+        <div class="buttons">
+        <button mat-raised-button (click)="goToPreviousDrawing()" >Précédent</button>
+        <button mat-raised-button (click)="goToNextDrawing()" >Suivant</button>
+        </div>
+      </ng-container>
+      <ng-template #elseBlock >Il n'y a présentement aucun dessin</ng-template>
+        <div class="tags">
+        Nom:<input>
+        Étiquettes:<input> Pour filtrer les dessins, entrer le nom d'une étiquette valide.
+        </div>
+</div>
