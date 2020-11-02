@@ -4,26 +4,37 @@ import { SelectionBox } from '@app/classes/selection-box';
 import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
 import { DrawingService } from '@app/services/drawing/drawing.service';
-import { DASHLINE_EMPTY, DASHLINE_FULL, DEPLACEMENT, ESCAPE_KEY, NEGATIVE_MULTIPLIER, SHIFT_KEY } from '@app/shared/constant';
+import {
+    ARROW_DOWN,
+    ARROW_LEFT,
+    ARROW_RIGHT,
+    ARROW_UP,
+    DASHLINE_EMPTY,
+    DASHLINE_FULL,
+    DEPLACEMENT,
+    ESCAPE_KEY,
+    NEGATIVE_MULTIPLIER,
+    SHIFT_KEY,
+} from '@app/shared/constant';
 import { MouseButton } from '@app/shared/enum';
 
 @Injectable({
     providedIn: 'root',
 })
 export class RectangleSelectorService extends Tool {
-    isAreaSelected: boolean = false;
-    selectedImageData: ImageData;
-    shiftDown: boolean;
-    selectedBox: BoundingBox;
-    selectionBox: SelectionBox;
-    draggingAnchorRelativePosition: Vec2;
-
     constructor(drawingService: DrawingService) {
         super(drawingService);
 
         this.selectedBox = new BoundingBox();
         this.selectionBox = new SelectionBox();
     }
+    isAreaSelected: boolean = false;
+    selectedImageData: ImageData;
+    shiftDown: boolean;
+    selectedBox: BoundingBox;
+    selectionBox: SelectionBox;
+    draggingAnchorRelativePosition: Vec2;
+    map: boolean[] = [];
 
     onMouseDown(event: MouseEvent): void {
         this.mouseDown = event.buttons === MouseButton.Left;
@@ -146,34 +157,44 @@ export class RectangleSelectorService extends Tool {
                 this.drawSelectionBox();
             }
         }
+        event = event || event; // to deal with IE
+        // tslint:disable-next-line: deprecation
+        this.map[event.keyCode] = event.type === 'keydown';
     }
 
     onKeyDown(event: KeyboardEvent): void {
+        event = event || event; // to deal with IE
+        // tslint:disable-next-line: deprecation
+        this.map[event.keyCode] = event.type === 'keydown';
+
         if (event.key === SHIFT_KEY) {
             this.shiftDown = true;
             if (this.mouseDown && !this.isAreaSelected) {
                 this.drawSelectionBox();
             }
         } else if (this.isAreaSelected) {
-            if (event.key === 'ArrowDown') {
+            console.log(event.key);
+            if (this.map[ARROW_DOWN]) {
                 this.selectedBox.translateY(DEPLACEMENT);
                 this.updateSelectedAreaPreview();
             }
-            if (event.key === 'ArrowUp') {
+            if (this.map[ARROW_UP]) {
                 this.selectedBox.translateY(DEPLACEMENT * NEGATIVE_MULTIPLIER);
                 this.updateSelectedAreaPreview();
             }
-            if (event.key === 'ArrowLeft') {
+            if (this.map[ARROW_LEFT]) {
                 this.selectedBox.translateX(DEPLACEMENT * NEGATIVE_MULTIPLIER);
                 this.updateSelectedAreaPreview();
             }
-            if (event.key === 'ArrowRight') {
+            if (this.map[ARROW_RIGHT]) {
                 this.selectedBox.translateX(DEPLACEMENT);
                 this.updateSelectedAreaPreview();
             }
+            if (this.map[17] && this.map[65]) {
+                this.selectAllCanvas();
+            }
         }
     }
-
     placeImage(): void {
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
         if (this.isAreaSelected) {
@@ -191,6 +212,12 @@ export class RectangleSelectorService extends Tool {
             this.selectedBox.width,
             this.selectedBox.height,
         );
+        this.clearBaseCanvasSelectedArea();
+        this.updateSelectedAreaPreview();
+    }
+
+    private selectAllCanvas(): void {
+        this.selectedImageData = this.drawingService.baseCtx.getImageData(0, 0, this.drawingService.canvas.width, this.drawingService.canvas.height);
         this.clearBaseCanvasSelectedArea();
         this.updateSelectedAreaPreview();
     }
