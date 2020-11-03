@@ -6,7 +6,6 @@ import { EllipseService } from '@app/services/tools/ellipse-service';
 import { EraserService } from '@app/services/tools/eraser-service';
 import { LineService } from '@app/services/tools/line-service';
 import { PencilService } from '@app/services/tools/pencil-service';
-import { PipetteService } from '@app/services/tools/pipette-service';
 import { RectangleService } from '@app/services/tools/rectangle-service';
 import { drawingToolId, sidebarToolID } from '@app/shared/enum';
 
@@ -28,10 +27,9 @@ export class ToolsService {
         lineService: LineService,
         brushService: BrushService,
         bucketService: BucketService,
-        pipetteSerice: PipetteService,
     ) {
         this.currentDrawingTool = pencilService;
-        this.tools = [pencilService, rectangleService, ellipseService, eraserService, lineService, brushService, bucketService, pipetteSerice];
+        this.tools = [pencilService, rectangleService, ellipseService, eraserService, lineService, brushService, bucketService];
     }
 
     set _currentDrawingTool(newToolID: drawingToolId) {
