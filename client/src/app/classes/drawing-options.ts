@@ -9,7 +9,7 @@ export interface DrawingOptions {
     outlineType?: string;
     traceType?: TraceTypes;
     texture?: Texture;
-    toleranceInterval?: number;
+    tolerance?: number;
     numberOfSides?: number;
     angle?: number;
     lineLength?: number;

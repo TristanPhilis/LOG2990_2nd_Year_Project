@@ -11,11 +11,6 @@ export const BASE_ANGLE_SNAP_DIVIDER = 8;
 export const MIDDLE_SNAP_ANGLE = Math.PI / MIDDLE_ANGLE_SNAP_DIVIDER;
 export const BASE_SNAP_ANGLE = Math.PI / BASE_ANGLE_SNAP_DIVIDER;
 
-export const DEFAULT_OPTIONS = {
-    size: 1,
-    texture: Texture.one,
-    traceType: TraceTypes.fill,
-};
 export const R_POSITION = 0;
 export const G_POSITION = 1;
 export const B_POSITION = 2;
@@ -24,3 +19,10 @@ export const A_POSITION = 3;
 export const MAX_TOLERANCE = 100;
 export const MIN_TOLERANCE = 0;
 export const PIXEL_INTERVAL = 4;
+
+export const DEFAULT_OPTIONS = {
+    size: 1,
+    texture: Texture.one,
+    traceType: TraceTypes.fill,
+    tolerance: MIN_TOLERANCE,
+};

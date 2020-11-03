@@ -7,7 +7,7 @@ import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
 import { ColorSelectionService } from '@app/services/color/color-selection-service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
-import { A_POSITION, B_POSITION, G_POSITION, MAX_TOLERANCE, MIN_TOLERANCE, PIXEL_INTERVAL, R_POSITION } from '@app/shared/constant';
+import { A_POSITION, B_POSITION, DEFAULT_OPTIONS, G_POSITION, MAX_TOLERANCE, MIN_TOLERANCE, PIXEL_INTERVAL, R_POSITION } from '@app/shared/constant';
 import { drawingToolId, MouseButton } from '@app/shared/enum';
 import { UndoRedoService } from './undoredo-service';
 
@@ -32,6 +32,14 @@ export class BucketService extends Tool {
         this.boundingBox = new BoundingBox();
         this.visitedPixel = [];
         this.pixelToVisit = [];
+        this.setDefaultOptions();
+    }
+
+    setDefaultOptions(): void {
+        this.options = {
+            primaryColor: this.primaryColor,
+            tolerance: DEFAULT_OPTIONS.tolerance,
+        };
     }
 
     onMouseDown(event: MouseEvent): void {
