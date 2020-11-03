@@ -33,6 +33,8 @@ export class ToolsService {
         brushService: BrushService,
         rectangleSelectionService: RectangleSelectorService,
         ellipseSelectionService: EllipseSelectorService,
+        bucketService: BucketService,
+        pipetteService: PipetteService,
     ) {
         this.currentDrawingTool = pencilService;
         this.tools = [
@@ -44,6 +46,8 @@ export class ToolsService {
             brushService,
             rectangleSelectionService,
             ellipseSelectionService,
+            bucketService,
+            pipetteService,
         ];
     }
 

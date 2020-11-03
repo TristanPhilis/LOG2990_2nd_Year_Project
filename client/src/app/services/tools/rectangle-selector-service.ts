@@ -132,7 +132,7 @@ export class RectangleSelectorService extends Tool {
     }
 
     private clearBaseCanvasSelectedArea(): void {
-        this.drawingService.fillCanvas('white', this.selectedBox);
+        this.drawingService.fillCanvas('white');
     }
 
     private translateSelectedBoxFromMouseMove(coord: Vec2): void {

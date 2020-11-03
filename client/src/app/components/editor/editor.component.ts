@@ -4,8 +4,6 @@ import { Vec2 } from '@app/classes/vec2';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { MIN_CANVAS_SIZE } from '@app/shared/constant';
 import { MouseButton } from '@app/shared/enum';
-import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
 
 export enum anchorId {
     bottom,
@@ -57,6 +55,8 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
             this.drawingService.drawingToLoad = '';
         }
     }
+
+    ngOnDestroy(): void {}
 
     setAnchorPosition(): void {
         const canvasBorderSize = 2;

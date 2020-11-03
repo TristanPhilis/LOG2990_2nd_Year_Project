@@ -9,7 +9,6 @@ import { SavePopupComponent } from '@app/components/popup/save-popup/save-popup.
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ToolsService } from '@app/services/tools/tools-service';
 import { drawingToolId, sidebarToolID } from '@app/shared/enum';
-import { CarouselComponent } from '../carousel/carousel.component';
 import { SidebarToolComponent } from './sidebar-tool/sidebar-tool.component';
 
 declare type callback = () => void;
