@@ -4,7 +4,7 @@ import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
 import { ColorSelectionService } from '@app/services/color/color-selection-service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
-import { BACKSPACE_KEY, BASE_SNAP_ANGLE, ESCAPE_KEY, MIDDLE_SNAP_ANGLE, SHIFT_KEY } from '@app/shared/constant';
+import { BACKSPACE_KEY, BASE_SNAP_ANGLE, DEFAULT_OPTIONS, ESCAPE_KEY, MIDDLE_SNAP_ANGLE, SHIFT_KEY } from '@app/shared/constant';
 import { drawingToolId } from '@app/shared/enum';
 import { UndoRedoService } from './undoredo-service';
 
@@ -15,7 +15,6 @@ export class LineService extends Tool {
     private pathData: Vec2[];
     lineStarted: boolean;
     currentCoord: Vec2;
-    initialCoord: Vec2;
 
     constructor(drawingService: DrawingService, undoRedoService: UndoRedoService, colorService: ColorSelectionService) {
         super(drawingService, undoRedoService, colorService);
@@ -26,7 +25,7 @@ export class LineService extends Tool {
     setDefaultOptions(): void {
         this.options = {
             primaryColor: this.primaryColor,
-            size: 1,
+            size: DEFAULT_OPTIONS.size,
         };
     }
     set _thickness(newThickness: number) {
@@ -37,55 +36,57 @@ export class LineService extends Tool {
         return this.options.size ? this.options.size : 1;
     }
 
+    private getLastClickedCoord(): Vec2 {
+        const length = this.pathData.length;
+        return length > 1 ? this.pathData[length - 2] : { x: 0, y: 0 };
+    }
+
     onMouseClick(event: MouseEvent): void {
         if (this.lineStarted) {
-            const adjustedCoord = this.getAdjustedCoord(this.pathData);
-            this.pathData.push(adjustedCoord);
+            this.pathData.push(this.pathData[this.pathData.length - 1]);
         } else {
             this.lineStarted = true;
-            this.initialCoord = this.getPositionFromMouse(event);
-            this.currentCoord = this.initialCoord;
-            this.pathData.push(this.currentCoord);
+            const initialCoord = this.getPositionFromMouse(event);
+            this.currentCoord = initialCoord;
+            this.pathData = [initialCoord, initialCoord];
         }
     }
 
     onMouseMove(event: MouseEvent): void {
         if (this.lineStarted) {
             this.currentCoord = this.getPositionFromMouse(event);
-            this.pathData.push(this.currentCoord);
+            this.updateLastCoord();
             this.draw(this.drawingService.previewCtx, this.getDrawingAction());
-            this.pathData.pop();
         }
     }
 
     onMouseDoubleClick(event: MouseEvent): void {
         if (this.lineStarted) {
-            this.undoRedoService.saveAction(this.getDrawingAction());
-            this.draw(this.drawingService.baseCtx, this.getDrawingAction());
-            this.endLine(this.pathData);
+            this.endLine();
+            const drawingAction = this.getDrawingAction();
+            this.undoRedoService.saveAction(drawingAction);
+            this.draw(this.drawingService.baseCtx, drawingAction);
+            this.lineStarted = false;
+            this.clearPath();
         }
     }
 
-    endLine(path: Vec2[]): void {
+    endLine(): void {
         const closingMinDistance = 20;
-        const endCoord = this.getAdjustedCoord(path);
-        const diff = this.getDiff(path[0], path[path.length - 1]);
+        const endPoint = this.getLastClickedCoord();
+        const initialPoint = this.pathData[0];
+        const diff = this.getDiff(initialPoint, endPoint);
         const closeShape = Math.abs(diff.x) <= closingMinDistance && Math.abs(diff.y) <= closingMinDistance;
         if (closeShape) {
-            const ctx = this.drawingService.baseCtx;
-            ctx.beginPath();
-            ctx.moveTo(endCoord.x, endCoord.y);
-            ctx.lineTo(path[0].x, path[0].y);
-            ctx.stroke();
+            this.pathData.splice(this.pathData.length - 1, 1, initialPoint);
         }
-        this.clearPath();
-        this.lineStarted = false;
     }
 
     onKeyUp(event: KeyboardEvent): void {
         if (event.key === SHIFT_KEY) {
             this.shiftDown = false;
             if (this.lineStarted) {
+                this.updateLastCoord();
                 this.draw(this.drawingService.previewCtx, this.getDrawingAction());
             }
         }
@@ -97,12 +98,13 @@ export class LineService extends Tool {
                 if (this.shiftDown !== true) {
                     this.shiftDown = true;
                     if (this.lineStarted) {
+                        this.updateLastCoord();
                         this.draw(this.drawingService.previewCtx, this.getDrawingAction());
                     }
                 }
                 break;
             case BACKSPACE_KEY:
-                this.pathData.pop();
+                this.pathData.splice(this.pathData.length - 2, 1);
                 if (this.lineStarted) {
                     this.draw(this.drawingService.previewCtx, this.getDrawingAction());
                 }
@@ -115,37 +117,41 @@ export class LineService extends Tool {
         }
     }
 
+    updateLastCoord(): void {
+        const lastClickedCoord = this.getLastClickedCoord();
+        const adjustedCoord = this.getAdjustedCoord(lastClickedCoord, this.currentCoord);
+        this.pathData.splice(this.pathData.length - 1, 1, adjustedCoord);
+    }
+
     calculateAngle(startingPoint: Vec2, endPoint: Vec2): number {
         const diff = this.getDiff(startingPoint, endPoint);
         return Math.atan(Math.abs(diff.y) / Math.abs(diff.x));
     }
 
-    getAdjustedCoord(path: Vec2[]): Vec2 {
-        return this.shiftDown ? this.getSnappedCoord(path) : this.currentCoord;
+    getAdjustedCoord(initialPoint: Vec2, finalPoint: Vec2): Vec2 {
+        return this.shiftDown ? this.getSnappedCoord(initialPoint, finalPoint) : finalPoint;
     }
 
-    getSnappedCoord(path: Vec2[]): Vec2 {
-        const nPoints = path.length;
-        const startingPoint = nPoints > 0 ? path[nPoints - 1] : path[0];
-        const angle = this.calculateAngle(startingPoint, this.currentCoord);
+    getSnappedCoord(initialPoint: Vec2, finalPoint: Vec2): Vec2 {
+        const angle = this.calculateAngle(initialPoint, finalPoint);
 
         let point = { x: 0, y: 0 };
         if (angle < BASE_SNAP_ANGLE) {
-            point = { x: this.currentCoord.x, y: startingPoint.y };
+            point = { x: finalPoint.x, y: initialPoint.y };
         } else if (angle > MIDDLE_SNAP_ANGLE + BASE_SNAP_ANGLE) {
-            point = { x: startingPoint.x, y: this.currentCoord.y };
+            point = { x: initialPoint.x, y: finalPoint.y };
         } else {
-            point = this.getProjectedPoint(startingPoint);
+            point = this.getProjectedPoint(initialPoint, finalPoint);
         }
         return point;
     }
 
-    getProjectedPoint(startingPoint: Vec2): Vec2 {
-        const diff = this.getDiff(startingPoint, this.currentCoord);
+    getProjectedPoint(initialPoint: Vec2, finalPoint: Vec2): Vec2 {
+        const diff = this.getDiff(initialPoint, finalPoint);
 
         const projectedPoint = {
-            x: this.currentCoord.x,
-            y: startingPoint.y + Math.tan(MIDDLE_SNAP_ANGLE) * Math.abs(diff.x) * Math.sign(diff.y),
+            x: finalPoint.x,
+            y: initialPoint.y + Math.tan(MIDDLE_SNAP_ANGLE) * Math.abs(diff.x) * Math.sign(diff.y),
         };
         return projectedPoint;
     }
@@ -153,17 +159,17 @@ export class LineService extends Tool {
     draw(ctx: CanvasRenderingContext2D, drawingAction: DrawingAction): void {
         if (drawingAction.path && drawingAction.options.size) {
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
-            const adjustedCoord = this.getAdjustedCoord(drawingAction.path);
             ctx.beginPath();
             ctx.lineWidth = drawingAction.options.size;
-            ctx.strokeStyle = this.options.primaryColor.getRgbString();
-            ctx.lineTo(drawingAction.path[0].x, drawingAction.path[0].y);
-            for (const point of this.pathData) {
+            ctx.strokeStyle = drawingAction.options.primaryColor.getRgbString();
+
+            const startingPoint = drawingAction.path[0];
+            ctx.moveTo(startingPoint.x, startingPoint.y);
+            for (const point of drawingAction.path) {
                 ctx.lineTo(point.x, point.y);
             }
-
-            ctx.lineTo(adjustedCoord.x, adjustedCoord.y);
             ctx.stroke();
+            ctx.closePath();
         }
     }
 
@@ -180,7 +186,5 @@ export class LineService extends Tool {
     }
     private clearPath(): void {
         this.pathData = [];
-        this.initialCoord = { x: 0, y: 0 };
-        this.currentCoord = { x: 0, y: 0 };
     }
 }

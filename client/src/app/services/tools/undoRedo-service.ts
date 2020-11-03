@@ -10,7 +10,7 @@ export class UndoRedoService {
     undoPile: DrawingAction[];
     redoPile: DrawingAction[];
     private undidAction: boolean;
-    private toolsService: ToolsService
+    private toolsService: ToolsService;
 
     constructor(private drawingService: DrawingService, injector: Injector) {
         this.clearPile();

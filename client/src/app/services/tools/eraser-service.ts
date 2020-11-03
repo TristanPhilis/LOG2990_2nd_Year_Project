@@ -4,6 +4,7 @@ import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
 import { ColorSelectionService } from '@app/services/color/color-selection-service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { DEFAULT_OPTIONS } from '@app/shared/constant';
 import { drawingToolId, MouseButton } from '@app/shared/enum';
 import { UndoRedoService } from './undoredo-service';
 
@@ -22,7 +23,7 @@ export class EraserService extends Tool {
     setDefaultOptions(): void {
         this.options = {
             primaryColor: this.primaryColor,
-            size: 1,
+            size: DEFAULT_OPTIONS.size,
         };
     }
 

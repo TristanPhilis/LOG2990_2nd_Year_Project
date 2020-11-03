@@ -4,7 +4,8 @@ import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
 import { ColorSelectionService } from '@app/services/color/color-selection-service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
-import { drawingToolId, MouseButton, Texture } from '@app/shared/enum';
+import { DEFAULT_OPTIONS } from '@app/shared/constant';
+import { drawingToolId, MouseButton } from '@app/shared/enum';
 import { UndoRedoService } from './undoredo-service';
 
 @Injectable({
@@ -22,8 +23,8 @@ export class BrushService extends Tool {
     setDefaultOptions(): void {
         this.options = {
             primaryColor: this.primaryColor,
-            texture: Texture.one,
-            size: 1,
+            texture: DEFAULT_OPTIONS.texture,
+            size: DEFAULT_OPTIONS.size,
         };
     }
 

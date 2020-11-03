@@ -66,7 +66,7 @@ export abstract class Tool {
 
     abstract getDrawingAction(): DrawingAction;
 
-    abstract setDefaultOptions(): void;
+    setDefaultOptions(): void {}
 
     get primaryColor(): Color {
         return this.colorService.primaryColor;

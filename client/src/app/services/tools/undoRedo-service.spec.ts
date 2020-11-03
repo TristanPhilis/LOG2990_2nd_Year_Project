@@ -1,5 +1,5 @@
 import { inject, TestBed } from '@angular/core/testing';
-import { UndoRedoService } from './undoRedo-service';
+import { UndoRedoService } from './undoredo-service';
 
 describe('Service: UndoRedo', () => {
     beforeEach(() => {

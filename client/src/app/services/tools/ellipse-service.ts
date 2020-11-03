@@ -5,8 +5,8 @@ import { SelectionBox } from '@app/classes/selection-box';
 import { Tool } from '@app/classes/tool';
 import { ColorSelectionService } from '@app/services/color/color-selection-service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
-import { SHIFT_KEY } from '@app/shared/constant';
-import { drawingToolId, MouseButton, TraceTypes } from '@app/shared/enum';
+import { DEFAULT_OPTIONS, SHIFT_KEY } from '@app/shared/constant';
+import { drawingToolId, MouseButton } from '@app/shared/enum';
 import { UndoRedoService } from './undoredo-service';
 
 @Injectable({
@@ -24,8 +24,9 @@ export class EllipseService extends Tool {
     setDefaultOptions(): void {
         this.options = {
             primaryColor: this.primaryColor,
-            size: 1,
-            traceType: TraceTypes.stroke,
+            secondaryColor: this.secondaryColor,
+            size: DEFAULT_OPTIONS.size,
+            traceType: DEFAULT_OPTIONS.traceType,
         };
     }
 
@@ -89,7 +90,7 @@ export class EllipseService extends Tool {
 
     draw(ctx: CanvasRenderingContext2D, drawingAction: DrawingAction): void {
         const options = drawingAction.options;
-        if (drawingAction.box && options.size && options.traceType && options.secondaryColor) {
+        if (drawingAction.box && options.size && options.traceType !== undefined && options.secondaryColor) {
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
             ctx.beginPath();
             const xRadius = drawingAction.box.width / 2;
