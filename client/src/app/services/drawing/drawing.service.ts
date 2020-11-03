@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { Vec2 } from '@app/classes/vec2';
 
 @Injectable({
     providedIn: 'root',
@@ -21,13 +22,19 @@ export class DrawingService {
         this.baseCtx.putImageData(imageData, 0, 0);
     }
 
-    fillWhiteBackground(): void {
-        this.baseCtx.fillStyle = 'white';
+    fillCanvas(color: string): void {
+        this.baseCtx.fillStyle = color;
         this.baseCtx.fillRect(0, 0, this.canvas.width, this.canvas.height);
     }
 
     clearCanvas(context: CanvasRenderingContext2D): void {
         context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    }
+
+    isCoordInCanvas(coord: Vec2): boolean {
+        const xIsValid = coord.x >= 0 && coord.x <= this.canvas.width;
+        const yIsValid = coord.y >= 0 && coord.y <= this.canvas.height;
+        return xIsValid && yIsValid;
     }
 
     loadDrawing(context: CanvasRenderingContext2D): void {

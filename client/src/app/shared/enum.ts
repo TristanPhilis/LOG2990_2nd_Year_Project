@@ -25,6 +25,8 @@ export enum drawingToolId {
     eraserService,
     lineService,
     brushService,
+    polygonService,
+    bucketService,
 }
 
 export enum MouseButton {

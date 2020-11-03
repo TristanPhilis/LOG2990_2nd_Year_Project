@@ -86,6 +86,11 @@ export class SidebarComponent {
                 this.undoRedo.redo();
                 break;
             }
+            case sidebarToolID.paintBucket: {
+                this.toolsService._selectedSideBarToolID = sidebarToolID.paintBucket;
+                this.toolsService._currentDrawingTool = drawingToolId.bucketService;
+                break;
+            }
             case sidebarToolID.createNew: {
                 this.undoRedo.clearPile();
                 this.isDialogOpen = true;
@@ -186,6 +191,7 @@ export class SidebarComponent {
                 this.onButtonPress(sidebarToolID.tracing);
                 this.toolsService._currentDrawingTool = drawingToolId.brushService;
             },
+            b: () => this.onButtonPress(sidebarToolID.paintBucket),
             e: () => this.onButtonPress(sidebarToolID.eraser),
             l: () => this.onButtonPress(sidebarToolID.line),
             1: () => {
@@ -195,6 +201,10 @@ export class SidebarComponent {
             2: () => {
                 this.onButtonPress(sidebarToolID.shapes);
                 this.toolsService._currentDrawingTool = drawingToolId.ellipseService;
+            },
+            3: () => {
+                this.onButtonPress(sidebarToolID.shapes);
+                this.toolsService._currentDrawingTool = drawingToolId.polygonService;
             },
         };
         const keys: string = this.getComposedKey(event);

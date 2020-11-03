@@ -1,7 +1,7 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { Color, MAX_RBG_VALUE } from '@app/classes/color-service';
+import { Color, MAX_RGBA_VALUE } from '@app/classes/color';
 import { ValidatorService } from '@app/services/validator-service';
 
 @Component({
@@ -13,9 +13,9 @@ export class ColorPickerComponent implements OnInit {
     hue: Color;
     color: Color;
     colorForm: FormGroup = this.fb.group({
-        r: ['', [Validators.required, Validators.min(0), Validators.max(MAX_RBG_VALUE), this.validatorService.isNumber()]],
-        g: ['', [Validators.required, Validators.min(0), Validators.max(MAX_RBG_VALUE), this.validatorService.isNumber()]],
-        b: ['', [Validators.required, Validators.min(0), Validators.max(MAX_RBG_VALUE), this.validatorService.isNumber()]],
+        r: ['', [Validators.required, Validators.min(0), Validators.max(MAX_RGBA_VALUE), this.validatorService.isNumber()]],
+        g: ['', [Validators.required, Validators.min(0), Validators.max(MAX_RGBA_VALUE), this.validatorService.isNumber()]],
+        b: ['', [Validators.required, Validators.min(0), Validators.max(MAX_RGBA_VALUE), this.validatorService.isNumber()]],
         hex: ['', [this.validatorService.isValidHexColor()]],
     });
 

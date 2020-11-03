@@ -2,7 +2,7 @@ import { ColorSelectionService } from '@app/services/color/color-selection-servi
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { UndoRedoService } from '@app/services/tools/undoredo-service';
 import { TraceTypes } from '@app/shared/enum';
-import { Color } from './color-service';
+import { Color } from './color';
 import { DrawingAction } from './drawing-action';
 import { DrawingOptions } from './drawing-options';
 import { Vec2 } from './vec2';
