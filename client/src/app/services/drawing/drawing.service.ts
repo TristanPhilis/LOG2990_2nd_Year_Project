@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BoundingBox } from '@app/classes/bounding-box';
+import { Vec2 } from '@app/classes/vec2';
 
 @Injectable({
     providedIn: 'root',
@@ -8,6 +8,7 @@ export class DrawingService {
     baseCtx: CanvasRenderingContext2D;
     previewCtx: CanvasRenderingContext2D;
     canvas: HTMLCanvasElement;
+    drawingToLoad: string;
 
     getImageData(): ImageData {
         return this.baseCtx.getImageData(0, 0, this.canvas.width, this.canvas.height);
@@ -21,16 +22,28 @@ export class DrawingService {
         this.baseCtx.putImageData(imageData, 0, 0);
     }
 
-    fillCanvas(color: string, region?: BoundingBox): void {
+    fillCanvas(color: string): void {
         this.baseCtx.fillStyle = color;
-        if (region) {
-            this.baseCtx.fillRect(region.position.x, region.position.y, region.width, region.height);
-        } else {
-            this.baseCtx.fillRect(0, 0, this.canvas.width, this.canvas.height);
-        }
+        this.baseCtx.fillRect(0, 0, this.canvas.width, this.canvas.height);
     }
 
     clearCanvas(context: CanvasRenderingContext2D): void {
         context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    }
+
+    isCoordInCanvas(coord: Vec2): boolean {
+        const xIsValid = coord.x >= 0 && coord.x <= this.canvas.width;
+        const yIsValid = coord.y >= 0 && coord.y <= this.canvas.height;
+        return xIsValid && yIsValid;
+    }
+
+    loadDrawing(context: CanvasRenderingContext2D): void {
+        const image = new Image();
+        image.src = this.drawingToLoad;
+        context.drawImage(image, 0, 0);
+    }
+
+    sendDrawing(drawing: string): void {
+        this.drawingToLoad = drawing;
     }
 }

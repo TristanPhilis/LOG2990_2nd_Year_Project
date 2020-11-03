@@ -22,7 +22,7 @@ export class MainPageComponent {
     }
 
     openCarousel(): void {
-        const dialogRef = this.dialog.open(CarouselComponent);
+        const dialogRef = this.dialog.open(CarouselComponent, { width: '90%', height: '70%' });
 
         dialogRef.afterClosed().subscribe((result) => {
             console.log(`Dialog result: ${result}`);

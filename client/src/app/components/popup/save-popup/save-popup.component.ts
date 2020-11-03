@@ -40,6 +40,6 @@ export class SavePopupComponent implements OnInit {
             tags: this.tags,
             metadata: this.drawingService.getImageURL(),
         };
-        this.webRequestService.postDrawing(drawing).subscribe();
+        this.webRequestService.postDrawing(drawing)?.subscribe();
     }
 }

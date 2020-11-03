@@ -40,7 +40,6 @@ describe('IndexService', () => {
         const postReq = httpMock.expectOne(baseUrl + '/send');
         expect(postReq.request.method).toBe('POST');
         expect(req.request.method).toBe('GET');
-        // service.deleteDrawing(expectedDrawing.id).subscribe();
         // actually send the request
         req.flush(expectedDrawing);
         postReq.flush(expectedDrawing);
@@ -56,7 +55,7 @@ describe('IndexService', () => {
         expect(req.request.method).toBe('POST');
         // actually send the request
         req.flush(sentDrawing);
-        service.deleteDrawing(sentDrawing.id).subscribe(() => {}, fail);
+        service.deleteDrawing(sentDrawing.id).subscribe();
         const delReq = httpMock.expectOne(baseUrl + '/' + sentDrawing.id);
         expect(delReq.request.method).toBe('DELETE');
     });
@@ -69,9 +68,9 @@ describe('IndexService', () => {
         ];
 
         for (const sentDrawing of sentDrawings) {
-          service.postDrawing(sentDrawing).subscribe(() => {}, fail);
-          const postReq = httpMock.expectOne(baseUrl + '/send');
-          postReq.flush(sentDrawing);
+            service.postDrawing(sentDrawing).subscribe();
+            const postReq = httpMock.expectOne(baseUrl + '/send');
+            postReq.flush(sentDrawing);
         }
 
         service.getAllDrawings().subscribe((responses: DrawingInfo[]) => {

@@ -3,7 +3,7 @@ export const G_MASK = 0x00ff00;
 export const B_MASK = 0x0000ff;
 export const BYTE = 8;
 export const MAX_ALPHA = 1;
-export const MAX_RBG_VALUE = 255;
+export const MAX_RGBA_VALUE = 255;
 export const MAX_HEX_VALUE = 0xffffff;
 const HEX_CHARACTER_COUNT = 6;
 

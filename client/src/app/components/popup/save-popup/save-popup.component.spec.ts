@@ -2,6 +2,7 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { IndexService } from '@app/services/index/index.service';
+import { DrawingInfo } from '@common/communication/drawing-info';
 import { SavePopupComponent } from './save-popup.component';
 
 describe('SavePopupComponent', () => {
@@ -70,13 +71,13 @@ describe('SavePopupComponent', () => {
         const tags = ['tag'];
         component.tags = tags;
         drawingServiceSpy.getImageURL.and.returnValue(imageURL);
-        const expectedDrawingInfo = {
-            id: -1,
-            name,
-            tags,
-            metadata: imageURL,
+        const expectedDrawing: DrawingInfo = {
+            id: webRequestServiceSpy.nextDrawingId,
+            name: component.nameInput.value.toString(),
+            tags: component.tags,
+            metadata: drawingServiceSpy.getImageURL(),
         };
         component.saveDrawing();
-        expect(webRequestServiceSpy.postDrawing).toHaveBeenCalledWith(expectedDrawingInfo);
+        expect(webRequestServiceSpy.postDrawing).toHaveBeenCalledWith(expectedDrawing);
     });
 });

@@ -8,7 +8,10 @@ describe('DrawingService', () => {
     beforeEach(() => {
         TestBed.configureTestingModule({});
         service = TestBed.inject(DrawingService);
+        const size = 100;
         service.canvas = canvasTestHelper.canvas;
+        service.canvas.width = size;
+        service.canvas.height = size;
         service.baseCtx = canvasTestHelper.canvas.getContext('2d') as CanvasRenderingContext2D;
         service.previewCtx = canvasTestHelper.drawCanvas.getContext('2d') as CanvasRenderingContext2D;
     });
@@ -57,5 +60,16 @@ describe('DrawingService', () => {
         }
         service.setImageData(imageData);
         expect(service.getImageData()).toEqual(imageData);
+    });
+
+    it('isCoordInCanvas should return true for valid coord', () => {
+        const insideCoord = 50;
+        const result = service.isCoordInCanvas({ x: insideCoord, y: insideCoord });
+        expect(result).toBeTrue();
+    });
+    it('isCoordInCanvas should return false for invalid coord', () => {
+        const outsideCoord = 200;
+        const result = service.isCoordInCanvas({ x: outsideCoord, y: outsideCoord });
+        expect(result).toBeFalse();
     });
 });

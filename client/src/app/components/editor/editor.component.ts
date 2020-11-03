@@ -1,7 +1,7 @@
 import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, HostListener, OnDestroy, ViewChild } from '@angular/core';
 import { MatSidenav } from '@angular/material/sidenav';
 import { Vec2 } from '@app/classes/vec2';
-import { ToolsService } from '@app/services/tools/tools-service';
+import { DrawingService } from '@app/services/drawing/drawing.service';
 import { MIN_CANVAS_SIZE } from '@app/shared/constant';
 import { MouseButton } from '@app/shared/enum';
 import { Subject } from 'rxjs';
@@ -41,9 +41,7 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
     resizeX: boolean;
     resizeY: boolean;
 
-    private unsubscribe$ = new Subject<void>();
-
-    constructor(private cd: ChangeDetectorRef, public toolService: ToolsService) {}
+    constructor(private cd: ChangeDetectorRef, private drawingService: DrawingService) {}
 
     ngAfterViewInit(): void {
         this.workzoneRect = this.workzone.nativeElement.getBoundingClientRect();
@@ -54,18 +52,10 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
         this.previewSize = this.canvasSize;
         this.setAnchorPosition();
         this.cd.detectChanges();
-        this.toolService.toolSidenavToogle.pipe(takeUntil(this.unsubscribe$)).subscribe((value) => {
-            if (value === true) {
-                this.toolAttributeSidenav.open();
-            } else {
-                this.toolAttributeSidenav.close();
-            }
-        });
-    }
-
-    ngOnDestroy(): void {
-        this.unsubscribe$.next();
-        this.unsubscribe$.complete();
+        if (this.drawingService.drawingToLoad !== (undefined && '')) {
+            this.drawingService.loadDrawing(this.drawingService.baseCtx);
+            this.drawingService.drawingToLoad = '';
+        }
     }
 
     setAnchorPosition(): void {

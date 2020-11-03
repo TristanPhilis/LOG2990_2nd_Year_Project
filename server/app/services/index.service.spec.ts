@@ -23,7 +23,7 @@ describe('Index service', () => {
         const newDrawing: DrawingInfo = { id: 996, name: '', tags: [], metadata: '' };
         indexService.storeDrawing(newDrawing);
         expect(indexService.deleteDrawing(newDrawing.id).id).to.equals(newDrawing.id);
-        expect(indexService.clientDrawings).to.be.empty;
+        expect(indexService.clientDrawings.length).to.equal(0);
         done();
     });
 
@@ -32,6 +32,7 @@ describe('Index service', () => {
         const newDrawing2: DrawingInfo = { id: 994, name: '', tags: ['a'], metadata: '' };
         indexService.storeDrawing(newDrawing);
         indexService.storeDrawing(newDrawing2);
+        // tslint:disable-next-line: no-magic-numbers
         indexService.deleteDrawing(995);
         expect(indexService.clientDrawings.length).to.equals(2);
         done();

@@ -18,3 +18,12 @@ export const BASE_ANGLE_SNAP_DIVIDER = 8;
 export const SIZE_OF_SELECTION_BOX = 5;
 export const MIDDLE_SNAP_ANGLE = Math.PI / MIDDLE_ANGLE_SNAP_DIVIDER;
 export const BASE_SNAP_ANGLE = Math.PI / BASE_ANGLE_SNAP_DIVIDER;
+
+export const R_POSITION = 0;
+export const G_POSITION = 1;
+export const B_POSITION = 2;
+export const A_POSITION = 3;
+
+export const MAX_TOLERANCE = 100;
+export const MIN_TOLERANCE = 0;
+export const PIXEL_INTERVAL = 4;

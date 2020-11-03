@@ -1,7 +1,8 @@
+import { Box } from './box';
 import { SelectionBox } from './selection-box';
 import { Vec2 } from './vec2';
 
-export class BoundingBox {
+export class BoundingBox extends Box {
     top: number;
     bottom: number;
     left: number;

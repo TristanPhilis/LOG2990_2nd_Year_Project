@@ -1,7 +1,9 @@
 import { Component, HostListener } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { CarouselComponent } from '@app/components/carousel/carousel.component';
 import { CreateNewDrawingComponent } from '@app/components/create-new-drawing/create-new-drawing.component';
 import { GuideComponent } from '@app/components/guide/guide.component';
+
 import { ExportPopupComponent } from '@app/components/popup/export-popup/export-popup.component';
 import { SavePopupComponent } from '@app/components/popup/save-popup/save-popup.component';
 import { DrawingService } from '@app/services/drawing/drawing.service';
@@ -88,14 +90,9 @@ export class SidebarComponent {
                 this.toolsService._currentDrawingTool = drawingToolId.eraserService;
                 break;
             }
-            case sidebarToolID.selection: {
-                if (this.toolsService._selectedSideBarToolID === sidebarToolID.selection && this.toolsService.toolSidenavToogle.getValue() === true) {
-                    this.toolsService.closeToolSidenav();
-                } else {
-                    this.toolsService.openToolSidenav();
-                }
-                this.toolsService._selectedSideBarToolID = sidebarToolID.selection;
-                this.toolsService._currentDrawingTool = drawingToolId.rectangleSelectionService;
+            case sidebarToolID.paintBucket: {
+                this.toolsService._selectedSideBarToolID = sidebarToolID.paintBucket;
+                this.toolsService._currentDrawingTool = drawingToolId.bucketService;
                 break;
             }
             case sidebarToolID.createNew: {
@@ -138,8 +135,22 @@ export class SidebarComponent {
                 });
                 break;
             }
-            default: {
-                this.toolsService.closeToolSidenav();
+            case sidebarToolID.openCarrousel: {
+                this.isDialogOpen = true;
+                const dialogRef = this.dialog.open(CarouselComponent, { width: '90%', height: '70%' });
+
+                dialogRef.afterClosed().subscribe(() => {
+                    this.isDialogOpen = false;
+                });
+                break;
+            }
+            case sidebarToolID.saveCurrent: {
+                const dialogRef = this.dialog.open(SavePopupComponent);
+                this.isDialogOpen = true;
+                dialogRef.afterClosed().subscribe(() => {
+                    this.isDialogOpen = false;
+                });
+                break;
             }
         }
     }
@@ -189,6 +200,7 @@ export class SidebarComponent {
                 this.onButtonPress(sidebarToolID.tracing);
                 this.toolsService._currentDrawingTool = drawingToolId.brushService;
             },
+            b: () => this.onButtonPress(sidebarToolID.paintBucket),
             e: () => this.onButtonPress(sidebarToolID.eraser),
             l: () => this.onButtonPress(sidebarToolID.line),
             r: () => {

@@ -49,6 +49,11 @@ export class DrawingComponent implements AfterViewInit, OnChanges {
         this.drawingService.setImageData(savedImageData);
     }
 
+    @HostListener('contextmenu', ['$event'])
+    disableContextMenu(event: MouseEvent): void {
+        event.preventDefault();
+    }
+
     @HostListener('mousemove', ['$event'])
     onMouseMove(event: MouseEvent): void {
         this.currentTool.onMouseMove(event);

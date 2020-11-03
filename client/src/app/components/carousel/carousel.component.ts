@@ -1,69 +1,70 @@
-import { Component, AfterViewInit } from '@angular/core';
-// import {MatButtonModule} from '@angular/material/button';
+import { Component } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import { Router } from '@angular/router';
+import { CreateNewDrawingComponent } from '@app/components/create-new-drawing/create-new-drawing.component';
+import { DrawingService } from '@app/services/drawing/drawing.service';
 import { IndexService } from '@app/services/index/index.service';
 import { DrawingInfo } from '@common/communication/drawing-info';
 import { BehaviorSubject } from 'rxjs';
 import { map } from 'rxjs/operators';
 
-const CURRENT_DRAWINGS_SIZE = 3;
+const CURRENT_DRAWINGS_MAX_SIZE = 3;
 @Component({
     selector: 'app-carousel',
     templateUrl: './carousel.component.html',
     styleUrls: ['./carousel.component.scss'],
 })
-export class CarouselComponent implements AfterViewInit {
+export class CarouselComponent {
     drawingsInfo: BehaviorSubject<DrawingInfo[]>;
     drawingCounter: number;
-    currentDrawings: BehaviorSubject<DrawingInfo[]>;
-    constructor(private basicService: IndexService) {
+    currentDrawings: DrawingInfo[];
+    constructor(private basicService: IndexService, private drawingService: DrawingService, private dialog: MatDialog, private router: Router) {
         this.drawingCounter = 0;
         this.drawingsInfo = new BehaviorSubject<DrawingInfo[]>([]);
-        this.currentDrawings = new BehaviorSubject<DrawingInfo[]>([]);
+        this.currentDrawings = [];
         this.getAllDrawings();
     }
-    ngAfterViewInit(): void {
-        this.updateCurrentDrawings();
-    }
 
-    updateCurrentDrawings() {
-        if (this.drawingsInfo.value.length >= CURRENT_DRAWINGS_SIZE) {
-            for (let i = 0; i < CURRENT_DRAWINGS_SIZE; i++) {
-          const drawing: DrawingInfo = this.drawingsInfo.value[this.getDrawingPosition(this.drawingCounter - 1 + i)];
-                this.currentDrawings.value[i] = drawing;
-                this.currentDrawings.next(this.currentDrawings.value);
-            }
-        } else {
-          this.currentDrawings.value[0] = this.drawingsInfo.value[0];
-            if (this.drawingsInfo.value.length === CURRENT_DRAWINGS_SIZE - 1) {
-              this.currentDrawings.value[1] = this.drawingsInfo.value[1];
-                this.currentDrawings.next(this.currentDrawings.value);
-            }
+    updateCurrentDrawings(): void {
+        switch (this.drawingsInfo.value.length) {
+            case 0:
+                break;
+            case 1:
+                this.currentDrawings = [this.drawingsInfo.value[0]];
+                break;
+            case 2:
+                this.currentDrawings = [
+                    this.drawingsInfo.value[this.getDrawingPosition(this.drawingCounter - 1)],
+                    this.drawingsInfo.value[this.getDrawingPosition(this.drawingCounter)],
+                ];
+                break;
+            default:
+                for (let i = 0; i < CURRENT_DRAWINGS_MAX_SIZE; i++) {
+                    this.currentDrawings[i] = this.drawingsInfo.value[this.getDrawingPosition(this.drawingCounter - 1 + i)];
+                }
+                break;
         }
-    }
-    sendDrawing(): void {
-        const newDrawing: DrawingInfo = {
-            id: 6,
-            name: 'drawing1',
-            tags: ['a'],
-            metadata: '',
-        };
-        /*if (this.basicService.postDrawing(newDrawing) !== undefined)*/ this.basicService.postDrawing(newDrawing).subscribe();
-        this.drawingsInfo.value.push(newDrawing);
     }
 
     getAllDrawings(): void {
-        if (this.basicService.getAllDrawings() !== undefined) {
-            this.basicService
-                .getAllDrawings()
-                .pipe(
-                    map((drawingInfo: DrawingInfo[]) => {
-                        return drawingInfo;
-                    }),
-                )
-                .subscribe(this.drawingsInfo);
-        }
-
-        // console.log(this.drawingsInfo);
+        this.basicService
+            .getAllDrawings()
+            .pipe(
+                map((drawingInfo: DrawingInfo[]) => {
+                    return drawingInfo;
+                }),
+            )
+            .subscribe(
+                (drawingsInfo) => {
+                    this.drawingsInfo.next(drawingsInfo);
+                },
+                (error: Error) => {
+                    throw error;
+                },
+                () => {
+                    this.updateCurrentDrawings();
+                },
+            );
     }
 
     goToPreviousDrawing(): void {
@@ -85,26 +86,47 @@ export class CarouselComponent implements AfterViewInit {
     }
 
     deleteDrawing(drawingId: number): void {
-      this.updateCurrentDrawings();
-        if (this.basicService.deleteDrawing(drawingId) !== undefined)
-            this.basicService.deleteDrawing(drawingId).subscribe((drawingId: number) => {
+        this.basicService.deleteDrawing(drawingId)?.subscribe(
+            (deletedDrawingId: number) => {
                 for (const drawingInfo of this.drawingsInfo.value) {
-                    if (drawingInfo.id === drawingId) {
+                    if (drawingInfo.id === deletedDrawingId) {
                         const index = this.drawingsInfo.value.indexOf(drawingInfo);
                         this.drawingsInfo.value.splice(index, 1);
                     }
                 }
-                // console.log(reponse);
-            });
-        this.getAllDrawings();
-        this.updateCurrentDrawings();
+            },
+            () => {
+                throw new Error('Error: Drawing does not exist');
+            },
+            () => {
+                this.updateCurrentDrawings();
+            },
+        );
+    }
+
+    loadDrawing(drawing: DrawingInfo): void {
+        const newDrawingRef = this.dialog.open(CreateNewDrawingComponent);
+        newDrawingRef.afterClosed().subscribe((result) => {
+            if (result) {
+                this.drawingService.clearCanvas(this.drawingService.baseCtx);
+                this.drawingService.sendDrawing(drawing.metadata);
+                this.router
+                    .navigate(['/editor'])
+                    .then(() => {
+                        this.drawingService.loadDrawing(this.drawingService.baseCtx);
+                    })
+                    .catch();
+            } else {
+                const carouselRef = this.dialog.open(CarouselComponent);
+                carouselRef.afterClosed().subscribe();
+            }
+        });
     }
 
     getDrawingPosition(counter: number): number {
         let position = counter % this.drawingsInfo.value.length;
         if (position < 0) {
             position += this.drawingsInfo.value.length;
-            position = position % this.drawingsInfo.value.length;
         }
         return position;
     }

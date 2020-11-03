@@ -12,7 +12,6 @@ describe('MainPageComponent', () => {
     let fixture: ComponentFixture<MainPageComponent>;
 
     beforeEach(async(() => {
-
         TestBed.configureTestingModule({
             imports: [RouterTestingModule, HttpClientModule, MatDialogModule, BrowserModule, BrowserAnimationsModule],
             declarations: [MainPageComponent],
@@ -32,5 +31,4 @@ describe('MainPageComponent', () => {
     it("should have as title 'LOG2990'", () => {
         expect(component.title).toEqual('LOG2990');
     });
-
 });

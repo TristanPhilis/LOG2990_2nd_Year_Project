@@ -1,13 +1,12 @@
 import { HttpClientModule } from '@angular/common/http';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import SpyObj = jasmine.SpyObj;
+import { MatDialogModule } from '@angular/material/dialog';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterTestingModule } from '@angular/router/testing';
 import { IndexService } from '@app/services/index/index.service';
 import { DrawingInfo } from '@common/communication/drawing-info';
-
-import SpyObj = jasmine.SpyObj;
-import { MatDialogModule } from '@angular/material/dialog';
 import { of } from 'rxjs';
 import { CarouselComponent } from './carousel.component';
 
@@ -21,8 +20,6 @@ describe('CarouselComponent', () => {
         indexServiceSpy = jasmine.createSpyObj('IndexService', ['getDrawing', 'getAllDrawings', 'postDrawing', 'deleteDrawing']);
         indexServiceSpy.getAllDrawings.and.returnValue(of(testDrawings));
         indexServiceSpy.getDrawing.and.returnValue(of(testDrawings[0]));
-        /*indexServiceSpy.sendDrawing.and.returnValue(of());
-        indexServiceSpy.deleteDrawing.and.returnValue(of());*/
 
         TestBed.configureTestingModule({
             imports: [RouterTestingModule, HttpClientModule, MatDialogModule, BrowserModule, BrowserAnimationsModule],
@@ -40,6 +37,7 @@ describe('CarouselComponent', () => {
             tags: ['one'],
             metadata: '',
         };
+        // tslint:disable-next-line: no-magic-numbers
         for (let i = 0; i < 3; i++) {
             component.drawingsInfo.value.push(newDrawing);
         }
@@ -48,11 +46,6 @@ describe('CarouselComponent', () => {
 
     it('should create', () => {
         expect(component).toBeTruthy();
-    });
-
-    it('should call index.sendDrawing() when calling sendDrawing()', () => {
-        component.sendDrawing();
-        expect(indexServiceSpy.postDrawing).toHaveBeenCalled();
     });
 
     it('should call index.getAllDrawings() and subscribe when calling getAllDrawings()', () => {
@@ -70,9 +63,7 @@ describe('CarouselComponent', () => {
         expect(component.getDrawingPosition(component.drawingCounter - 1)).toEqual(component.drawingsInfo.value.length - 1);
         component.drawingCounter = component.drawingsInfo.value.length - 1;
         expect(component.getDrawingPosition(component.drawingCounter + 1)).toEqual(0);
-        console.log(component.drawingsInfo.value);
     });
-
 
     it('should go to previousDrawing', () => {
         component.drawingCounter = 0;
@@ -89,5 +80,4 @@ describe('CarouselComponent', () => {
         component.goToNextDrawing();
         expect(component.drawingCounter).toEqual(1);
     });
-
 });

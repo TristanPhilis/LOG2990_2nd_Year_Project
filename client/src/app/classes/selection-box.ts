@@ -1,6 +1,7 @@
+import { Box } from './box';
 import { Vec2 } from './vec2';
 
-export class SelectionBox {
+export class SelectionBox extends Box {
     private anchor: Vec2;
     private opposingCorner: Vec2;
 

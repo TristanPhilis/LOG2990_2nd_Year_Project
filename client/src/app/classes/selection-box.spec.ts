@@ -1,7 +1,7 @@
 import { SelectionBox } from './selection-box';
 import { Vec2 } from './vec2';
 
-describe('BoundingBox', () => {
+describe('SelectionBox', () => {
     let selectionBox: SelectionBox;
     let anchorCoord: Vec2;
     let topLeftCorner: Vec2;

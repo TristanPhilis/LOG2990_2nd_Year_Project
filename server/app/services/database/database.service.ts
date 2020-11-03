@@ -1,4 +1,3 @@
-// import { Injectable } from '@angular/core';
 import { DrawingInfo } from '@common/communication/drawing-info';
 import { injectable } from 'inversify';
 import { Collection, MongoClient, MongoClientOptions } from 'mongodb';
@@ -20,7 +19,7 @@ export class DatabaseService {
         useUnifiedTopology: true,
     };
 
-    start() {
+    start(): void {
         MongoClient.connect(DB_URL, this.options)
             .then((client: MongoClient) => {
                 this.client = client;
@@ -43,8 +42,8 @@ export class DatabaseService {
             .then((drawings: DrawingInfo[]) => {
                 return drawings;
             })
-            .catch((error: Error) => {
-                throw error;
+            .catch(() => {
+                throw new Error('Drawings could not be fetched');
             });
     }
 
@@ -55,43 +54,28 @@ export class DatabaseService {
             .then((drawing: DrawingInfo) => {
                 return drawing;
             })
-            .catch((error: Error) => {
-                throw error;
-            });
+            .catch();
     }
 
     async addDrawing(drawing: DrawingInfo): Promise<void> {
         if (this.validateDrawing(drawing)) {
-            this.collection.insertOne(drawing).catch((error: Error) => {
-                throw error;
-            });
+            this.collection.insertOne(drawing).catch();
         } else {
-            throw new Error('Invalid drawing');
+            throw new Error('Invalid drawing, could not add to database');
         }
     }
 
     async deleteDrawing(drawingId: number): Promise<void> {
         return this.collection
             .findOneAndDelete({ id: drawingId })
-            .then(() => {})
+            .then((deletedDrawing) => {
+                if (deletedDrawing.value === null) {
+                    throw new Error('Invalid id, could not find the drawing to remove');
+                }
+            })
             .catch((error: Error) => {
                 throw error;
             });
-    }
-
-    async populateDB() {
-        const drawings: DrawingInfo[] = [
-            { id: 1, name: 'Drawing1', tags: ['a', 'c'], metadata: '' },
-            { id: 2, name: 'Drawing2', tags: ['b', 'c'], metadata: '' },
-            { id: 3, name: 'Drawing3', tags: ['a'], metadata: '' },
-            { id: 4, name: 'Drawing4', tags: ['a', 'c', 'd'], metadata: '' },
-            { id: 5, name: 'Drawing5', tags: ['a', 'b'], metadata: '' },
-        ];
-
-        console.log('THIS ADDS DATA TO THE DATABASE, DO NOT USE OTHERWISE');
-        drawings.forEach((drawing) => {
-            this.addDrawing(drawing);
-        });
     }
 
     private validateDrawing(drawing: DrawingInfo): boolean {
@@ -99,16 +83,16 @@ export class DatabaseService {
     }
 
     private validateId(id: number): boolean {
-        return true;
+        return id >= 0;
     }
 
     private validateName(name: string): boolean {
-        return true;
+        return name !== '';
     }
     private validateTags(tags: string[]): boolean {
-        return true;
-    }
-
-    constructor() {
+        let isValid = true;
+        const regEx = /^[a-z][a-z0-9]{0,4}$/i;
+        for (const tag of tags) if (!regEx.test(tag)) isValid = false;
+        return isValid;
     }
 }

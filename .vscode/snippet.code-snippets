@@ -28,7 +28,7 @@
         "scope": "javascript,typescript",
         "prefix": "nomagic",
         "body": [
-            "// tslint:disable-next-line:no-magic-number"
+            "// tslint:disable-next-line:no-magic-numbers"
         ],
         "description": "disable tslint no magic number rule"
     },
