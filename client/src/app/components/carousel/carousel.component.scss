@@ -1,0 +1,48 @@
+
+
+.nodrawings {
+  position: absolute;
+  bottom: 50%;
+  left: 45%;
+  color: red;
+}
+
+.dialog {
+  width: 90%;
+  height: 90%;
+  border-color: burlywood;
+  background-color: burlywood;
+}
+
+.example-header-image {
+  background-size: cover;
+}
+
+li {
+  float: left;
+  list-style-type: none;
+}
+
+.load {
+  height: fit-content;
+  width: fit-content;
+
+}
+
+.drawing{
+  max-width: 250px;
+  max-height: 200px;
+  border: 1px;
+  border-color: black;
+  border-style: solid;
+}
+
+.tags{
+ position: absolute;
+ bottom: 20%;
+}
+
+.buttons{
+  position: absolute;
+  bottom : 30%;
+}

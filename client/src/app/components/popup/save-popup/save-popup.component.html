@@ -1,0 +1,25 @@
+<h1 mat-dialog-title align='center'>Sauvegarder mon dessin</h1>
+<div mat-dialog-content>
+    <mat-form-field>
+        <mat-label>Nom du dessin</mat-label>
+        <input matInput [formControl]="nameInput">
+        <mat-error *ngIf="nameInput.invalid">Le champ nom est requis</mat-error>
+    </mat-form-field>
+    <p>Les tags doivent commencer avec une lettre et avoir une longueur maximale de 5 charactères alphanumérique</p>
+    <mat-form-field>
+        <mat-label>Tag</mat-label>
+        <input matInput [formControl]="tagInput">
+        <mat-error *ngIf="tagInput.invalid">Ce tag ne respecte pas les conditions mentionnées plus haut</mat-error>
+    </mat-form-field>
+    <button mat-icon-button (click)="addTag()" [disabled]="tagInput.invalid"><mat-icon>add</mat-icon></button>
+    <div class="tags-container">
+        <div class="tag" *ngFor="let tag of tags">
+            <span>{{tag}}</span>
+            <button mat-icon-button (click)="deleteTag(tag)"><mat-icon>delete</mat-icon></button>
+        </div>
+    </div>
+</div>
+<div mat-dialog-actions>
+    <button mat-raised-button (click)="saveDrawing()" mat-dialog-close [disabled]="nameInput.invalid">Sauvegarder</button>
+    <button mat-raised-button mat-dialog-close>Annuler</button>
+</div>

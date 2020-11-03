@@ -1,8 +1,12 @@
 import { Component, HostListener } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { CarouselComponent } from '@app/components/carousel/carousel.component';
 import { CreateNewDrawingComponent } from '@app/components/create-new-drawing/create-new-drawing.component';
 import { GuideComponent } from '@app/components/guide/guide.component';
+
 import { ExportPopupComponent } from '@app/components/popup/export-popup/export-popup.component';
+import { SavePopupComponent } from '@app/components/popup/save-popup/save-popup.component';
+
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ToolsService } from '@app/services/tools/tools-service';
 import { UndoRedoService } from '@app/services/tools/undoRedo-service';
@@ -104,6 +108,23 @@ export class SidebarComponent {
             case sidebarToolID.exportCurrent: {
                 this.isDialogOpen = true;
                 const dialogRef = this.dialog.open(ExportPopupComponent);
+                dialogRef.afterClosed().subscribe(() => {
+                    this.isDialogOpen = false;
+                });
+                break;
+            }
+            case sidebarToolID.openCarrousel: {
+                this.isDialogOpen = true;
+                const dialogRef = this.dialog.open(CarouselComponent, { width: '90%', height: '70%' });
+
+                dialogRef.afterClosed().subscribe(() => {
+                    this.isDialogOpen = false;
+                });
+                break;
+            }
+            case sidebarToolID.saveCurrent: {
+                const dialogRef = this.dialog.open(SavePopupComponent);
+                this.isDialogOpen = true;
                 dialogRef.afterClosed().subscribe(() => {
                     this.isDialogOpen = false;
                 });
