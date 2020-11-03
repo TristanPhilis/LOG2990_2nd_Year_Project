@@ -8,7 +8,6 @@ import { RectangleSelectorService } from './rectangle-selector-service';
 // tslint:disable:no-any
 describe('RectangleSelectorService', () => {
     let service: RectangleSelectorService;
-    // let mouseEvent: MouseEvent;
     let mouseEventLClick: MouseEvent;
     let mouseEventRClick: MouseEvent;
     let drawServiceSpy: jasmine.SpyObj<DrawingService>;
@@ -18,7 +17,6 @@ describe('RectangleSelectorService', () => {
     let initializeSelectedBoxSpy: jasmine.Spy<any>;
     let drawSelectionBoxSpy: jasmine.Spy<any>;
     let placeImageSpy: jasmine.Spy<any>;
-    // let clearBaseCanvasSelectedAreaSpy: jasmine.Spy<any>;
     let updateSelectedAreaPreviewSpy: jasmine.Spy<any>;
 
     let initializeSelectionBoxSpy: jasmine.Spy<any>;
@@ -36,18 +34,10 @@ describe('RectangleSelectorService', () => {
         service = TestBed.inject(RectangleSelectorService);
         initializeSelectedBoxSpy = spyOn<any>(service, 'initializeSelectedBox').and.callThrough();
         placeImageSpy = spyOn<any>(service, 'placeImage').and.callThrough();
-
-        // clearBaseCanvasSelectedAreaSpy = spyOn<any>(service, 'clearBaseCanvasSelectedArea').and.callThrough();
         // Service's Spy configuration
         // tslint:disable:no-string-literal
         service['drawingService'].baseCtx = baseCtxStub; // Jasmine doesnt copy properties with underlying data
         service['drawingService'].previewCtx = previewCtxStub;
-
-        /*mouseEvent = {
-            offsetX: 25,
-            offsetY: 25,
-            button: 0,
-        } as MouseEvent;*/
 
         mouseEventLClick = {
             offsetX: 25,
