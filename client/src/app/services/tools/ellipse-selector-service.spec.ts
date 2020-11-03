@@ -8,7 +8,6 @@ import { EllipseSelectorService } from './ellipse-selector-service';
 // tslint:disable:no-any
 describe('EllipseSelectorService', () => {
     let service: EllipseSelectorService;
-    // let mouseEvent: MouseEvent;
     let mouseEventLClick: MouseEvent;
     let mouseEventRClick: MouseEvent;
     let drawServiceSpy: jasmine.SpyObj<DrawingService>;
@@ -18,7 +17,6 @@ describe('EllipseSelectorService', () => {
     let initializeSelectedBoxSpy: jasmine.Spy<any>;
     let drawSelectionBoxSpy: jasmine.Spy<any>;
     let placeImageSpy: jasmine.Spy<any>;
-    // let clearBaseCanvasSelectedAreaSpy: jasmine.Spy<any>;
     let updateSelectedAreaPreviewSpy: jasmine.Spy<any>;
 
     let initializeSelectionBoxSpy: jasmine.Spy<any>;
@@ -40,12 +38,6 @@ describe('EllipseSelectorService', () => {
         // tslint:disable:no-string-literal
         service['drawingService'].baseCtx = baseCtxStub; // Jasmine doesnt copy properties with underlying data
         service['drawingService'].previewCtx = previewCtxStub;
-
-        /*mouseEvent = {
-            offsetX: 25,
-            offsetY: 25,
-            button: 0,
-        } as MouseEvent;*/
 
         mouseEventLClick = {
             offsetX: 25,
