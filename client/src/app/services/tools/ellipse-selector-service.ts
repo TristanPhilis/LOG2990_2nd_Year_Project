@@ -15,6 +15,7 @@ import {
     ESCAPE_KEY,
     NEGATIVE_MULTIPLIER,
     SHIFT_KEY,
+    SIZE_OF_SELECTION_BOX,
 } from '@app/shared/constant';
 import { MouseButton } from '@app/shared/enum';
 
@@ -120,6 +121,7 @@ export class EllipseSelectorService extends Tool {
         this.savedXRadius = this.selectionBox.width / 2;
         this.savedYRadius = this.selectionBox.height / 2;
         ctx.beginPath();
+        ctx.lineWidth = SIZE_OF_SELECTION_BOX;
         ctx.strokeStyle = '#111155';
         ctx.setLineDash([DASHLINE_EMPTY, DASHLINE_FULL]);
 
@@ -141,7 +143,15 @@ export class EllipseSelectorService extends Tool {
     }
 
     private clearBaseCanvasSelectedArea(): void {
-        this.drawingService.fillCanvas('white', this.selectedBox);
+        this.drawingService.baseCtx.beginPath();
+        if (this.wasItCircle) {
+            const smallestRadius = Math.min(Math.abs(this.savedXRadius), Math.abs(this.savedYRadius));
+            this.drawingService.baseCtx.arc(this.savedXMiddle, this.savedYMiddle, smallestRadius, 0, 2 * Math.PI);
+        } else {
+            this.drawingService.baseCtx.ellipse(this.savedXMiddle, this.savedYMiddle, this.savedXRadius, this.savedYRadius, 0, 0, 2 * Math.PI);
+        }
+        this.drawingService.baseCtx.fillStyle = 'white';
+        this.drawingService.baseCtx.fill();
     }
 
     private translateSelectedBoxFromMouseMove(coord: Vec2): void {
@@ -155,9 +165,37 @@ export class EllipseSelectorService extends Tool {
     }
 
     private updateSelectedAreaPreview(): void {
+        this.drawingService.previewCtx.save();
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
         this.drawSelectedBox();
-        this.drawingService.previewCtx.putImageData(this.selectedImageData, this.selectedBox.position.x, this.selectedBox.position.y);
+        const ellipsePath = new Path2D();
+        if (this.wasItCircle) {
+            const smallestRadius = Math.min(Math.abs(this.savedXRadius), Math.abs(this.savedYRadius));
+            ellipsePath.arc(
+                this.selectedBox.position.x + this.selectedBox.width / 2,
+                this.selectedBox.position.y + this.selectedBox.height / 2,
+                smallestRadius,
+                0,
+                2 * Math.PI,
+            );
+        } else {
+            ellipsePath.ellipse(
+                this.selectedBox.position.x + this.selectedBox.width / 2,
+                this.selectedBox.position.y + this.selectedBox.height / 2,
+                this.savedXRadius,
+                this.savedYRadius,
+                0,
+                0,
+                2 * Math.PI,
+            );
+        }
+        this.drawingService.previewCtx.clip(ellipsePath);
+        this.drawingService.previewCtx.drawImage(
+            this.imagedata_to_image(this.selectedImageData),
+            this.selectedBox.position.x,
+            this.selectedBox.position.y,
+        );
+        this.drawingService.previewCtx.restore();
     }
 
     onKeyUp(event: KeyboardEvent): void {
@@ -205,23 +243,36 @@ export class EllipseSelectorService extends Tool {
             }
         }
     }
+
     placeImage(): void {
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
         if (this.isAreaSelected) {
             const ctx = this.drawingService.baseCtx;
-            ctx.beginPath();
+            const ellipsePath = new Path2D();
             if (this.wasItCircle) {
                 const smallestRadius = Math.min(Math.abs(this.savedXRadius), Math.abs(this.savedYRadius));
-                ctx.arc(this.savedXMiddle, this.savedYMiddle, smallestRadius, 0, 2 * Math.PI);
+                ellipsePath.arc(
+                    this.selectedBox.position.x + this.selectedBox.width / 2,
+                    this.selectedBox.position.y + this.selectedBox.height / 2,
+                    smallestRadius,
+                    0,
+                    2 * Math.PI,
+                );
             } else {
-                ctx.ellipse(this.savedXMiddle, this.savedYMiddle, this.savedXRadius, this.savedYRadius, 0, 0, 2 * Math.PI);
+                ellipsePath.ellipse(
+                    this.selectedBox.position.x + this.selectedBox.width / 2,
+                    this.selectedBox.position.y + this.selectedBox.height / 2,
+                    this.savedXRadius,
+                    this.savedYRadius,
+                    0,
+                    0,
+                    2 * Math.PI,
+                );
             }
-            
-            ctx.globalCompositeOperation = 'destination-out';
-            ctx.fill();
-            ctx.globalCompositeOperation = 'source-out'
-            ctx.putImageData(this.selectedImageData, this.selectedBox.position.x, this.selectedBox.position.y);
-            ctx.globalCompositeOperation = 'source-over';
+            ctx.save();
+            ctx.clip(ellipsePath);
+            ctx.drawImage(this.imagedata_to_image(this.selectedImageData), this.selectedBox.position.x, this.selectedBox.position.y);
+            ctx.restore();
         }
         this.isAreaSelected = false;
         this.selectedImageData = { data: new Uint8ClampedArray(), width: 0, height: 0 };
@@ -236,5 +287,17 @@ export class EllipseSelectorService extends Tool {
         );
         this.clearBaseCanvasSelectedArea();
         this.updateSelectedAreaPreview();
+    }
+
+    private imagedata_to_image(imagedata: ImageData): CanvasImageSource {
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = imagedata.width;
+        canvas.height = imagedata.height;
+        // tslint:disable-next-line: no-non-null-assertion
+        ctx!.putImageData(imagedata, 0, 0);
+        const image = new Image();
+        image.src = canvas.toDataURL();
+        return image;
     }
 }

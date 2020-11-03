@@ -5,16 +5,19 @@ import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import {
+    A,
     ARROW_DOWN,
     ARROW_LEFT,
     ARROW_RIGHT,
     ARROW_UP,
+    CONTROL,
     DASHLINE_EMPTY,
     DASHLINE_FULL,
     DEPLACEMENT,
     ESCAPE_KEY,
     NEGATIVE_MULTIPLIER,
     SHIFT_KEY,
+    SIZE_OF_SELECTION_BOX,
 } from '@app/shared/constant';
 import { MouseButton } from '@app/shared/enum';
 
@@ -99,8 +102,8 @@ export class RectangleSelectorService extends Tool {
     }
 
     private drawSelectedBox(): void {
-        this.drawingService.clearCanvas(this.drawingService.previewCtx);
         const ctx = this.drawingService.previewCtx;
+        this.drawingService.clearCanvas(ctx);
         ctx.beginPath();
         ctx.strokeStyle = '#111155';
         ctx.setLineDash([DASHLINE_EMPTY, DASHLINE_FULL]);
@@ -112,6 +115,7 @@ export class RectangleSelectorService extends Tool {
     private drawSelectionBox(): void {
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
         const ctx = this.drawingService.previewCtx;
+        ctx.lineWidth = SIZE_OF_SELECTION_BOX;
         ctx.beginPath();
         ctx.strokeStyle = '#111155';
         ctx.setLineDash([DASHLINE_EMPTY, DASHLINE_FULL]);
@@ -173,7 +177,6 @@ export class RectangleSelectorService extends Tool {
                 this.drawSelectionBox();
             }
         } else if (this.isAreaSelected) {
-            console.log(event.key);
             if (this.map[ARROW_DOWN]) {
                 this.selectedBox.translateY(DEPLACEMENT);
                 this.updateSelectedAreaPreview();
@@ -190,7 +193,7 @@ export class RectangleSelectorService extends Tool {
                 this.selectedBox.translateX(DEPLACEMENT);
                 this.updateSelectedAreaPreview();
             }
-            if (this.map[17] && this.map[65]) {
+            if (this.map[CONTROL] && this.map[A]) {
                 this.selectAllCanvas();
             }
         }
@@ -216,7 +219,7 @@ export class RectangleSelectorService extends Tool {
         this.updateSelectedAreaPreview();
     }
 
-    private selectAllCanvas(): void {
+    selectAllCanvas(): void {
         this.selectedImageData = this.drawingService.baseCtx.getImageData(0, 0, this.drawingService.canvas.width, this.drawingService.canvas.height);
         this.clearBaseCanvasSelectedArea();
         this.updateSelectedAreaPreview();
