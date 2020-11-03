@@ -23,6 +23,7 @@ export enum drawingToolId {
     eraserService,
     lineService,
     brushService,
+    polygonService,
     bucketService,
 }
 
