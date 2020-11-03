@@ -1,11 +1,13 @@
 import { Injectable } from '@angular/core';
+import { DrawingAction } from '@app/classes/drawing-action';
 import { SelectionBox } from '@app/classes/selection-box';
 import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
 import { ColorSelectionService } from '@app/services/color/color-selection-service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { DASHLINE_EMPTY, DASHLINE_FULL } from '@app/shared/constant';
-import { MouseButton, TraceTypes } from '@app/shared/enum';
+import { drawingToolId, MouseButton, TraceTypes } from '@app/shared/enum';
+import { UndoRedoService } from './undoredo-service';
 
 export const MAX_SIDES = 12;
 export const MIN_SIDES = 3;
@@ -18,8 +20,8 @@ export class PolygonService extends Tool {
     nSides: number;
     traceType: TraceTypes;
 
-    constructor(drawingService: DrawingService, private colorService: ColorSelectionService) {
-        super(drawingService);
+    constructor(drawingService: DrawingService, undoRedoService: UndoRedoService, colorService: ColorSelectionService) {
+        super(drawingService, undoRedoService, colorService);
         this.initializeDefaultOptions();
     }
 
@@ -75,35 +77,15 @@ export class PolygonService extends Tool {
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
         const corners: Vec2[] = this.getCornersPosition();
         const startingPoint = corners.shift();
-        if (startingPoint) {
+        if (startingPoint && this.options.traceType && this.options.secondaryColor) {
             ctx.beginPath();
             ctx.moveTo(startingPoint.x, startingPoint.y);
             for (const corner of corners) {
                 ctx.lineTo(corner.x, corner.y);
             }
             ctx.lineTo(startingPoint.x, startingPoint.y);
-            this.fill(ctx);
+            this.fill(ctx, this.options.traceType, this.options.primaryColor, this.options.secondaryColor);
             ctx.closePath();
-        }
-    }
-
-    private fill(ctx: CanvasRenderingContext2D): void {
-        ctx.fillStyle = this.colorService.primaryColor.getRgbString();
-        ctx.strokeStyle = this.colorService.secondaryColor.getRgbString();
-        switch (this.traceType) {
-            case TraceTypes.fill: {
-                ctx.fill();
-                break;
-            }
-            case TraceTypes.stroke: {
-                ctx.stroke();
-                break;
-            }
-            case TraceTypes.fillAndStroke: {
-                ctx.fill();
-                ctx.stroke();
-                break;
-            }
         }
     }
 
@@ -118,5 +100,21 @@ export class PolygonService extends Tool {
             positions.push({ x, y });
         }
         return positions;
+    }
+
+    getDrawingAction(): DrawingAction {
+        const options = {
+            primaryColor: this.primaryColor,
+            secondaryColor: this.secondaryColor,
+            numberOfSides: this.options.numberOfSides,
+            size: this.options.size,
+            traceType: this.traceType,
+        };
+
+        return {
+            id: drawingToolId.polygonService,
+            box: this.selectionBox,
+            options,
+        };
     }
 }

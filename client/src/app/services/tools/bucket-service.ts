@@ -2,12 +2,14 @@ import { Injectable } from '@angular/core';
 import { BoundingBox } from '@app/classes/bounding-box';
 import { Color, MAX_RGBA_VALUE } from '@app/classes/color';
 import { isColorSimilar } from '@app/classes/color-comparison-helper';
+import { DrawingAction } from '@app/classes/drawing-action';
 import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
 import { ColorSelectionService } from '@app/services/color/color-selection-service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { A_POSITION, B_POSITION, G_POSITION, MAX_TOLERANCE, MIN_TOLERANCE, PIXEL_INTERVAL, R_POSITION } from '@app/shared/constant';
-import { MouseButton } from '@app/shared/enum';
+import { drawingToolId, MouseButton } from '@app/shared/enum';
+import { UndoRedoService } from './undoredo-service';
 
 @Injectable({
     providedIn: 'root',
@@ -23,8 +25,8 @@ export class BucketService extends Tool {
     initialColor: Color;
     boundingBox: BoundingBox;
 
-    constructor(drawingService: DrawingService, private colorService: ColorSelectionService) {
-        super(drawingService);
+    constructor(drawingService: DrawingService, undoRedoService: UndoRedoService, colorService: ColorSelectionService) {
+        super(drawingService, undoRedoService, colorService);
         this.tolerance = MIN_TOLERANCE;
         this.pixelsData = new Uint8ClampedArray();
         this.boundingBox = new BoundingBox();
@@ -40,7 +42,11 @@ export class BucketService extends Tool {
         }
 
         if (this.tolerance === MAX_TOLERANCE) {
-            this.drawingService.fillCanvas(this.colorService.primaryColor.getRgbString());
+            this.drawingService.fillCanvas(this.primaryColor.getRgbString());
+            this.pixelsData = this.drawingService.getImageData().data;
+            this.boundingBox.setStartingCoord({ x: 0, y: 0 });
+            this.boundingBox.update({ x: this.canvasSize.x, y: this.canvasSize.y });
+            this.undoRedoService.saveAction(this.getDrawingAction());
         } else {
             const initialCoord = this.getPositionFromMouse(event);
             this.initSearchParams(initialCoord);
@@ -56,7 +62,7 @@ export class BucketService extends Tool {
         this.pixelsData = this.drawingService.getImageData().data;
         this.canvasSize = { x: this.drawingService.canvas.width, y: this.drawingService.canvas.height };
 
-        this.endColor = this.colorService.primaryColor;
+        this.endColor = this.primaryColor;
         this.initialColor = this.getColorFromCoord(initialCoord);
 
         this.boundingBox = new BoundingBox();
@@ -78,7 +84,9 @@ export class BucketService extends Tool {
                 this.fillPixel(currentPixelIndex);
             }
         }
-        this.updateCanvas();
+        const action = this.getDrawingAction();
+        this.undoRedoService.saveAction(action);
+        this.draw(this.drawingService.baseCtx, action);
     }
 
     private beginLinearSearch(): void {
@@ -89,20 +97,9 @@ export class BucketService extends Tool {
                 this.fillPixel(colorIndex);
             }
         }
-        this.updateCanvas();
-    }
-
-    private updateCanvas(): void {
-        const newImageData = new ImageData(this.pixelsData, this.canvasSize.x, this.canvasSize.y);
-        this.drawingService.baseCtx.putImageData(
-            newImageData,
-            0,
-            0,
-            this.boundingBox.position.x,
-            this.boundingBox.position.y,
-            this.boundingBox.width + 1,
-            this.boundingBox.height + 1,
-        );
+        const action = this.getDrawingAction();
+        this.undoRedoService.saveAction(action);
+        this.draw(this.drawingService.baseCtx, action);
     }
 
     private addAdjacentPixel(startingCoord: Vec2): void {
@@ -170,5 +167,32 @@ export class BucketService extends Tool {
 
     private isColorSimilar(color: Color): boolean {
         return isColorSimilar(this.initialColor, color, this.tolerance);
+    }
+
+    draw(ctx: CanvasRenderingContext2D, drawingAction: DrawingAction): void {
+        if (drawingAction.box && drawingAction.imageData) {
+            ctx.putImageData(
+                drawingAction.imageData,
+                0,
+                0,
+                drawingAction.box.position.x,
+                drawingAction.box.position.y,
+                drawingAction.box.width + 1,
+                drawingAction.box.height + 1,
+            );
+        }
+    }
+
+    getDrawingAction(): DrawingAction {
+        const newImageData = new ImageData(this.pixelsData, this.canvasSize.x, this.canvasSize.y);
+        const options = {
+            primaryColor: this.primaryColor,
+        };
+        return {
+            id: drawingToolId.bucketService,
+            box: this.boundingBox,
+            imageData: newImageData,
+            options,
+        };
     }
 }

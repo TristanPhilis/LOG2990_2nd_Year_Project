@@ -1,4 +1,4 @@
-import { Color, MAX_ALPHA } from './color-service';
+import { Color, MAX_ALPHA } from './color';
 
 describe('Color', () => {
     let color: Color;

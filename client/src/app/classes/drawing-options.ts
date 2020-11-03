@@ -1,5 +1,5 @@
 import { Texture, TraceTypes } from '@app/shared/enum';
-import { Color } from './color-service';
+import { Color } from './color';
 
 export interface DrawingOptions {
     primaryColor: Color;

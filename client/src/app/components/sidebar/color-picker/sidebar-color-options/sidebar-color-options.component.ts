@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { Color } from '@app/classes/color-service';
+import { Color } from '@app/classes/color';
 import { ColorPickerComponent } from '@app/components/sidebar//color-picker/color-picker.component';
 import { ColorSelectionService } from '@app/services/color/color-selection-service';
 import { PERCENT_MULTIPLIER } from '@app/shared/constant';

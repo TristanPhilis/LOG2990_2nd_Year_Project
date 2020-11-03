@@ -1,5 +1,5 @@
 import { AfterViewInit, Component, ElementRef, EventEmitter, HostListener, Input, OnChanges, Output, SimpleChanges, ViewChild } from '@angular/core';
-import { Color } from '@app/classes/color-service';
+import { Color } from '@app/classes/color';
 import { Vec2 } from '@app/classes/vec2';
 
 @Component({
