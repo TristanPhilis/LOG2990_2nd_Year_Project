@@ -3,10 +3,8 @@ import { MatDialog } from '@angular/material/dialog';
 import { CarouselComponent } from '@app/components/carousel/carousel.component';
 import { CreateNewDrawingComponent } from '@app/components/create-new-drawing/create-new-drawing.component';
 import { GuideComponent } from '@app/components/guide/guide.component';
-
 import { ExportPopupComponent } from '@app/components/popup/export-popup/export-popup.component';
 import { SavePopupComponent } from '@app/components/popup/save-popup/save-popup.component';
-
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ToolsService } from '@app/services/tools/tools-service';
 import { drawingToolId, sidebarToolID } from '@app/shared/enum';
@@ -174,6 +172,10 @@ export class SidebarComponent {
             2: () => {
                 this.onButtonPress(sidebarToolID.shapes);
                 this.toolsService._currentDrawingTool = drawingToolId.ellipseService;
+            },
+            3: () => {
+                this.onButtonPress(sidebarToolID.shapes);
+                this.toolsService._currentDrawingTool = drawingToolId.polygonService;
             },
         };
         const keys: string = this.getComposedKey(event);

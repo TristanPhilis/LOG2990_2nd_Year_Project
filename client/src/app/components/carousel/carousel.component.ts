@@ -108,7 +108,7 @@ export class CarouselComponent {
         const newDrawingRef = this.dialog.open(CreateNewDrawingComponent);
         newDrawingRef.afterClosed().subscribe((result) => {
             if (result) {
-                this.drawingService.clearCanvas(this.drawingService.baseCtx);
+                this.drawingService.fillCanvas('white');
                 this.drawingService.sendDrawing(drawing.metadata);
                 this.router
                     .navigate(['/editor'])
