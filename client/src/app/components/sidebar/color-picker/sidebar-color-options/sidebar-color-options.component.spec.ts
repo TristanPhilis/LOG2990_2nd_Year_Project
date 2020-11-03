@@ -1,7 +1,7 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatDialog, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { Color } from '@app/classes/color';
+import { Color } from '@app/classes/color-service';
 import { ColorPickerComponent } from '@app/components/sidebar/color-picker/color-picker.component';
 import { ColorSelectionService } from '@app/services/color/color-selection-service';
 import { MouseButton } from '@app/shared/enum';

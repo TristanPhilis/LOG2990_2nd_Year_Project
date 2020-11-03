@@ -1,5 +1,5 @@
 import { TestBed } from '@angular/core/testing';
-import { Color } from '@app/classes/color';
+import { Color } from '@app/classes/color-service';
 import { ColorSelectionService } from './color-selection-service';
 
 describe('ColorSelectionServiceService', () => {

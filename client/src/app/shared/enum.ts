@@ -14,6 +14,8 @@ export enum sidebarToolID {
     openCarrousel,
     exportCurrent,
     openGuide,
+    undo,
+    redo,
 }
 
 export enum drawingToolId {

@@ -1,15 +1,11 @@
 import { Vec2 } from './vec2';
 
 export abstract class Box {
-    get position(): Vec2 {
-        return { x: 0, y: 0 };
-    }
+    abstract get position(): Vec2;
 
-    get width(): number {
-        return 0;
-    }
+    abstract get width(): number;
 
-    get height(): number {
-        return 0;
-    }
+    abstract get height(): number;
+
+    abstract get center(): Vec2;
 }

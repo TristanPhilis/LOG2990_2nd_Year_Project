@@ -1,7 +1,7 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatDialogModule, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { Color } from '@app/classes/color';
+import { Color } from '@app/classes/color-service';
 import { ValidatorService } from '@app/services/validator-service';
 import { MockComponents } from 'ng-mocks';
 import { ColorPaletteComponent } from './color-palette/color-palette.component';

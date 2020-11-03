@@ -1,10 +1,14 @@
 import { Injectable } from '@angular/core';
+import { BoundingBox } from '@app/classes/bounding-box';
+import { DrawingAction } from '@app/classes/drawing-action';
+import { SelectionBox } from '@app/classes/selection-box';
 import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
+import { ColorSelectionService } from '@app/services/color/color-selection-service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { SHIFT_KEY } from '@app/shared/constant';
 import { drawingToolId, MouseButton, TraceTypes } from '@app/shared/enum';
-import { UndoRedoService } from './undoRedo-service';
+import { UndoRedoService } from './undoredo-service';
 
 @Injectable({
     providedIn: 'root',
@@ -12,30 +16,33 @@ import { UndoRedoService } from './undoRedo-service';
 export class RectangleService extends Tool {
     initialCoord: Vec2;
     private pathData: Vec2[];
-    private thickness: number;
-    private traceType: number;
+    selectionBox: SelectionBox;
 
-    constructor(drawingService: DrawingService) {
-        super(drawingService);
-        this.clearPath();
-        this.thickness = 0;
-        this.traceType = 0;
+    constructor(drawingService: DrawingService, undoRedoService: UndoRedoService, colorService: ColorSelectionService) {
+        super(drawingService, undoRedoService, colorService);
+        this.setDefaultOptions();
+        this.selectionBox = new SelectionBox();
+    }
+
+    setDefaultOptions(): void {
+        this.options.size = 1;
+        this.options.traceType = TraceTypes.stroke;
     }
 
     set _thickness(newThickness: number) {
-        this.thickness = newThickness;
+        this.options.size = newThickness;
     }
 
     get _thickness(): number {
-        return this.thickness;
+        return this.options.size ? this.options.size : 1;
     }
 
     set _traceType(newType: number) {
-        this.traceType = newType;
+        this.options.traceType = newType;
     }
 
     get _traceType(): number {
-        return this.traceType;
+        return this.options.traceType ? Number(this.options.traceType) : 0;
     }
     get pathdata(): Vec2[] {
         return this.pathData;
@@ -45,36 +52,29 @@ export class RectangleService extends Tool {
         this.mouseDown = event.buttons === MouseButton.Left;
         if (this.mouseDown) {
             const currentCoord = this.getPositionFromMouse(event);
-            this.initialCoord = currentCoord;
-            this.mouseDownCoord = currentCoord;
-            this.pathData.push(currentCoord);
+            this.selectionBox.setAnchor(currentCoord);
         }
     }
 
-    onMouseUp(event: MouseEvent, undoRedo: UndoRedoService): void {
+    onMouseUp(event: MouseEvent): void {
         if (this.mouseDown) {
-            this.pathData.push(this.mouseDownCoord);
-            undoRedo.undoPile.push({
-                path: this.pathData,
-                id: drawingToolId.rectangleService,
-                thickness: this._thickness,
-                traceType: this._traceType,
-            });
-            this.draw(this.drawingService.baseCtx, this.pathData);
+            const currentCoord = this.getPositionFromMouse(event);
+            this.selectionBox.updateOpposingCorner(currentCoord);
+            const action = this.getDrawingAction();
+            this.undoRedoService.saveAction(action);
+            this.draw(this.drawingService.baseCtx, action);
         }
         this.mouseDown = false;
-        this.clearPath();
     }
 
     onMouseMove(event: MouseEvent): void {
         if (this.mouseDown && event.buttons === MouseButton.Left) {
-            this.mouseDownCoord = this.getPositionFromMouse(event);
-            this.pathData.push(this.mouseDownCoord);
-            this.draw(this.drawingService.previewCtx, this.pathData);
-            this.pathData.pop();
+            const currentCoord = this.getPositionFromMouse(event);
+            this.selectionBox.updateOpposingCorner(currentCoord);
+            this.draw(this.drawingService.previewCtx, this.getDrawingAction());
         }
         if (this.mouseDown && !(event.buttons === MouseButton.Left)) {
-            this.draw(this.drawingService.baseCtx, this.pathData);
+            this.draw(this.drawingService.baseCtx, this.getDrawingAction());
             this.mouseDown = false;
         }
     }
@@ -83,7 +83,7 @@ export class RectangleService extends Tool {
         if (event.key === SHIFT_KEY) {
             this.shiftDown = false;
             if (this.mouseDown) {
-                this.draw(this.drawingService.previewCtx, this.pathData);
+                this.draw(this.drawingService.previewCtx, this.getDrawingAction());
             }
         }
     }
@@ -92,44 +92,36 @@ export class RectangleService extends Tool {
         if (event.key === SHIFT_KEY) {
             this.shiftDown = true;
             if (this.mouseDown) {
-                this.draw(this.drawingService.previewCtx, this.pathData);
+                this.draw(this.drawingService.previewCtx, this.getDrawingAction());
             }
         }
     }
 
-    draw(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
-        this.drawingService.clearCanvas(this.drawingService.previewCtx);
-        ctx.beginPath();
-        // tslint:disable-next-line: prefer-const
-
-        const width = path[1].x - path[0].x;
-        const height = path[1].y - path[0].y;
-
-        ctx.lineWidth = this.thickness;
-
-        if (this.shiftDown) {
-            const squareSize = Math.min(Math.abs(width), Math.abs(height));
-            ctx.rect(path[0].x, path[0].y, squareSize * Math.sign(width), squareSize * Math.sign(height));
-        } else {
-            ctx.rect(path[0].x, path[0].y, width, height);
-        }
-
-        switch (this.traceType) {
-            case TraceTypes.fill:
-                ctx.fill();
-                break;
-            case TraceTypes.stroke:
-                ctx.stroke();
-                break;
-            case TraceTypes.fillAndStroke:
-                ctx.fill();
-                ctx.stroke();
-                break;
-            default:
-                ctx.fill();
+    draw(ctx: CanvasRenderingContext2D, drawingAction: DrawingAction): void {
+        const options = drawingAction.options;
+        if (drawingAction.box && options.size && options.traceType && options.secondaryColor) {
+            this.drawingService.clearCanvas(this.drawingService.previewCtx);
+            ctx.beginPath();
+            ctx.lineWidth = options.size;
+            const box = drawingAction.box;
+            ctx.rect(box.position.x, box.position.y, box.width, box.height);
+            this.fill(ctx, options.traceType, options.primaryColor, options.secondaryColor);
         }
     }
-    private clearPath(): void {
-        this.pathData = [];
+
+    getDrawingAction(): DrawingAction {
+        const options = {
+            primaryColor: this.primaryColor,
+            secondaryColor: this.secondaryColor,
+            size: this.options.size,
+            traceType: this.options.traceType,
+        };
+        const box = new BoundingBox();
+        box.updateFromSelectionBox(this.selectionBox, this.shiftDown);
+        return {
+            id: drawingToolId.rectangleService,
+            box,
+            options,
+        };
     }
 }

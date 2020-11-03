@@ -1,72 +1,76 @@
 import { Injectable } from '@angular/core';
+import { BoundingBox } from '@app/classes/bounding-box';
+import { DrawingAction } from '@app/classes/drawing-action';
+import { SelectionBox } from '@app/classes/selection-box';
 import { Tool } from '@app/classes/tool';
-import { Vec2 } from '@app/classes/vec2';
+import { ColorSelectionService } from '@app/services/color/color-selection-service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { SHIFT_KEY } from '@app/shared/constant';
-import { drawingToolId, MouseButton } from '@app/shared/enum';
-import { UndoRedoService } from './undoRedo-service';
+import { drawingToolId, MouseButton, TraceTypes } from '@app/shared/enum';
+import { UndoRedoService } from './undoredo-service';
 
 @Injectable({
     providedIn: 'root',
 })
 export class EllipseService extends Tool {
-    initialCoord: Vec2;
+    selectionBox: SelectionBox;
 
-    private thickness: number;
-    private pathData: Vec2[];
+    constructor(drawingService: DrawingService, undoRedoService: UndoRedoService, colorService: ColorSelectionService) {
+        super(drawingService, undoRedoService, colorService);
+        this.setDefaultOptions();
+        this.selectionBox = new SelectionBox();
+    }
 
-    constructor(drawingService: DrawingService) {
-        super(drawingService);
-        this.clearPath();
-        this.thickness = 0;
+    setDefaultOptions(): void {
+        this.options.size = 1;
+        this.options.traceType = TraceTypes.stroke;
     }
 
     set _thickness(newThickness: number) {
-        this.thickness = newThickness;
+        this.options.size = newThickness;
     }
 
     get _thickness(): number {
-        return this.thickness;
+        return this.options.size ? this.options.size : 1;
     }
 
     onMouseDown(event: MouseEvent): void {
         this.mouseDown = event.buttons === MouseButton.Left;
         if (this.mouseDown) {
             const currentPosition = this.getPositionFromMouse(event);
-            this.initialCoord = currentPosition;
-            this.mouseDownCoord = currentPosition;
-            this.pathData.push(this.initialCoord);
+            this.selectionBox.setAnchor(currentPosition);
         }
     }
 
     onMouseMove(event: MouseEvent): void {
         if (this.mouseDown && event.buttons === MouseButton.Left) {
-            this.mouseDownCoord = this.getPositionFromMouse(event);
-            this.pathData.push(this.mouseDownCoord);
-            this.draw(this.drawingService.previewCtx, this.pathData);
-            this.pathData.pop();
+            const currentPosition = this.getPositionFromMouse(event);
+            this.selectionBox.updateOpposingCorner(currentPosition);
+            this.draw(this.drawingService.previewCtx, this.getDrawingAction());
         }
+
         if (this.mouseDown && !(event.buttons === MouseButton.Left)) {
             this.mouseDown = false;
-            this.draw(this.drawingService.baseCtx, this.pathData);
+            this.draw(this.drawingService.baseCtx, this.getDrawingAction());
         }
     }
 
-    onMouseUp(event: MouseEvent, undoRedo: UndoRedoService): void {
+    onMouseUp(event: MouseEvent): void {
         if (this.mouseDown) {
-            this.pathData.push(this.mouseDownCoord);
-            undoRedo.undoPile.push({ path: this.pathData, id: drawingToolId.ellipseService, thickness: this._thickness, traceType: 0 });
-            this.draw(this.drawingService.baseCtx, this.pathData);
+            const currentPosition = this.getPositionFromMouse(event);
+            this.selectionBox.updateOpposingCorner(currentPosition);
+            const drawingAction = this.getDrawingAction();
+            this.undoRedoService.saveAction(drawingAction);
+            this.draw(this.drawingService.baseCtx, drawingAction);
         }
         this.mouseDown = false;
-        this.clearPath();
     }
 
     onKeyUp(event: KeyboardEvent): void {
         if (event.key === SHIFT_KEY) {
             this.shiftDown = false;
             if (this.mouseDown) {
-                this.draw(this.drawingService.previewCtx, this.pathData);
+                this.draw(this.drawingService.previewCtx, this.getDrawingAction());
             }
         }
     }
@@ -75,32 +79,41 @@ export class EllipseService extends Tool {
         if (event.key === SHIFT_KEY) {
             this.shiftDown = true;
             if (this.mouseDown) {
-                this.draw(this.drawingService.previewCtx, this.pathData);
+                this.draw(this.drawingService.previewCtx, this.getDrawingAction());
             }
         }
     }
 
-    draw(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
-        this.drawingService.clearCanvas(this.drawingService.previewCtx);
-        ctx.beginPath();
-        const xRadius = (path[1].x - path[0].x) / 2;
-        const yRadius = (path[1].y - path[0].y) / 2;
-        ctx.lineWidth = this.thickness;
+    draw(ctx: CanvasRenderingContext2D, drawingAction: DrawingAction): void {
+        const options = drawingAction.options;
+        if (drawingAction.box && options.size && options.traceType && options.secondaryColor) {
+            this.drawingService.clearCanvas(this.drawingService.previewCtx);
+            ctx.beginPath();
+            const xRadius = drawingAction.box.width / 2;
+            const yRadius = drawingAction.box.height / 2;
+            const center = drawingAction.box.center;
+            ctx.lineWidth = options.size;
 
-        if (this.shiftDown) {
-            const smallestRadius = Math.min(Math.abs(xRadius), Math.abs(yRadius));
-            const xMiddle = path[0].x + smallestRadius * Math.sign(xRadius);
-            const yMiddle = path[0].y + smallestRadius * Math.sign(yRadius);
-            ctx.arc(xMiddle, yMiddle, smallestRadius, 0, 2 * Math.PI);
-        } else {
-            const xMiddle = path[0].x + xRadius;
-            const yMiddle = path[0].y + yRadius;
-            ctx.ellipse(xMiddle, yMiddle, Math.abs(xRadius), Math.abs(yRadius), 0, 0, 2 * Math.PI);
+            ctx.ellipse(center.x, center.y, xRadius, yRadius, 0, 0, 2 * Math.PI);
+            this.fill(ctx, options.traceType, options.primaryColor, options.secondaryColor);
+
+            ctx.closePath();
         }
-
-        ctx.stroke(); // Stroke for now, has to be dynamic to fill for example
     }
-    private clearPath(): void {
-        this.pathData = [];
+
+    getDrawingAction(): DrawingAction {
+        const options = {
+            primaryColor: this.primaryColor,
+            secondaryColor: this.secondaryColor,
+            size: this.options.size,
+            traceType: this.options.traceType,
+        };
+        const box = new BoundingBox();
+        box.updateFromSelectionBox(this.selectionBox, this.shiftDown);
+        return {
+            id: drawingToolId.ellipseService,
+            box,
+            options,
+        };
     }
 }

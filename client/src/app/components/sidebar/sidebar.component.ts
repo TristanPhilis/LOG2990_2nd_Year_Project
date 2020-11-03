@@ -3,13 +3,11 @@ import { MatDialog } from '@angular/material/dialog';
 import { CarouselComponent } from '@app/components/carousel/carousel.component';
 import { CreateNewDrawingComponent } from '@app/components/create-new-drawing/create-new-drawing.component';
 import { GuideComponent } from '@app/components/guide/guide.component';
-
 import { ExportPopupComponent } from '@app/components/popup/export-popup/export-popup.component';
 import { SavePopupComponent } from '@app/components/popup/save-popup/save-popup.component';
-
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ToolsService } from '@app/services/tools/tools-service';
-import { UndoRedoService } from '@app/services/tools/undoRedo-service';
+import { UndoRedoService } from '@app/services/tools/undoredo-service';
 import { drawingToolId, sidebarToolID } from '@app/shared/enum';
 import { SidebarToolComponent } from './sidebar-tool/sidebar-tool.component';
 
@@ -141,6 +139,10 @@ export class SidebarComponent {
         if (event.shiftKey) {
             keys += 'S-';
         }
+        if (event.shiftKey && event.ctrlKey) {
+            keys = 'C-';
+            keys += 'S-';
+        }
         keys += event.key.toLowerCase();
         return keys;
     }
@@ -158,6 +160,9 @@ export class SidebarComponent {
             },
             'C-z': () => {
                 this.undoRedo.undo();
+            },
+            'C-S-z': () => {
+                this.undoRedo.redo();
             },
         };
         const func: callback | undefined = kbd[keys];

@@ -1,30 +1,34 @@
 import { Injectable } from '@angular/core';
+import { DrawingAction } from '@app/classes/drawing-action';
 import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
+import { ColorSelectionService } from '@app/services/color/color-selection-service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { drawingToolId, MouseButton } from '@app/shared/enum';
-import { UndoRedoService } from './undoRedo-service';
+import { UndoRedoService } from './undoredo-service';
 
 @Injectable({
     providedIn: 'root',
 })
 export class EraserService extends Tool {
     private pathData: Vec2[];
-    private thickness: number;
-    private five: number = 5;
 
-    constructor(drawingService: DrawingService) {
-        super(drawingService);
-        this.thickness = this.five; // Replace by an oberversable
+    constructor(drawingService: DrawingService, undoRedoService: UndoRedoService, colorService: ColorSelectionService) {
+        super(drawingService, undoRedoService, colorService);
         this.clearPath();
+        this.setDefaultOptions();
+    }
+
+    setDefaultOptions(): void {
+        this.options.size = 1;
     }
 
     set _thickness(newThickness: number) {
-        this.thickness = newThickness;
+        this.options.size = newThickness;
     }
 
     get _thickness(): number {
-        return this.thickness;
+        return this.options.size ? this.options.size : 1;
     }
 
     onMouseDown(event: MouseEvent): void {
@@ -36,12 +40,12 @@ export class EraserService extends Tool {
         }
     }
 
-    onMouseUp(event: MouseEvent, undoRedo: UndoRedoService): void {
+    onMouseUp(event: MouseEvent): void {
         if (this.mouseDown) {
             const mousePosition = this.getPositionFromMouse(event);
             this.pathData.push(mousePosition);
-            this.draw(this.drawingService.baseCtx, this.pathData);
-            undoRedo.undoPile.push({ path: this.pathData, id: drawingToolId.eraserService, thickness: this._thickness, traceType: 0 });
+            this.draw(this.drawingService.baseCtx, this.getDrawingAction());
+            this.undoRedoService.saveAction(this.getDrawingAction());
         }
         this.mouseDown = false;
         this.clearPath();
@@ -51,24 +55,38 @@ export class EraserService extends Tool {
         if (this.mouseDown && event.buttons === MouseButton.Left) {
             const mousePosition = this.getPositionFromMouse(event);
             this.pathData.push(mousePosition);
-            this.draw(this.drawingService.previewCtx, this.pathData);
-            this.draw(this.drawingService.baseCtx, this.pathData);
+            this.draw(this.drawingService.previewCtx, this.getDrawingAction());
+            this.draw(this.drawingService.baseCtx, this.getDrawingAction());
         }
         if (this.mouseDown && !(event.buttons === MouseButton.Left)) {
-            this.draw(this.drawingService.baseCtx, this.pathData);
+            this.draw(this.drawingService.baseCtx, this.getDrawingAction());
         }
     }
 
-    draw(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
-        ctx.globalCompositeOperation = 'destination-out';
-        ctx.beginPath();
-        ctx.lineCap = 'round';
-        ctx.lineWidth = this.thickness;
-        for (const point of path) {
-            ctx.lineTo(point.x, point.y);
+    draw(ctx: CanvasRenderingContext2D, drawingAction: DrawingAction): void {
+        if (drawingAction.path && drawingAction.options.size) {
+            ctx.globalCompositeOperation = 'destination-out';
+            ctx.beginPath();
+            ctx.lineCap = 'round';
+            ctx.lineWidth = drawingAction.options.size;
+            for (const point of drawingAction.path) {
+                ctx.lineTo(point.x, point.y);
+            }
+            ctx.stroke();
+            ctx.globalCompositeOperation = 'source-over';
         }
-        ctx.stroke();
-        ctx.globalCompositeOperation = 'source-over';
+    }
+
+    getDrawingAction(): DrawingAction {
+        const options = {
+            primaryColor: this.primaryColor,
+            size: this.options.size,
+        };
+        return {
+            id: drawingToolId.eraserService,
+            path: this.pathData,
+            options,
+        };
     }
 
     private clearPath(): void {

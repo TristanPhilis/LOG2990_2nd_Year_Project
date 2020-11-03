@@ -1,6 +1,6 @@
 import { SimpleChange } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { Color } from '@app/classes/color';
+import { Color } from '@app/classes/color-service';
 import { ColorPaletteComponent } from './color-palette.component';
 
 // tslint:disable:no-any

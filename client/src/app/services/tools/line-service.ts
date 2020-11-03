@@ -1,10 +1,12 @@
 import { Injectable } from '@angular/core';
+import { DrawingAction } from '@app/classes/drawing-action';
 import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
+import { ColorSelectionService } from '@app/services/color/color-selection-service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { BACKSPACE_KEY, BASE_SNAP_ANGLE, ESCAPE_KEY, MIDDLE_SNAP_ANGLE, SHIFT_KEY } from '@app/shared/constant';
 import { drawingToolId } from '@app/shared/enum';
-import { UndoRedoService } from './undoRedo-service';
+import { UndoRedoService } from './undoredo-service';
 
 @Injectable({
     providedIn: 'root',
@@ -14,21 +16,22 @@ export class LineService extends Tool {
     lineStarted: boolean;
     currentCoord: Vec2;
     initialCoord: Vec2;
-    private thickness: number;
 
-    constructor(drawingService: DrawingService) {
-        super(drawingService);
-        this.thickness = 0;
+    constructor(drawingService: DrawingService, undoRedoService: UndoRedoService, colorService: ColorSelectionService) {
+        super(drawingService, undoRedoService, colorService);
         this.clearPath();
+        this.setDefaultOptions();
         this.lineStarted = false;
     }
-
+    setDefaultOptions(): void {
+        this.options.size = 1;
+    }
     set _thickness(newThickness: number) {
-        this.thickness = newThickness;
+        this.options.size = newThickness;
     }
 
     get _thickness(): number {
-        return this.thickness;
+        return this.options.size ? this.options.size : 1;
     }
 
     onMouseClick(event: MouseEvent): void {
@@ -47,17 +50,15 @@ export class LineService extends Tool {
         if (this.lineStarted) {
             this.currentCoord = this.getPositionFromMouse(event);
             this.pathData.push(this.currentCoord);
-            this.draw(this.drawingService.previewCtx, this.pathData);
+            this.draw(this.drawingService.previewCtx, this.getDrawingAction());
             this.pathData.pop();
         }
     }
 
-    onMouseDoubleClick(undoRedo: UndoRedoService): void {
+    onMouseDoubleClick(event: MouseEvent): void {
         if (this.lineStarted) {
-            undoRedo.undoPile.push({ path: this.pathData, id: drawingToolId.lineService, thickness: this._thickness, traceType: 0 });
-            // const onMouseclickTriggerAdjustment = 2;
-            // this.pathData.splice(this.pathData.length - onMouseclickTriggerAdjustment, onMouseclickTriggerAdjustment);
-            this.draw(this.drawingService.baseCtx, this.pathData);
+            this.undoRedoService.saveAction(this.getDrawingAction());
+            this.draw(this.drawingService.baseCtx, this.getDrawingAction());
             this.endLine(this.pathData);
         }
     }
@@ -82,7 +83,7 @@ export class LineService extends Tool {
         if (event.key === SHIFT_KEY) {
             this.shiftDown = false;
             if (this.lineStarted) {
-                this.draw(this.drawingService.previewCtx, this.pathData);
+                this.draw(this.drawingService.previewCtx, this.getDrawingAction());
             }
         }
     }
@@ -93,14 +94,14 @@ export class LineService extends Tool {
                 if (this.shiftDown !== true) {
                     this.shiftDown = true;
                     if (this.lineStarted) {
-                        this.draw(this.drawingService.previewCtx, this.pathData);
+                        this.draw(this.drawingService.previewCtx, this.getDrawingAction());
                     }
                 }
                 break;
             case BACKSPACE_KEY:
                 this.pathData.pop();
                 if (this.lineStarted) {
-                    this.draw(this.drawingService.previewCtx, this.pathData);
+                    this.draw(this.drawingService.previewCtx, this.getDrawingAction());
                 }
                 break;
             case ESCAPE_KEY:
@@ -146,20 +147,34 @@ export class LineService extends Tool {
         return projectedPoint;
     }
 
-    draw(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
-        this.drawingService.clearCanvas(this.drawingService.previewCtx);
-        const adjustedCoord = this.getAdjustedCoord(path);
-        ctx.beginPath();
-        ctx.lineTo(path[0].x, path[0].y);
-        ctx.lineWidth = this.thickness;
-        for (const point of this.pathData) {
-            ctx.lineTo(point.x, point.y);
-        }
+    draw(ctx: CanvasRenderingContext2D, drawingAction: DrawingAction): void {
+        if (drawingAction.path && drawingAction.options.size) {
+            this.drawingService.clearCanvas(this.drawingService.previewCtx);
+            const adjustedCoord = this.getAdjustedCoord(drawingAction.path);
+            ctx.beginPath();
+            ctx.lineWidth = drawingAction.options.size;
+            ctx.strokeStyle = this.options.primaryColor.getRgbString();
+            ctx.lineTo(drawingAction.path[0].x, drawingAction.path[0].y);
+            for (const point of this.pathData) {
+                ctx.lineTo(point.x, point.y);
+            }
 
-        ctx.lineTo(adjustedCoord.x, adjustedCoord.y);
-        ctx.stroke();
+            ctx.lineTo(adjustedCoord.x, adjustedCoord.y);
+            ctx.stroke();
+        }
     }
 
+    getDrawingAction(): DrawingAction {
+        const options = {
+            primaryColor: this.primaryColor,
+            size: this.options.size,
+        };
+        return {
+            id: drawingToolId.lineService,
+            path: this.pathData,
+            options,
+        };
+    }
     private clearPath(): void {
         this.pathData = [];
         this.initialCoord = { x: 0, y: 0 };

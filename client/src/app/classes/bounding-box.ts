@@ -71,4 +71,11 @@ export class BoundingBox extends Box {
     get height(): number {
         return this.bottom - this.top;
     }
+
+    get center(): Vec2 {
+        return {
+            x: this.left + this.width / 2,
+            y: this.top + this.height / 2,
+        };
+    }
 }

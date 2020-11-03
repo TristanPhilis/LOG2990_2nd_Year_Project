@@ -1,36 +1,35 @@
 import { Injectable } from '@angular/core';
+import { DrawingAction } from '@app/classes/drawing-action';
 import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
+import { ColorSelectionService } from '@app/services/color/color-selection-service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { drawingToolId, MouseButton, Texture } from '@app/shared/enum';
-import { UndoRedoService } from './undoRedo-service';
+import { UndoRedoService } from './undoredo-service';
 
 @Injectable({
     providedIn: 'root',
 })
 export class BrushService extends Tool {
     private pathData: Vec2[];
-    // Todo: Global Attributes
-    // private color: string;
-    // private opacity: number;
-    private thickness: number;
-    selectedTexture: Texture;
-    color: string;
 
-    constructor(drawingService: DrawingService) {
-        super(drawingService);
-        this.thickness = 1; // Replace with an observable
+    constructor(drawingService: DrawingService, undoRedoService: UndoRedoService, colorService: ColorSelectionService) {
+        super(drawingService, undoRedoService, colorService);
         this.clearPath();
-        this.selectedTexture = Texture.one;
-        this.color = 'black';
+        this.setDefaultOptions();
+    }
+
+    setDefaultOptions(): void {
+        this.options.texture = Texture.one;
+        this.options.size = 1;
     }
 
     set _thickness(newThickness: number) {
-        this.thickness = newThickness;
+        this.options.size = newThickness;
     }
 
     get _thickness(): number {
-        return this.thickness;
+        return this.options.size ? this.options.size : 1;
     }
 
     onMouseDown(event: MouseEvent): void {
@@ -42,12 +41,13 @@ export class BrushService extends Tool {
         }
     }
 
-    onMouseUp(event: MouseEvent, undoRedo: UndoRedoService): void {
+    onMouseUp(event: MouseEvent): void {
         if (this.mouseDown) {
-            undoRedo.undoPile.push({ path: this.pathData, id: drawingToolId.brushService, thickness: this._thickness, traceType: 0 });
             const mousePosition = this.getPositionFromMouse(event);
             this.pathData.push(mousePosition);
-            this.draw(this.drawingService.baseCtx, this.pathData);
+            const drawingAction = this.getDrawingAction();
+            this.undoRedoService.saveAction(drawingAction);
+            this.draw(this.drawingService.baseCtx, drawingAction);
         }
         this.mouseDown = false;
         this.clearPath();
@@ -58,30 +58,45 @@ export class BrushService extends Tool {
             const mousePosition = this.getPositionFromMouse(event);
             this.pathData.push(mousePosition);
             // We draw on the preview canvas and erase it each time the mouse is moved
-            this.draw(this.drawingService.previewCtx, this.pathData);
+            this.draw(this.drawingService.previewCtx, this.getDrawingAction());
         }
         if (this.mouseDown && !(event.buttons === MouseButton.Left)) {
-            this.draw(this.drawingService.baseCtx, this.pathData);
+            this.draw(this.drawingService.baseCtx, this.getDrawingAction());
         }
     }
 
-    draw(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
-        this.drawingService.clearCanvas(this.drawingService.previewCtx);
-        ctx.beginPath();
-        ctx.lineCap = 'round';
-        ctx.lineWidth = this.thickness;
-        const image = new Image(1, 1);
-        image.src = this.selectedTexture;
-        const pattern = ctx.createPattern(image, 'repeat');
-        if (pattern !== null) ctx.strokeStyle = pattern;
-        for (const point of path) {
-            ctx.lineTo(point.x, point.y);
+    draw(ctx: CanvasRenderingContext2D, drawingAction: DrawingAction): void {
+        if (drawingAction.path && drawingAction.options.size && drawingAction.options.texture) {
+            this.drawingService.clearCanvas(this.drawingService.previewCtx);
+            ctx.beginPath();
+            ctx.lineCap = 'round';
+            ctx.lineWidth = drawingAction.options.size;
+            const image = new Image(1, 1);
+            image.src = drawingAction.options.texture;
+            const pattern = ctx.createPattern(image, 'repeat');
+            if (pattern !== null) ctx.strokeStyle = pattern;
+            for (const point of drawingAction.path) {
+                ctx.lineTo(point.x, point.y);
+            }
+            ctx.stroke();
+            ctx.globalCompositeOperation = 'color';
+            ctx.strokeStyle = this.options.primaryColor.getRgbString();
+            ctx.stroke();
+            ctx.globalCompositeOperation = 'source-over';
         }
-        ctx.stroke();
-        ctx.globalCompositeOperation = 'color';
-        ctx.strokeStyle = this.color;
-        ctx.stroke();
-        ctx.globalCompositeOperation = 'source-over';
+    }
+
+    getDrawingAction(): DrawingAction {
+        const options = {
+            primaryColor: this.primaryColor,
+            size: this.options.size,
+            texture: this.options.texture,
+        };
+        return {
+            id: drawingToolId.brushService,
+            path: this.pathData,
+            options,
+        };
     }
 
     private clearPath(): void {

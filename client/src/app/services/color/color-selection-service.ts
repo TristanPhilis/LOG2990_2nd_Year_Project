@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Color } from '@app/classes/color';
-
+import { Color } from '@app/classes/color-service';
 const MAX_HISTORY_SIZE = 10;
 
 @Injectable({
