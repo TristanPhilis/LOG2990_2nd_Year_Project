@@ -20,7 +20,10 @@ export class EraserService extends Tool {
     }
 
     setDefaultOptions(): void {
-        this.options.size = 1;
+        this.options = {
+            primaryColor: this.primaryColor,
+            size: 1,
+        };
     }
 
     set _thickness(newThickness: number) {

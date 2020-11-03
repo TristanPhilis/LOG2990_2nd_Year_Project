@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Injector } from '@angular/core';
 import { DrawingAction } from '@app/classes/drawing-action';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ToolsService } from './tools-service';
@@ -10,10 +10,14 @@ export class UndoRedoService {
     undoPile: DrawingAction[];
     redoPile: DrawingAction[];
     private undidAction: boolean;
+    private toolsService: ToolsService
 
-    constructor(private drawingService: DrawingService, private toolsService: ToolsService) {
+    constructor(private drawingService: DrawingService, injector: Injector) {
         this.clearPile();
         this.undidAction = false;
+        setTimeout(() => {
+            this.toolsService = injector.get(ToolsService);
+        });
     }
 
     saveAction(action: DrawingAction): void {
@@ -35,7 +39,7 @@ export class UndoRedoService {
             }
             this.drawingService.fillWhiteBackground();
             for (const action of this.undoPile) {
-                this.toolsService.currentDrawingTool.draw(this.drawingService.baseCtx, action);
+                this.toolsService.getTool(action.id).draw(this.drawingService.baseCtx, action);
             }
         }
     }
@@ -49,7 +53,7 @@ export class UndoRedoService {
             }
             this.drawingService.fillWhiteBackground();
             for (const action of this.undoPile) {
-                this.toolsService.currentDrawingTool.draw(this.drawingService.baseCtx, action);
+                this.toolsService.getTool(action.id).draw(this.drawingService.baseCtx, action);
             }
         }
     }

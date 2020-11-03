@@ -20,8 +20,11 @@ export class BrushService extends Tool {
     }
 
     setDefaultOptions(): void {
-        this.options.texture = Texture.one;
-        this.options.size = 1;
+        this.options = {
+            primaryColor: this.primaryColor,
+            texture: Texture.one,
+            size: 1,
+        };
     }
 
     set _thickness(newThickness: number) {

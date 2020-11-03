@@ -25,8 +25,11 @@ export class RectangleService extends Tool {
     }
 
     setDefaultOptions(): void {
-        this.options.size = 1;
-        this.options.traceType = TraceTypes.stroke;
+        this.options = {
+            primaryColor: this.primaryColor,
+            size: 1,
+            traceType: TraceTypes.stroke,
+        };
     }
 
     set _thickness(newThickness: number) {

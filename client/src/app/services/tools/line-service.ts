@@ -24,7 +24,10 @@ export class LineService extends Tool {
         this.lineStarted = false;
     }
     setDefaultOptions(): void {
-        this.options.size = 1;
+        this.options = {
+            primaryColor: this.primaryColor,
+            size: 1,
+        };
     }
     set _thickness(newThickness: number) {
         this.options.size = newThickness;

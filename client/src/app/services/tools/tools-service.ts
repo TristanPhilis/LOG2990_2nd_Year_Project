@@ -30,6 +30,10 @@ export class ToolsService {
         this.tools = [pencilService, rectangleService, ellipseService, eraserService, lineService, brushService];
     }
 
+    getTool(id: drawingToolId): Tool {
+        return this.tools[id];
+    }
+
     set _currentDrawingTool(newToolID: drawingToolId) {
         this.currentDrawingTool = this.tools[newToolID];
         this.currentDrawingToolID = newToolID;
