@@ -15,7 +15,7 @@ import {
     ESCAPE_KEY,
     NEGATIVE_MULTIPLIER,
     SHIFT_KEY,
-    SIZE_OF_SELECTION_BOX
+    SIZE_OF_SELECTION_BOX,
 } from '@app/shared/constant';
 import { MouseButton } from '@app/shared/enum';
 
@@ -113,6 +113,31 @@ export class EllipseSelectorService extends Tool {
         ctx.rect(this.selectedBox.position.x, this.selectedBox.position.y, this.selectedBox.width, this.selectedBox.height);
         ctx.stroke();
         ctx.setLineDash([]);
+        const buttonSize = 5;
+        ctx.beginPath();
+        ctx.arc(this.selectedBox.left, this.selectedBox.top, buttonSize, 0, 2 * Math.PI);
+        ctx.fill();
+        ctx.beginPath();
+        ctx.arc(this.selectedBox.right, this.selectedBox.top, buttonSize, 0, 2 * Math.PI);
+        ctx.fill();
+        ctx.beginPath();
+        ctx.arc(this.selectedBox.left, this.selectedBox.bottom, buttonSize, 0, 2 * Math.PI);
+        ctx.fill();
+        ctx.beginPath();
+        ctx.arc(this.selectedBox.right, this.selectedBox.bottom, buttonSize, 0, 2 * Math.PI);
+        ctx.fill();
+        ctx.beginPath();
+        ctx.arc((this.selectedBox.left + this.selectedBox.right) / 2, this.selectedBox.top, buttonSize, 0, 2 * Math.PI);
+        ctx.fill();
+        ctx.beginPath();
+        ctx.arc(this.selectedBox.right, (this.selectedBox.top + this.selectedBox.bottom) / 2, buttonSize, 0, 2 * Math.PI);
+        ctx.fill();
+        ctx.beginPath();
+        ctx.arc((this.selectedBox.left + this.selectedBox.right) / 2, this.selectedBox.bottom, buttonSize, 0, 2 * Math.PI);
+        ctx.fill();
+        ctx.beginPath();
+        ctx.arc(this.selectedBox.right, (this.selectedBox.top + this.selectedBox.bottom) / 2, buttonSize, 0, 2 * Math.PI);
+        ctx.fill();
     }
 
     private drawSelectionBox(): void {
@@ -291,10 +316,11 @@ export class EllipseSelectorService extends Tool {
 
     private imagedata_to_image(imagedata: ImageData): CanvasImageSource {
         const canvas = document.createElement('canvas');
-        const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
+        const ctx = canvas.getContext('2d');
         canvas.width = imagedata.width;
         canvas.height = imagedata.height;
-        ctx.putImageData(imagedata, 0, 0);
+        // tslint:disable-next-line: no-non-null-assertion
+        ctx!.putImageData(imagedata, 0, 0);
         const image = new Image();
         image.src = canvas.toDataURL();
         return image;

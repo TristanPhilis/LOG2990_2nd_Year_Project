@@ -10,6 +10,7 @@ import { PolygonService } from '@app/services/tools/polygon-service';
 import { RectangleService } from '@app/services/tools/rectangle-service';
 import { drawingToolId, sidebarToolID, TraceTypes } from '@app/shared/enum';
 import { BehaviorSubject } from 'rxjs';
+import { EllipseSelectorService} from './ellipse-selector-service';
 import { RectangleSelectorService } from './rectangle-selector-service';
 
 @Injectable({
@@ -31,6 +32,7 @@ export class ToolsService {
         lineService: LineService,
         brushService: BrushService,
         rectangleSelectionService: RectangleSelectorService,
+        ellipseSelectionService: EllipseSelectorService,
         polygonService: PolygonService,
         bucketService: BucketService,
     ) {
@@ -43,6 +45,7 @@ export class ToolsService {
             lineService,
             brushService,
             rectangleSelectionService,
+            ellipseSelectionService,
             polygonService,
             bucketService,
         ];

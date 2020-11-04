@@ -27,6 +27,11 @@ export class DrawingService {
         this.baseCtx.fillRect(0, 0, this.canvas.width, this.canvas.height);
     }
 
+    fillCanvasAtLocation(color: string, location: Vec2, width: number, height: number): void {
+        this.baseCtx.fillStyle = color;
+        this.baseCtx.fillRect(location.x, location.y, width, height);
+    }
+
     clearCanvas(context: CanvasRenderingContext2D): void {
         context.clearRect(0, 0, this.canvas.width, this.canvas.height);
     }

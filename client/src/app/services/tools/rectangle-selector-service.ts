@@ -110,6 +110,31 @@ export class RectangleSelectorService extends Tool {
         ctx.rect(this.selectedBox.position.x, this.selectedBox.position.y, this.selectedBox.width, this.selectedBox.height);
         ctx.stroke();
         ctx.setLineDash([]);
+        const buttonSize = 5;
+        ctx.beginPath();
+        ctx.arc(this.selectedBox.left, this.selectedBox.top, buttonSize, 0, 2 * Math.PI);
+        ctx.fill();
+        ctx.beginPath();
+        ctx.arc(this.selectedBox.right, this.selectedBox.top, buttonSize, 0, 2 * Math.PI);
+        ctx.fill();
+        ctx.beginPath();
+        ctx.arc(this.selectedBox.left, this.selectedBox.bottom, buttonSize, 0, 2 * Math.PI);
+        ctx.fill();
+        ctx.beginPath();
+        ctx.arc(this.selectedBox.right, this.selectedBox.bottom, buttonSize, 0, 2 * Math.PI);
+        ctx.fill();
+        ctx.beginPath();
+        ctx.arc((this.selectedBox.left + this.selectedBox.right) / 2, this.selectedBox.top, buttonSize, 0, 2 * Math.PI);
+        ctx.fill();
+        ctx.beginPath();
+        ctx.arc(this.selectedBox.right, (this.selectedBox.top + this.selectedBox.bottom) / 2, buttonSize, 0, 2 * Math.PI);
+        ctx.fill();
+        ctx.beginPath();
+        ctx.arc((this.selectedBox.left + this.selectedBox.right) / 2, this.selectedBox.bottom, buttonSize, 0, 2 * Math.PI);
+        ctx.fill();
+        ctx.beginPath();
+        ctx.arc(this.selectedBox.right, (this.selectedBox.top + this.selectedBox.bottom) / 2, buttonSize, 0, 2 * Math.PI);
+        ctx.fill();
     }
 
     private drawSelectionBox(): void {
@@ -132,7 +157,7 @@ export class RectangleSelectorService extends Tool {
     }
 
     private clearBaseCanvasSelectedArea(): void {
-        this.drawingService.fillCanvas('white');
+        this.drawingService.fillCanvasAtLocation('white', this.selectedBox.position, this.selectedBox.width, this.selectedBox.height);
     }
 
     private translateSelectedBoxFromMouseMove(coord: Vec2): void {

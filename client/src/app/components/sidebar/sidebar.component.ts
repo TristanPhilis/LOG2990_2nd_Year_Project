@@ -181,6 +181,15 @@ export class SidebarComponent {
             b: () => this.onButtonPressTop(this.sideBarToolsTopMap.get(sidebarToolID.paintBucket)),
             e: () => this.onButtonPressTop(this.sideBarToolsTopMap.get(sidebarToolID.eraser)),
             l: () => this.onButtonPressTop(this.sideBarToolsTopMap.get(sidebarToolID.line)),
+            r: () => {
+                this.onButtonPressTop(this.sideBarToolsTopMap.get(sidebarToolID.selection));
+                this.toolsService._currentDrawingTool = drawingToolId.rectangleSelectionService;
+            },
+
+            s: () => {
+                this.onButtonPressTop(this.sideBarToolsTopMap.get(sidebarToolID.selection));
+                this.toolsService._currentDrawingTool = drawingToolId.ellipseSelectionService;
+            },
 
             1: () => {
                 this.onButtonPressTop(this.sideBarToolsTopMap.get(sidebarToolID.shapes));
