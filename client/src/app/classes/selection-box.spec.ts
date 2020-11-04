@@ -95,4 +95,48 @@ describe('SelectionBox', () => {
         expect(selectionBox.squarePosition.x).toEqual(startingCoord - rectangleHeight);
         expect(selectionBox.squarePosition.y).toEqual(startingCoord);
     });
+
+    it('Should return the right center', () => {
+        const expectedCenter = 42.5;
+        const result = selectionBox.center;
+        expect(result).toEqual({ x: expectedCenter, y: expectedCenter });
+    });
+
+    // disabling for easy center position verification
+    // tslint:disable:no-magic-numbers
+    it('Should return the right squareCenter', () => {
+        const rectangleWidth = 20;
+        const rectangleHeight = 10;
+
+        // top left
+        let expectedX = 35;
+        let expectedY = 35;
+        selectionBox.updateOpposingCorner({ x: startingCoord - rectangleWidth, y: startingCoord - rectangleHeight });
+        expect(selectionBox.squareCenter).toEqual({ x: expectedX, y: expectedY });
+
+        // top right
+        expectedX = 45;
+        expectedY = 35;
+        selectionBox.updateOpposingCorner({ x: startingCoord + rectangleWidth, y: startingCoord - rectangleHeight });
+        expect(selectionBox.squareCenter).toEqual({ x: expectedX, y: expectedY });
+
+        // bottom right
+        expectedX = 45;
+        expectedY = 45;
+        selectionBox.updateOpposingCorner({ x: startingCoord + rectangleWidth, y: startingCoord + rectangleHeight });
+        expect(selectionBox.squareCenter).toEqual({ x: expectedX, y: expectedY });
+
+        // bottom left
+        expectedX = 35;
+        expectedY = 45;
+        selectionBox.updateOpposingCorner({ x: startingCoord - rectangleWidth, y: startingCoord + rectangleHeight });
+        expect(selectionBox.squareCenter).toEqual({ x: expectedX, y: expectedY });
+    });
+    // tslint:enable:no-magic-numbers
+
+    it('should return the right circle radius', () => {
+        const expectedRadius = 2.5;
+        const result = selectionBox.circleRadius;
+        expect(result).toEqual(expectedRadius);
+    });
 });

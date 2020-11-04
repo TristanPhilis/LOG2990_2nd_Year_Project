@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { BrowserModule } from '@angular/platform-browser';
@@ -20,12 +20,14 @@ describe('EditorComponent', () => {
     let mouseEvent: MouseEvent;
     let setAnchorSpy: jasmine.Spy<any>;
 
-    beforeEach(async(() => {
-        TestBed.configureTestingModule({
-            imports: [MatDialogModule, BrowserModule, BrowserAnimationsModule, MatSidenavModule],
-            declarations: [EditorComponent, MockComponents(SidebarComponent, AttributePanelComponent, DrawingComponent)],
-        }).compileComponents();
-    }));
+    beforeEach(
+        waitForAsync(() => {
+            TestBed.configureTestingModule({
+                imports: [MatDialogModule, BrowserModule, BrowserAnimationsModule, MatSidenavModule],
+                declarations: [EditorComponent, MockComponents(SidebarComponent, AttributePanelComponent, DrawingComponent)],
+            }).compileComponents();
+        }),
+    );
 
     beforeEach(() => {
         fixture = TestBed.createComponent(EditorComponent);

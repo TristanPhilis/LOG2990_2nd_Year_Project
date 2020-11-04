@@ -63,12 +63,22 @@ export class EllipseService extends Tool {
         }
     }
 
+    colorSelector(): string {
+        if (this.colorSelection === ColorSelection.primary) {
+            return this.colorSelectionService.primaryColor.getRgbString();
+        } else {
+            return this.colorSelectionService.secondaryColor.getRgbString();
+        }
+    }
+
     private drawEllipse(ctx: CanvasRenderingContext2D): void {
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
         ctx.beginPath();
         const xRadius = (this.mouseDownCoord.x - this.initialCoord.x) / 2;
         const yRadius = (this.mouseDownCoord.y - this.initialCoord.y) / 2;
-        ctx.lineWidth = this.size!;
+        if (this.size) {
+            ctx.lineWidth = this.size;
+        }
 
         if (this.shiftDown) {
             const smallestRadius = Math.min(Math.abs(xRadius), Math.abs(yRadius));
@@ -82,40 +92,24 @@ export class EllipseService extends Tool {
         }
 
         switch (this.traceType) {
-            case TraceTypes.fill: {
-                if (this.colorSelection === ColorSelection.primary) {
-                    ctx.fillStyle = this.colorSelectionService.primaryColor.getRgbString();
-                } else if (this.colorSelection === ColorSelection.secondary) {
-                    ctx.fillStyle = this.colorSelectionService.secondaryColor.getRgbString();
-                }
+            case TraceTypes.fill:
+                ctx.fillStyle = this.colorSelector();
                 ctx.fill();
                 break;
-            }
-            case TraceTypes.stroke: {
-                if (this.colorSelection === ColorSelection.primary) {
-                    ctx.strokeStyle = this.colorSelectionService.primaryColor.getRgbString();
-                } else if (this.colorSelection === ColorSelection.secondary) {
-                    ctx.strokeStyle = this.colorSelectionService.secondaryColor.getRgbString();
-                }
+            case TraceTypes.stroke:
+                ctx.strokeStyle = this.colorSelector();
                 ctx.stroke();
                 break;
-            }
-            case TraceTypes.fillAndStroke: {
+            case TraceTypes.fillAndStroke:
                 ctx.fillStyle = this.colorSelectionService.primaryColor.getRgbString();
                 ctx.strokeStyle = this.colorSelectionService.secondaryColor.getRgbString();
                 ctx.fill();
                 ctx.stroke();
                 break;
-            }
-            default: {
-                if (this.colorSelection === ColorSelection.primary) {
-                    ctx.fillStyle = this.colorSelectionService.primaryColor.getRgbString();
-                } else if (this.colorSelection === ColorSelection.secondary) {
-                    ctx.fillStyle = this.colorSelectionService.secondaryColor.getRgbString();
-                }
+            default:
+                ctx.fillStyle = this.colorSelector();
                 ctx.fill();
                 break;
-            }
         }
     }
 }

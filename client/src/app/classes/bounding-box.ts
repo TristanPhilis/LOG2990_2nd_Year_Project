@@ -8,6 +8,14 @@ export class BoundingBox extends Box {
     left: number;
     right: number;
 
+    constructor() {
+        super();
+        this.top = 0;
+        this.bottom = 0;
+        this.left = 0;
+        this.right = 0;
+    }
+
     setStartingCoord(coord: Vec2): void {
         this.top = coord.y;
         this.bottom = coord.y;

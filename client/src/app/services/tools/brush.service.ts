@@ -56,7 +56,9 @@ export class BrushService extends Tool {
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
         ctx.beginPath();
         ctx.lineCap = 'round';
-        ctx.lineWidth = this.size!;
+        if (this.size) {
+            ctx.lineWidth = this.size;
+        }
         const image = new Image(1, 1);
         image.src = this.selectedTexture;
         const pattern = ctx.createPattern(image, 'repeat');
@@ -66,12 +68,18 @@ export class BrushService extends Tool {
         }
         ctx.stroke();
         ctx.globalCompositeOperation = 'color';
-        ctx.strokeStyle = this.color!;
+        if (this.color) {
+            ctx.strokeStyle = this.color;
+        }
         ctx.stroke();
         ctx.globalCompositeOperation = 'source-over';
     }
 
     private clearPath(): void {
         this.pathData = [];
+    }
+
+    changeTexture(texture: Texture): void {
+        this.selectedTexture = texture;
     }
 }

@@ -139,7 +139,9 @@ export class LineService extends Tool {
         ctx.beginPath();
 
         ctx.moveTo(this.initialCoord.x, this.initialCoord.y);
-        ctx.lineWidth = this.size!;
+        if (this.size) {
+            ctx.lineWidth = this.size;
+        }
         if (this.colorSelection === ColorSelection.primary) {
             ctx.strokeStyle = this.colorSelectionService.primaryColor.getRgbString();
         } else if (this.colorSelection === ColorSelection.secondary) {

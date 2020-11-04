@@ -1,11 +1,6 @@
 import { Component } from '@angular/core';
-import { ToolOptionComponent } from '@app/components/sidebar/tool-option/tool-option.component';
+import { ToolOption } from '@app/classes/tool-option';
 import { BrushService } from '@app/services/tools/brush.service';
-import { EllipseService } from '@app/services/tools/ellipse-service';
-import { EraserService } from '@app/services/tools/eraser-service';
-import { LineService } from '@app/services/tools/line-service';
-import { PencilService } from '@app/services/tools/pencil-service';
-import { RectangleService } from '@app/services/tools/rectangle-service';
 import { ToolsService } from '@app/services/tools/tools-service';
 import { drawingToolId, sidebarToolID, Texture, TraceTypes } from '@app/shared/enum';
 // tslint:disable:no-any
@@ -17,32 +12,31 @@ import { drawingToolId, sidebarToolID, Texture, TraceTypes } from '@app/shared/e
 })
 export class AttributePanelComponent {
     showTools: boolean;
-    tracingTools: ToolOptionComponent[];
-    shapesTools: ToolOptionComponent[];
-    tracingTypes: ToolOptionComponent[];
-    textures: ToolOptionComponent[];
+    tracingTools: ToolOption[];
+    shapesTools: ToolOption[];
+    tracingTypes: ToolOption[];
+    textures: ToolOption[];
 
-    constructor(
-        public toolsService: ToolsService,
-        private pencilService: PencilService,
-        private rectangleService: RectangleService,
-        private ellipseService: EllipseService,
-        private lineService: LineService,
-        private eraserService: EraserService,
-        private brushService: BrushService,
-    ) {
+    constructor(public toolsService: ToolsService, public brushService: BrushService) {
         this.tracingTools = [
-            { id: drawingToolId.pencilService, name: 'Pencil' },
-            { id: drawingToolId.brushService, name: 'Brush' },
+            { id: drawingToolId.pencilService, name: 'Crayon' },
+            { id: drawingToolId.brushService, name: 'Pinceau' },
         ];
         this.shapesTools = [
             { id: drawingToolId.rectangleService, name: 'Rectangle' },
             { id: drawingToolId.ellipseService, name: 'Ellipse' },
         ];
         this.tracingTypes = [
-            { id: TraceTypes.fill, name: 'Fill' },
-            { id: TraceTypes.stroke, name: 'Stroke' },
-            { id: TraceTypes.fillAndStroke, name: 'Fill and Stroke' },
+            { id: TraceTypes.fill, name: 'Rempli' },
+            { id: TraceTypes.stroke, name: 'Contour' },
+            { id: TraceTypes.fillAndStroke, name: 'Contour et rempli' },
+        ];
+        this.textures = [
+            { id: Texture.one, name: 'Texture Une' },
+            { id: Texture.two, name: 'Texture Deux' },
+            { id: Texture.three, name: 'Texture Trois' },
+            { id: Texture.four, name: 'Texture Quatre' },
+            { id: Texture.five, name: 'Texture Cinq' },
         ];
         this.textures = [
             { id: Texture.one, name: 'Texture One' },
@@ -63,91 +57,5 @@ export class AttributePanelComponent {
 
     handleChange(selectedTool: drawingToolId): void {
         this.toolsService._currentDrawingTool = Number(selectedTool);
-    }
-
-    handleTraceTypeChange(traceType: TraceTypes): void {
-        switch (
-            this.toolsService._selectedSideBarToolID // Remplacer avec if
-        ) {
-            case sidebarToolID.shapes: {
-                switch (this.toolsService._currentDrawingToolID) {
-                    case drawingToolId.rectangleService: {
-                        this.rectangleService._traceType = Number(traceType);
-                        break;
-                    }
-                    case drawingToolId.ellipseService: {
-                        this.ellipseService.traceType = Number(traceType);
-                        break;
-                    }
-                }
-                break;
-            }
-        }
-    }
-
-    // need any to acces target.valueAsNumber
-    // tslint:disable-next-line:no-any
-    sliderChange(size: number): void {
-        // mettre dans toolsService en evitant le switch case
-        switch (this.toolsService._selectedSideBarToolID) {
-            case sidebarToolID.tracing: {
-                switch (this.toolsService._currentDrawingToolID) {
-                    case drawingToolId.pencilService: {
-                        this.pencilService.size = size;
-                        break;
-                    }
-                    case drawingToolId.brushService: {
-                        this.brushService.size = size;
-                    }
-                }
-                break;
-            }
-            case sidebarToolID.shapes: {
-                switch (this.toolsService._currentDrawingToolID) {
-                    case drawingToolId.rectangleService: {
-                        this.rectangleService.size = size;
-                        break;
-                    }
-                    case drawingToolId.ellipseService: {
-                        this.ellipseService.size = size;
-                        break;
-                    }
-                }
-                break;
-            }
-            case sidebarToolID.line: {
-                this.lineService.size = size;
-                break;
-            }
-            case sidebarToolID.eraser: {
-                this.eraserService.size = size;
-                break;
-            }
-        }
-    }
-
-    handleTextureChange(texture: Texture): void {
-        switch (texture) {
-            case Texture.one: {
-                this.brushService.selectedTexture = Texture.one;
-                break;
-            }
-            case Texture.two: {
-                this.brushService.selectedTexture = Texture.two;
-                break;
-            }
-            case Texture.three: {
-                this.brushService.selectedTexture = Texture.three;
-                break;
-            }
-            case Texture.four: {
-                this.brushService.selectedTexture = Texture.four;
-                break;
-            }
-            case Texture.five: {
-                this.brushService.selectedTexture = Texture.five;
-                break;
-            }
-        }
     }
 }

@@ -25,9 +25,7 @@ import { ColorPaletteComponent } from './components/sidebar/color-picker/color-p
 import { ColorPickerComponent } from './components/sidebar/color-picker/color-picker.component';
 import { ColorSliderComponent } from './components/sidebar/color-picker/color-slider/color-slider.component';
 import { SidebarColorOptionsComponent } from './components/sidebar/color-picker/sidebar-color-options/sidebar-color-options.component';
-import { SidebarToolComponent } from './components/sidebar/sidebar-tool/sidebar-tool.component';
 import { SidebarComponent } from './components/sidebar/sidebar.component';
-import { ToolOptionComponent } from './components/sidebar/tool-option/tool-option.component';
 
 @NgModule({
     declarations: [
@@ -39,8 +37,6 @@ import { ToolOptionComponent } from './components/sidebar/tool-option/tool-optio
         ColorPickerComponent,
         ColorSliderComponent,
         ColorPaletteComponent,
-        ToolOptionComponent,
-        SidebarToolComponent,
         SidebarColorOptionsComponent,
         AttributePanelComponent,
         CarouselComponent,
@@ -58,6 +54,10 @@ import { ToolOptionComponent } from './components/sidebar/tool-option/tool-optio
         MatInputModule,
         MatDialogModule,
         MatButtonModule,
+        BrowserAnimationsModule,
+        MatSidenavModule,
+        MatButtonModule,
+        MatInputModule,
         MatRadioModule,
         MatSidenavModule,
         BrowserAnimationsModule,

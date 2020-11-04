@@ -52,7 +52,9 @@ export class EraserService extends Tool {
         ctx.globalCompositeOperation = 'destination-out';
         ctx.beginPath();
         ctx.lineCap = 'round';
-        ctx.lineWidth = this.size!;
+        if (this.size) {
+            ctx.lineWidth = this.size;
+        }
         for (const point of path) {
             ctx.lineTo(point.x, point.y);
         }

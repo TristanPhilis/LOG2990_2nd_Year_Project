@@ -6,11 +6,10 @@ import { EllipseService } from '@app/services/tools/ellipse-service';
 import { EraserService } from '@app/services/tools/eraser-service';
 import { LineService } from '@app/services/tools/line-service';
 import { PencilService } from '@app/services/tools/pencil-service';
-import { PipetteService } from '@app/services/tools/pipette-service';
+import { PolygonService } from '@app/services/tools/polygon-service';
 import { RectangleService } from '@app/services/tools/rectangle-service';
-import { drawingToolId, sidebarToolID } from '@app/shared/enum';
+import { drawingToolId, sidebarToolID, TraceTypes } from '@app/shared/enum';
 import { BehaviorSubject } from 'rxjs';
-import { EllipseSelectorService } from './ellipse-selector-service';
 import { RectangleSelectorService } from './rectangle-selector-service';
 
 @Injectable({
@@ -22,7 +21,7 @@ export class ToolsService {
 
     private selectedSideBarToolID: sidebarToolID;
     private currentDrawingToolID: drawingToolId;
-    toolSidenavToogle: BehaviorSubject<boolean> = new BehaviorSubject(false);
+    toolSidenavToggle: BehaviorSubject<boolean> = new BehaviorSubject(false);
 
     constructor(
         pencilService: PencilService,
@@ -32,9 +31,8 @@ export class ToolsService {
         lineService: LineService,
         brushService: BrushService,
         rectangleSelectionService: RectangleSelectorService,
-        ellipseSelectionService: EllipseSelectorService,
+        polygonService: PolygonService,
         bucketService: BucketService,
-        pipetteService: PipetteService,
     ) {
         this.currentDrawingTool = pencilService;
         this.tools = [
@@ -45,9 +43,8 @@ export class ToolsService {
             lineService,
             brushService,
             rectangleSelectionService,
-            ellipseSelectionService,
+            polygonService,
             bucketService,
-            pipetteService,
         ];
     }
 
@@ -73,14 +70,22 @@ export class ToolsService {
     }
 
     toggleToolSidenav(): void {
-        this.toolSidenavToogle.next(!this.toolSidenavToogle.getValue());
+        this.toolSidenavToggle.next(!this.toolSidenavToggle.getValue());
     }
 
     openToolSidenav(): void {
-        this.toolSidenavToogle.next(true);
+        this.toolSidenavToggle.next(true);
     }
 
     closeToolSidenav(): void {
-        this.toolSidenavToogle.next(false);
+        this.toolSidenavToggle.next(false);
+    }
+
+    changeToolSize(size: number): void {
+        this.currentDrawingTool.size = size;
+    }
+
+    changeTraceType(traceType: TraceTypes): void {
+        this.currentDrawingTool.traceType = Number(traceType);
     }
 }

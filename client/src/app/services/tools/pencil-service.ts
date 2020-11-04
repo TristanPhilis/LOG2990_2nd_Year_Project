@@ -51,7 +51,9 @@ export class PencilService extends Tool {
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
         ctx.beginPath();
         ctx.lineCap = 'round';
-        ctx.lineWidth = this.size!;
+        if (this.size) {
+            ctx.lineWidth = this.size;
+        }
 
         if (this.colorSelection === ColorSelection.primary) {
             ctx.strokeStyle = this.colorSelectionService.primaryColor.getRgbString();

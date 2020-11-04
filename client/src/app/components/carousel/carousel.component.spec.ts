@@ -1,6 +1,5 @@
 import { HttpClientModule } from '@angular/common/http';
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import SpyObj = jasmine.SpyObj;
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { MatDialogModule } from '@angular/material/dialog';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -9,6 +8,7 @@ import { IndexService } from '@app/services/index/index.service';
 import { DrawingInfo } from '@common/communication/drawing-info';
 import { of } from 'rxjs';
 import { CarouselComponent } from './carousel.component';
+import SpyObj = jasmine.SpyObj;
 
 describe('CarouselComponent', () => {
     let component: CarouselComponent;
@@ -16,17 +16,19 @@ describe('CarouselComponent', () => {
     let indexServiceSpy: SpyObj<IndexService>;
     const testDrawings: DrawingInfo[] = [{ id: 996, name: '', tags: [], metadata: '' }];
 
-    beforeEach(async(() => {
-        indexServiceSpy = jasmine.createSpyObj('IndexService', ['getDrawing', 'getAllDrawings', 'postDrawing', 'deleteDrawing']);
-        indexServiceSpy.getAllDrawings.and.returnValue(of(testDrawings));
-        indexServiceSpy.getDrawing.and.returnValue(of(testDrawings[0]));
+    beforeEach(
+        waitForAsync(() => {
+            indexServiceSpy = jasmine.createSpyObj('IndexService', ['getDrawing', 'getAllDrawings', 'postDrawing', 'deleteDrawing']);
+            indexServiceSpy.getAllDrawings.and.returnValue(of(testDrawings));
+            indexServiceSpy.getDrawing.and.returnValue(of(testDrawings[0]));
 
-        TestBed.configureTestingModule({
-            imports: [RouterTestingModule, HttpClientModule, MatDialogModule, BrowserModule, BrowserAnimationsModule],
-            declarations: [CarouselComponent],
-            providers: [{ provide: IndexService, useValue: indexServiceSpy }],
-        }).compileComponents();
-    }));
+            TestBed.configureTestingModule({
+                imports: [RouterTestingModule, HttpClientModule, MatDialogModule, BrowserModule, BrowserAnimationsModule],
+                declarations: [CarouselComponent],
+                providers: [{ provide: IndexService, useValue: indexServiceSpy }],
+            }).compileComponents();
+        }),
+    );
 
     beforeEach(() => {
         fixture = TestBed.createComponent(CarouselComponent);

@@ -18,14 +18,6 @@ export class RectangleService extends Tool {
         this.traceType = 0;
     }
 
-    set _traceType(newType: TraceTypes) {
-        this.traceType = newType;
-    }
-
-    get _traceType(): TraceTypes {
-        return this.traceType!;
-    }
-
     onMouseDown(event: MouseEvent): void {
         this.mouseDown = event.buttons === MouseButton.Left;
         if (this.mouseDown) {
@@ -71,6 +63,14 @@ export class RectangleService extends Tool {
         }
     }
 
+    colorSelector(): string {
+        if (this.colorSelection === ColorSelection.primary) {
+            return this.colorSelectionService.primaryColor.getRgbString();
+        } else {
+            return this.colorSelectionService.secondaryColor.getRgbString();
+        }
+    }
+
     private drawRectangle(ctx: CanvasRenderingContext2D): void {
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
         ctx.beginPath();
@@ -79,7 +79,9 @@ export class RectangleService extends Tool {
         const width = this.mouseDownCoord.x - this.initialCoord.x;
         const height = this.mouseDownCoord.y - this.initialCoord.y;
 
-        ctx.lineWidth = this.size!;
+        if (this.size) {
+            ctx.lineWidth = this.size;
+        }
 
         if (this.shiftDown) {
             const squareSize = Math.min(Math.abs(width), Math.abs(height));
@@ -90,19 +92,11 @@ export class RectangleService extends Tool {
 
         switch (this.traceType) {
             case TraceTypes.fill:
-                if (this.colorSelection === ColorSelection.primary) {
-                    ctx.fillStyle = this.colorSelectionService.primaryColor.getRgbString();
-                } else if (this.colorSelection === ColorSelection.secondary) {
-                    ctx.fillStyle = this.colorSelectionService.secondaryColor.getRgbString();
-                }
+                ctx.fillStyle = this.colorSelector();
                 ctx.fill();
                 break;
             case TraceTypes.stroke:
-                if (this.colorSelection === ColorSelection.primary) {
-                    ctx.strokeStyle = this.colorSelectionService.primaryColor.getRgbString();
-                } else if (this.colorSelection === ColorSelection.secondary) {
-                    ctx.strokeStyle = this.colorSelectionService.secondaryColor.getRgbString();
-                }
+                ctx.strokeStyle = this.colorSelector();
                 ctx.stroke();
                 break;
             case TraceTypes.fillAndStroke:
@@ -112,12 +106,9 @@ export class RectangleService extends Tool {
                 ctx.stroke();
                 break;
             default:
-                if (this.colorSelection === ColorSelection.primary) {
-                    ctx.fillStyle = this.colorSelectionService.primaryColor.getRgbString();
-                } else if (this.colorSelection === ColorSelection.secondary) {
-                    ctx.fillStyle = this.colorSelectionService.secondaryColor.getRgbString();
-                }
+                ctx.fillStyle = this.colorSelector();
                 ctx.fill();
+                break;
         }
     }
 }

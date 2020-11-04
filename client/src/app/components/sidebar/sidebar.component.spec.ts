@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { MatDialog, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -20,21 +20,23 @@ describe('SidebarComponent', () => {
     let dialogSpy: jasmine.SpyObj<MatDialog>;
     let dialogRefSpyObj: jasmine.SpyObj<MatDialogRef<GuideComponent, any>>;
 
-    beforeEach(async(() => {
-        dialogSpy = jasmine.createSpyObj('MatDialog', ['open']);
-        dialogRefSpyObj = jasmine.createSpyObj({ afterClosed: of({}), close: null });
-        dialogSpy.open.and.returnValue(dialogRefSpyObj);
-        drawServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas']);
-        TestBed.configureTestingModule({
-            imports: [MatDialogModule, BrowserModule, BrowserAnimationsModule],
-            declarations: [SidebarComponent],
-            providers: [
-                { provide: DrawingService, useValue: drawServiceSpy },
-                { provide: MatDialog, useValue: dialogSpy },
-            ],
-        }).compileComponents();
-        toolsService = TestBed.inject(ToolsService);
-    }));
+    beforeEach(
+        waitForAsync(() => {
+            dialogSpy = jasmine.createSpyObj('MatDialog', ['open']);
+            dialogRefSpyObj = jasmine.createSpyObj({ afterClosed: of({}), close: null });
+            dialogSpy.open.and.returnValue(dialogRefSpyObj);
+            drawServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas']);
+            TestBed.configureTestingModule({
+                imports: [MatDialogModule, BrowserModule, BrowserAnimationsModule],
+                declarations: [SidebarComponent],
+                providers: [
+                    { provide: DrawingService, useValue: drawServiceSpy },
+                    { provide: MatDialog, useValue: dialogSpy },
+                ],
+            }).compileComponents();
+            toolsService = TestBed.inject(ToolsService);
+        }),
+    );
 
     beforeEach(() => {
         fixture = TestBed.createComponent(SidebarComponent);
@@ -59,8 +61,8 @@ describe('SidebarComponent', () => {
         expect(drawServiceSpy.clearCanvas).toHaveBeenCalled();
     });
 
-    it('onButtonPress should set openGuide', () => {
-        component.onButtonPress(sidebarToolID.openGuide);
+    it('onButtonPressBottom should set openGuide', () => {
+        component.onButtonPressBottom(sidebarToolID.openGuide);
         expect(dialogSpy.open).toHaveBeenCalled();
     });
 
