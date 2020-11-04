@@ -1,8 +1,10 @@
 import { Injectable } from '@angular/core';
 import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
+import { ColorSelectionService } from '@app/services/color/color-selection-service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { BACKSPACE_KEY, BASE_SNAP_ANGLE, ESCAPE_KEY, MIDDLE_SNAP_ANGLE, SHIFT_KEY } from '@app/shared/constant';
+import { ColorSelection } from '@app/shared/enum';
 
 @Injectable({
     providedIn: 'root',
@@ -12,21 +14,12 @@ export class LineService extends Tool {
     lineStarted: boolean;
     currentCoord: Vec2;
     initialCoord: Vec2;
-    private thickness: number;
 
-    constructor(drawingService: DrawingService) {
+    constructor(drawingService: DrawingService, private colorSelectionService: ColorSelectionService) {
         super(drawingService);
-        this.thickness = 0;
+        this.size = 0;
         this.clearPath();
         this.lineStarted = false;
-    }
-
-    set _thickness(newThickness: number) {
-        this.thickness = newThickness;
-    }
-
-    get _thickness(): number {
-        return this.thickness;
     }
 
     onMouseClick(event: MouseEvent): void {
@@ -146,7 +139,15 @@ export class LineService extends Tool {
         ctx.beginPath();
 
         ctx.moveTo(this.initialCoord.x, this.initialCoord.y);
-        ctx.lineWidth = this.thickness;
+        if (this.size) {
+            ctx.lineWidth = this.size;
+        }
+        if (this.colorSelection === ColorSelection.primary) {
+            ctx.strokeStyle = this.colorSelectionService.primaryColor.getRgbString();
+        } else if (this.colorSelection === ColorSelection.secondary) {
+            ctx.strokeStyle = this.colorSelectionService.secondaryColor.getRgbString();
+        }
+
         for (const point of this.pathData) {
             ctx.lineTo(point.x, point.y);
         }

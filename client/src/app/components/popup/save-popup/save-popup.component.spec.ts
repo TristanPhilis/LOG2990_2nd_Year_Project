@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { IndexService } from '@app/services/index/index.service';
@@ -11,18 +11,20 @@ describe('SavePopupComponent', () => {
     let drawingServiceSpy: jasmine.SpyObj<DrawingService>;
     let webRequestServiceSpy: jasmine.SpyObj<IndexService>;
 
-    beforeEach(async(() => {
-        webRequestServiceSpy = jasmine.createSpyObj('IndexService', ['postDrawing']);
-        drawingServiceSpy = jasmine.createSpyObj('DrawingService', ['getImageURL']);
-        TestBed.configureTestingModule({
-            declarations: [SavePopupComponent],
-            providers: [
-                { provide: DrawingService, useValue: drawingServiceSpy },
-                { provide: IndexService, useValue: webRequestServiceSpy },
-            ],
-            imports: [FormsModule, ReactiveFormsModule],
-        }).compileComponents();
-    }));
+    beforeEach(
+        waitForAsync(() => {
+            webRequestServiceSpy = jasmine.createSpyObj('IndexService', ['postDrawing']);
+            drawingServiceSpy = jasmine.createSpyObj('DrawingService', ['getImageURL']);
+            TestBed.configureTestingModule({
+                declarations: [SavePopupComponent],
+                providers: [
+                    { provide: DrawingService, useValue: drawingServiceSpy },
+                    { provide: IndexService, useValue: webRequestServiceSpy },
+                ],
+                imports: [FormsModule, ReactiveFormsModule],
+            }).compileComponents();
+        }),
+    );
 
     beforeEach(() => {
         fixture = TestBed.createComponent(SavePopupComponent);

@@ -1,46 +1,54 @@
 <app-sidebar-color-options></app-sidebar-color-options>
+
+<!-- Tracing Tools -->
 <div *ngIf="this.toolsService._selectedSideBarToolID === sidebarToolID.tracing" class="attribute-container">
     <label for="tracing">Tracing</label>
     <select (change)="handleChange($event.target.value)" id="tracing">
         <option *ngFor="let tool of tracingTools" value="{{ tool.id }}">{{ tool.name }}</option>
     </select>
-    <label for="tracingThickness">Thickness</label>
+    <label for="tracingThickness">Largeur</label>
     <div class="slide-container">
-        <input type="range" min="1" max="100" value="1" id="tracingThickness" (input)="sliderChange($event)" />
+        <input type="range" min="1" max="100" value="1" id="tracingThickness" (input)="toolsService.changeToolSize($event.target.value)" />
     </div>
-    <label for="traceType">Type</label>
-    <select (change)="handleTraceTypeChange($event)" id="traceType">
-        <option *ngFor="let tool of tracingTypes">{{ tool.name }}</option>
+
+    <label *ngIf="this.toolsService._currentDrawingToolID === drawingToolId.brushService" for="textureType">Type</label>
+    <select
+        *ngIf="this.toolsService._currentDrawingToolID === drawingToolId.brushService"
+        (change)="brushService.changeTexture($event.target.value)"
+        id="textureType"
+    >
+        <option *ngFor="let texture of textures" value="{{ texture.id }}">{{ texture.name }}</option>
     </select>
 </div>
 
+<!-- Shapes Tools -->
 <div *ngIf="this.toolsService._selectedSideBarToolID === sidebarToolID.shapes" class="attribute-container">
     <label for="shapes">Shapes</label>
     <select (change)="handleChange($event.target.value)" id="shapes">
         <option *ngFor="let tool of shapesTools" value="{{ tool.id }}">{{ tool.name }}</option>
     </select>
-    <label for="outlineType">Outline</label>
-    <select id="outlineType"></select>
-    <label for="outlineThickness">Thickness</label>
+    <label for="outlineThickness">Largeur</label>
     <div class="slide-container">
-        <input type="range" min="1" max="100" value="1" id="outlineThickness" (input)="sliderChange($event)" />
+        <input type="range" min="1" max="100" value="1" id="outlineThickness" (input)="toolsService.changeToolSize($event.target.value)" />
     </div>
     <label for="traceType">Type</label>
-    <select (change)="handleTraceTypeChange($event)" id="traceType">
-        <option *ngFor="let tool of tracingTypes">{{ tool.name }}</option>
+    <select (change)="toolsService.changeTraceType($event.target.value)" id="traceType">
+        <option *ngFor="let tool of tracingTypes" value="{{ tool.id }}">{{ tool.name }}</option>
     </select>
 </div>
 
+<!-- Line Tool -->
 <div *ngIf="this.toolsService._selectedSideBarToolID === sidebarToolID.line" class="attribute-container">
-    <label for="tracingThickness">Thickness</label>
+    <label for="tracingThickness">Largeur</label>
     <div class="slide-container">
-        <input type="range" min="1" max="100" value="1" id="lineThickness" (input)="sliderChange($event)" />
+        <input type="range" min="1" max="100" value="1" id="lineThickness" (input)="toolsService.changeToolSize($event.target.value)" />
     </div>
 </div>
 
+<!-- Eraser Tool -->
 <div *ngIf="this.toolsService._selectedSideBarToolID === sidebarToolID.eraser" class="attribute-container">
-    <label for="tracingThickness">Thickness</label>
+    <label for="tracingThickness">Largeur</label>
     <div class="slide-container">
-        <input type="range" min="1" max="100" value="1" id="eraserThickness" (input)="sliderChange($event)" />
+        <input type="range" min="1" max="100" value="1" id="eraserThickness" (input)="toolsService.changeToolSize($event.target.value)" />
     </div>
 </div>

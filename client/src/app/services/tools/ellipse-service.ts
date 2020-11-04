@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
 import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
+import { ColorSelectionService } from '@app/services/color/color-selection-service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { SHIFT_KEY } from '@app/shared/constant';
-import { MouseButton } from '@app/shared/enum';
+import { ColorSelection, MouseButton, TraceTypes } from '@app/shared/enum';
 
 @Injectable({
     providedIn: 'root',
@@ -11,19 +12,10 @@ import { MouseButton } from '@app/shared/enum';
 export class EllipseService extends Tool {
     initialCoord: Vec2;
 
-    private thickness: number;
-
-    constructor(drawingService: DrawingService) {
+    constructor(drawingService: DrawingService, private colorSelectionService: ColorSelectionService) {
         super(drawingService);
-        this.thickness = 0;
-    }
-
-    set _thickness(newThickness: number) {
-        this.thickness = newThickness;
-    }
-
-    get _thickness(): number {
-        return this.thickness;
+        this.size = 0;
+        this.traceType = TraceTypes.fill;
     }
 
     onMouseDown(event: MouseEvent): void {
@@ -71,12 +63,22 @@ export class EllipseService extends Tool {
         }
     }
 
+    colorSelector(): string {
+        if (this.colorSelection === ColorSelection.primary) {
+            return this.colorSelectionService.primaryColor.getRgbString();
+        } else {
+            return this.colorSelectionService.secondaryColor.getRgbString();
+        }
+    }
+
     private drawEllipse(ctx: CanvasRenderingContext2D): void {
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
         ctx.beginPath();
         const xRadius = (this.mouseDownCoord.x - this.initialCoord.x) / 2;
         const yRadius = (this.mouseDownCoord.y - this.initialCoord.y) / 2;
-        ctx.lineWidth = this.thickness;
+        if (this.size) {
+            ctx.lineWidth = this.size;
+        }
 
         if (this.shiftDown) {
             const smallestRadius = Math.min(Math.abs(xRadius), Math.abs(yRadius));
@@ -89,6 +91,25 @@ export class EllipseService extends Tool {
             ctx.ellipse(xMiddle, yMiddle, Math.abs(xRadius), Math.abs(yRadius), 0, 0, 2 * Math.PI);
         }
 
-        ctx.stroke(); // Stroke for now, has to be dynamic to fill for example
+        switch (this.traceType) {
+            case TraceTypes.fill:
+                ctx.fillStyle = this.colorSelector();
+                ctx.fill();
+                break;
+            case TraceTypes.stroke:
+                ctx.strokeStyle = this.colorSelector();
+                ctx.stroke();
+                break;
+            case TraceTypes.fillAndStroke:
+                ctx.fillStyle = this.colorSelectionService.primaryColor.getRgbString();
+                ctx.strokeStyle = this.colorSelectionService.secondaryColor.getRgbString();
+                ctx.fill();
+                ctx.stroke();
+                break;
+            default:
+                ctx.fillStyle = this.colorSelector();
+                ctx.fill();
+                break;
+        }
     }
 }
