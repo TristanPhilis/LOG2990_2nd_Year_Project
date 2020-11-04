@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
+import { ColorSelectionService } from '@app/services/color/color-selection-service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { drawingToolId } from '@app/shared/enum';
-import { ColorSelectionService } from '../color/color-selection-service';
 import { PencilService } from './pencil-service';
 import { ToolsService } from './tools-service';
 

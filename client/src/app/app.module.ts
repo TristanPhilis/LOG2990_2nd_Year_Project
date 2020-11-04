@@ -4,11 +4,10 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatDialogModule } from '@angular/material/dialog';
-
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatRadioModule } from '@angular/material/radio';
-
+import { MatSidenavModule } from '@angular/material/sidenav';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AppRoutingModule } from './app-routing.module';
@@ -20,10 +19,8 @@ import { DrawingComponent } from './components/drawing/drawing.component';
 import { EditorComponent } from './components/editor/editor.component';
 import { GuideComponent } from './components/guide/guide.component';
 import { MainPageComponent } from './components/main-page/main-page.component';
-
-import { SavePopupComponent } from './components/popup/save-popup/save-popup.component';
-
 import { ExportPopupComponent } from './components/popup/export-popup/export-popup.component';
+import { SavePopupComponent } from './components/popup/save-popup/save-popup.component';
 import { ColorPaletteComponent } from './components/sidebar/color-picker/color-palette/color-palette.component';
 import { ColorPickerComponent } from './components/sidebar/color-picker/color-picker.component';
 import { ColorSliderComponent } from './components/sidebar/color-picker/color-slider/color-slider.component';
@@ -62,6 +59,7 @@ import { ToolOptionComponent } from './components/sidebar/tool-option/tool-optio
         MatDialogModule,
         MatButtonModule,
         MatRadioModule,
+        MatSidenavModule,
         BrowserAnimationsModule,
     ],
     entryComponents: [GuideComponent, CarouselComponent, ColorPickerComponent, ExportPopupComponent, SavePopupComponent],

@@ -10,10 +10,10 @@ export abstract class Tool {
     shiftDown: boolean = false;
     dblClick: boolean = false;
 
-    //Tool identification
+    // Tool identification
     id: drawingToolId;
     name: string;
-    //All tool options
+    // All tool options
     colorSelection?: ColorSelection = ColorSelection.primary;
     color?: string;
     lineJoint?: JointSelection;

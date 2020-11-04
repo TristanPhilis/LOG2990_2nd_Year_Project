@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
+import { ColorSelectionService } from '@app/services/color/color-selection-service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { MouseButton, Texture } from '@app/shared/enum';
-import { ColorSelectionService } from '../color/color-selection-service';
 
 @Injectable({
     providedIn: 'root',

@@ -3,13 +3,13 @@ import { MatDialog } from '@angular/material/dialog';
 import { CarouselComponent } from '@app/components/carousel/carousel.component';
 import { CreateNewDrawingComponent } from '@app/components/create-new-drawing/create-new-drawing.component';
 import { GuideComponent } from '@app/components/guide/guide.component';
-
 import { ExportPopupComponent } from '@app/components/popup/export-popup/export-popup.component';
 import { SavePopupComponent } from '@app/components/popup/save-popup/save-popup.component';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ToolsService } from '@app/services/tools/tools-service';
 import { drawingToolId, sidebarToolID } from '@app/shared/enum';
 import { SidebarToolComponent } from './sidebar-tool/sidebar-tool.component';
+
 
 declare type callback = () => void;
 
@@ -111,20 +111,20 @@ export class SidebarComponent {
                 break;
             }
             case sidebarToolID.openCarrousel: {
-              this.isDialogOpen = true;
-              const dialogRef = this.dialog.open(CarouselComponent);
-              dialogRef.afterClosed().subscribe(() => {
-                  this.isDialogOpen = false;
-              });
-              break;
+                this.isDialogOpen = true;
+                const dialogRef = this.dialog.open(CarouselComponent);
+                dialogRef.afterClosed().subscribe(() => {
+                    this.isDialogOpen = false;
+                });
+                break;
             }
             case sidebarToolID.saveCurrent: {
-              this.isDialogOpen = true;
-              const dialogRef = this.dialog.open(SavePopupComponent);
-              dialogRef.afterClosed().subscribe(() => {
-                  this.isDialogOpen = false;
-              });
-              break;
+                this.isDialogOpen = true;
+                const dialogRef = this.dialog.open(SavePopupComponent);
+                dialogRef.afterClosed().subscribe(() => {
+                    this.isDialogOpen = false;
+                });
+                break;
             }
             case sidebarToolID.exportCurrent: {
                 this.isDialogOpen = true;

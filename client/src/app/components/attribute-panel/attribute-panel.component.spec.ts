@@ -31,5 +31,7 @@ describe('AttributePanelComponent', () => {
         expect(component).toBeTruthy();
     });
 
-    it('Should change the current drawing tool', () => {});
+    it('Should change the current drawing tool', () => {
+        // allo
+    });
 });

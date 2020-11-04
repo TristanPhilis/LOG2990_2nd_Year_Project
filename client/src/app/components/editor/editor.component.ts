@@ -56,8 +56,6 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
         }
     }
 
-    ngOnDestroy(): void {}
-
     setAnchorPosition(): void {
         const canvasBorderSize = 2;
         const cornerHeightOffset = this.bottomAnchor.nativeElement.clientHeight + this.rightAnchor.nativeElement.clientHeight;

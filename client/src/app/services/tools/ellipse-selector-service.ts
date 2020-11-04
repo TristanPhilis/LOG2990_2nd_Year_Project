@@ -15,7 +15,7 @@ import {
     ESCAPE_KEY,
     NEGATIVE_MULTIPLIER,
     SHIFT_KEY,
-    SIZE_OF_SELECTION_BOX,
+    SIZE_OF_SELECTION_BOX
 } from '@app/shared/constant';
 import { MouseButton } from '@app/shared/enum';
 
@@ -291,11 +291,10 @@ export class EllipseSelectorService extends Tool {
 
     private imagedata_to_image(imagedata: ImageData): CanvasImageSource {
         const canvas = document.createElement('canvas');
-        const ctx = canvas.getContext('2d');
+        const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
         canvas.width = imagedata.width;
         canvas.height = imagedata.height;
-        // tslint:disable-next-line: no-non-null-assertion
-        ctx!.putImageData(imagedata, 0, 0);
+        ctx.putImageData(imagedata, 0, 0);
         const image = new Image();
         image.src = canvas.toDataURL();
         return image;
