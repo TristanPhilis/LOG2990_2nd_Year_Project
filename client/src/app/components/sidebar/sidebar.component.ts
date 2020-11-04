@@ -42,8 +42,8 @@ export class SidebarComponent {
             { id: sidebarToolID.stamp, name: 'Stamp' },
             { id: sidebarToolID.pipette, name: 'Pipette' },
             { id: sidebarToolID.eraser, name: 'Eraser' },
-            { id: sidebarToolID.undo, name: 'undo' },
-            { id: sidebarToolID.redo, name: 'Redo' },
+            { id: sidebarToolID.undo, name: 'annuler' },
+            { id: sidebarToolID.redo, name: 'refaire' },
         ];
         this.sideBarToolsBottom = [
             { id: sidebarToolID.createNew, name: 'New Drawing' },
