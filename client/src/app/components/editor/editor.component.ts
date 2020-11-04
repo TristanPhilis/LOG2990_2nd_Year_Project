@@ -1,8 +1,12 @@
-import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, HostListener, ViewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, HostListener, OnDestroy, ViewChild } from '@angular/core';
+import { MatSidenav } from '@angular/material/sidenav';
 import { Vec2 } from '@app/classes/vec2';
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { ToolsService } from '@app/services/tools/tools-service';
 import { MIN_CANVAS_SIZE } from '@app/shared/constant';
 import { MouseButton } from '@app/shared/enum';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 export enum anchorId {
     bottom,
@@ -15,7 +19,7 @@ export enum anchorId {
     templateUrl: './editor.component.html',
     styleUrls: ['./editor.component.scss'],
 })
-export class EditorComponent implements AfterViewInit {
+export class EditorComponent implements AfterViewInit, OnDestroy {
     @ViewChild('workzone', { static: false })
     workzone: ElementRef<HTMLDivElement>;
 
@@ -28,6 +32,9 @@ export class EditorComponent implements AfterViewInit {
     @ViewChild('cornerAnchor', { static: false })
     cornerAnchor: ElementRef<HTMLDivElement>;
 
+    @ViewChild('toolAttributeSidenav', { static: false })
+    toolAttributeSidenav: MatSidenav;
+
     canvasSize: Vec2;
     previewSize: Vec2;
     workzoneRect: DOMRect;
@@ -35,7 +42,9 @@ export class EditorComponent implements AfterViewInit {
     resizeX: boolean;
     resizeY: boolean;
 
-    constructor(private cd: ChangeDetectorRef, private drawingService: DrawingService) {}
+    private unsubscribe$: Subject<void> = new Subject<void>();
+
+    constructor(private cd: ChangeDetectorRef, public toolService: ToolsService, private drawingService: DrawingService) {}
 
     ngAfterViewInit(): void {
         this.workzoneRect = this.workzone.nativeElement.getBoundingClientRect();
@@ -46,10 +55,24 @@ export class EditorComponent implements AfterViewInit {
         this.previewSize = this.canvasSize;
         this.setAnchorPosition();
         this.cd.detectChanges();
+
         if (this.drawingService.drawingToLoad !== (undefined && '')) {
             this.drawingService.loadDrawing(this.drawingService.baseCtx);
             this.drawingService.drawingToLoad = '';
         }
+
+        this.toolService.toolSidenavToggle.pipe(takeUntil(this.unsubscribe$)).subscribe((value) => {
+            if (value === true) {
+                this.toolAttributeSidenav.open();
+            } else {
+                this.toolAttributeSidenav.close();
+            }
+        });
+    }
+
+    ngOnDestroy(): void {
+        this.unsubscribe$.next();
+        this.unsubscribe$.complete();
     }
 
     setAnchorPosition(): void {

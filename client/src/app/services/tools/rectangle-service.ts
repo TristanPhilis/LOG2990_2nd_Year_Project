@@ -33,25 +33,6 @@ export class RectangleService extends Tool {
         };
     }
 
-    set _thickness(newThickness: number) {
-        this.options.size = newThickness;
-    }
-
-    get _thickness(): number {
-        return this.options.size ? this.options.size : 1;
-    }
-
-    set _traceType(newType: number) {
-        this.options.traceType = newType;
-    }
-
-    get _traceType(): number {
-        return this.options.traceType ? Number(this.options.traceType) : 0;
-    }
-    get pathdata(): Vec2[] {
-        return this.pathData;
-    }
-
     onMouseDown(event: MouseEvent): void {
         this.mouseDown = event.buttons === MouseButton.Left;
         if (this.mouseDown) {

@@ -28,13 +28,6 @@ export class LineService extends Tool {
             size: DEFAULT_OPTIONS.size,
         };
     }
-    set _thickness(newThickness: number) {
-        this.options.size = newThickness;
-    }
-
-    get _thickness(): number {
-        return this.options.size ? this.options.size : 1;
-    }
 
     private getLastClickedCoord(): Vec2 {
         const length = this.pathData.length;
@@ -184,6 +177,7 @@ export class LineService extends Tool {
             options,
         };
     }
+
     private clearPath(): void {
         this.pathData = [];
     }

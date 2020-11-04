@@ -1,5 +1,5 @@
 import { SimpleChange } from '@angular/core';
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { Color } from '@app/classes/color';
 import { ColorPaletteComponent } from './color-palette.component';
 
@@ -10,11 +10,13 @@ describe('ColorPaletteComponent', () => {
     let mouseEvent: MouseEvent;
     let colorChangeSpy: jasmine.Spy<any>;
 
-    beforeEach(async(() => {
-        TestBed.configureTestingModule({
-            declarations: [ColorPaletteComponent],
-        }).compileComponents();
-    }));
+    beforeEach(
+        waitForAsync(() => {
+            TestBed.configureTestingModule({
+                declarations: [ColorPaletteComponent],
+            }).compileComponents();
+        }),
+    );
 
     beforeEach(() => {
         fixture = TestBed.createComponent(ColorPaletteComponent);

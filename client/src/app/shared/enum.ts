@@ -25,6 +25,7 @@ export enum drawingToolId {
     eraserService,
     lineService,
     brushService,
+    rectangleSelectionService,
     polygonService,
     bucketService,
 }
@@ -50,4 +51,19 @@ export enum TraceTypes {
     fill,
     stroke,
     fillAndStroke,
+}
+
+export enum ColorSelection {
+    primary,
+    secondary,
+}
+
+export enum JointSelection {
+    normal,
+    dot,
+}
+
+export enum SelectionType {
+    rectangle,
+    ellipse,
 }
