@@ -1,38 +1,21 @@
 import { Injectable } from '@angular/core';
 import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
+import { ColorSelectionService } from '@app/services/color/color-selection-service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { SHIFT_KEY } from '@app/shared/constant';
-import { MouseButton, TraceTypes } from '@app/shared/enum';
+import { ColorSelection, MouseButton, TraceTypes } from '@app/shared/enum';
 
 @Injectable({
     providedIn: 'root',
 })
 export class RectangleService extends Tool {
     initialCoord: Vec2;
-    private thickness: number;
-    private traceType: number;
 
-    constructor(drawingService: DrawingService) {
+    constructor(drawingService: DrawingService, private colorSelectionService: ColorSelectionService) {
         super(drawingService);
-        this.thickness = 0;
+        this.size = 0;
         this.traceType = 0;
-    }
-
-    set _thickness(newThickness: number) {
-        this.thickness = newThickness;
-    }
-
-    get _thickness(): number {
-        return this.thickness;
-    }
-
-    set _traceType(newType: number) {
-        this.traceType = newType;
-    }
-
-    get _traceType(): number {
-        return this.traceType;
     }
 
     onMouseDown(event: MouseEvent): void {
@@ -80,6 +63,14 @@ export class RectangleService extends Tool {
         }
     }
 
+    colorSelector(): string {
+        if (this.colorSelection === ColorSelection.primary) {
+            return this.colorSelectionService.primaryColor.getRgbString();
+        } else {
+            return this.colorSelectionService.secondaryColor.getRgbString();
+        }
+    }
+
     private drawRectangle(ctx: CanvasRenderingContext2D): void {
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
         ctx.beginPath();
@@ -88,7 +79,9 @@ export class RectangleService extends Tool {
         const width = this.mouseDownCoord.x - this.initialCoord.x;
         const height = this.mouseDownCoord.y - this.initialCoord.y;
 
-        ctx.lineWidth = this.thickness;
+        if (this.size) {
+            ctx.lineWidth = this.size;
+        }
 
         if (this.shiftDown) {
             const squareSize = Math.min(Math.abs(width), Math.abs(height));
@@ -99,17 +92,23 @@ export class RectangleService extends Tool {
 
         switch (this.traceType) {
             case TraceTypes.fill:
+                ctx.fillStyle = this.colorSelector();
                 ctx.fill();
                 break;
             case TraceTypes.stroke:
+                ctx.strokeStyle = this.colorSelector();
                 ctx.stroke();
                 break;
             case TraceTypes.fillAndStroke:
+                ctx.fillStyle = this.colorSelectionService.primaryColor.getRgbString();
+                ctx.strokeStyle = this.colorSelectionService.secondaryColor.getRgbString();
                 ctx.fill();
                 ctx.stroke();
                 break;
             default:
+                ctx.fillStyle = this.colorSelector();
                 ctx.fill();
+                break;
         }
     }
 }

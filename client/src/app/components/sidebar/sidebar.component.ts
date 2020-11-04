@@ -8,7 +8,7 @@ import { SavePopupComponent } from '@app/components/popup/save-popup/save-popup.
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ToolsService } from '@app/services/tools/tools-service';
 import { drawingToolId, sidebarToolID } from '@app/shared/enum';
-import { SidebarToolComponent } from './sidebar-tool/sidebar-tool.component';
+import { SidebarTool } from './sidebar-tool/sidebar-tool';
 
 declare type callback = () => void;
 
@@ -18,61 +18,61 @@ declare type callback = () => void;
     styleUrls: ['./sidebar.component.scss'],
 })
 export class SidebarComponent {
-    sideBarToolsTop: SidebarToolComponent[];
-    sideBarToolsBottom: SidebarToolComponent[];
+    sideBarToolsTop: SidebarTool[];
+    sideBarToolsBottom: SidebarTool[];
+    sideBarToolsTopMap: Map<sidebarToolID, SidebarTool> = new Map<sidebarToolID, SidebarTool>();
+    sideBarToolsBottomMap: Map<sidebarToolID, SidebarTool> = new Map<sidebarToolID, SidebarTool>();
 
     showDrawingTools: boolean;
     private isDialogOpen: boolean;
 
     constructor(private toolsService: ToolsService, private dialog: MatDialog, private drawingService: DrawingService) {
         this.sideBarToolsTop = [
-            { id: sidebarToolID.move, name: 'Select & Move' },
-            { id: sidebarToolID.selection, name: 'Selection' },
-            { id: sidebarToolID.tracing, name: 'Tracing' },
-            { id: sidebarToolID.shapes, name: 'Shapes' },
-            { id: sidebarToolID.line, name: 'Line' },
-            { id: sidebarToolID.text, name: 'Text' },
-            { id: sidebarToolID.paintBucket, name: 'Bucket' },
-            { id: sidebarToolID.stamp, name: 'Stamp' },
+            { id: sidebarToolID.selection, name: 'Selection', defaultDrawingToolid: drawingToolId.rectangleSelectionService },
+            { id: sidebarToolID.tracing, name: 'Traçage', defaultDrawingToolid: drawingToolId.pencilService },
+            { id: sidebarToolID.shapes, name: 'Figures', defaultDrawingToolid: drawingToolId.rectangleService },
+            { id: sidebarToolID.line, name: 'Ligne', defaultDrawingToolid: drawingToolId.lineService },
+            { id: sidebarToolID.text, name: 'Texte' },
+            { id: sidebarToolID.paintBucket, name: 'Sceau', defaultDrawingToolid: drawingToolId.bucketService },
+            { id: sidebarToolID.stamp, name: 'Étampe' },
             { id: sidebarToolID.pipette, name: 'Pipette' },
-            { id: sidebarToolID.eraser, name: 'Eraser' },
+            { id: sidebarToolID.eraser, name: 'Efface', defaultDrawingToolid: drawingToolId.eraserService },
         ];
         this.sideBarToolsBottom = [
-            { id: sidebarToolID.createNew, name: 'New Drawing' },
-            { id: sidebarToolID.saveCurrent, name: 'Save Drawing' },
-            { id: sidebarToolID.openCarrousel, name: 'Open Carrousel' },
-            { id: sidebarToolID.exportCurrent, name: 'Export Drawing' },
-            { id: sidebarToolID.openGuide, name: 'Open Guide' },
+            { id: sidebarToolID.createNew, name: 'Nouveau dessin' },
+            { id: sidebarToolID.saveCurrent, name: 'Sauvegarder' },
+            { id: sidebarToolID.openCarrousel, name: 'Carroussel' },
+            { id: sidebarToolID.exportCurrent, name: 'Exporter' },
+            { id: sidebarToolID.openGuide, name: 'Ouvrir Guide' },
         ];
+        this.sideBarToolsTop.forEach((object) => {
+            this.sideBarToolsTopMap.set(object.id, object);
+        });
+        this.sideBarToolsBottom.forEach((object) => {
+            this.sideBarToolsBottomMap.set(object.id, object);
+        });
     }
 
-    onButtonPress(id: sidebarToolID): void {
+    openCloseSidenav(id: sidebarToolID): void {
+        if (this.toolsService._selectedSideBarToolID === id && this.toolsService.toolSidenavToggle.getValue() === true) {
+            this.toolsService.closeToolSidenav();
+        } else {
+            this.toolsService.openToolSidenav();
+        }
+    }
+
+    onButtonPressTop(object: SidebarTool | undefined): void {
+        if (object) {
+            this.openCloseSidenav(object.id);
+            this.toolsService._selectedSideBarToolID = object.id;
+            if (object.defaultDrawingToolid !== undefined) {
+                this.toolsService._currentDrawingTool = object.defaultDrawingToolid;
+            }
+        }
+    }
+
+    onButtonPressBottom(id: sidebarToolID): void {
         switch (id) {
-            case sidebarToolID.tracing: {
-                this.toolsService._selectedSideBarToolID = sidebarToolID.tracing;
-                this.toolsService._currentDrawingTool = drawingToolId.pencilService;
-                break;
-            }
-            case sidebarToolID.shapes: {
-                this.toolsService._selectedSideBarToolID = sidebarToolID.shapes;
-                this.toolsService._currentDrawingTool = drawingToolId.rectangleService;
-                break;
-            }
-            case sidebarToolID.line: {
-                this.toolsService._selectedSideBarToolID = sidebarToolID.line;
-                this.toolsService._currentDrawingTool = drawingToolId.lineService;
-                break;
-            }
-            case sidebarToolID.eraser: {
-                this.toolsService._selectedSideBarToolID = sidebarToolID.eraser;
-                this.toolsService._currentDrawingTool = drawingToolId.eraserService;
-                break;
-            }
-            case sidebarToolID.paintBucket: {
-                this.toolsService._selectedSideBarToolID = sidebarToolID.paintBucket;
-                this.toolsService._currentDrawingTool = drawingToolId.bucketService;
-                break;
-            }
             case sidebarToolID.createNew: {
                 this.isDialogOpen = true;
                 const dialogRef = this.dialog.open(CreateNewDrawingComponent);
@@ -138,7 +138,7 @@ export class SidebarComponent {
                 this.drawingService.clearCanvas(this.drawingService.previewCtx);
             },
             'C-e': () => {
-                this.onButtonPress(sidebarToolID.exportCurrent);
+                this.onButtonPressBottom(sidebarToolID.exportCurrent);
             },
         };
         const func: callback | undefined = kbd[keys];
@@ -155,26 +155,25 @@ export class SidebarComponent {
         }
         const kbd: { [id: string]: callback } = {
             c: () => {
-                this.onButtonPress(sidebarToolID.tracing);
-                this.toolsService._currentDrawingTool = drawingToolId.pencilService;
+                this.onButtonPressTop(this.sideBarToolsTopMap.get(sidebarToolID.tracing));
             },
             w: () => {
-                this.onButtonPress(sidebarToolID.tracing);
+                this.onButtonPressTop(this.sideBarToolsTopMap.get(sidebarToolID.tracing));
                 this.toolsService._currentDrawingTool = drawingToolId.brushService;
             },
-            b: () => this.onButtonPress(sidebarToolID.paintBucket),
-            e: () => this.onButtonPress(sidebarToolID.eraser),
-            l: () => this.onButtonPress(sidebarToolID.line),
+            b: () => this.onButtonPressTop(this.sideBarToolsTopMap.get(sidebarToolID.paintBucket)),
+            e: () => this.onButtonPressTop(this.sideBarToolsTopMap.get(sidebarToolID.eraser)),
+            l: () => this.onButtonPressTop(this.sideBarToolsTopMap.get(sidebarToolID.line)),
+
             1: () => {
-                this.onButtonPress(sidebarToolID.shapes);
-                this.toolsService._currentDrawingTool = drawingToolId.rectangleService;
+                this.onButtonPressTop(this.sideBarToolsTopMap.get(sidebarToolID.shapes));
             },
             2: () => {
-                this.onButtonPress(sidebarToolID.shapes);
+                this.onButtonPressTop(this.sideBarToolsTopMap.get(sidebarToolID.shapes));
                 this.toolsService._currentDrawingTool = drawingToolId.ellipseService;
             },
             3: () => {
-                this.onButtonPress(sidebarToolID.shapes);
+                this.onButtonPressTop(this.sideBarToolsTopMap.get(sidebarToolID.shapes));
                 this.toolsService._currentDrawingTool = drawingToolId.polygonService;
             },
         };

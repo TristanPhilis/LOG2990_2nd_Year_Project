@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { MatDialog, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { Color } from '@app/classes/color';
@@ -15,24 +15,30 @@ describe('SidebarColorOptionsComponent', () => {
     let dialogSpy: jasmine.SpyObj<MatDialog>;
     let dialogRefSpyObj: jasmine.SpyObj<MatDialogRef<ColorPickerComponent>>;
     let defaultColor: Color;
-    beforeEach(async(() => {
-        defaultColor = new Color(0, 0, 0);
-        dialogSpy = jasmine.createSpyObj('MatDialog', ['open']);
-        dialogSpy.open.and.returnValue(dialogRefSpyObj);
+    beforeEach(
+        waitForAsync(() => {
+            defaultColor = new Color(0, 0, 0);
+            dialogSpy = jasmine.createSpyObj('MatDialog', ['open']);
+            dialogSpy.open.and.returnValue(dialogRefSpyObj);
 
-        colorSelectionServiceSpy = jasmine.createSpyObj('ColorSelectionService', ['updateHistory', 'selectNewColor', 'getcolorsHistory', 'swap'], {
-            primaryColor: defaultColor,
-            secondaryColor: defaultColor,
-        });
-        TestBed.configureTestingModule({
-            declarations: [SidebarColorOptionsComponent],
-            imports: [MatDialogModule, BrowserAnimationsModule],
-            providers: [
-                { provide: MatDialog, useValue: dialogSpy },
-                { provide: ColorSelectionService, useValue: colorSelectionServiceSpy },
-            ],
-        }).compileComponents();
-    }));
+            colorSelectionServiceSpy = jasmine.createSpyObj(
+                'ColorSelectionService',
+                ['updateHistory', 'selectNewColor', 'getcolorsHistory', 'swap'],
+                {
+                    primaryColor: defaultColor,
+                    secondaryColor: defaultColor,
+                },
+            );
+            TestBed.configureTestingModule({
+                declarations: [SidebarColorOptionsComponent],
+                imports: [MatDialogModule, BrowserAnimationsModule],
+                providers: [
+                    { provide: MatDialog, useValue: dialogSpy },
+                    { provide: ColorSelectionService, useValue: colorSelectionServiceSpy },
+                ],
+            }).compileComponents();
+        }),
+    );
 
     beforeEach(() => {
         fixture = TestBed.createComponent(SidebarColorOptionsComponent);

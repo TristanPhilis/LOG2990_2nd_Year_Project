@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatDialogModule, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Color } from '@app/classes/color';
@@ -15,19 +15,21 @@ describe('ColorPickerComponent', () => {
     let validatorServiceSpy: jasmine.SpyObj<ValidatorService>;
     let matDialogRefSpy: jasmine.SpyObj<MatDialogRef<ColorPickerComponent>>;
 
-    beforeEach(async(() => {
-        validatorServiceSpy = jasmine.createSpyObj('ValidatorService', ['isNumber', 'isValidHexColor']);
-        matDialogRefSpy = jasmine.createSpyObj('MatDialogRef<ColorPickerComponent>', ['close']);
-        TestBed.configureTestingModule({
-            declarations: [ColorPickerComponent, MockComponents(ColorSliderComponent, ColorPaletteComponent)],
-            imports: [FormsModule, ReactiveFormsModule, MatDialogModule],
-            providers: [
-                { provide: ValidatorService, usevalue: validatorServiceSpy },
-                { provide: MatDialogRef, useValue: matDialogRefSpy },
-                { provide: MAT_DIALOG_DATA, useValue: [] },
-            ],
-        }).compileComponents();
-    }));
+    beforeEach(
+        waitForAsync(() => {
+            validatorServiceSpy = jasmine.createSpyObj('ValidatorService', ['isNumber', 'isValidHexColor']);
+            matDialogRefSpy = jasmine.createSpyObj('MatDialogRef<ColorPickerComponent>', ['close']);
+            TestBed.configureTestingModule({
+                declarations: [ColorPickerComponent, MockComponents(ColorSliderComponent, ColorPaletteComponent)],
+                imports: [FormsModule, ReactiveFormsModule, MatDialogModule],
+                providers: [
+                    { provide: ValidatorService, usevalue: validatorServiceSpy },
+                    { provide: MatDialogRef, useValue: matDialogRefSpy },
+                    { provide: MAT_DIALOG_DATA, useValue: [] },
+                ],
+            }).compileComponents();
+        }),
+    );
 
     beforeEach(() => {
         fixture = TestBed.createComponent(ColorPickerComponent);

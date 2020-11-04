@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
+import { ColorSelectionService } from '@app/services/color/color-selection-service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { MouseButton, Texture } from '@app/shared/enum';
 
@@ -9,27 +10,14 @@ import { MouseButton, Texture } from '@app/shared/enum';
 })
 export class BrushService extends Tool {
     private pathData: Vec2[];
-    // Todo: Global Attributes
-    // private color: string;
-    // private opacity: number;
-    private thickness: number;
     selectedTexture: Texture;
-    color: string;
 
-    constructor(drawingService: DrawingService) {
+    constructor(drawingService: DrawingService, colorSelectionService: ColorSelectionService) {
         super(drawingService);
-        this.thickness = 1; // Replace with an observable
+        this.size = 1; // Remplacer par un observable
         this.clearPath();
         this.selectedTexture = Texture.one;
         this.color = 'black';
-    }
-
-    set _thickness(newThickness: number) {
-        this.thickness = newThickness;
-    }
-
-    get _thickness(): number {
-        return this.thickness;
     }
 
     onMouseDown(event: MouseEvent): void {
@@ -67,7 +55,9 @@ export class BrushService extends Tool {
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
         ctx.beginPath();
         ctx.lineCap = 'round';
-        ctx.lineWidth = this.thickness;
+        if (this.size) {
+            ctx.lineWidth = this.size;
+        }
         const image = new Image(1, 1);
         image.src = this.selectedTexture;
         const pattern = ctx.createPattern(image, 'repeat');
@@ -77,12 +67,18 @@ export class BrushService extends Tool {
         }
         ctx.stroke();
         ctx.globalCompositeOperation = 'color';
-        ctx.strokeStyle = this.color;
+        if (this.color) {
+            ctx.strokeStyle = this.color;
+        }
         ctx.stroke();
         ctx.globalCompositeOperation = 'source-over';
     }
 
     private clearPath(): void {
         this.pathData = [];
+    }
+
+    changeTexture(texture: Texture): void {
+        this.selectedTexture = texture;
     }
 }

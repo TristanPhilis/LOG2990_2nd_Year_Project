@@ -1,5 +1,5 @@
 import { Renderer2 } from '@angular/core';
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
 import { MatRadioModule } from '@angular/material/radio';
@@ -20,24 +20,26 @@ describe('ExportPopupComponent', () => {
     let anchorSpy: jasmine.SpyObj<HTMLAnchorElement>;
     let ctxSpy: jasmine.SpyObj<CanvasRenderingContext2D>;
 
-    beforeEach(async(() => {
-        // spys for testing the exportDrawing function
-        canvasSpy = jasmine.createSpyObj('HTMLCanvasElement', ['toDataURL', 'getContext'], ['width', 'height']);
-        ctxSpy = jasmine.createSpyObj('CanvasRenderingContext2D', ['drawImage', 'clearRect'], ['filter']);
-        canvasSpy.getContext.and.returnValue(ctxSpy);
-        anchorSpy = jasmine.createSpyObj('HTMLAnchorElement', ['click']);
-        rendererMock = jasmine.createSpyObj('Renderer2', ['createElement']);
-        rendererMock.createElement.withArgs('canvas').and.returnValue(canvasSpy);
-        rendererMock.createElement.withArgs('a').and.returnValue(anchorSpy);
+    beforeEach(
+        waitForAsync(() => {
+            // spys for testing the exportDrawing function
+            canvasSpy = jasmine.createSpyObj('HTMLCanvasElement', ['toDataURL', 'getContext'], ['width', 'height']);
+            ctxSpy = jasmine.createSpyObj('CanvasRenderingContext2D', ['drawImage', 'clearRect'], ['filter']);
+            canvasSpy.getContext.and.returnValue(ctxSpy);
+            anchorSpy = jasmine.createSpyObj('HTMLAnchorElement', ['click']);
+            rendererMock = jasmine.createSpyObj('Renderer2', ['createElement']);
+            rendererMock.createElement.withArgs('canvas').and.returnValue(canvasSpy);
+            rendererMock.createElement.withArgs('a').and.returnValue(anchorSpy);
 
-        drawServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas']);
-        drawServiceSpy.canvas = canvasTestHelper.canvas;
-        TestBed.configureTestingModule({
-            declarations: [ExportPopupComponent],
-            providers: [{ provide: DrawingService, useValue: drawServiceSpy }],
-            imports: [FormsModule, ReactiveFormsModule, MatInputModule, MatRadioModule, BrowserAnimationsModule],
-        }).compileComponents();
-    }));
+            drawServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas']);
+            drawServiceSpy.canvas = canvasTestHelper.canvas;
+            TestBed.configureTestingModule({
+                declarations: [ExportPopupComponent],
+                providers: [{ provide: DrawingService, useValue: drawServiceSpy }],
+                imports: [FormsModule, ReactiveFormsModule, MatInputModule, MatRadioModule, BrowserAnimationsModule],
+            }).compileComponents();
+        }),
+    );
 
     beforeEach(() => {
         fixture = TestBed.createComponent(ExportPopupComponent);
