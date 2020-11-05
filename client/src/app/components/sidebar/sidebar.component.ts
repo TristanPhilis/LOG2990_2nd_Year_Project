@@ -78,10 +78,8 @@ export class SidebarComponent {
         if (object) {
             this.openCloseSidenav(object.id);
             this.toolsService._selectedSideBarToolID = object.id;
-            console.log(object);
             if (object.defaultDrawingToolid !== undefined) {
                 this.toolsService._currentDrawingTool = object.defaultDrawingToolid;
-                console.log(this.toolsService.currentDrawingTool);
             }
         }
     }
