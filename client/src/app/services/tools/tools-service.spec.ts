@@ -4,13 +4,14 @@ import { DrawingService } from '@app/services/drawing/drawing.service';
 import { drawingToolId } from '@app/shared/enum';
 import { PencilService } from './pencil-service';
 import { ToolsService } from './tools-service';
+import { UndoRedoService } from './undoredo-service';
 
 describe('ToolsService', () => {
     let service: ToolsService;
     let pencilStub: PencilService;
 
     beforeEach(() => {
-        pencilStub = new PencilService({} as DrawingService, {} as ColorSelectionService);
+        pencilStub = new PencilService({} as DrawingService, {} as UndoRedoService, {} as ColorSelectionService);
         TestBed.configureTestingModule({
             providers: [{ provide: PencilService, useValue: pencilStub }],
         });

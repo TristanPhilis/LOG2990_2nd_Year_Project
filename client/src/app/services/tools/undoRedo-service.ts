@@ -1,7 +1,7 @@
 import { Injectable, Injector } from '@angular/core';
 import { DrawingAction } from '@app/classes/drawing-action';
 import { DrawingService } from '@app/services/drawing/drawing.service';
-import { ToolsService } from './tools-service';
+import { ToolsService } from '@app/services/tools/tools-service';
 
 @Injectable({
     providedIn: 'root',
@@ -9,8 +9,8 @@ import { ToolsService } from './tools-service';
 export class UndoRedoService {
     undoPile: DrawingAction[];
     redoPile: DrawingAction[];
-    private undidAction: boolean;
-    private toolsService: ToolsService;
+    undidAction: boolean;
+    toolsService: ToolsService;
 
     constructor(private drawingService: DrawingService, injector: Injector) {
         this.clearPile();

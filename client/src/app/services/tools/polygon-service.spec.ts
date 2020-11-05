@@ -49,8 +49,8 @@ describe('PolygonService', () => {
 
     it('should start with default values ', () => {
         expect(service.selectionBox).toBeTruthy();
-        expect(service.nSides).toEqual(MIN_SIDES);
-        expect(service.traceType).toEqual(TraceTypes.stroke);
+        expect(service.options.numberOfSides).toEqual(MIN_SIDES);
+        expect(service.options.traceType).toEqual(TraceTypes.stroke);
     });
 
     it('onMouseDown should do nothing if not left click', () => {
@@ -96,30 +96,30 @@ describe('PolygonService', () => {
     });
 
     it('getCornerPosition should return the right number of coordinates', () => {
-        service.nSides = MIN_SIDES;
+        service.options.numberOfSides = MIN_SIDES;
         let result: Vec2[] = (service as any).getCornersPosition();
         expect(result.length).toEqual(MIN_SIDES);
-        service.nSides = MAX_SIDES;
+        service.options.numberOfSides = MAX_SIDES;
         result = (service as any).getCornersPosition();
         expect(result.length).toEqual(MAX_SIDES);
     });
 
     it('fill should call good fonction based on fill traceType', () => {
-        service.traceType = TraceTypes.fill;
+        service.options.traceType = TraceTypes.fill;
         (service as any).fill(baseCtxSpy);
         expect(baseCtxSpy.fill).toHaveBeenCalledTimes(1);
         expect(baseCtxSpy.stroke).not.toHaveBeenCalled();
     });
 
     it('fill should call good fonction based on fill and stroke traceType', () => {
-        service.traceType = TraceTypes.fillAndStroke;
+        service.options.traceType = TraceTypes.fillAndStroke;
         (service as any).fill(baseCtxSpy);
         expect(baseCtxSpy.fill).toHaveBeenCalledTimes(1);
         expect(baseCtxSpy.stroke).toHaveBeenCalledTimes(1);
     });
 
     it('fill should call good fonction based on stroke traceType', () => {
-        service.traceType = TraceTypes.stroke;
+        service.options.traceType = TraceTypes.stroke;
         (service as any).fill(baseCtxSpy);
         expect(baseCtxSpy.fill).not.toHaveBeenCalled();
         expect(baseCtxSpy.stroke).toHaveBeenCalledTimes(1);
