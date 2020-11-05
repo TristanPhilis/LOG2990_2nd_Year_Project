@@ -15,7 +15,7 @@ import {
     ESCAPE_KEY,
     NEGATIVE_MULTIPLIER,
     SELECTION_BOX_BORDER_SIZE,
-    SELECTION_BOX_COLOUR
+    SELECTION_BOX_COLOUR,
     SHIFT_KEY,
 } from '@app/shared/constant';
 import { MouseButton } from '@app/shared/enum';
