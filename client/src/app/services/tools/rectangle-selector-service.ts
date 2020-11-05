@@ -245,8 +245,10 @@ export class RectangleSelectorService extends Tool {
     }
 
     selectAllCanvas(): void {
-        this.selectedImageData = this.drawingService.baseCtx.getImageData(0, 0, this.drawingService.canvas.width, this.drawingService.canvas.height);
-        this.clearBaseCanvasSelectedArea();
-        this.updateSelectedAreaPreview();
+        this.initializeSelectionBox({ x: 0, y: 0 });
+        this.selectionBox.updateOpposingCorner({ x: this.drawingService.canvas.width, y: this.drawingService.canvas.height });
+        this.drawSelectionBox();
+        this.initializeSelectedBox();
+        this.mouseDown = false;
     }
 }
