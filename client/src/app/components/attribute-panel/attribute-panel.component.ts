@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { ToolOption } from '@app/classes/tool-option';
+import { DrawingService } from '@app/services/drawing/drawing.service';
 import { BrushService } from '@app/services/tools/brush.service';
 import { ToolsService } from '@app/services/tools/tools-service';
 import { drawingToolId, sidebarToolID, Texture, TraceTypes } from '@app/shared/enum';
@@ -17,7 +18,7 @@ export class AttributePanelComponent {
     tracingTypes: ToolOption[];
     textures: ToolOption[];
 
-    constructor(public toolsService: ToolsService, public brushService: BrushService) {
+    constructor(public toolsService: ToolsService, public brushService: BrushService, public drawingService: DrawingService) {
         this.tracingTools = [
             { id: drawingToolId.pencilService, name: 'Crayon' },
             { id: drawingToolId.brushService, name: 'Pinceau' },

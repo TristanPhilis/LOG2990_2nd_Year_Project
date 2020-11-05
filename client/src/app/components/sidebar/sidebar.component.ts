@@ -35,7 +35,7 @@ export class SidebarComponent {
             { id: sidebarToolID.text, name: 'Texte' },
             { id: sidebarToolID.paintBucket, name: 'Sceau', defaultDrawingToolid: drawingToolId.bucketService },
             { id: sidebarToolID.stamp, name: 'Étampe' },
-            { id: sidebarToolID.pipette, name: 'Pipette' },
+            { id: sidebarToolID.pipette, name: 'Pipette', defaultDrawingToolid: drawingToolId.pipetteService },
             { id: sidebarToolID.eraser, name: 'Efface', defaultDrawingToolid: drawingToolId.eraserService },
         ];
         this.sideBarToolsBottom = [
@@ -164,6 +164,7 @@ export class SidebarComponent {
             b: () => this.onButtonPressTop(this.sideBarToolsTopMap.get(sidebarToolID.paintBucket)),
             e: () => this.onButtonPressTop(this.sideBarToolsTopMap.get(sidebarToolID.eraser)),
             l: () => this.onButtonPressTop(this.sideBarToolsTopMap.get(sidebarToolID.line)),
+            i: () => this.onButtonPressTop(this.sideBarToolsTopMap.get(sidebarToolID.pipette)),
 
             1: () => {
                 this.onButtonPressTop(this.sideBarToolsTopMap.get(sidebarToolID.shapes));
