@@ -52,7 +52,6 @@ export class BrushService extends Tool {
     }
 
     private drawBrush(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
-        console.log(this.selectedTexture);
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
         ctx.beginPath();
         ctx.lineCap = 'round';

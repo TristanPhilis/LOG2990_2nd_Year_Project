@@ -5,19 +5,19 @@ import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import {
-    A,
     ARROW_DOWN,
     ARROW_LEFT,
     ARROW_RIGHT,
     ARROW_UP,
+    A_KEY,
     CONTROL,
     DASHLINE_EMPTY,
     DASHLINE_FULL,
     DEPLACEMENT,
     ESCAPE_KEY,
     NEGATIVE_MULTIPLIER,
+    SELECTION_BOX_BORDER_SIZE,
     SHIFT_KEY,
-    SIZE_OF_SELECTION_BOX,
 } from '@app/shared/constant';
 import { MouseButton } from '@app/shared/enum';
 
@@ -33,7 +33,6 @@ export class RectangleSelectorService extends Tool {
     }
     isAreaSelected: boolean = false;
     selectedImageData: ImageData;
-    shiftDown: boolean;
     selectedBox: BoundingBox;
     selectionBox: SelectionBox;
     draggingAnchorRelativePosition: Vec2;
@@ -140,7 +139,7 @@ export class RectangleSelectorService extends Tool {
     private drawSelectionBox(): void {
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
         const ctx = this.drawingService.previewCtx;
-        ctx.lineWidth = SIZE_OF_SELECTION_BOX;
+        ctx.lineWidth = SELECTION_BOX_BORDER_SIZE;
         ctx.beginPath();
         ctx.strokeStyle = '#111155';
         ctx.setLineDash([DASHLINE_EMPTY, DASHLINE_FULL]);
@@ -186,13 +185,14 @@ export class RectangleSelectorService extends Tool {
                 this.drawSelectionBox();
             }
         }
-        event = event || event; // to deal with IE
+        event = event || event;
         // tslint:disable-next-line: deprecation
         this.map[event.keyCode] = event.type === 'keydown';
     }
 
     onKeyDown(event: KeyboardEvent): void {
-        event = event || event; // to deal with IE
+        event = event || event;
+        // Need to use keyCode to travel through the map
         // tslint:disable-next-line: deprecation
         this.map[event.keyCode] = event.type === 'keydown';
 
@@ -218,7 +218,7 @@ export class RectangleSelectorService extends Tool {
                 this.selectedBox.translateX(DEPLACEMENT);
                 this.updateSelectedAreaPreview();
             }
-            if (this.map[CONTROL] && this.map[A]) {
+            if (this.map[CONTROL] && this.map[A_KEY]) {
                 this.selectAllCanvas();
             }
         }

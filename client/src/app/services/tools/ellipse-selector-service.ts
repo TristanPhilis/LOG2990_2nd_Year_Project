@@ -15,7 +15,7 @@ import {
     ESCAPE_KEY,
     NEGATIVE_MULTIPLIER,
     SHIFT_KEY,
-    SIZE_OF_SELECTION_BOX,
+    SELECTION_BOX_BORDER_SIZE,
 } from '@app/shared/constant';
 import { MouseButton } from '@app/shared/enum';
 
@@ -146,7 +146,7 @@ export class EllipseSelectorService extends Tool {
         this.savedXRadius = this.selectionBox.width / 2;
         this.savedYRadius = this.selectionBox.height / 2;
         ctx.beginPath();
-        ctx.lineWidth = SIZE_OF_SELECTION_BOX;
+        ctx.lineWidth = SELECTION_BOX_BORDER_SIZE;
         ctx.strokeStyle = '#111155';
         ctx.setLineDash([DASHLINE_EMPTY, DASHLINE_FULL]);
 
@@ -232,13 +232,14 @@ export class EllipseSelectorService extends Tool {
                 this.drawSelectionBox();
             }
         }
-        event = event || event; // to deal with IE
+        event = event || event;
         // tslint:disable-next-line: deprecation
         this.map[event.keyCode] = event.type === 'keydown';
     }
 
     onKeyDown(event: KeyboardEvent): void {
-        event = event || event; // to deal with IE
+        event = event || event;
+        // Need to use keyCode to travel in the map
         // tslint:disable-next-line: deprecation
         this.map[event.keyCode] = event.type === 'keydown';
 
@@ -248,7 +249,6 @@ export class EllipseSelectorService extends Tool {
                 this.drawSelectionBox();
             }
         } else if (this.isAreaSelected) {
-            console.log(event.key);
             if (this.map[ARROW_DOWN]) {
                 this.selectedBox.translateY(DEPLACEMENT);
                 this.updateSelectedAreaPreview();
