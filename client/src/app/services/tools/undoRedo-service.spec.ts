@@ -9,7 +9,7 @@ import { UndoRedoService } from '@app/services/tools/undoredo-service';
 import { drawingToolId, Options } from '@app/shared/enum';
 
 // tslint:disable:no-any
-fdescribe('Service: UndoRedo', () => {
+describe('Service: UndoRedo', () => {
     let action: DrawingAction;
     let service: UndoRedoService;
     const newColor = new Color(1, 1, 1, 0);
