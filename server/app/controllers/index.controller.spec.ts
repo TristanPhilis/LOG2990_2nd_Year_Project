@@ -6,7 +6,6 @@ import { expect } from 'chai';
 import * as Httpstatus from 'http-status-codes';
 import * as supertest from 'supertest';
 import { Stubbed, testingContainer } from '../../test/test-utils';
-import * as Httpstatus from 'http-status-codes';
 
 // tslint:disable:no-any
 
