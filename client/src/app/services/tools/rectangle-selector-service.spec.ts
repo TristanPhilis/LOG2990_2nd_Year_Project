@@ -184,7 +184,7 @@ describe('RectangleSelectorService', () => {
 
     it('onKeyDown Should Update the selected Area Preview when Up Arrow is pressed', () => {
         service.isAreaSelected = true;
-        service.map[ARROW_UP] = true;
+        service.keyMap[ARROW_UP] = true;
         const keyEvent = {
             key: 'ArrowUp',
         } as KeyboardEvent;
@@ -196,7 +196,7 @@ describe('RectangleSelectorService', () => {
 
     it('onKeyDown Should Update the selected Area Preview when down Arrow is pressed', () => {
         service.isAreaSelected = true;
-        service.map[ARROW_DOWN] = true;
+        service.keyMap[ARROW_DOWN] = true;
         const keyEvent = {
             key: 'ArrowDown',
         } as KeyboardEvent;
@@ -208,7 +208,7 @@ describe('RectangleSelectorService', () => {
 
     it('onKeyDown Should Update the selected Area Preview when right Arrow is pressed', () => {
         service.isAreaSelected = true;
-        service.map[ARROW_RIGHT] = true;
+        service.keyMap[ARROW_RIGHT] = true;
         const keyEvent = {
             key: 'ArrowRight',
         } as KeyboardEvent;
@@ -220,7 +220,7 @@ describe('RectangleSelectorService', () => {
 
     it('onKeyDown Should Update the selected Area Preview when left Arrow is pressed', () => {
         service.isAreaSelected = true;
-        service.map[ARROW_LEFT] = true;
+        service.keyMap[ARROW_LEFT] = true;
         const keyEvent = {
             key: 'ArrowLeft',
         } as KeyboardEvent;
