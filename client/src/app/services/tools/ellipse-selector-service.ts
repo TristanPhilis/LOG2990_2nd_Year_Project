@@ -14,8 +14,8 @@ import {
     DEPLACEMENT,
     ESCAPE_KEY,
     NEGATIVE_MULTIPLIER,
-    SHIFT_KEY,
     SELECTION_BOX_BORDER_SIZE,
+    SHIFT_KEY,
 } from '@app/shared/constant';
 import { MouseButton } from '@app/shared/enum';
 
