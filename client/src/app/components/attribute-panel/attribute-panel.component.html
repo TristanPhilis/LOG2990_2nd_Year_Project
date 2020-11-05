@@ -45,6 +45,11 @@
     </div>
 </div>
 
+<!-- Pipette Tool -->
+<div *ngIf="this.toolsService._selectedSideBarToolID === sidebarToolID.pipette && drawingService.mouseIsOverCanvas" class="attribute-container">
+    <app-pipette-preview></app-pipette-preview>
+</div>
+
 <!-- Eraser Tool -->
 <div *ngIf="this.toolsService._selectedSideBarToolID === sidebarToolID.eraser" class="attribute-container">
     <label for="tracingThickness">Largeur</label>

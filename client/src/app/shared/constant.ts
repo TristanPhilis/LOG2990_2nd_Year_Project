@@ -18,3 +18,12 @@ export const A_POSITION = 3;
 export const MAX_TOLERANCE = 100;
 export const MIN_TOLERANCE = 0;
 export const PIXEL_INTERVAL = 4;
+
+export const RED = 0;
+export const GREEN = 1;
+export const BLUE = 2;
+export const ALPHA = 3;
+
+export const PREVIEW_SELECTION_SIZE = 20;
+export const PREVIEW_SCALE = 5;
+export const PREVIEW_RADIUS_SIZE = 50;

@@ -26,6 +26,7 @@ export enum drawingToolId {
     rectangleSelectionService,
     polygonService,
     bucketService,
+    pipetteService,
 }
 
 export enum MouseButton {
