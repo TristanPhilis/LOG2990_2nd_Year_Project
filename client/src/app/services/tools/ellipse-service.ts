@@ -51,7 +51,9 @@ export class EllipseService extends Tool {
 
         if (this.mouseDown && !(event.buttons === MouseButton.Left)) {
             this.mouseDown = false;
-            this.draw(this.drawingService.baseCtx, this.getDrawingAction());
+            const drawingAction = this.getDrawingAction();
+            this.undoRedoService.saveAction(drawingAction);
+            this.draw(this.drawingService.baseCtx, drawingAction);
         }
     }
 

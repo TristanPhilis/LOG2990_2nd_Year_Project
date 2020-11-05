@@ -1,26 +1,40 @@
 import { TestBed } from '@angular/core/testing';
+import { Color } from '@app/classes/color';
 import { Vec2 } from '@app/classes/vec2';
+import { ColorSelectionService } from '@app/services/color/color-selection-service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
-import { TraceTypes } from '@app/shared/enum';
+import { Options, TraceTypes } from '@app/shared/enum';
 import { MAX_SIDES, MIN_SIDES, PolygonService } from './polygon-service';
+import { UndoRedoService } from './undoredo-service';
 
 // tslint:disable:no-any
 describe('PolygonService', () => {
     let service: PolygonService;
+    let drawServiceSpy: jasmine.SpyObj<DrawingService>;
+    let undoRedoServiceSpy: jasmine.SpyObj<UndoRedoService>;
+    let colorServiceSpy: jasmine.SpyObj<ColorSelectionService>;
     let mouseEventLClick: MouseEvent;
     let mouseEventRClick: MouseEvent;
-    let drawServiceSpy: jasmine.SpyObj<DrawingService>;
     let baseCtxSpy: jasmine.SpyObj<CanvasRenderingContext2D>;
     let previewCtxSpy: jasmine.SpyObj<CanvasRenderingContext2D>;
     let drawSpy: jasmine.Spy<any>;
 
     beforeEach(() => {
+        undoRedoServiceSpy = jasmine.createSpyObj('UndoRedoService', ['saveAction']);
+        const defaultColor = new Color(0, 0, 0);
+        colorServiceSpy = jasmine.createSpyObj('colorServiceSpy', ['']);
+        colorServiceSpy.primaryColor = defaultColor;
+        colorServiceSpy.secondaryColor = defaultColor;
         const contextMethod = ['stroke', 'fill', 'beginPath', 'moveTo', 'lineTo', 'closePath', 'setLineDash', 'arc'];
         baseCtxSpy = jasmine.createSpyObj('CanvasRenderingContext2D', contextMethod);
         previewCtxSpy = jasmine.createSpyObj('CanvasRenderingContext2D', contextMethod);
         drawServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas']);
         TestBed.configureTestingModule({
-            providers: [{ provide: DrawingService, useValue: drawServiceSpy }],
+            providers: [
+                { provide: DrawingService, useValue: drawServiceSpy },
+                { provide: UndoRedoService, useValue: undoRedoServiceSpy },
+                { provide: ColorSelectionService, useValue: colorServiceSpy },
+            ],
         });
         service = TestBed.inject(PolygonService);
         drawSpy = spyOn<any>(service, 'draw').and.callThrough();
@@ -49,8 +63,9 @@ describe('PolygonService', () => {
 
     it('should start with default values ', () => {
         expect(service.selectionBox).toBeTruthy();
-        expect(service.options.numberOfSides).toEqual(MIN_SIDES);
-        expect(service.options.traceType).toEqual(TraceTypes.stroke);
+        expect(service.options.toolOptions.get(Options.numberOfSides)?.value).toEqual(MIN_SIDES);
+        expect(service.options.toolOptions.get(Options.traceType)?.value).toEqual(TraceTypes.fill);
+        expect(service.options.toolOptions.get(Options.size)?.value).toEqual(1);
     });
 
     it('onMouseDown should do nothing if not left click', () => {
@@ -70,57 +85,62 @@ describe('PolygonService', () => {
         expect(drawSpy).not.toHaveBeenCalled();
     });
 
-    it('onMouseUp with mouseDown should call draw', () => {
+    it('onMouseUp with mouseDown should update the selection box and call draw and saveAction', () => {
+        const updateOpposingCornerSpy = spyOn<any>(service.selectionBox, 'updateOpposingCorner');
         service.mouseDown = true;
         service.onMouseUp(mouseEventLClick);
+        expect(updateOpposingCornerSpy).toHaveBeenCalled();
+        expect(undoRedoServiceSpy.saveAction).toHaveBeenCalled();
         expect(drawSpy).toHaveBeenCalled();
     });
 
     it('onMouseMove without mouseDown should do nothing', () => {
+        const updateOpposingCornerSpy = spyOn<any>(service.selectionBox, 'updateOpposingCorner');
         service.mouseDown = false;
         service.onMouseMove(mouseEventLClick);
         expect(drawSpy).not.toHaveBeenCalled();
+        expect(updateOpposingCornerSpy).not.toHaveBeenCalled();
     });
 
-    it('onMouseMove with leftClick down should draw on preview canvas', () => {
+    it('onMouseMove with leftClick down should update selection box and draw it', () => {
+        const updateOpposingCornerSpy = spyOn<any>(service.selectionBox, 'updateOpposingCorner');
+        const drawSelectionBoxSpy = spyOn<any>(service, 'drawSelectionBox').and.callThrough();
         service.mouseDown = true;
         service.onMouseMove(mouseEventLClick);
-        expect(drawSpy).toHaveBeenCalledWith(previewCtxSpy);
+        expect(drawSpy).toHaveBeenCalled();
+        expect(updateOpposingCornerSpy).toHaveBeenCalled();
+        expect(drawSelectionBoxSpy).toHaveBeenCalled();
     });
 
-    it('onMouseMove without leftClick down should draw on base canvas', () => {
+    it('onMouseMove without leftClick down should draw on base canvas and save action', () => {
         service.mouseDown = true;
         service.onMouseMove(mouseEventRClick);
-        expect(drawSpy).toHaveBeenCalledWith(baseCtxSpy);
+        expect(drawSpy).toHaveBeenCalled();
+        expect(undoRedoServiceSpy.saveAction).toHaveBeenCalled();
         expect(service.mouseDown).toBeFalse();
     });
 
     it('getCornerPosition should return the right number of coordinates', () => {
-        service.options.numberOfSides = MIN_SIDES;
-        let result: Vec2[] = (service as any).getCornersPosition();
+        let result: Vec2[] = (service as any).getCornersPosition(service.selectionBox, MIN_SIDES);
         expect(result.length).toEqual(MIN_SIDES);
-        service.options.numberOfSides = MAX_SIDES;
-        result = (service as any).getCornersPosition();
+        result = (service as any).getCornersPosition(service.selectionBox, MAX_SIDES);
         expect(result.length).toEqual(MAX_SIDES);
     });
 
     it('fill should call good fonction based on fill traceType', () => {
-        service.options.traceType = TraceTypes.fill;
-        (service as any).fill(baseCtxSpy);
+        (service as any).fill(baseCtxSpy, TraceTypes.fill, service.primaryColor, service.secondaryColor);
         expect(baseCtxSpy.fill).toHaveBeenCalledTimes(1);
         expect(baseCtxSpy.stroke).not.toHaveBeenCalled();
     });
 
     it('fill should call good fonction based on fill and stroke traceType', () => {
-        service.options.traceType = TraceTypes.fillAndStroke;
-        (service as any).fill(baseCtxSpy);
+        (service as any).fill(baseCtxSpy, TraceTypes.fillAndStroke, service.primaryColor, service.secondaryColor);
         expect(baseCtxSpy.fill).toHaveBeenCalledTimes(1);
         expect(baseCtxSpy.stroke).toHaveBeenCalledTimes(1);
     });
 
     it('fill should call good fonction based on stroke traceType', () => {
-        service.options.traceType = TraceTypes.stroke;
-        (service as any).fill(baseCtxSpy);
+        (service as any).fill(baseCtxSpy, TraceTypes.stroke, service.primaryColor, service.secondaryColor);
         expect(baseCtxSpy.fill).not.toHaveBeenCalled();
         expect(baseCtxSpy.stroke).toHaveBeenCalledTimes(1);
     });

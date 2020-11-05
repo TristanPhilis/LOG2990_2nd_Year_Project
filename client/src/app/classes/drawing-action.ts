@@ -9,7 +9,4 @@ export interface DrawingAction {
     imageData?: ImageData;
     id: drawingToolId;
     options: DrawingOptions;
-
-    thickness?: number;
-    traceType?: number;
 }

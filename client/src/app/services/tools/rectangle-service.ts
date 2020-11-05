@@ -62,7 +62,9 @@ export class RectangleService extends Tool {
             this.draw(this.drawingService.previewCtx, this.getDrawingAction());
         }
         if (this.mouseDown && !(event.buttons === MouseButton.Left)) {
-            this.draw(this.drawingService.baseCtx, this.getDrawingAction());
+            const action = this.getDrawingAction();
+            this.undoRedoService.saveAction(action);
+            this.draw(this.drawingService.baseCtx, action);
             this.mouseDown = false;
         }
     }

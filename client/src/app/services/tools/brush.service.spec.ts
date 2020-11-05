@@ -1,28 +1,42 @@
 import { TestBed } from '@angular/core/testing';
 import { canvasTestHelper } from '@app/classes/canvas-test-helper';
+import { Color } from '@app/classes/color';
 import { Vec2 } from '@app/classes/vec2';
+import { ColorSelectionService } from '@app/services/color/color-selection-service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { BrushService } from './brush.service';
+import { UndoRedoService } from './undoredo-service';
 
 // tslint:disable:no-any
 describe('BrushService', () => {
     let service: BrushService;
-    let mouseEvent: MouseEvent;
     let drawServiceSpy: jasmine.SpyObj<DrawingService>;
-
+    let undoRedoServiceSpy: jasmine.SpyObj<UndoRedoService>;
+    let colorServiceSpy: jasmine.SpyObj<ColorSelectionService>;
+    let mouseEvent: MouseEvent;
     let baseCtxStub: CanvasRenderingContext2D;
     let previewCtxStub: CanvasRenderingContext2D;
-    let drawBrushSpy: jasmine.Spy<any>;
+    let drawSpy: jasmine.Spy<any>;
+
     beforeEach(() => {
+        undoRedoServiceSpy = jasmine.createSpyObj('UndoRedoService', ['saveAction']);
+        const defaultColor = new Color(0, 0, 0);
+        colorServiceSpy = jasmine.createSpyObj('colorServiceSpy', ['']);
+        colorServiceSpy.primaryColor = defaultColor;
+        colorServiceSpy.secondaryColor = defaultColor;
         baseCtxStub = canvasTestHelper.canvas.getContext('2d') as CanvasRenderingContext2D;
         previewCtxStub = canvasTestHelper.drawCanvas.getContext('2d') as CanvasRenderingContext2D;
         drawServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas']);
 
         TestBed.configureTestingModule({
-            providers: [{ provide: DrawingService, useValue: drawServiceSpy }],
+            providers: [
+                { provide: DrawingService, useValue: drawServiceSpy },
+                { provide: UndoRedoService, useValue: undoRedoServiceSpy },
+                { provide: ColorSelectionService, useValue: colorServiceSpy },
+            ],
         });
         service = TestBed.inject(BrushService);
-        drawBrushSpy = spyOn<any>(service, 'drawBrush').and.callThrough();
+        drawSpy = spyOn<any>(service, 'draw').and.callThrough();
 
         // Service spy configuration
         // tslint:disable:no-string-literal
@@ -66,14 +80,14 @@ describe('BrushService', () => {
         service.mouseDown = true;
 
         service.onMouseUp(mouseEvent);
-        expect(drawBrushSpy).toHaveBeenCalled();
+        expect(drawSpy).toHaveBeenCalled();
     });
     it(' onMouseUp should not call drawBrush if mouse was not already down', () => {
         service.mouseDown = false;
         service.mouseDownCoord = { x: 0, y: 0 };
 
         service.onMouseUp(mouseEvent);
-        expect(drawBrushSpy).not.toHaveBeenCalled();
+        expect(drawSpy).not.toHaveBeenCalled();
     });
 
     it(' onMouseMove should call drawBrush if mouse was already down', () => {
@@ -82,7 +96,7 @@ describe('BrushService', () => {
 
         service.onMouseMove(mouseEvent);
         expect(drawServiceSpy.clearCanvas).toHaveBeenCalled();
-        expect(drawBrushSpy).toHaveBeenCalled();
+        expect(drawSpy).toHaveBeenCalled();
     });
 
     it(' onMouseMove should call drawBrush if mouse was already down but dropped outside', () => {
@@ -95,7 +109,7 @@ describe('BrushService', () => {
         } as MouseEvent;
 
         service.onMouseMove(droppedMouseEvent);
-        expect(drawBrushSpy).toHaveBeenCalled();
+        expect(drawSpy).toHaveBeenCalled();
     });
 
     it(' onMouseMove should not call drawBrush if mouse was not already down', () => {
@@ -104,6 +118,6 @@ describe('BrushService', () => {
 
         service.onMouseMove(mouseEvent);
         expect(drawServiceSpy.clearCanvas).not.toHaveBeenCalled();
-        expect(drawBrushSpy).not.toHaveBeenCalled();
+        expect(drawSpy).not.toHaveBeenCalled();
     });
 });

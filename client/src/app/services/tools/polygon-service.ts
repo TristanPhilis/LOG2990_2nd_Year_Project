@@ -65,7 +65,9 @@ export class PolygonService extends Tool {
             this.drawSelectionBox();
         }
         if (this.mouseDown && !(event.buttons === MouseButton.Left)) {
-            this.draw(this.drawingService.baseCtx, this.getDrawingAction());
+            const action = this.getDrawingAction();
+            this.undoRedoService.saveAction(action);
+            this.draw(this.drawingService.baseCtx, action);
             this.mouseDown = false;
         }
     }

@@ -1,32 +1,50 @@
 import { TestBed } from '@angular/core/testing';
 import { canvasTestHelper } from '@app/classes/canvas-test-helper';
+import { Color } from '@app/classes/color';
 import { Vec2 } from '@app/classes/vec2';
+import { ColorSelectionService } from '@app/services/color/color-selection-service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { SHIFT_KEY } from '@app/shared/constant';
 import { EllipseService } from './ellipse-service';
+import { UndoRedoService } from './undoredo-service';
 
 // tslint:disable:no-any
 describe('EllipseServiceService', () => {
     let service: EllipseService;
+    let drawServiceSpy: jasmine.SpyObj<DrawingService>;
+    let undoRedoServiceSpy: jasmine.SpyObj<UndoRedoService>;
+    let colorServiceSpy: jasmine.SpyObj<ColorSelectionService>;
     let mouseEvent: MouseEvent;
     let mouseEventRClick: MouseEvent;
     let mouseEventLClick: MouseEvent;
-    let drawServiceSpy: jasmine.SpyObj<DrawingService>;
 
     let baseCtxStub: CanvasRenderingContext2D;
     let previewCtxStub: CanvasRenderingContext2D;
-    let drawEllipseSpy: jasmine.Spy<any>;
+    let drawSpy: jasmine.Spy<any>;
+    let setAnchorSpy: jasmine.Spy<any>;
+    let updateOpposingCornerSpy: jasmine.Spy<any>;
 
     beforeEach(() => {
+        undoRedoServiceSpy = jasmine.createSpyObj('UndoRedoService', ['saveAction']);
+        const defaultColor = new Color(0, 0, 0);
+        colorServiceSpy = jasmine.createSpyObj('colorServiceSpy', ['']);
+        colorServiceSpy.primaryColor = defaultColor;
+        colorServiceSpy.secondaryColor = defaultColor;
         baseCtxStub = canvasTestHelper.canvas.getContext('2d') as CanvasRenderingContext2D;
         previewCtxStub = canvasTestHelper.drawCanvas.getContext('2d') as CanvasRenderingContext2D;
         drawServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas']);
 
         TestBed.configureTestingModule({
-            providers: [{ provide: DrawingService, useValue: drawServiceSpy }],
+            providers: [
+                { provide: DrawingService, useValue: drawServiceSpy },
+                { provide: UndoRedoService, useValue: undoRedoServiceSpy },
+                { provide: ColorSelectionService, useValue: colorServiceSpy },
+            ],
         });
         service = TestBed.inject(EllipseService);
-        drawEllipseSpy = spyOn<any>(service, 'drawEllipse').and.callThrough();
+        drawSpy = spyOn<any>(service, 'draw').and.callThrough();
+        setAnchorSpy = spyOn<any>(service.selectionBox, 'setAnchor');
+        updateOpposingCornerSpy = spyOn<any>(service.selectionBox, 'updateOpposingCorner');
 
         // Spy service configuration
         // tslint:disable:no-string-literal
@@ -56,10 +74,10 @@ describe('EllipseServiceService', () => {
         expect(service).toBeTruthy();
     });
 
-    it(' mouseDown should set initial to correct position', () => {
+    it(' mouseDown should set the selection box anchor to correct position', () => {
         const expectedResult: Vec2 = { x: 25, y: 25 };
         service.onMouseDown(mouseEventLClick);
-        expect(service.initialCoord).toEqual(expectedResult);
+        expect(setAnchorSpy).toHaveBeenCalledWith(expectedResult);
     });
 
     it(' mouseDown should set mouseDown property to true on left click', () => {
@@ -72,47 +90,38 @@ describe('EllipseServiceService', () => {
         expect(service.mouseDown).toEqual(false);
     });
 
-    it(' onMouseUp should call drawEllipse if mouse was already down', () => {
-        service.initialCoord = { x: 0, y: 0 };
-        service.mouseDownCoord = { x: 0, y: 0 };
+    it(' onMouseUp should call drawEllipse if mouse was already down and saveAction', () => {
         service.mouseDown = true;
-
         service.onMouseUp(mouseEventLClick);
-        expect(drawEllipseSpy).toHaveBeenCalled();
+        expect(drawSpy).toHaveBeenCalled();
+        expect(undoRedoServiceSpy.saveAction).toHaveBeenCalled();
     });
 
     it(' onMouseUp should not call drawEllipse if mouse was not already down', () => {
         service.mouseDown = false;
-        service.initialCoord = { x: 0, y: 0 };
-
         service.onMouseUp(mouseEvent);
-        expect(drawEllipseSpy).not.toHaveBeenCalled();
+        expect(drawSpy).not.toHaveBeenCalled();
     });
 
-    it(' onMouseMove should call drawEllipse if mouse was already down', () => {
-        service.initialCoord = { x: 0, y: 0 };
+    it(' onMouseMove should update the selectionBox and call drawEllipse if mouse was already down', () => {
         service.mouseDown = true;
         service.onMouseMove(mouseEventLClick);
-        expect(drawServiceSpy.clearCanvas).toHaveBeenCalled();
-        expect(drawEllipseSpy).toHaveBeenCalled();
+        expect(updateOpposingCornerSpy).toHaveBeenCalled();
+        expect(drawSpy).toHaveBeenCalled();
     });
 
     it(' onMouseMove should not call drawEllipse if mouse was not already down', () => {
-        service.initialCoord = { x: 0, y: 0 };
         service.mouseDown = false;
-
         service.onMouseMove(mouseEvent);
-        expect(drawServiceSpy.clearCanvas).not.toHaveBeenCalled();
-        expect(drawEllipseSpy).not.toHaveBeenCalled();
+        expect(drawSpy).not.toHaveBeenCalled();
     });
 
     it(' onMouseMove should call drawEllipse if mouse was already down but left button wasnt', () => {
-        service.initialCoord = { x: 0, y: 0 };
-        service.mouseDownCoord = { x: 0, y: 0 };
         service.mouseDown = true;
 
         service.onMouseMove(mouseEventRClick);
-        expect(drawEllipseSpy).toHaveBeenCalled();
+        expect(drawSpy).toHaveBeenCalled();
+        expect(undoRedoServiceSpy.saveAction).toHaveBeenCalled();
     });
 
     it('onKeyDown Should call drawEllipse with shiftDown to true when shift is pressed and mouse is down', () => {
@@ -122,7 +131,7 @@ describe('EllipseServiceService', () => {
         } as KeyboardEvent;
 
         service.onKeyDown(keyEvent);
-        expect(drawEllipseSpy).toHaveBeenCalled();
+        expect(drawSpy).toHaveBeenCalled();
         expect(service.shiftDown).toBeTrue();
     });
 
@@ -133,7 +142,7 @@ describe('EllipseServiceService', () => {
         } as KeyboardEvent;
 
         service.onKeyUp(keyEvent);
-        expect(drawEllipseSpy).toHaveBeenCalled();
+        expect(drawSpy).toHaveBeenCalled();
         expect(service.shiftDown).toBeFalse();
     });
 
@@ -145,7 +154,7 @@ describe('EllipseServiceService', () => {
 
         service.onKeyDown(keyEvent);
         service.onKeyUp(keyEvent);
-        expect(drawEllipseSpy).not.toHaveBeenCalled();
+        expect(drawSpy).not.toHaveBeenCalled();
     });
 
     it('Pressing an other key shound not do anything', () => {
@@ -156,6 +165,6 @@ describe('EllipseServiceService', () => {
         service.onKeyDown(keyEvent);
         expect(service.shiftDown).toBeFalse();
         service.onKeyUp(keyEvent);
-        expect(drawEllipseSpy).not.toHaveBeenCalled();
+        expect(drawSpy).not.toHaveBeenCalled();
     });
 });

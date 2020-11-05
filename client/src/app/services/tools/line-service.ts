@@ -14,7 +14,7 @@ import { UndoRedoService } from './undoredo-service';
 })
 export class LineService extends Tool {
     private pathData: Vec2[];
-    lineStarted: boolean;
+    private lineStarted: boolean;
     currentCoord: Vec2;
 
     constructor(drawingService: DrawingService, undoRedoService: UndoRedoService, colorService: ColorSelectionService) {
@@ -100,8 +100,8 @@ export class LineService extends Tool {
                 }
                 break;
             case BACKSPACE_KEY:
-                this.pathData.splice(this.pathData.length - 2, 1);
                 if (this.lineStarted) {
+                    this.pathData.splice(this.pathData.length - 2, 1);
                     this.draw(this.drawingService.previewCtx, this.getDrawingAction());
                 }
                 break;

@@ -40,10 +40,11 @@ export class PencilService extends Tool {
 
     onMouseUp(event: MouseEvent): void {
         if (this.mouseDown) {
-            this.undoRedoService.saveAction(this.getDrawingAction());
             const mousePosition = this.getPositionFromMouse(event);
             this.pathData.push(mousePosition);
-            this.draw(this.drawingService.baseCtx, this.getDrawingAction());
+            const action = this.getDrawingAction();
+            this.undoRedoService.saveAction(action);
+            this.draw(this.drawingService.baseCtx, action);
         }
         this.mouseDown = false;
         this.clearPath();
@@ -56,7 +57,9 @@ export class PencilService extends Tool {
             this.draw(this.drawingService.previewCtx, this.getDrawingAction());
         }
         if (this.mouseDown && !(event.buttons === MouseButton.Left)) {
-            this.draw(this.drawingService.baseCtx, this.getDrawingAction());
+            const action = this.getDrawingAction();
+            this.undoRedoService.saveAction(action);
+            this.draw(this.drawingService.baseCtx, action);
         }
     }
 
