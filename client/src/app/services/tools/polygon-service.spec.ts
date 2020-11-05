@@ -5,7 +5,7 @@ import { ColorSelectionService } from '@app/services/color/color-selection-servi
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { Options, TraceTypes } from '@app/shared/enum';
 import { MAX_SIDES, MIN_SIDES, PolygonService } from './polygon-service';
-import { UndoRedoService } from './undoredo-service';
+import { UndoRedoService } from './undo-redo-service';
 
 // tslint:disable:no-any
 describe('PolygonService', () => {

@@ -9,7 +9,7 @@ import { DrawingService } from '@app/services/drawing/drawing.service';
 import { MAX_TOLERANCE, MIN_TOLERANCE, PIXEL_INTERVAL } from '@app/shared/constant';
 import { Options } from '@app/shared/enum';
 import { BucketService } from './bucket-service';
-import { UndoRedoService } from './undoredo-service';
+import { UndoRedoService } from './undo-redo-service';
 
 // tslint:disable:no-any
 describe('BucketServiceService', () => {

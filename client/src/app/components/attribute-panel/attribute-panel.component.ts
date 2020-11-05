@@ -54,7 +54,8 @@ export class AttributePanelComponent {
     }
 
     get toolOptions(): Map<Options, ToolOption> {
-        return this.toolsService.currentDrawingToolOptions;
+        const optionsMap = this.toolsService.currentDrawingToolOptions;
+        return optionsMap ? optionsMap : new Map<Options, ToolOption>();
     }
 
     handleToolChange(selectedTool: drawingToolId): void {

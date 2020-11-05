@@ -93,7 +93,10 @@ export class ToolsService {
         this.currentDrawingTool.options.toolOptions.set(key, option);
     }
 
-    get currentDrawingToolOptions(): Map<Options, ToolOption> {
-        return this.currentDrawingTool.options.toolOptions;
+    get currentDrawingToolOptions(): Map<Options, ToolOption> | undefined {
+        if (this.currentDrawingTool.options) {
+            return this.currentDrawingTool.options.toolOptions;
+        }
+        return undefined;
     }
 }

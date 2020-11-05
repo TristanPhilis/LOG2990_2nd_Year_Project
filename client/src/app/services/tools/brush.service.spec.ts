@@ -5,7 +5,7 @@ import { Vec2 } from '@app/classes/vec2';
 import { ColorSelectionService } from '@app/services/color/color-selection-service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { BrushService } from './brush.service';
-import { UndoRedoService } from './undoredo-service';
+import { UndoRedoService } from './undo-redo-service';
 
 // tslint:disable:no-any
 describe('BrushService', () => {

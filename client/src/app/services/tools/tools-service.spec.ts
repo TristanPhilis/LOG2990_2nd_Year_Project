@@ -1,10 +1,10 @@
 import { TestBed } from '@angular/core/testing';
 import { ColorSelectionService } from '@app/services/color/color-selection-service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { UndoRedoService } from '@app/services/tools/undo-redo-service';
 import { drawingToolId } from '@app/shared/enum';
 import { PencilService } from './pencil-service';
 import { ToolsService } from './tools-service';
-import { UndoRedoService } from './undoredo-service';
 
 describe('ToolsService', () => {
     let service: ToolsService;

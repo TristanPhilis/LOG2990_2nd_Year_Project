@@ -6,7 +6,7 @@ import { ColorSelectionService } from '@app/services/color/color-selection-servi
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { SHIFT_KEY } from '@app/shared/constant';
 import { EllipseService } from './ellipse-service';
-import { UndoRedoService } from './undoredo-service';
+import { UndoRedoService } from './undo-redo-service';
 
 // tslint:disable:no-any
 describe('EllipseServiceService', () => {
