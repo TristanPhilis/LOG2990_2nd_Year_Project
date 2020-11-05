@@ -61,5 +61,4 @@ describe('IndexController', () => {
                 expect(response.body).to.deep.equal([baseDrawing, baseDrawing]);
             });
     });
-    // it('should return an appropriate error')
 });
