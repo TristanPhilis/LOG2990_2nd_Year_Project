@@ -183,7 +183,6 @@ export class EllipseSelectorService extends Tool {
         const distanceFromLeft = coord.x - this.selectedBox.left;
         const xTranslate = distanceFromLeft - this.draggingAnchorRelativePosition.x;
         this.selectedBox.translateX(xTranslate);
-
         const distanceFromTop = coord.y - this.selectedBox.top;
         const yTranslate = distanceFromTop - this.draggingAnchorRelativePosition.y;
         this.selectedBox.translateY(yTranslate);

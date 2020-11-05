@@ -10,7 +10,7 @@ import { PolygonService } from '@app/services/tools/polygon-service';
 import { RectangleService } from '@app/services/tools/rectangle-service';
 import { drawingToolId, sidebarToolID, TraceTypes } from '@app/shared/enum';
 import { BehaviorSubject } from 'rxjs';
-import { EllipseSelectorService} from './ellipse-selector-service';
+import { EllipseSelectorService } from './ellipse-selector-service';
 import { RectangleSelectorService } from './rectangle-selector-service';
 
 @Injectable({
