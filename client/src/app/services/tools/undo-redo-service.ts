@@ -11,6 +11,7 @@ export class UndoRedoService {
     redoPile: DrawingAction[];
     undidAction: boolean;
     toolsService: ToolsService;
+    // Comment to be removed
 
     constructor(private drawingService: DrawingService, injector: Injector) {
         this.clearPile();

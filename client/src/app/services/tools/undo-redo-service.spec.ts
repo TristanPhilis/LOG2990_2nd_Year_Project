@@ -5,7 +5,7 @@ import { ToolOption } from '@app/classes/tool-option';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { PencilService } from '@app/services/tools/pencil-service';
 import { ToolsService } from '@app/services/tools/tools-service';
-import { UndoRedoService } from '@app/services/tools/undoredo-service';
+import { UndoRedoService } from '@app/services/tools/undo-redo-service';
 import { drawingToolId, Options } from '@app/shared/enum';
 
 // tslint:disable:no-any
@@ -18,6 +18,7 @@ describe('Service: UndoRedo', () => {
 
     let toolsServiceSpy: jasmine.SpyObj<ToolsService>;
     let drawServiceSpy: jasmine.SpyObj<DrawingService>;
+    // Comment to be removed
 
     beforeEach(() => {
         drawServiceSpy = jasmine.createSpyObj('DrawingService', ['fillCanvas']);

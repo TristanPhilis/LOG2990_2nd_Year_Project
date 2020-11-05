@@ -7,7 +7,7 @@ import { ExportPopupComponent } from '@app/components/popup/export-popup/export-
 import { SavePopupComponent } from '@app/components/popup/save-popup/save-popup.component';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ToolsService } from '@app/services/tools/tools-service';
-import { UndoRedoService } from '@app/services/tools/undoredo-service';
+import { UndoRedoService } from '@app/services/tools/undo-redo-service';
 import { drawingToolId, sidebarToolID } from '@app/shared/enum';
 import { SidebarTool } from './sidebar-tool/sidebar-tool';
 

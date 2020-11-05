@@ -6,9 +6,9 @@ import { Tool } from '@app/classes/tool';
 import { ToolOption } from '@app/classes/tool-option';
 import { ColorSelectionService } from '@app/services/color/color-selection-service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { UndoRedoService } from '@app/services/tools/undo-redo-service';
 import { DEFAULT_OPTIONS, SHIFT_KEY } from '@app/shared/constant';
 import { drawingToolId, MouseButton, Options } from '@app/shared/enum';
-import { UndoRedoService } from './undoredo-service';
 
 @Injectable({
     providedIn: 'root',

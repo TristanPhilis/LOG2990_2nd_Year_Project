@@ -1,6 +1,6 @@
 import { ColorSelectionService } from '@app/services/color/color-selection-service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
-import { UndoRedoService } from '@app/services/tools/undoredo-service';
+import { UndoRedoService } from '@app/services/tools/undo-redo-service';
 import { Options, TraceTypes } from '@app/shared/enum';
 import { Color } from './color';
 import { DrawingAction } from './drawing-action';

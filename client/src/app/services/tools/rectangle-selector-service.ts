@@ -5,8 +5,8 @@ import { ToolOption } from '@app/classes/tool-option';
 import { Vec2 } from '@app/classes/vec2';
 import { ColorSelectionService } from '@app/services/color/color-selection-service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { UndoRedoService } from '@app/services/tools/undo-redo-service';
 import { drawingToolId, MouseButton, Options } from '@app/shared/enum';
-import { UndoRedoService } from './undoredo-service';
 
 @Injectable({
     providedIn: 'root',
