@@ -1,8 +1,12 @@
 import { Injectable } from '@angular/core';
+import { DrawingAction } from '@app/classes/drawing-action';
 import { Tool } from '@app/classes/tool';
+import { ToolOption } from '@app/classes/tool-option';
 import { Vec2 } from '@app/classes/vec2';
+import { ColorSelectionService } from '@app/services/color/color-selection-service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
-import { MouseButton } from '@app/shared/enum';
+import { drawingToolId, MouseButton, Options } from '@app/shared/enum';
+import { UndoRedoService } from './undoredo-service';
 
 @Injectable({
     providedIn: 'root',
@@ -15,8 +19,8 @@ export class RectangleSelectorService extends Tool {
     savedHeight: number;
     savedInitialCoords: Vec2;
 
-    constructor(drawingService: DrawingService) {
-        super(drawingService);
+    constructor(drawingService: DrawingService, undoRedoService: UndoRedoService, colorService: ColorSelectionService) {
+        super(drawingService, undoRedoService, colorService);
     }
 
     onMouseDown(event: MouseEvent): void {
@@ -83,5 +87,17 @@ export class RectangleSelectorService extends Tool {
 
         ctx.globalCompositeOperation = 'source-over';
         ctx.putImageData(this.selectedArea, this.mouseDownCoord.x, this.mouseDownCoord.y);
+    }
+
+    getDrawingAction(): DrawingAction {
+        const options = {
+            primaryColor: this.primaryColor,
+            toolOptions: new Map<Options, ToolOption>(),
+        };
+
+        return {
+            id: drawingToolId.rectangleSelectionService,
+            options,
+        };
     }
 }

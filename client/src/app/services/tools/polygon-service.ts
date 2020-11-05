@@ -4,11 +4,12 @@ import { Box } from '@app/classes/box';
 import { DrawingAction } from '@app/classes/drawing-action';
 import { SelectionBox } from '@app/classes/selection-box';
 import { Tool } from '@app/classes/tool';
+import { ToolOption } from '@app/classes/tool-option';
 import { Vec2 } from '@app/classes/vec2';
 import { ColorSelectionService } from '@app/services/color/color-selection-service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { DASHLINE_EMPTY, DASHLINE_FULL, DEFAULT_OPTIONS } from '@app/shared/constant';
-import { drawingToolId, MouseButton } from '@app/shared/enum';
+import { drawingToolId, MouseButton, Options } from '@app/shared/enum';
 import { UndoRedoService } from './undoredo-service';
 
 export const MAX_SIDES = 12;
@@ -27,12 +28,15 @@ export class PolygonService extends Tool {
     }
 
     setDefaultOptions(): void {
+        const toolOptions = new Map<Options, ToolOption>([
+            [Options.size, { value: DEFAULT_OPTIONS.size, displayName: 'Largeur' }],
+            [Options.traceType, { value: DEFAULT_OPTIONS.traceType, displayName: 'Type' }],
+            [Options.numberOfSides, { value: MIN_SIDES, displayName: 'Nombre de côté' }],
+        ]);
         this.options = {
             primaryColor: this.primaryColor,
             secondaryColor: this.secondaryColor,
-            size: DEFAULT_OPTIONS.size,
-            traceType: DEFAULT_OPTIONS.traceType,
-            numberOfSides: MIN_SIDES,
+            toolOptions,
         };
     }
 
@@ -83,19 +87,22 @@ export class PolygonService extends Tool {
 
     draw(ctx: CanvasRenderingContext2D, drawingAction: DrawingAction): void {
         const options = drawingAction.options;
-        if (drawingAction.box && options.size && options.traceType !== undefined && options.secondaryColor && options.numberOfSides) {
+        const size = options.toolOptions.get(Options.size);
+        const traceType = options.toolOptions.get(Options.traceType);
+        const numberOfSides = options.toolOptions.get(Options.numberOfSides);
+        if (drawingAction.box && size && traceType && options.secondaryColor && numberOfSides) {
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
-            const corners: Vec2[] = this.getCornersPosition(drawingAction.box, options.numberOfSides);
+            const corners: Vec2[] = this.getCornersPosition(drawingAction.box, numberOfSides.value);
             const startingPoint = corners.shift();
             if (startingPoint) {
                 ctx.beginPath();
-                ctx.lineWidth = options.size;
+                ctx.lineWidth = size.value;
                 ctx.moveTo(startingPoint.x, startingPoint.y);
                 for (const corner of corners) {
                     ctx.lineTo(corner.x, corner.y);
                 }
                 ctx.lineTo(startingPoint.x, startingPoint.y);
-                this.fill(ctx, options.traceType, options.primaryColor, options.secondaryColor);
+                this.fill(ctx, traceType.value, options.primaryColor, options.secondaryColor);
                 ctx.closePath();
             }
         }
@@ -117,9 +124,7 @@ export class PolygonService extends Tool {
         const options = {
             primaryColor: this.primaryColor,
             secondaryColor: this.secondaryColor,
-            numberOfSides: this.options.numberOfSides,
-            size: this.options.size,
-            traceType: this.options.traceType,
+            toolOptions: this.copyToolOptionMap(this.options.toolOptions),
         };
         const box = new BoundingBox();
         box.updateFromSelectionBox(this.selectionBox, true);

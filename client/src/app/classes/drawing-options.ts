@@ -1,18 +1,9 @@
-import { Texture, TraceTypes } from '@app/shared/enum';
+import { Options } from '@app/shared/enum';
 import { Color } from './color';
+import { ToolOption } from './tool-option';
 
 export interface DrawingOptions {
     primaryColor: Color;
     secondaryColor?: Color;
-
-    size?: number;
-    outlineType?: string;
-    traceType?: TraceTypes;
-    texture?: Texture;
-    tolerance?: number;
-    numberOfSides?: number;
-    angle?: number;
-    lineLength?: number;
-    emissionPerSecond?: number;
-    imageChoice?: string;
+    toolOptions: Map<Options, ToolOption>;
 }

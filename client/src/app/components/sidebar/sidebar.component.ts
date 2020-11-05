@@ -21,6 +21,7 @@ declare type callback = () => void;
 export class SidebarComponent {
     sideBarToolsTop: SidebarTool[];
     sideBarToolsBottom: SidebarTool[];
+    sideBarUndoRedoButtons: SidebarTool[];
     sideBarToolsTopMap: Map<sidebarToolID, SidebarTool> = new Map<sidebarToolID, SidebarTool>();
     sideBarToolsBottomMap: Map<sidebarToolID, SidebarTool> = new Map<sidebarToolID, SidebarTool>();
 
@@ -31,7 +32,7 @@ export class SidebarComponent {
         private toolsService: ToolsService,
         private dialog: MatDialog,
         private drawingService: DrawingService,
-        private undoRedo: UndoRedoService,
+        public undoRedo: UndoRedoService,
     ) {
         this.sideBarToolsTop = [
             { id: sidebarToolID.selection, name: 'Selection', defaultDrawingToolid: drawingToolId.rectangleSelectionService },
@@ -43,9 +44,13 @@ export class SidebarComponent {
             { id: sidebarToolID.stamp, name: 'Étampe' },
             { id: sidebarToolID.pipette, name: 'Pipette' },
             { id: sidebarToolID.eraser, name: 'Efface', defaultDrawingToolid: drawingToolId.eraserService },
+        ];
+
+        this.sideBarUndoRedoButtons = [
             { id: sidebarToolID.undo, name: 'annuler' },
             { id: sidebarToolID.redo, name: 'refaire' },
         ];
+
         this.sideBarToolsBottom = [
             { id: sidebarToolID.createNew, name: 'Nouveau dessin' },
             { id: sidebarToolID.saveCurrent, name: 'Sauvegarder' },
@@ -201,5 +206,13 @@ export class SidebarComponent {
             const func: callback = kbd[keys];
             func();
         }
+    }
+
+    get showUndo(): boolean {
+        return this.undoRedo.undoPile.length > 0;
+    }
+
+    get showRedo(): boolean {
+        return this.undoRedo.redoPile.length > 0;
     }
 }

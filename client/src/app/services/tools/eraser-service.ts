@@ -1,29 +1,35 @@
 import { Injectable } from '@angular/core';
+import { BoundingBox } from '@app/classes/bounding-box';
 import { DrawingAction } from '@app/classes/drawing-action';
 import { Tool } from '@app/classes/tool';
+import { ToolOption } from '@app/classes/tool-option';
 import { Vec2 } from '@app/classes/vec2';
 import { ColorSelectionService } from '@app/services/color/color-selection-service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
-import { DEFAULT_OPTIONS } from '@app/shared/constant';
-import { drawingToolId, MouseButton } from '@app/shared/enum';
+import { drawingToolId, MouseButton, Options } from '@app/shared/enum';
 import { UndoRedoService } from './undoredo-service';
+
+export const MINIMUM_ERASER_SIZE = 5;
 
 @Injectable({
     providedIn: 'root',
 })
 export class EraserService extends Tool {
     private pathData: Vec2[];
+    private boundingBox: BoundingBox;
 
     constructor(drawingService: DrawingService, undoRedoService: UndoRedoService, colorService: ColorSelectionService) {
         super(drawingService, undoRedoService, colorService);
         this.clearPath();
+        this.boundingBox = new BoundingBox();
         this.setDefaultOptions();
     }
 
     setDefaultOptions(): void {
+        const toolOptions = new Map<Options, ToolOption>([[Options.eraserSize, { value: MINIMUM_ERASER_SIZE, displayName: 'Grosseur' }]]);
         this.options = {
             primaryColor: this.primaryColor,
-            size: DEFAULT_OPTIONS.size,
+            toolOptions,
         };
     }
 
@@ -48,39 +54,46 @@ export class EraserService extends Tool {
     }
 
     onMouseMove(event: MouseEvent): void {
-        if (this.mouseDown && event.buttons === MouseButton.Left) {
-            const mousePosition = this.getPositionFromMouse(event);
-            this.pathData.push(mousePosition);
-            this.draw(this.drawingService.previewCtx, this.getDrawingAction());
-            this.draw(this.drawingService.baseCtx, this.getDrawingAction());
-        }
-        if (this.mouseDown && !(event.buttons === MouseButton.Left)) {
+        const size = this.options.toolOptions.get(Options.size);
+        this.boundingBox.squareSize = size ? size.value : MINIMUM_ERASER_SIZE;
+        const currentCoord = this.getPositionFromMouse(event);
+        this.boundingBox.squareCenter = currentCoord;
+        this.drawEraserBorder();
+        if (this.mouseDown) {
+            this.pathData.push(currentCoord);
             this.draw(this.drawingService.baseCtx, this.getDrawingAction());
         }
     }
 
+    drawEraserBorder(): void {
+        const ctx = this.drawingService.previewCtx;
+        this.drawingService.clearCanvas(ctx);
+        ctx.strokeStyle = 'black';
+        const borderSize = 1;
+        ctx.lineWidth = borderSize;
+        ctx.strokeRect(this.boundingBox.position.x, this.boundingBox.position.y, this.boundingBox.width, this.boundingBox.height);
+    }
+
     draw(ctx: CanvasRenderingContext2D, drawingAction: DrawingAction): void {
-        if (drawingAction.path && drawingAction.options.size) {
-            ctx.globalCompositeOperation = 'destination-out';
-            ctx.beginPath();
-            ctx.lineCap = 'round';
-            ctx.lineWidth = drawingAction.options.size;
+        const box = drawingAction.box as BoundingBox;
+        if (drawingAction.path && box) {
+            ctx.fillStyle = 'white';
             for (const point of drawingAction.path) {
-                ctx.lineTo(point.x, point.y);
+                box.squareCenter = point;
+                ctx.fillRect(box.position.x, box.position.y, box.width, box.height);
             }
-            ctx.stroke();
-            ctx.globalCompositeOperation = 'source-over';
         }
     }
 
     getDrawingAction(): DrawingAction {
         const options = {
             primaryColor: this.primaryColor,
-            size: this.options.size,
+            toolOptions: this.copyToolOptionMap(this.options.toolOptions),
         };
         return {
             id: drawingToolId.eraserService,
             path: this.pathData,
+            box: this.boundingBox.copy(),
             options,
         };
     }

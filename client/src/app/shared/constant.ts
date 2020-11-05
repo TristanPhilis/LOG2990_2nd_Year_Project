@@ -26,3 +26,11 @@ export const DEFAULT_OPTIONS = {
     traceType: TraceTypes.fill,
     tolerance: MIN_TOLERANCE,
 };
+
+export const TEXTURES = [
+    '/assets/textureOne.jpg',
+    '/assets/textureTwo.jpg',
+    '/assets/textureThree.jpg',
+    '/assets/textureFour.jpg',
+    '/assets/textureFive.jpg',
+];

@@ -1,11 +1,12 @@
 import { Injectable } from '@angular/core';
 import { DrawingAction } from '@app/classes/drawing-action';
 import { Tool } from '@app/classes/tool';
+import { ToolOption } from '@app/classes/tool-option';
 import { Vec2 } from '@app/classes/vec2';
 import { ColorSelectionService } from '@app/services/color/color-selection-service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
-import { DEFAULT_OPTIONS } from '@app/shared/constant';
-import { drawingToolId, MouseButton } from '@app/shared/enum';
+import { DEFAULT_OPTIONS, TEXTURES } from '@app/shared/constant';
+import { drawingToolId, MouseButton, Options } from '@app/shared/enum';
 import { UndoRedoService } from './undoredo-service';
 
 @Injectable({
@@ -13,18 +14,23 @@ import { UndoRedoService } from './undoredo-service';
 })
 export class BrushService extends Tool {
     private pathData: Vec2[];
+    private availableTextures: string[];
 
     constructor(drawingService: DrawingService, undoRedoService: UndoRedoService, colorService: ColorSelectionService) {
         super(drawingService, undoRedoService, colorService);
         this.clearPath();
         this.setDefaultOptions();
+        this.availableTextures = TEXTURES;
     }
 
     setDefaultOptions(): void {
+        const toolOptions = new Map<Options, ToolOption>([
+            [Options.size, { value: DEFAULT_OPTIONS.size, displayName: 'Largeur' }],
+            [Options.texture, { value: DEFAULT_OPTIONS.texture, displayName: 'Texture' }],
+        ]);
         this.options = {
             primaryColor: this.primaryColor,
-            texture: DEFAULT_OPTIONS.texture,
-            size: DEFAULT_OPTIONS.size,
+            toolOptions,
         };
     }
 
@@ -62,13 +68,15 @@ export class BrushService extends Tool {
     }
 
     draw(ctx: CanvasRenderingContext2D, drawingAction: DrawingAction): void {
-        if (drawingAction.path && drawingAction.options.size && drawingAction.options.texture) {
+        const size = drawingAction.options.toolOptions.get(Options.size);
+        const texture = drawingAction.options.toolOptions.get(Options.texture);
+        if (drawingAction.path && size && texture) {
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
             ctx.beginPath();
             ctx.lineCap = 'round';
-            ctx.lineWidth = drawingAction.options.size;
+            ctx.lineWidth = size.value;
             const image = new Image(1, 1);
-            image.src = drawingAction.options.texture;
+            image.src = this.availableTextures[texture.value];
             const pattern = ctx.createPattern(image, 'repeat');
             if (pattern !== null) ctx.strokeStyle = pattern;
             for (const point of drawingAction.path) {
@@ -76,7 +84,7 @@ export class BrushService extends Tool {
             }
             ctx.stroke();
             ctx.globalCompositeOperation = 'color';
-            ctx.strokeStyle = this.options.primaryColor.getRgbString();
+            ctx.strokeStyle = drawingAction.options.primaryColor.getRgbString();
             ctx.stroke();
             ctx.globalCompositeOperation = 'source-over';
         }
@@ -85,9 +93,9 @@ export class BrushService extends Tool {
     getDrawingAction(): DrawingAction {
         const options = {
             primaryColor: this.primaryColor,
-            size: this.options.size,
-            texture: this.options.texture,
+            toolOptions: this.copyToolOptionMap(this.options.toolOptions),
         };
+
         return {
             id: drawingToolId.brushService,
             path: this.pathData,

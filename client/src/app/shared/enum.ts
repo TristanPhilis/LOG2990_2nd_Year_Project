@@ -40,22 +40,17 @@ export enum MouseButton {
 }
 
 export enum Texture {
-    one = '/assets/textureOne.jpg',
-    two = '/assets/textureTwo.jpg',
-    three = '/assets/textureThree.jpg',
-    four = '/assets/textureFour.jpg',
-    five = '/assets/textureFive.jpg',
+    one,
+    two,
+    three,
+    four,
+    five,
 }
 
 export enum TraceTypes {
     fill,
     stroke,
     fillAndStroke,
-}
-
-export enum ColorSelection {
-    primary,
-    secondary,
 }
 
 export enum JointSelection {
@@ -66,4 +61,17 @@ export enum JointSelection {
 export enum SelectionType {
     rectangle,
     ellipse,
+}
+
+export enum Options {
+    eraserSize,
+    size,
+    traceType,
+    texture,
+    tolerance,
+    numberOfSides,
+    angle,
+    lineLength,
+    emissionPerSecond,
+    imageChoice,
 }

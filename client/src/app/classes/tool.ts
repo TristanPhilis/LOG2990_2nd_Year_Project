@@ -1,10 +1,11 @@
 import { ColorSelectionService } from '@app/services/color/color-selection-service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { UndoRedoService } from '@app/services/tools/undoredo-service';
-import { TraceTypes } from '@app/shared/enum';
+import { Options, TraceTypes } from '@app/shared/enum';
 import { Color } from './color';
 import { DrawingAction } from './drawing-action';
 import { DrawingOptions } from './drawing-options';
+import { ToolOption } from './tool-option';
 import { Vec2 } from './vec2';
 
 // This is justified since we have functions that will be managed by the child classes.
@@ -64,7 +65,13 @@ export abstract class Tool {
         }
     }
 
-    abstract getDrawingAction(): DrawingAction;
+    copyToolOptionMap(map: Map<Options, ToolOption>): Map<Options, ToolOption> {
+        const mapCopy = new Map<Options, ToolOption>();
+        for (const option of map) {
+            mapCopy.set(option[0], { value: option[1].value, displayName: option[1].displayName });
+        }
+        return mapCopy;
+    }
 
     setDefaultOptions(): void {}
 

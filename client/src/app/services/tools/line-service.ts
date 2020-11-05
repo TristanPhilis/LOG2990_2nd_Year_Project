@@ -1,11 +1,12 @@
 import { Injectable } from '@angular/core';
 import { DrawingAction } from '@app/classes/drawing-action';
 import { Tool } from '@app/classes/tool';
+import { ToolOption } from '@app/classes/tool-option';
 import { Vec2 } from '@app/classes/vec2';
 import { ColorSelectionService } from '@app/services/color/color-selection-service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { BACKSPACE_KEY, BASE_SNAP_ANGLE, DEFAULT_OPTIONS, ESCAPE_KEY, MIDDLE_SNAP_ANGLE, SHIFT_KEY } from '@app/shared/constant';
-import { drawingToolId } from '@app/shared/enum';
+import { drawingToolId, Options } from '@app/shared/enum';
 import { UndoRedoService } from './undoredo-service';
 
 @Injectable({
@@ -23,9 +24,11 @@ export class LineService extends Tool {
         this.lineStarted = false;
     }
     setDefaultOptions(): void {
+        const toolOptions = new Map<Options, ToolOption>([[Options.size, { value: DEFAULT_OPTIONS.size, displayName: 'Largeur' }]]);
+
         this.options = {
             primaryColor: this.primaryColor,
-            size: DEFAULT_OPTIONS.size,
+            toolOptions,
         };
     }
 
@@ -150,10 +153,11 @@ export class LineService extends Tool {
     }
 
     draw(ctx: CanvasRenderingContext2D, drawingAction: DrawingAction): void {
-        if (drawingAction.path && drawingAction.options.size) {
+        const size = drawingAction.options.toolOptions.get(Options.size);
+        if (drawingAction.path && size) {
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
             ctx.beginPath();
-            ctx.lineWidth = drawingAction.options.size;
+            ctx.lineWidth = size.value;
             ctx.strokeStyle = drawingAction.options.primaryColor.getRgbString();
 
             const startingPoint = drawingAction.path[0];
@@ -169,7 +173,7 @@ export class LineService extends Tool {
     getDrawingAction(): DrawingAction {
         const options = {
             primaryColor: this.primaryColor,
-            size: this.options.size,
+            toolOptions: this.copyToolOptionMap(this.options.toolOptions),
         };
         return {
             id: drawingToolId.lineService,

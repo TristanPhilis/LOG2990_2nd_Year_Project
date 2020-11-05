@@ -4,18 +4,18 @@ import { Color, MAX_RGBA_VALUE } from '@app/classes/color';
 import { isColorSimilar } from '@app/classes/color-comparison-helper';
 import { DrawingAction } from '@app/classes/drawing-action';
 import { Tool } from '@app/classes/tool';
+import { ToolOption } from '@app/classes/tool-option';
 import { Vec2 } from '@app/classes/vec2';
 import { ColorSelectionService } from '@app/services/color/color-selection-service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
-import { A_POSITION, B_POSITION, DEFAULT_OPTIONS, G_POSITION, MAX_TOLERANCE, MIN_TOLERANCE, PIXEL_INTERVAL, R_POSITION } from '@app/shared/constant';
-import { drawingToolId, MouseButton } from '@app/shared/enum';
+import { A_POSITION, B_POSITION, DEFAULT_OPTIONS, G_POSITION, MAX_TOLERANCE, PIXEL_INTERVAL, R_POSITION } from '@app/shared/constant';
+import { drawingToolId, MouseButton, Options } from '@app/shared/enum';
 import { UndoRedoService } from './undoredo-service';
 
 @Injectable({
     providedIn: 'root',
 })
 export class BucketService extends Tool {
-    tolerance: number;
     endColor: Color;
 
     pixelsData: Uint8ClampedArray;
@@ -27,7 +27,6 @@ export class BucketService extends Tool {
 
     constructor(drawingService: DrawingService, undoRedoService: UndoRedoService, colorService: ColorSelectionService) {
         super(drawingService, undoRedoService, colorService);
-        this.tolerance = MIN_TOLERANCE;
         this.pixelsData = new Uint8ClampedArray();
         this.boundingBox = new BoundingBox();
         this.visitedPixel = [];
@@ -36,9 +35,10 @@ export class BucketService extends Tool {
     }
 
     setDefaultOptions(): void {
+        const toolOptions = new Map<Options, ToolOption>([[Options.tolerance, { value: DEFAULT_OPTIONS.tolerance, displayName: 'Tolérance' }]]);
         this.options = {
             primaryColor: this.primaryColor,
-            tolerance: DEFAULT_OPTIONS.tolerance,
+            toolOptions,
         };
     }
 
@@ -51,9 +51,7 @@ export class BucketService extends Tool {
 
         if (this.tolerance === MAX_TOLERANCE) {
             this.drawingService.fillCanvas(this.primaryColor.getRgbString());
-            this.pixelsData = this.drawingService.getImageData().data;
-            this.boundingBox.setStartingCoord({ x: 0, y: 0 });
-            this.boundingBox.update({ x: this.canvasSize.x, y: this.canvasSize.y });
+            this.setParamsForMaxTolerance();
             this.undoRedoService.saveAction(this.getDrawingAction());
         } else {
             const initialCoord = this.getPositionFromMouse(event);
@@ -64,6 +62,13 @@ export class BucketService extends Tool {
                 this.beginLinearSearch();
             }
         }
+    }
+
+    private setParamsForMaxTolerance(): void {
+        this.pixelsData = this.drawingService.getImageData().data;
+        this.canvasSize = { x: this.drawingService.canvas.width, y: this.drawingService.canvas.height };
+        this.boundingBox.setStartingCoord({ x: 0, y: 0 });
+        this.boundingBox.update({ x: this.canvasSize.x, y: this.canvasSize.y });
     }
 
     private initSearchParams(initialCoord: Vec2): void {
@@ -195,12 +200,18 @@ export class BucketService extends Tool {
         const newImageData = new ImageData(this.pixelsData, this.canvasSize.x, this.canvasSize.y);
         const options = {
             primaryColor: this.primaryColor,
+            toolOptions: this.copyToolOptionMap(this.options.toolOptions),
         };
         return {
             id: drawingToolId.bucketService,
-            box: this.boundingBox,
+            box: this.boundingBox.copy(),
             imageData: newImageData,
             options,
         };
+    }
+
+    get tolerance(): number {
+        const tolerance = this.options.toolOptions.get(Options.tolerance);
+        return tolerance ? tolerance.value : DEFAULT_OPTIONS.tolerance;
     }
 }

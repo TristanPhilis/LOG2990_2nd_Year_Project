@@ -3,10 +3,11 @@ import { BoundingBox } from '@app/classes/bounding-box';
 import { DrawingAction } from '@app/classes/drawing-action';
 import { SelectionBox } from '@app/classes/selection-box';
 import { Tool } from '@app/classes/tool';
+import { ToolOption } from '@app/classes/tool-option';
 import { ColorSelectionService } from '@app/services/color/color-selection-service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { DEFAULT_OPTIONS, SHIFT_KEY } from '@app/shared/constant';
-import { drawingToolId, MouseButton } from '@app/shared/enum';
+import { drawingToolId, MouseButton, Options } from '@app/shared/enum';
 import { UndoRedoService } from './undoredo-service';
 
 @Injectable({
@@ -22,11 +23,14 @@ export class EllipseService extends Tool {
     }
 
     setDefaultOptions(): void {
+        const toolOptions = new Map<Options, ToolOption>([
+            [Options.size, { value: DEFAULT_OPTIONS.size, displayName: 'Largeur' }],
+            [Options.traceType, { value: DEFAULT_OPTIONS.traceType, displayName: 'Type' }],
+        ]);
         this.options = {
             primaryColor: this.primaryColor,
             secondaryColor: this.secondaryColor,
-            size: DEFAULT_OPTIONS.size,
-            traceType: DEFAULT_OPTIONS.traceType,
+            toolOptions,
         };
     }
 
@@ -82,16 +86,18 @@ export class EllipseService extends Tool {
 
     draw(ctx: CanvasRenderingContext2D, drawingAction: DrawingAction): void {
         const options = drawingAction.options;
-        if (drawingAction.box && options.size && options.traceType !== undefined && options.secondaryColor) {
+        const size = options.toolOptions.get(Options.size);
+        const traceType = options.toolOptions.get(Options.traceType);
+        if (drawingAction.box && size && traceType && options.secondaryColor) {
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
             ctx.beginPath();
             const xRadius = drawingAction.box.width / 2;
             const yRadius = drawingAction.box.height / 2;
             const center = drawingAction.box.center;
-            ctx.lineWidth = options.size;
+            ctx.lineWidth = size.value;
 
             ctx.ellipse(center.x, center.y, xRadius, yRadius, 0, 0, 2 * Math.PI);
-            this.fill(ctx, options.traceType, options.primaryColor, options.secondaryColor);
+            this.fill(ctx, traceType.value, options.primaryColor, options.secondaryColor);
 
             ctx.closePath();
         }
@@ -101,8 +107,7 @@ export class EllipseService extends Tool {
         const options = {
             primaryColor: this.primaryColor,
             secondaryColor: this.secondaryColor,
-            size: this.options.size,
-            traceType: this.options.traceType,
+            toolOptions: this.copyToolOptionMap(this.options.toolOptions),
         };
         const box = new BoundingBox();
         box.updateFromSelectionBox(this.selectionBox, this.shiftDown);
