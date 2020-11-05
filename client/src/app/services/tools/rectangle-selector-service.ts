@@ -17,6 +17,7 @@ import {
     ESCAPE_KEY,
     NEGATIVE_MULTIPLIER,
     SELECTION_BOX_BORDER_SIZE,
+    SELECTION_BOX_COLOUR,
     SHIFT_KEY,
 } from '@app/shared/constant';
 import { MouseButton } from '@app/shared/enum';
@@ -30,13 +31,14 @@ export class RectangleSelectorService extends Tool {
 
         this.selectedBox = new BoundingBox();
         this.selectionBox = new SelectionBox();
+        this.isAreaSelected = false;
     }
-    isAreaSelected: boolean = false;
+    isAreaSelected: boolean;
     selectedImageData: ImageData;
     selectedBox: BoundingBox;
     selectionBox: SelectionBox;
     draggingAnchorRelativePosition: Vec2;
-    map: boolean[] = [];
+    keyMap: boolean[] = [];
 
     onMouseDown(event: MouseEvent): void {
         this.mouseDown = event.buttons === MouseButton.Left;
@@ -104,7 +106,8 @@ export class RectangleSelectorService extends Tool {
         const ctx = this.drawingService.previewCtx;
         this.drawingService.clearCanvas(ctx);
         ctx.beginPath();
-        ctx.strokeStyle = '#111155';
+        const selectionBoxColour = SELECTION_BOX_COLOUR;
+        ctx.strokeStyle = selectionBoxColour;
         ctx.setLineDash([DASHLINE_EMPTY, DASHLINE_FULL]);
         ctx.rect(this.selectedBox.position.x, this.selectedBox.position.y, this.selectedBox.width, this.selectedBox.height);
         ctx.stroke();
@@ -141,7 +144,7 @@ export class RectangleSelectorService extends Tool {
         const ctx = this.drawingService.previewCtx;
         ctx.lineWidth = SELECTION_BOX_BORDER_SIZE;
         ctx.beginPath();
-        ctx.strokeStyle = '#111155';
+        ctx.strokeStyle = SELECTION_BOX_COLOUR;
         ctx.setLineDash([DASHLINE_EMPTY, DASHLINE_FULL]);
 
         if (this.shiftDown) {
@@ -187,14 +190,14 @@ export class RectangleSelectorService extends Tool {
         }
         event = event || event;
         // tslint:disable-next-line: deprecation
-        this.map[event.keyCode] = event.type === 'keydown';
+        this.keyMap[event.keyCode] = event.type === 'keydown';
     }
 
     onKeyDown(event: KeyboardEvent): void {
         event = event || event;
-        // Need to use keyCode to travel through the map
+        // Need to use keyCode to travel through the keyMap
         // tslint:disable-next-line: deprecation
-        this.map[event.keyCode] = event.type === 'keydown';
+        this.keyMap[event.keyCode] = event.type === 'keydown';
 
         if (event.key === SHIFT_KEY) {
             this.shiftDown = true;
@@ -202,23 +205,23 @@ export class RectangleSelectorService extends Tool {
                 this.drawSelectionBox();
             }
         } else if (this.isAreaSelected) {
-            if (this.map[ARROW_DOWN]) {
+            if (this.keyMap[ARROW_DOWN]) {
                 this.selectedBox.translateY(DEPLACEMENT);
                 this.updateSelectedAreaPreview();
             }
-            if (this.map[ARROW_UP]) {
+            if (this.keyMap[ARROW_UP]) {
                 this.selectedBox.translateY(DEPLACEMENT * NEGATIVE_MULTIPLIER);
                 this.updateSelectedAreaPreview();
             }
-            if (this.map[ARROW_LEFT]) {
+            if (this.keyMap[ARROW_LEFT]) {
                 this.selectedBox.translateX(DEPLACEMENT * NEGATIVE_MULTIPLIER);
                 this.updateSelectedAreaPreview();
             }
-            if (this.map[ARROW_RIGHT]) {
+            if (this.keyMap[ARROW_RIGHT]) {
                 this.selectedBox.translateX(DEPLACEMENT);
                 this.updateSelectedAreaPreview();
             }
-            if (this.map[CONTROL] && this.map[A_KEY]) {
+            if (this.keyMap[CONTROL] && this.keyMap[A_KEY]) {
                 this.selectAllCanvas();
             }
         }

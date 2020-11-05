@@ -15,6 +15,7 @@ import {
     ESCAPE_KEY,
     NEGATIVE_MULTIPLIER,
     SELECTION_BOX_BORDER_SIZE,
+    SELECTION_BOX_COLOUR
     SHIFT_KEY,
 } from '@app/shared/constant';
 import { MouseButton } from '@app/shared/enum';
@@ -28,19 +29,21 @@ export class EllipseSelectorService extends Tool {
 
         this.selectedBox = new BoundingBox();
         this.selectionBox = new SelectionBox();
+        this.isAreaSelected = false;
+        this.wasItCircle = false;
     }
-    isAreaSelected: boolean = false;
+    isAreaSelected: boolean;
     selectedImageData: ImageData;
     shiftDown: boolean;
     selectedBox: BoundingBox;
     selectionBox: SelectionBox;
     draggingAnchorRelativePosition: Vec2;
-    map: boolean[] = [];
+    keyMap: boolean[] = [];
     savedXMiddle: number;
     savedYMiddle: number;
     savedXRadius: number;
     savedYRadius: number;
-    wasItCircle: boolean = false;
+    wasItCircle: boolean;
 
     onMouseDown(event: MouseEvent): void {
         this.mouseDown = event.buttons === MouseButton.Left;
@@ -108,7 +111,8 @@ export class EllipseSelectorService extends Tool {
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
         const ctx = this.drawingService.previewCtx;
         ctx.beginPath();
-        ctx.strokeStyle = '#111155';
+        const selectionBoxColour = SELECTION_BOX_COLOUR;
+        ctx.strokeStyle = selectionBoxColour;
         ctx.setLineDash([DASHLINE_EMPTY, DASHLINE_FULL]);
         ctx.rect(this.selectedBox.position.x, this.selectedBox.position.y, this.selectedBox.width, this.selectedBox.height);
         ctx.stroke();
@@ -147,7 +151,8 @@ export class EllipseSelectorService extends Tool {
         this.savedYRadius = this.selectionBox.height / 2;
         ctx.beginPath();
         ctx.lineWidth = SELECTION_BOX_BORDER_SIZE;
-        ctx.strokeStyle = '#111155';
+        const selectionBoxColour = SELECTION_BOX_COLOUR;
+        ctx.strokeStyle = selectionBoxColour;
         ctx.setLineDash([DASHLINE_EMPTY, DASHLINE_FULL]);
 
         if (this.shiftDown) {
@@ -234,14 +239,14 @@ export class EllipseSelectorService extends Tool {
         }
         event = event || event;
         // tslint:disable-next-line: deprecation
-        this.map[event.keyCode] = event.type === 'keydown';
+        this.keyMap[event.keyCode] = event.type === 'keydown';
     }
 
     onKeyDown(event: KeyboardEvent): void {
         event = event || event;
-        // Need to use keyCode to travel in the map
+        // Need to use keyCode to travel in the keyMap
         // tslint:disable-next-line: deprecation
-        this.map[event.keyCode] = event.type === 'keydown';
+        this.keyMap[event.keyCode] = event.type === 'keydown';
 
         if (event.key === SHIFT_KEY) {
             this.shiftDown = true;
@@ -249,19 +254,19 @@ export class EllipseSelectorService extends Tool {
                 this.drawSelectionBox();
             }
         } else if (this.isAreaSelected) {
-            if (this.map[ARROW_DOWN]) {
+            if (this.keyMap[ARROW_DOWN]) {
                 this.selectedBox.translateY(DEPLACEMENT);
                 this.updateSelectedAreaPreview();
             }
-            if (this.map[ARROW_UP]) {
+            if (this.keyMap[ARROW_UP]) {
                 this.selectedBox.translateY(DEPLACEMENT * NEGATIVE_MULTIPLIER);
                 this.updateSelectedAreaPreview();
             }
-            if (this.map[ARROW_LEFT]) {
+            if (this.keyMap[ARROW_LEFT]) {
                 this.selectedBox.translateX(DEPLACEMENT * NEGATIVE_MULTIPLIER);
                 this.updateSelectedAreaPreview();
             }
-            if (this.map[ARROW_RIGHT]) {
+            if (this.keyMap[ARROW_RIGHT]) {
                 this.selectedBox.translateX(DEPLACEMENT);
                 this.updateSelectedAreaPreview();
             }
