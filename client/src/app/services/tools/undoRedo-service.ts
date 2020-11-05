@@ -34,9 +34,6 @@ export class UndoRedoService {
         if (lastIn !== undefined) {
             this.redoPile.push(lastIn);
 
-            if (this.redoPile.length < 0 || this.undoPile.length < 0) {
-                return;
-            }
             this.drawingService.fillCanvas('white');
             for (const action of this.undoPile) {
                 this.toolsService.getTool(action.id).draw(this.drawingService.baseCtx, action);
@@ -48,9 +45,6 @@ export class UndoRedoService {
         const lastIn = this.redoPile.pop();
         if (lastIn !== undefined) {
             this.undoPile.push(lastIn);
-            if (this.redoPile.length < 0 || this.undoPile.length < 0) {
-                return;
-            }
             this.toolsService.getTool(lastIn.id).draw(this.drawingService.baseCtx, lastIn);
         }
     }
