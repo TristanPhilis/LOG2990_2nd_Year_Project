@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { ToolOption } from '@app/classes/tool-option';
 import { BrushService } from '@app/services/tools/brush.service';
+import { RectangleSelectorService } from '@app/services/tools/rectangle-selector-service';
 import { ToolsService } from '@app/services/tools/tools-service';
 import { drawingToolId, sidebarToolID, Texture, TraceTypes } from '@app/shared/enum';
 // tslint:disable:no-any
@@ -12,12 +13,17 @@ import { drawingToolId, sidebarToolID, Texture, TraceTypes } from '@app/shared/e
 })
 export class AttributePanelComponent {
     showTools: boolean;
+    selectionTools: ToolOption[];
     tracingTools: ToolOption[];
     shapesTools: ToolOption[];
     tracingTypes: ToolOption[];
     textures: ToolOption[];
 
-    constructor(public toolsService: ToolsService, public brushService: BrushService) {
+    constructor(public toolsService: ToolsService, public brushService: BrushService, public rectangleSelectionService: RectangleSelectorService) {
+        this.selectionTools = [
+            { id: drawingToolId.rectangleSelectionService, name: 'Selection Rectangulaire' },
+            { id: drawingToolId.ellipseSelectionService, name: 'Selection Elliptique' },
+        ];
         this.tracingTools = [
             { id: drawingToolId.pencilService, name: 'Crayon' },
             { id: drawingToolId.brushService, name: 'Pinceau' },
@@ -37,13 +43,6 @@ export class AttributePanelComponent {
             { id: Texture.three, name: 'Texture Trois' },
             { id: Texture.four, name: 'Texture Quatre' },
             { id: Texture.five, name: 'Texture Cinq' },
-        ];
-        this.textures = [
-            { id: Texture.one, name: 'Texture One' },
-            { id: Texture.two, name: 'Texture Two' },
-            { id: Texture.three, name: 'Texture Three' },
-            { id: Texture.four, name: 'Texture Four' },
-            { id: Texture.five, name: 'Texture Five' },
         ];
     }
 

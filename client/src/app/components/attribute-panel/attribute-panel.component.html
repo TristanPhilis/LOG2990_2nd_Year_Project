@@ -1,5 +1,14 @@
 <app-sidebar-color-options></app-sidebar-color-options>
 
+<!-- Selection Tools -->
+<div *ngIf="this.toolsService._selectedSideBarToolID === sidebarToolID.selection" class="attribute-container">
+    <label for="selection">Selection</label>
+    <select (change)="handleChange($event.target.value)" id="selection">
+        <option *ngFor="let tool of selectionTools" value="{{ tool.id }}">{{ tool.name }}</option>
+    </select>
+    <button (click)="rectangleSelectionService.selectAllCanvas()">Tout Sélectionner</button>
+</div>
+
 <!-- Tracing Tools -->
 <div *ngIf="this.toolsService._selectedSideBarToolID === sidebarToolID.tracing" class="attribute-container">
     <label for="tracing">Tracing</label>

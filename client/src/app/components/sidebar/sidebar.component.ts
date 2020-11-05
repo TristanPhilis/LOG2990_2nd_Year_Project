@@ -5,11 +5,10 @@ import { CreateNewDrawingComponent } from '@app/components/create-new-drawing/cr
 import { GuideComponent } from '@app/components/guide/guide.component';
 import { ExportPopupComponent } from '@app/components/popup/export-popup/export-popup.component';
 import { SavePopupComponent } from '@app/components/popup/save-popup/save-popup.component';
+import { SidebarTool } from '@app/components/sidebar/sidebar-tool/sidebar-tool';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ToolsService } from '@app/services/tools/tools-service';
 import { drawingToolId, sidebarToolID } from '@app/shared/enum';
-import { SidebarTool } from './sidebar-tool/sidebar-tool';
-
 
 declare type callback = () => void;
 
