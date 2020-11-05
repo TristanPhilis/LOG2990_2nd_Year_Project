@@ -34,3 +34,7 @@ export const TEXTURES = [
     '/assets/textureFour.jpg',
     '/assets/textureFive.jpg',
 ];
+
+export const PREVIEW_SELECTION_SIZE = 20;
+export const PREVIEW_SCALE = 5;
+export const PREVIEW_RADIUS_SIZE = 50;

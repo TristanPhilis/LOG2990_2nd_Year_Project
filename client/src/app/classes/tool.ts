@@ -17,7 +17,11 @@ export abstract class Tool {
     dblClick: boolean = false;
     options: DrawingOptions;
 
-    constructor(protected drawingService: DrawingService, protected undoRedoService: UndoRedoService, private colorService: ColorSelectionService) {}
+    constructor(
+        protected drawingService: DrawingService,
+        protected undoRedoService: UndoRedoService,
+        protected colorService: ColorSelectionService,
+    ) {}
 
     onMouseDown(event: MouseEvent): void {}
 

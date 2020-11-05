@@ -20,7 +20,7 @@ export class DrawingComponent implements AfterViewInit, OnChanges {
     @Input()
     private canvasSize: Vec2;
 
-    constructor(private drawingService: DrawingService, private toolsService: ToolsService) {}
+    constructor(public drawingService: DrawingService, private toolsService: ToolsService) {}
 
     ngAfterViewInit(): void {
         this.baseCtx = this.baseCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;

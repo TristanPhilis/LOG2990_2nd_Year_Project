@@ -7,11 +7,12 @@ import { EllipseService } from '@app/services/tools/ellipse-service';
 import { EraserService } from '@app/services/tools/eraser-service';
 import { LineService } from '@app/services/tools/line-service';
 import { PencilService } from '@app/services/tools/pencil-service';
+import { PipetteService } from '@app/services/tools/pipette-service';
 import { PolygonService } from '@app/services/tools/polygon-service';
+import { RectangleSelectorService } from '@app/services/tools/rectangle-selector-service';
 import { RectangleService } from '@app/services/tools/rectangle-service';
 import { drawingToolId, Options, sidebarToolID } from '@app/shared/enum';
 import { BehaviorSubject } from 'rxjs';
-import { RectangleSelectorService } from './rectangle-selector-service';
 
 @Injectable({
     providedIn: 'root',
@@ -34,6 +35,7 @@ export class ToolsService {
         rectangleSelectionService: RectangleSelectorService,
         polygonService: PolygonService,
         bucketService: BucketService,
+        pipetteService: PipetteService,
     ) {
         this.currentDrawingTool = pencilService;
         this.tools = [
@@ -46,6 +48,7 @@ export class ToolsService {
             rectangleSelectionService,
             polygonService,
             bucketService,
+            pipetteService,
         ];
     }
 

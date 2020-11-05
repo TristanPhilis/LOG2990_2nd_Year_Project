@@ -19,6 +19,7 @@ import { DrawingComponent } from './components/drawing/drawing.component';
 import { EditorComponent } from './components/editor/editor.component';
 import { GuideComponent } from './components/guide/guide.component';
 import { MainPageComponent } from './components/main-page/main-page.component';
+import { PipettePreviewComponent } from './components/pipette-preview/pipette-preview.component';
 import { ExportPopupComponent } from './components/popup/export-popup/export-popup.component';
 import { SavePopupComponent } from './components/popup/save-popup/save-popup.component';
 import { ColorPaletteComponent } from './components/sidebar/color-picker/color-palette/color-palette.component';
@@ -43,6 +44,7 @@ import { SidebarComponent } from './components/sidebar/sidebar.component';
         CreateNewDrawingComponent,
         SavePopupComponent,
         ExportPopupComponent,
+        PipettePreviewComponent,
     ],
     imports: [
         BrowserModule,

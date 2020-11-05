@@ -16,7 +16,12 @@
     </select>
 </div>
 
-<div class="attribute-container">
+<!-- Pipette Tool -->
+<div *ngIf="this.toolsService._selectedSideBarToolID === sidebarToolID.pipette && drawingService.mouseIsOverCanvas" class="attribute-container">
+    <app-pipette-preview></app-pipette-preview>
+</div>
+
+<div *ngIf="this.toolOptions" class="attribute-container">
     <ng-container *ngFor="let option of this.toolOptions | keyvalue">
         <!-- Trace type list -->
         <ng-container *ngIf="option.key === Options.traceType">
@@ -36,32 +41,56 @@
         <ng-container *ngIf="option.key === Options.size">
             <label for="tracingThickness">{{ option.value.displayName }}</label>
             <div class="slide-container">
-                <input type="range" min="1" max="100" value="1" id="tracingThickness" 
-                (input)="this.updateToolOptionValue(option.key, $event.target.value)"/>
+                <input
+                    type="range"
+                    min="1"
+                    max="100"
+                    value="1"
+                    id="tracingThickness"
+                    (input)="this.updateToolOptionValue(option.key, $event.target.value)"
+                />
             </div>
         </ng-container>
         <!-- Eraser size -->
         <ng-container *ngIf="option.key === Options.eraserSize">
             <label for="eraserSize">{{ option.value.displayName }}</label>
             <div class="slide-container">
-                <input type="range" min="5" max="100" value="1" id="eraserSize" 
-                (input)="this.updateToolOptionValue(option.key, $event.target.value)"/>
+                <input
+                    type="range"
+                    min="5"
+                    max="100"
+                    value="1"
+                    id="eraserSize"
+                    (input)="this.updateToolOptionValue(option.key, $event.target.value)"
+                />
             </div>
         </ng-container>
         <!-- Bucket tolerance -->
         <ng-container *ngIf="option.key === Options.tolerance">
             <label for="tolerance">{{ option.value.displayName }}</label>
             <div class="slide-container">
-                <input type="range" min="0" max="100" value="1" id="tolerance" 
-                (input)="this.updateToolOptionValue(option.key, $event.target.value)"/>
+                <input
+                    type="range"
+                    min="0"
+                    max="100"
+                    value="1"
+                    id="tolerance"
+                    (input)="this.updateToolOptionValue(option.key, $event.target.value)"
+                />
             </div>
         </ng-container>
         <!-- Polygon number of sides -->
         <ng-container *ngIf="option.key === Options.numberOfSides">
             <label for="numberOfSides">{{ option.value.displayName }}</label>
             <div class="slide-container">
-                <input type="range" min="3" max="12" value="1" id="numberOfSides" 
-                (input)="this.updateToolOptionValue(option.key, $event.target.value)"/>
+                <input
+                    type="range"
+                    min="3"
+                    max="12"
+                    value="1"
+                    id="numberOfSides"
+                    (input)="this.updateToolOptionValue(option.key, $event.target.value)"
+                />
             </div>
         </ng-container>
     </ng-container>
