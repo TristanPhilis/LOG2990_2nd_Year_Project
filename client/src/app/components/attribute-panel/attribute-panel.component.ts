@@ -55,10 +55,6 @@ export class AttributePanelComponent {
         return sidebarToolID;
     }
 
-    get drawingToolId(): typeof drawingToolId {
-        return drawingToolId;
-    }
-
     get Options(): typeof Options {
         return Options;
     }
