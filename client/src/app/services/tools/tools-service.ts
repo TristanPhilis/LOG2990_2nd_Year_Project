@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Tool } from '@app/classes/tool';
+import { ToolOption } from '@app/classes/tool-option';
 import { BrushService } from '@app/services/tools/brush.service';
 import { BucketService } from '@app/services/tools/bucket-service';
 import { EllipseService } from '@app/services/tools/ellipse-service';
@@ -10,7 +11,7 @@ import { PipetteService } from '@app/services/tools/pipette-service';
 import { PolygonService } from '@app/services/tools/polygon-service';
 import { RectangleSelectorService } from '@app/services/tools/rectangle-selector-service';
 import { RectangleService } from '@app/services/tools/rectangle-service';
-import { drawingToolId, sidebarToolID, TraceTypes } from '@app/shared/enum';
+import { drawingToolId, Options, sidebarToolID } from '@app/shared/enum';
 import { BehaviorSubject } from 'rxjs';
 
 @Injectable({
@@ -51,6 +52,10 @@ export class ToolsService {
         ];
     }
 
+    getTool(id: drawingToolId): Tool {
+        return this.tools[id];
+    }
+
     set _currentDrawingTool(newToolID: drawingToolId) {
         this.currentDrawingTool = this.tools[newToolID];
         this.currentDrawingToolID = newToolID;
@@ -84,11 +89,14 @@ export class ToolsService {
         this.toolSidenavToggle.next(false);
     }
 
-    changeToolSize(size: number): void {
-        this.currentDrawingTool.size = size;
+    updateOptionValue(key: Options, option: ToolOption): void {
+        this.currentDrawingTool.options.toolOptions.set(key, option);
     }
 
-    changeTraceType(traceType: TraceTypes): void {
-        this.currentDrawingTool.traceType = Number(traceType);
+    get currentDrawingToolOptions(): Map<Options, ToolOption> | undefined {
+        if (this.currentDrawingTool.options) {
+            return this.currentDrawingTool.options.toolOptions;
+        }
+        return undefined;
     }
 }

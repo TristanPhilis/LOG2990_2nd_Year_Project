@@ -1,46 +1,69 @@
 import { Injectable } from '@angular/core';
+import { BoundingBox } from '@app/classes/bounding-box';
+import { DrawingAction } from '@app/classes/drawing-action';
+import { SelectionBox } from '@app/classes/selection-box';
 import { Tool } from '@app/classes/tool';
-import { Vec2 } from '@app/classes/vec2';
+import { ToolOption } from '@app/classes/tool-option';
 import { ColorSelectionService } from '@app/services/color/color-selection-service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
-import { SHIFT_KEY } from '@app/shared/constant';
-import { ColorSelection, MouseButton, TraceTypes } from '@app/shared/enum';
+import { UndoRedoService } from '@app/services/tools/undo-redo-service';
+import { DEFAULT_OPTIONS, SHIFT_KEY } from '@app/shared/constant';
+import { drawingToolId, MouseButton, Options } from '@app/shared/enum';
 
 @Injectable({
     providedIn: 'root',
 })
 export class EllipseService extends Tool {
-    initialCoord: Vec2;
+    selectionBox: SelectionBox;
 
-    constructor(drawingService: DrawingService, private colorSelectionService: ColorSelectionService) {
-        super(drawingService);
-        this.size = 0;
-        this.traceType = TraceTypes.fill;
+    constructor(drawingService: DrawingService, undoRedoService: UndoRedoService, colorService: ColorSelectionService) {
+        super(drawingService, undoRedoService, colorService);
+        this.setDefaultOptions();
+        this.selectionBox = new SelectionBox();
+    }
+
+    setDefaultOptions(): void {
+        const toolOptions = new Map<Options, ToolOption>([
+            [Options.size, { value: DEFAULT_OPTIONS.size, displayName: 'Largeur' }],
+            [Options.traceType, { value: DEFAULT_OPTIONS.traceType, displayName: 'Type' }],
+        ]);
+        this.options = {
+            primaryColor: this.primaryColor,
+            secondaryColor: this.secondaryColor,
+            toolOptions,
+        };
     }
 
     onMouseDown(event: MouseEvent): void {
         this.mouseDown = event.buttons === MouseButton.Left;
         if (this.mouseDown) {
             const currentPosition = this.getPositionFromMouse(event);
-            this.initialCoord = currentPosition;
-            this.mouseDownCoord = currentPosition;
+            this.selectionBox.setAnchor(currentPosition);
         }
     }
 
     onMouseMove(event: MouseEvent): void {
         if (this.mouseDown && event.buttons === MouseButton.Left) {
-            this.mouseDownCoord = this.getPositionFromMouse(event);
-            this.drawEllipse(this.drawingService.previewCtx);
+            const currentPosition = this.getPositionFromMouse(event);
+            this.selectionBox.updateOpposingCorner(currentPosition);
+            this.draw(this.drawingService.previewCtx, this.getDrawingAction());
         }
+
         if (this.mouseDown && !(event.buttons === MouseButton.Left)) {
             this.mouseDown = false;
-            this.drawEllipse(this.drawingService.baseCtx);
+            const drawingAction = this.getDrawingAction();
+            this.undoRedoService.saveAction(drawingAction);
+            this.draw(this.drawingService.baseCtx, drawingAction);
         }
     }
 
     onMouseUp(event: MouseEvent): void {
         if (this.mouseDown) {
-            this.drawEllipse(this.drawingService.baseCtx);
+            const currentPosition = this.getPositionFromMouse(event);
+            this.selectionBox.updateOpposingCorner(currentPosition);
+            const drawingAction = this.getDrawingAction();
+            this.undoRedoService.saveAction(drawingAction);
+            this.draw(this.drawingService.baseCtx, drawingAction);
         }
         this.mouseDown = false;
     }
@@ -49,7 +72,7 @@ export class EllipseService extends Tool {
         if (event.key === SHIFT_KEY) {
             this.shiftDown = false;
             if (this.mouseDown) {
-                this.drawEllipse(this.drawingService.previewCtx);
+                this.draw(this.drawingService.previewCtx, this.getDrawingAction());
             }
         }
     }
@@ -58,58 +81,42 @@ export class EllipseService extends Tool {
         if (event.key === SHIFT_KEY) {
             this.shiftDown = true;
             if (this.mouseDown) {
-                this.drawEllipse(this.drawingService.previewCtx);
+                this.draw(this.drawingService.previewCtx, this.getDrawingAction());
             }
         }
     }
 
-    colorSelector(): string {
-        if (this.colorSelection === ColorSelection.primary) {
-            return this.colorSelectionService.primaryColor.getRgbString();
-        } else {
-            return this.colorSelectionService.secondaryColor.getRgbString();
+    draw(ctx: CanvasRenderingContext2D, drawingAction: DrawingAction): void {
+        const options = drawingAction.options;
+        const size = options.toolOptions.get(Options.size);
+        const traceType = options.toolOptions.get(Options.traceType);
+        if (drawingAction.box && size && traceType && options.secondaryColor) {
+            this.drawingService.clearCanvas(this.drawingService.previewCtx);
+            ctx.beginPath();
+            const xRadius = drawingAction.box.width / 2;
+            const yRadius = drawingAction.box.height / 2;
+            const center = drawingAction.box.center;
+            ctx.lineWidth = size.value;
+
+            ctx.ellipse(center.x, center.y, xRadius, yRadius, 0, 0, 2 * Math.PI);
+            this.fill(ctx, traceType.value, options.primaryColor, options.secondaryColor);
+
+            ctx.closePath();
         }
     }
 
-    private drawEllipse(ctx: CanvasRenderingContext2D): void {
-        this.drawingService.clearCanvas(this.drawingService.previewCtx);
-        ctx.beginPath();
-        const xRadius = (this.mouseDownCoord.x - this.initialCoord.x) / 2;
-        const yRadius = (this.mouseDownCoord.y - this.initialCoord.y) / 2;
-        if (this.size) {
-            ctx.lineWidth = this.size;
-        }
-
-        if (this.shiftDown) {
-            const smallestRadius = Math.min(Math.abs(xRadius), Math.abs(yRadius));
-            const xMiddle = this.initialCoord.x + smallestRadius * Math.sign(xRadius);
-            const yMiddle = this.initialCoord.y + smallestRadius * Math.sign(yRadius);
-            ctx.arc(xMiddle, yMiddle, smallestRadius, 0, 2 * Math.PI);
-        } else {
-            const xMiddle = this.initialCoord.x + xRadius;
-            const yMiddle = this.initialCoord.y + yRadius;
-            ctx.ellipse(xMiddle, yMiddle, Math.abs(xRadius), Math.abs(yRadius), 0, 0, 2 * Math.PI);
-        }
-
-        switch (this.traceType) {
-            case TraceTypes.fill:
-                ctx.fillStyle = this.colorSelector();
-                ctx.fill();
-                break;
-            case TraceTypes.stroke:
-                ctx.strokeStyle = this.colorSelector();
-                ctx.stroke();
-                break;
-            case TraceTypes.fillAndStroke:
-                ctx.fillStyle = this.colorSelectionService.primaryColor.getRgbString();
-                ctx.strokeStyle = this.colorSelectionService.secondaryColor.getRgbString();
-                ctx.fill();
-                ctx.stroke();
-                break;
-            default:
-                ctx.fillStyle = this.colorSelector();
-                ctx.fill();
-                break;
-        }
+    getDrawingAction(): DrawingAction {
+        const options = {
+            primaryColor: this.primaryColor,
+            secondaryColor: this.secondaryColor,
+            toolOptions: this.copyToolOptionMap(this.options.toolOptions),
+        };
+        const box = new BoundingBox();
+        box.updateFromSelectionBox(this.selectionBox, this.shiftDown);
+        return {
+            id: drawingToolId.ellipseService,
+            box,
+            options,
+        };
     }
 }

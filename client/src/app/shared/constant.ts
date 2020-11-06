@@ -1,3 +1,4 @@
+import { Texture, TraceTypes } from './enum';
 export const MIN_CANVAS_SIZE = 250;
 export const SHIFT_KEY = 'Shift';
 export const BACKSPACE_KEY = 'Backspace';
@@ -19,10 +20,20 @@ export const MAX_TOLERANCE = 100;
 export const MIN_TOLERANCE = 0;
 export const PIXEL_INTERVAL = 4;
 
-export const RED = 0;
-export const GREEN = 1;
-export const BLUE = 2;
-export const ALPHA = 3;
+export const DEFAULT_OPTIONS = {
+    size: 1,
+    texture: Texture.one,
+    traceType: TraceTypes.fill,
+    tolerance: MIN_TOLERANCE,
+};
+
+export const TEXTURES = [
+    '/assets/textureOne.jpg',
+    '/assets/textureTwo.jpg',
+    '/assets/textureThree.jpg',
+    '/assets/textureFour.jpg',
+    '/assets/textureFive.jpg',
+];
 
 export const PREVIEW_SELECTION_SIZE = 20;
 export const PREVIEW_SCALE = 5;

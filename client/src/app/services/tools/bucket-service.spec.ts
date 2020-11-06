@@ -2,21 +2,32 @@ import { TestBed } from '@angular/core/testing';
 import { BoundingBox } from '@app/classes/bounding-box';
 import { canvasTestHelper } from '@app/classes/canvas-test-helper';
 import { Color, MAX_RGBA_VALUE } from '@app/classes/color';
+import { ToolOption } from '@app/classes/tool-option';
 import { Vec2 } from '@app/classes/vec2';
+import { ColorSelectionService } from '@app/services/color/color-selection-service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { MAX_TOLERANCE, MIN_TOLERANCE, PIXEL_INTERVAL } from '@app/shared/constant';
+import { Options } from '@app/shared/enum';
 import { BucketService } from './bucket-service';
+import { UndoRedoService } from './undo-redo-service';
 
 // tslint:disable:no-any
 describe('BucketServiceService', () => {
     let service: BucketService;
+    let drawServiceSpy: jasmine.SpyObj<DrawingService>;
+    let undoRedoServiceSpy: jasmine.SpyObj<UndoRedoService>;
+    let colorServiceSpy: jasmine.SpyObj<ColorSelectionService>;
     let mouseRightClick: MouseEvent;
     let mouseLeftClick: MouseEvent;
-    let drawServiceSpy: jasmine.SpyObj<DrawingService>;
     let ctxSpy: jasmine.SpyObj<CanvasRenderingContext2D>;
 
     beforeEach(() => {
         drawServiceSpy = jasmine.createSpyObj('DrawingService', ['fillCanvas', 'getImageData', 'isCoordInCanvas']);
+        undoRedoServiceSpy = jasmine.createSpyObj('UndoRedoService', ['saveAction']);
+        const defaultColor = new Color(0, 0, 0);
+        colorServiceSpy = jasmine.createSpyObj('colorServiceSpy', ['']);
+        colorServiceSpy.primaryColor = defaultColor;
+        colorServiceSpy.secondaryColor = defaultColor;
         drawServiceSpy.getImageData.and.returnValue({
             data: new Uint8ClampedArray(),
             width: 0,
@@ -25,7 +36,11 @@ describe('BucketServiceService', () => {
         ctxSpy = jasmine.createSpyObj('CanvasRenderingContext2D', ['putImageData']);
         const canvasSize = 5;
         TestBed.configureTestingModule({
-            providers: [{ provide: DrawingService, useValue: drawServiceSpy }],
+            providers: [
+                { provide: DrawingService, useValue: drawServiceSpy },
+                { provide: UndoRedoService, useValue: undoRedoServiceSpy },
+                { provide: ColorSelectionService, useValue: colorServiceSpy },
+            ],
         });
         service = TestBed.inject(BucketService);
         service.canvasSize = { x: canvasSize, y: canvasSize };
@@ -70,9 +85,12 @@ describe('BucketServiceService', () => {
     });
 
     it('onMouseDown with max tolerence should directly fill canvas', () => {
-        service.tolerance = MAX_TOLERANCE;
+        const getActionSpy = spyOn<any>(service, 'getDrawingAction');
+        service.options.toolOptions.set(Options.tolerance, { value: MAX_TOLERANCE, displayName: '' });
         service.onMouseDown(mouseRightClick);
         expect(drawServiceSpy.fillCanvas).toHaveBeenCalled();
+        expect(undoRedoServiceSpy.saveAction).toHaveBeenCalled();
+        expect(getActionSpy).toHaveBeenCalled();
     });
 
     it('onMouseDown with right click should do linearSearch', () => {
@@ -87,18 +105,18 @@ describe('BucketServiceService', () => {
         expect(bfsSpy).toHaveBeenCalled();
     });
 
-    it('linearSearch should visit all pixels and update canvas', () => {
+    it('linearSearch should visit all pixels and draw on canvas', () => {
         const color = new Color(0, 0, 0);
         service.endColor = color;
         service.initialColor = color;
         const getColorSpy = spyOn<any>(service, 'getColorFromIndex');
         getColorSpy.and.callThrough();
-        const updateSpy = spyOn<any>(service, 'updateCanvas');
+        const drawSpy = spyOn<any>(service, 'draw');
         const canvasSize = 5;
         const pixelsNumber = canvasSize * canvasSize;
         (service as any).beginLinearSearch();
         expect(getColorSpy).toHaveBeenCalledTimes(pixelsNumber);
-        expect(updateSpy).toHaveBeenCalled();
+        expect(drawSpy).toHaveBeenCalled();
     });
 
     it('linearSearch should not fill pixel if color does not match', () => {
@@ -117,7 +135,7 @@ describe('BucketServiceService', () => {
         service.endColor = color;
         service.initialColor = color;
         // tslint:disable:no-magic-numbers
-        // disabling magic number for easy color index acces
+        // disabling magic number for easy color index acces for neighboor pixels
         (service as any).fillPixel(48);
         (service as any).fillPixel(0);
         (service as any).fillPixel(24);
@@ -129,10 +147,10 @@ describe('BucketServiceService', () => {
         expect(fillSpy).toHaveBeenCalledTimes(expectedCalls);
     });
 
-    it('updateCanvas should update the baseCtx', () => {
+    it('draw should update the baseCtx', () => {
         service.boundingBox = new BoundingBox();
         service.boundingBox.setStartingCoord({ x: 1, y: 1 });
-        (service as any).updateCanvas();
+        service.draw(ctxSpy, service.getDrawingAction());
         expect(drawServiceSpy.baseCtx.putImageData).toHaveBeenCalled();
     });
 
@@ -149,7 +167,7 @@ describe('BucketServiceService', () => {
         expect(service.pixelToVisit.length).toEqual(expectedLength);
     });
 
-    it('if adjacent coord are valid, should addAdjacentPixel should update visitedPixels and pixels to visit array', () => {
+    it('if adjacent coord are invalid, should addAdjacentPixel should not update visitedPixels and pixels to visit array', () => {
         const shouldAddCoordSpy = spyOn<any>(service, 'shouldAddCoord');
         shouldAddCoordSpy.and.returnValue(false);
         const getIndexFromCoordSpy = spyOn<any>(service, 'getIndexFromCoord');
@@ -180,10 +198,8 @@ describe('BucketServiceService', () => {
     it('shouldAddCoord should return fasle if coord was visited', () => {
         const wasVisitedSpy = spyOn<any>(service, 'wasCoordVisited');
         wasVisitedSpy.and.returnValue(true);
-
         const isValidCoordSpy = spyOn<any>(service, 'isValidCoord');
         isValidCoordSpy.and.returnValue(true);
-
         const isColorSimilarSpy = spyOn<any>(service, 'isColorSimilar');
         const coord = { x: 1, y: 1 };
         const result = (service as any).shouldAddCoord(coord);
@@ -194,10 +210,8 @@ describe('BucketServiceService', () => {
     it('shouldAddCoord should return isColorSimilar value if coord valid and not visited', () => {
         const wasVisitedSpy = spyOn<any>(service, 'wasCoordVisited');
         wasVisitedSpy.and.returnValue(false);
-
         const isValidCoordSpy = spyOn<any>(service, 'isValidCoord');
         isValidCoordSpy.and.returnValue(true);
-
         const isColorSimilarSpy = spyOn<any>(service, 'isColorSimilar');
         const coord = { x: 1, y: 1 };
         (service as any).shouldAddCoord(coord);
@@ -275,7 +289,7 @@ describe('BucketServiceService', () => {
     it('Almost exact color with min tolerance should return false', () => {
         service.initialColor = new Color(123, 123, 234);
         const testColor = new Color(123, 124, 234);
-        service.tolerance = MIN_TOLERANCE;
+        service.options.toolOptions.set(Options.tolerance, { value: MIN_TOLERANCE, displayName: '' });
         const result = (service as any).isColorSimilar(testColor);
         expect(result).toBeFalse();
     });
@@ -283,7 +297,7 @@ describe('BucketServiceService', () => {
     it('Almost exact color with very low tolerance should return true', () => {
         service.initialColor = new Color(123, 123, 234);
         const testColor = new Color(123, 124, 234);
-        service.tolerance = 1;
+        service.options.toolOptions.set(Options.tolerance, { value: 1, displayName: '' });
         const result = (service as any).isColorSimilar(testColor);
         expect(result).toBeTrue();
     });
@@ -291,7 +305,7 @@ describe('BucketServiceService', () => {
     it('Opposite color with max tolerance should return true', () => {
         service.initialColor = new Color(0, 0, 0);
         const testColor = new Color(255, 255, 255);
-        service.tolerance = MAX_TOLERANCE;
+        service.options.toolOptions.set(Options.tolerance, { value: MAX_TOLERANCE, displayName: '' });
         const result = (service as any).isColorSimilar(testColor);
         expect(result).toBeTrue();
     });
@@ -299,7 +313,7 @@ describe('BucketServiceService', () => {
     it('Opposite color with high tolerance should return false', () => {
         service.initialColor = new Color(0, 0, 0);
         const testColor = new Color(255, 255, 255);
-        service.tolerance = 90;
+        service.options.toolOptions.set(Options.tolerance, { value: 90, displayName: '' });
         const result = (service as any).isColorSimilar(testColor);
         expect(result).toBeFalse();
     });
@@ -308,7 +322,7 @@ describe('BucketServiceService', () => {
     it('Based on calculator, this test should return true', () => {
         service.initialColor = new Color(48, 109, 201);
         const testColor = new Color(34, 131, 201);
-        service.tolerance = 11;
+        service.options.toolOptions.set(Options.tolerance, { value: 11, displayName: '' });
         const result = (service as any).isColorSimilar(testColor);
         expect(result).toBeTrue();
     });
@@ -316,8 +330,18 @@ describe('BucketServiceService', () => {
     it('Based on calculator, this test should return false', () => {
         service.initialColor = new Color(48, 109, 201);
         const testColor = new Color(34, 131, 201);
-        service.tolerance = 10;
+        service.options.toolOptions.set(Options.tolerance, { value: 10, displayName: '' });
         const result = (service as any).isColorSimilar(testColor);
         expect(result).toBeFalse();
+    });
+
+    it('draw called with missing drawing action property does nothing', () => {
+        const options = {
+            primaryColor: service.primaryColor,
+            toolOptions: new Map<Options, ToolOption>(),
+        };
+        const action = { id: 0, options };
+        service.draw(ctxSpy, action);
+        expect(ctxSpy.putImageData).not.toHaveBeenCalled();
     });
 });

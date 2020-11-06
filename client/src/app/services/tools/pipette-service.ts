@@ -5,8 +5,9 @@ import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
 import { ColorSelectionService } from '@app/services/color/color-selection-service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
-import { ALPHA, BLUE, GREEN, PREVIEW_RADIUS_SIZE, PREVIEW_SCALE, PREVIEW_SELECTION_SIZE, RED } from '@app/shared/constant';
+import { A_POSITION, B_POSITION, G_POSITION, PREVIEW_RADIUS_SIZE, PREVIEW_SCALE, PREVIEW_SELECTION_SIZE, R_POSITION } from '@app/shared/constant';
 import { MouseButton } from '@app/shared/enum';
+import { UndoRedoService } from './undo-redo-service';
 @Injectable({
     providedIn: 'root',
 })
@@ -14,8 +15,8 @@ export class PipetteService extends Tool {
     private previewSquare: BoundingBox = new BoundingBox();
     pipettePreviewCtx: CanvasRenderingContext2D;
 
-    constructor(drawingService: DrawingService, private colorSelectionService: ColorSelectionService) {
-        super(drawingService);
+    constructor(drawingService: DrawingService, undoRedoService: UndoRedoService, colorService: ColorSelectionService) {
+        super(drawingService, undoRedoService, colorService);
         this.previewSquare.squareSize = PREVIEW_SELECTION_SIZE;
     }
 
@@ -27,13 +28,13 @@ export class PipetteService extends Tool {
         }
 
         const mousePosition = this.getPositionFromMouse(event);
-        this.colorSelectionService.selectNewColor(this.detectColor(mousePosition), isLeftClick);
+        this.colorService.selectNewColor(this.detectColor(mousePosition), isLeftClick);
     }
 
     private detectColor(coord: Vec2): Color {
         const imageData = this.drawingService.baseCtx.getImageData(coord.x, coord.y, 1, 1).data;
 
-        return new Color(imageData[RED], imageData[GREEN], imageData[BLUE], imageData[ALPHA] / MAX_ALPHA);
+        return new Color(imageData[R_POSITION], imageData[G_POSITION], imageData[B_POSITION], imageData[A_POSITION] / MAX_ALPHA);
     }
 
     onMouseMove(event: MouseEvent): void {
