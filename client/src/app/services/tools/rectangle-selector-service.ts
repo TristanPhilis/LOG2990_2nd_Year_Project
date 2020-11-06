@@ -92,96 +92,6 @@ export class RectangleSelectorService extends Tool {
         }
     }
 
-    private initializeSelectionBox(coord: Vec2): void {
-        this.selectionBox.setAnchor(coord);
-        this.selectionBox.updateOpposingCorner(coord);
-    }
-
-    private initializeSelectedBox(): void {
-        this.selectedBox.updateFromSelectionBox(this.selectionBox, this.shiftDown);
-        this.isAreaSelected = this.selectedBox.width > 0 && this.selectedBox.height > 0;
-        if (this.isAreaSelected) {
-            this.copyArea(this.drawingService.baseCtx);
-            this.updateSelectedAreaPreview();
-        }
-    }
-
-    private drawSelectedBox(): void {
-        const ctx = this.drawingService.previewCtx;
-        this.drawingService.clearCanvas(ctx);
-        ctx.beginPath();
-        const selectionBoxColour = SELECTION_BOX_COLOUR;
-        ctx.strokeStyle = selectionBoxColour;
-        ctx.setLineDash([DASHLINE_EMPTY, DASHLINE_FULL]);
-        ctx.rect(this.selectedBox.position.x, this.selectedBox.position.y, this.selectedBox.width, this.selectedBox.height);
-        ctx.stroke();
-        ctx.setLineDash([]);
-        const buttonSize = 5;
-        ctx.beginPath();
-        ctx.arc(this.selectedBox.left, this.selectedBox.top, buttonSize, 0, 2 * Math.PI);
-        ctx.fill();
-        ctx.beginPath();
-        ctx.arc(this.selectedBox.right, this.selectedBox.top, buttonSize, 0, 2 * Math.PI);
-        ctx.fill();
-        ctx.beginPath();
-        ctx.arc(this.selectedBox.left, this.selectedBox.bottom, buttonSize, 0, 2 * Math.PI);
-        ctx.fill();
-        ctx.beginPath();
-        ctx.arc(this.selectedBox.right, this.selectedBox.bottom, buttonSize, 0, 2 * Math.PI);
-        ctx.fill();
-        ctx.beginPath();
-        ctx.arc((this.selectedBox.left + this.selectedBox.right) / 2, this.selectedBox.top, buttonSize, 0, 2 * Math.PI);
-        ctx.fill();
-        ctx.beginPath();
-        ctx.arc(this.selectedBox.right, (this.selectedBox.top + this.selectedBox.bottom) / 2, buttonSize, 0, 2 * Math.PI);
-        ctx.fill();
-        ctx.beginPath();
-        ctx.arc((this.selectedBox.left + this.selectedBox.right) / 2, this.selectedBox.bottom, buttonSize, 0, 2 * Math.PI);
-        ctx.fill();
-        ctx.beginPath();
-        ctx.arc(this.selectedBox.right, (this.selectedBox.top + this.selectedBox.bottom) / 2, buttonSize, 0, 2 * Math.PI);
-        ctx.fill();
-    }
-
-    private drawSelectionBox(): void {
-        this.drawingService.clearCanvas(this.drawingService.previewCtx);
-        const ctx = this.drawingService.previewCtx;
-        ctx.lineWidth = SELECTION_BOX_BORDER_SIZE;
-        ctx.beginPath();
-        ctx.strokeStyle = SELECTION_BOX_COLOUR;
-        ctx.setLineDash([DASHLINE_EMPTY, DASHLINE_FULL]);
-
-        if (this.shiftDown) {
-            const squareSize = this.selectionBox.squareSize;
-            ctx.rect(this.selectionBox.squarePosition.x, this.selectionBox.squarePosition.y, squareSize, squareSize);
-        } else {
-            ctx.rect(this.selectionBox.position.x, this.selectionBox.position.y, this.selectionBox.width, this.selectionBox.height);
-        }
-
-        ctx.stroke();
-        ctx.setLineDash([]);
-    }
-
-    private clearBaseCanvasSelectedArea(): void {
-        this.drawingService.fillCanvasAtLocation('white', this.selectedBox.position, this.selectedBox.width, this.selectedBox.height);
-    }
-
-    private translateSelectedBoxFromMouseMove(coord: Vec2): void {
-        const distanceFromLeft = coord.x - this.selectedBox.left;
-        const xTranslate = distanceFromLeft - this.draggingAnchorRelativePosition.x;
-        this.selectedBox.translateX(xTranslate);
-
-        const distanceFromTop = coord.y - this.selectedBox.top;
-        const yTranslate = distanceFromTop - this.draggingAnchorRelativePosition.y;
-        this.selectedBox.translateY(yTranslate);
-    }
-
-    private updateSelectedAreaPreview(): void {
-        this.drawingService.clearCanvas(this.drawingService.previewCtx);
-        this.drawSelectedBox();
-        this.drawingService.previewCtx.putImageData(this.selectedImageData, this.selectedBox.position.x, this.selectedBox.position.y);
-    }
-
     onKeyUp(event: KeyboardEvent): void {
         if (event.key === ESCAPE_KEY) {
             this.placeImage();
@@ -230,14 +140,116 @@ export class RectangleSelectorService extends Tool {
             }
         }
     }
+
+    private initializeSelectionBox(coord: Vec2): void {
+        this.selectionBox.setAnchor(coord);
+        this.selectionBox.updateOpposingCorner(coord);
+    }
+
+    private initializeSelectedBox(): void {
+        this.selectedBox.updateFromSelectionBox(this.selectionBox, this.shiftDown);
+        this.selectedBox.oldSelectedBox = this.selectedBox.copy();
+        this.isAreaSelected = this.selectedBox.width > 0 && this.selectedBox.height > 0;
+        if (this.isAreaSelected) {
+            this.copyArea(this.drawingService.baseCtx);
+            this.updateSelectedAreaPreview();
+        }
+    }
+
+    private drawSelectedBox(): void {
+        const ctx = this.drawingService.previewCtx;
+        this.drawingService.clearCanvas(ctx);
+        ctx.beginPath();
+        ctx.strokeStyle = SELECTION_BOX_COLOUR;
+        ctx.setLineDash([DASHLINE_EMPTY, DASHLINE_FULL]);
+        ctx.rect(this.selectedBox.position.x, this.selectedBox.position.y, this.selectedBox.width, this.selectedBox.height);
+        ctx.stroke();
+        ctx.setLineDash([]);
+        const buttonSize = 5;
+        ctx.beginPath();
+        ctx.arc(this.selectedBox.left, this.selectedBox.top, buttonSize, 0, 2 * Math.PI);
+        ctx.fill();
+        ctx.beginPath();
+        ctx.arc(this.selectedBox.right, this.selectedBox.top, buttonSize, 0, 2 * Math.PI);
+        ctx.fill();
+        ctx.beginPath();
+        ctx.arc(this.selectedBox.left, this.selectedBox.bottom, buttonSize, 0, 2 * Math.PI);
+        ctx.fill();
+        ctx.beginPath();
+        ctx.arc(this.selectedBox.right, this.selectedBox.bottom, buttonSize, 0, 2 * Math.PI);
+        ctx.fill();
+        ctx.beginPath();
+        ctx.arc((this.selectedBox.left + this.selectedBox.right) / 2, this.selectedBox.top, buttonSize, 0, 2 * Math.PI);
+        ctx.fill();
+        ctx.beginPath();
+        ctx.arc(this.selectedBox.right, (this.selectedBox.top + this.selectedBox.bottom) / 2, buttonSize, 0, 2 * Math.PI);
+        ctx.fill();
+        ctx.beginPath();
+        ctx.arc((this.selectedBox.left + this.selectedBox.right) / 2, this.selectedBox.bottom, buttonSize, 0, 2 * Math.PI);
+        ctx.fill();
+        ctx.beginPath();
+        ctx.arc(this.selectedBox.right, (this.selectedBox.top + this.selectedBox.bottom) / 2, buttonSize, 0, 2 * Math.PI);
+        ctx.fill();
+    }
+
+    private drawSelectionBox(): void {
+        const ctx = this.drawingService.previewCtx;
+        this.drawingService.clearCanvas(ctx);
+        ctx.lineWidth = SELECTION_BOX_BORDER_SIZE;
+        ctx.beginPath();
+        ctx.strokeStyle = SELECTION_BOX_COLOUR;
+        ctx.setLineDash([DASHLINE_EMPTY, DASHLINE_FULL]);
+
+        if (this.shiftDown) {
+            const squareSize = this.selectionBox.squareSize;
+            ctx.rect(this.selectionBox.squarePosition.x, this.selectionBox.squarePosition.y, squareSize, squareSize);
+        } else {
+            ctx.rect(this.selectionBox.position.x, this.selectionBox.position.y, this.selectionBox.width, this.selectionBox.height);
+        }
+
+        ctx.stroke();
+        ctx.setLineDash([]);
+    }
+
+    private clearBaseCanvasSelectedArea(box: BoundingBox): void {
+        this.drawingService.fillCanvasAtLocation('white', box);
+    }
+
+    private translateSelectedBoxFromMouseMove(coord: Vec2): void {
+        const distanceFromLeft = coord.x - this.selectedBox.left;
+        const xTranslate = distanceFromLeft - this.draggingAnchorRelativePosition.x;
+        this.selectedBox.translateX(xTranslate);
+
+        const distanceFromTop = coord.y - this.selectedBox.top;
+        const yTranslate = distanceFromTop - this.draggingAnchorRelativePosition.y;
+        this.selectedBox.translateY(yTranslate);
+    }
+
+    private updateSelectedAreaPreview(): void {
+        this.drawingService.clearCanvas(this.drawingService.previewCtx);
+        this.drawSelectedBox();
+        this.drawingService.previewCtx.putImageData(this.selectedImageData, this.selectedBox.position.x, this.selectedBox.position.y);
+    }
+
     placeImage(): void {
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
         if (this.isAreaSelected) {
             const ctx = this.drawingService.baseCtx;
-            ctx.putImageData(this.selectedImageData, this.selectedBox.position.x, this.selectedBox.position.y);
+            const action = this.getDrawingAction();
+            this.undoRedoService.saveAction(action);
+            this.draw(ctx, action);
         }
         this.isAreaSelected = false;
         this.selectedImageData = { data: new Uint8ClampedArray(), width: 0, height: 0 };
+    }
+
+    draw(ctx: CanvasRenderingContext2D, drawingAction: DrawingAction): void {
+        const box = drawingAction.box as BoundingBox;
+        const imageData = drawingAction.imageData;
+        if (box && imageData) {
+            this.clearBaseCanvasSelectedArea(box.oldSelectedBox);
+            ctx.putImageData(imageData, box.position.x, box.position.y);
+        }
     }
 
     private copyArea(ctx: CanvasRenderingContext2D): void {
@@ -247,7 +259,7 @@ export class RectangleSelectorService extends Tool {
             this.selectedBox.width,
             this.selectedBox.height,
         );
-        this.clearBaseCanvasSelectedArea();
+        this.clearBaseCanvasSelectedArea(this.selectedBox);
         this.updateSelectedAreaPreview();
     }
 
@@ -267,6 +279,8 @@ export class RectangleSelectorService extends Tool {
 
         return {
             id: drawingToolId.rectangleSelectionService,
+            imageData: this.selectedImageData,
+            box: this.selectedBox.copy(),
             options,
         };
     }

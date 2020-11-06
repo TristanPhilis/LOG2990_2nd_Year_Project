@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { Box } from '@app/classes/box';
 import { Vec2 } from '@app/classes/vec2';
 
 @Injectable({
@@ -28,9 +29,9 @@ export class DrawingService {
         this.baseCtx.fillRect(0, 0, this.canvas.width, this.canvas.height);
     }
 
-    fillCanvasAtLocation(color: string, location: Vec2, width: number, height: number): void {
+    fillCanvasAtLocation(color: string, box: Box): void {
         this.baseCtx.fillStyle = color;
-        this.baseCtx.fillRect(location.x, location.y, width, height);
+        this.baseCtx.fillRect(box.position.x, box.position.y, box.width, box.height);
     }
 
     clearCanvas(context: CanvasRenderingContext2D): void {
