@@ -26,7 +26,7 @@ export class SidebarComponent {
     sideBarToolsBottomMap: Map<sidebarToolID, SidebarTool> = new Map<sidebarToolID, SidebarTool>();
 
     showDrawingTools: boolean;
-    private isDialogOpen: boolean;
+    isDialogOpen: boolean;
 
     constructor(
         private toolsService: ToolsService,
