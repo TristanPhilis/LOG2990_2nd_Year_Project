@@ -1,30 +1,34 @@
 <div class="color-option-container box">
     <div class="preview-container box-elem">
-        <span>Primary</span>
-        <div class="color-preview"
-            [ngStyle]="{'background-color': primaryColor ? primaryColor.getRgbString() : 'white'}"
-            (click)="openColorPicker(true)">
-        </div>
+        <span>Primaire</span>
+        <div
+            class="color-preview"
+            [ngStyle]="{ 'background-color': primaryColor ? primaryColor.getRgbString() : 'white' }"
+            (click)="openColorPicker(true)"
+        ></div>
     </div>
     <div class="slide-container">
         <input type="range" min="1" max="100" value="100" (input)="onAlphaChange($event, true)" />
     </div>
     <div class="preview-container box-elem">
-        <span>Secondary</span>
-        <div class="color-preview"
-            [ngStyle]="{'background-color': secondaryColor ? secondaryColor.getRgbString() : 'white'}"
-            (click)="openColorPicker(false)">
-        </div>
+        <span>Secondaire</span>
+        <div
+            class="color-preview"
+            [ngStyle]="{ 'background-color': secondaryColor ? secondaryColor.getRgbString() : 'white' }"
+            (click)="openColorPicker(false)"
+        ></div>
     </div>
     <div class="slide-container">
         <input type="range" min="1" max="100" value="100" (input)="onAlphaChange($event, false)" />
     </div>
-    <button (click)="swap()">Swap</button>
+    <button (click)="swap()">Intervertir</button>
     <div class="color-history-wrapper box">
         <ng-container *ngFor="let color of colorHistory">
-            <div class="color-choice" (mousedown)="onHistoryColorSelected($event, color)"
-                [ngStyle]="{'background-color': color.getRgbString()}">
-            </div>
+            <div
+                class="color-choice"
+                (mousedown)="onHistoryColorSelected($event, color)"
+                [ngStyle]="{ 'background-color': color.getRgbString() }"
+            ></div>
         </ng-container>
     </div>
 </div>
