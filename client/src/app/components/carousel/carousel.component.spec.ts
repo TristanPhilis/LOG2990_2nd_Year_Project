@@ -1,6 +1,9 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import SpyObj = jasmine.SpyObj;
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatDialogModule } from '@angular/material/dialog';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterTestingModule } from '@angular/router/testing';
@@ -9,6 +12,7 @@ import { DrawingsDataService } from '@app/services/index/drawings-data.service';
 import { DrawingInfo } from '@common/communication/drawing-info';
 import { BehaviorSubject } from 'rxjs';
 import { CarouselComponent } from './carousel.component';
+import SpyObj = jasmine.SpyObj;
 
 describe('CarouselComponent', () => {
     let component: CarouselComponent;
@@ -16,29 +20,42 @@ describe('CarouselComponent', () => {
     let drawingsDataServiceSpy: SpyObj<DrawingsDataService>;
     let drawingServiceSpy: SpyObj<DrawingService>;
 
-    beforeEach(async(() => {
-        drawingsDataServiceSpy = jasmine.createSpyObj('DrawingsDataService', [
-            'getAllDrawings',
-            'updateCurrentDrawings',
-            'deleteDrawing',
-            'getDrawingPosition',
-            'goToPreviousDrawing',
-            'goToNextDrawing',
-            'addTag',
-            'deleteTag',
-        ]);
+    beforeEach(
+        waitForAsync(() => {
+            drawingsDataServiceSpy = jasmine.createSpyObj('DrawingsDataService', [
+                'getAllDrawings',
+                'updateCurrentDrawings',
+                'deleteDrawing',
+                'getDrawingPosition',
+                'goToPreviousDrawing',
+                'goToNextDrawing',
+                'addTag',
+                'deleteTag',
+            ]);
+            drawingsDataServiceSpy.tagInput = new FormControl();
 
-        drawingServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas', 'sendDrawing', 'loadDrawing']);
+            drawingServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas', 'sendDrawing', 'loadDrawing']);
 
-        TestBed.configureTestingModule({
-            imports: [RouterTestingModule, MatDialogModule, BrowserModule, BrowserAnimationsModule],
-            providers: [
-                { provide: DrawingsDataService, useValue: drawingsDataServiceSpy },
-                { provide: DrawingService, useValue: drawingServiceSpy },
-            ],
-            declarations: [CarouselComponent],
-        }).compileComponents();
-    }));
+            TestBed.configureTestingModule({
+                imports: [
+                    RouterTestingModule,
+                    MatDialogModule,
+                    BrowserModule,
+                    BrowserAnimationsModule,
+                    MatFormFieldModule,
+                    MatIconModule,
+                    MatInputModule,
+                    ReactiveFormsModule,
+                    FormsModule,
+                ],
+                providers: [
+                    { provide: DrawingsDataService, useValue: drawingsDataServiceSpy },
+                    { provide: DrawingService, useValue: drawingServiceSpy },
+                ],
+                declarations: [CarouselComponent],
+            }).compileComponents();
+        }),
+    );
 
     beforeEach(() => {
         fixture = TestBed.createComponent(CarouselComponent);

@@ -1,5 +1,9 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { IndexService } from '@app/services/index/index.service';
 import { DrawingInfo } from '@common/communication/drawing-info';
@@ -21,7 +25,7 @@ describe('SavePopupComponent', () => {
                     { provide: DrawingService, useValue: drawingServiceSpy },
                     { provide: IndexService, useValue: webRequestServiceSpy },
                 ],
-                imports: [FormsModule, ReactiveFormsModule],
+                imports: [FormsModule, ReactiveFormsModule, MatInputModule, MatFormFieldModule, MatIconModule, BrowserAnimationsModule],
             }).compileComponents();
         }),
     );

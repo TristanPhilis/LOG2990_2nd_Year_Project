@@ -1,6 +1,6 @@
 import { AfterViewChecked, Component, HostListener, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { Router } from '@angular/router';
+// import { Router } from '@angular/router';
 import { CreateNewDrawingComponent } from '@app/components/create-new-drawing/create-new-drawing.component';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { DrawingsDataService } from '@app/services/index/drawings-data.service';
@@ -14,12 +14,7 @@ export class CarouselComponent implements OnInit, AfterViewChecked {
     noDrawingFiltered: boolean;
     noDrawings: boolean;
     displayedMessage: string;
-    constructor(
-        private drawingService: DrawingService,
-        public drawingsDataService: DrawingsDataService,
-        private dialog: MatDialog,
-        private router: Router,
-    ) {
+    constructor(private drawingService: DrawingService, public drawingsDataService: DrawingsDataService, private dialog: MatDialog) {
         this.drawingsDataService.getAllDrawings();
     }
 
@@ -77,12 +72,8 @@ export class CarouselComponent implements OnInit, AfterViewChecked {
         if (result) {
             this.drawingService.clearCanvas(this.drawingService.baseCtx);
             this.drawingService.sendDrawing(drawing.metadata);
-            this.router
-                .navigate(['/editor'])
-                .then(() => {
-                    this.drawingService.loadDrawing(this.drawingService.baseCtx);
-                })
-                .catch();
+
+            this.drawingService.loadDrawing(this.drawingService.baseCtx);
         } else {
             const carouselRef = this.dialog.open(CarouselComponent);
             carouselRef.afterClosed().subscribe();

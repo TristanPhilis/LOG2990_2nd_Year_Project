@@ -1,6 +1,5 @@
 import { HttpClientModule } from '@angular/common/http';
-import { async, TestBed } from '@angular/core/testing';
-import SpyObj = jasmine.SpyObj;
+import { TestBed, waitForAsync } from '@angular/core/testing';
 import { MatDialogModule } from '@angular/material/dialog';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -9,6 +8,7 @@ import { DrawingsDataService } from '@app/services/index/drawings-data.service';
 import { IndexService } from '@app/services/index/index.service';
 import { DrawingInfo } from '@common/communication/drawing-info';
 import { of } from 'rxjs';
+import SpyObj = jasmine.SpyObj;
 
 describe('DrawingsDataService', () => {
     let service: DrawingsDataService;
@@ -19,15 +19,17 @@ describe('DrawingsDataService', () => {
         { id: 998, name: 'three', tags: ['firstTag', 'secondTag'], metadata: '' },
     ];
 
-    beforeEach(async(() => {
-        indexServiceSpy = jasmine.createSpyObj('IndexService', ['getDrawing', 'getAllDrawings', 'postDrawing', 'deleteDrawing']);
-        indexServiceSpy.getAllDrawings.and.returnValue(of(testDrawings));
-        indexServiceSpy.getDrawing.and.returnValue(of(testDrawings[0]));
-        TestBed.configureTestingModule({
-            imports: [RouterTestingModule, HttpClientModule, MatDialogModule, BrowserModule, BrowserAnimationsModule],
-            providers: [{ provide: IndexService, useValue: indexServiceSpy }],
-        });
-    }));
+    beforeEach(
+        waitForAsync(() => {
+            indexServiceSpy = jasmine.createSpyObj('IndexService', ['getDrawing', 'getAllDrawings', 'postDrawing', 'deleteDrawing']);
+            indexServiceSpy.getAllDrawings.and.returnValue(of(testDrawings));
+            indexServiceSpy.getDrawing.and.returnValue(of(testDrawings[0]));
+            TestBed.configureTestingModule({
+                imports: [RouterTestingModule, HttpClientModule, MatDialogModule, BrowserModule, BrowserAnimationsModule],
+                providers: [{ provide: IndexService, useValue: indexServiceSpy }],
+            });
+        }),
+    );
 
     beforeEach(() => {
         service = TestBed.inject(DrawingsDataService);
