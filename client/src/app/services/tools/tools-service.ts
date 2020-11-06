@@ -13,6 +13,7 @@ import { RectangleSelectorService } from '@app/services/tools/rectangle-selector
 import { RectangleService } from '@app/services/tools/rectangle-service';
 import { DrawingToolId, Options, SidebarToolID } from '@app/shared/enum';
 import { BehaviorSubject } from 'rxjs';
+import { EllipseSelectorService } from './ellipse-selector-service';
 
 @Injectable({
     providedIn: 'root',
@@ -33,6 +34,7 @@ export class ToolsService {
         lineService: LineService,
         brushService: BrushService,
         rectangleSelectionService: RectangleSelectorService,
+        ellipseSelectionService: EllipseSelectorService,
         polygonService: PolygonService,
         bucketService: BucketService,
         pipetteService: PipetteService,
@@ -46,6 +48,7 @@ export class ToolsService {
             lineService,
             brushService,
             rectangleSelectionService,
+            ellipseSelectionService,
             polygonService,
             bucketService,
             pipetteService,

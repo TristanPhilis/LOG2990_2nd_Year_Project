@@ -5,11 +5,11 @@ import { CreateNewDrawingComponent } from '@app/components/create-new-drawing/cr
 import { GuideComponent } from '@app/components/guide/guide.component';
 import { ExportPopupComponent } from '@app/components/popup/export-popup/export-popup.component';
 import { SavePopupComponent } from '@app/components/popup/save-popup/save-popup.component';
+import { SidebarTool } from '@app/components/sidebar/sidebar-tool/sidebar-tool';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ToolsService } from '@app/services/tools/tools-service';
 import { UndoRedoService } from '@app/services/tools/undo-redo-service';
 import { DrawingToolId, SidebarToolID } from '@app/shared/enum';
-import { SidebarTool } from './sidebar-tool/sidebar-tool';
 
 declare type callback = () => void;
 
@@ -26,7 +26,7 @@ export class SidebarComponent {
     sideBarToolsBottomMap: Map<SidebarToolID, SidebarTool> = new Map<SidebarToolID, SidebarTool>();
 
     showDrawingTools: boolean;
-    private isDialogOpen: boolean;
+    isDialogOpen: boolean;
 
     constructor(
         private toolsService: ToolsService,
@@ -98,6 +98,22 @@ export class SidebarComponent {
             case SidebarToolID.openGuide: {
                 this.isDialogOpen = true;
                 const dialogRef = this.dialog.open(GuideComponent);
+                dialogRef.afterClosed().subscribe(() => {
+                    this.isDialogOpen = false;
+                });
+                break;
+            }
+            case SidebarToolID.openCarrousel: {
+                this.isDialogOpen = true;
+                const dialogRef = this.dialog.open(CarouselComponent);
+                dialogRef.afterClosed().subscribe(() => {
+                    this.isDialogOpen = false;
+                });
+                break;
+            }
+            case SidebarToolID.saveCurrent: {
+                this.isDialogOpen = true;
+                const dialogRef = this.dialog.open(SavePopupComponent);
                 dialogRef.afterClosed().subscribe(() => {
                     this.isDialogOpen = false;
                 });
@@ -193,6 +209,14 @@ export class SidebarComponent {
             b: () => this.onButtonPressTop(this.sideBarToolsTopMap.get(SidebarToolID.paintBucket)),
             e: () => this.onButtonPressTop(this.sideBarToolsTopMap.get(SidebarToolID.eraser)),
             l: () => this.onButtonPressTop(this.sideBarToolsTopMap.get(SidebarToolID.line)),
+            r: () => {
+                this.onButtonPressTop(this.sideBarToolsTopMap.get(SidebarToolID.selection));
+            },
+
+            s: () => {
+                this.onButtonPressTop(this.sideBarToolsTopMap.get(SidebarToolID.selection));
+                this.toolsService.setCurrentDrawingTool(DrawingToolId.ellipseSelectionService);
+            },
             i: () => this.onButtonPressTop(this.sideBarToolsTopMap.get(SidebarToolID.pipette)),
 
             1: () => {
