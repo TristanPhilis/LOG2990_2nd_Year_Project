@@ -174,6 +174,12 @@ export class SidebarComponent {
             'C-e': () => {
                 this.onButtonPressBottom(sidebarToolID.exportCurrent);
             },
+            'C-g': () => {
+                this.onButtonPressBottom(sidebarToolID.openCarrousel);
+            },
+            'C-s': () => {
+                this.onButtonPressBottom(sidebarToolID.saveCurrent);
+            },
             'C-z': () => {
                 this.undoRedo.undo();
             },

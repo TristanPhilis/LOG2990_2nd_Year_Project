@@ -1,6 +1,7 @@
 import { Renderer2 } from '@angular/core';
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatRadioModule } from '@angular/material/radio';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -36,7 +37,7 @@ describe('ExportPopupComponent', () => {
             TestBed.configureTestingModule({
                 declarations: [ExportPopupComponent],
                 providers: [{ provide: DrawingService, useValue: drawServiceSpy }],
-                imports: [FormsModule, ReactiveFormsModule, MatInputModule, MatRadioModule, BrowserAnimationsModule],
+                imports: [FormsModule, ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatRadioModule, BrowserAnimationsModule],
             }).compileComponents();
         }),
     );

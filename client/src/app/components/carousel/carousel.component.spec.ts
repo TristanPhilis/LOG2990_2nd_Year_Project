@@ -1,31 +1,58 @@
-import { HttpClientModule } from '@angular/common/http';
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatDialogModule } from '@angular/material/dialog';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterTestingModule } from '@angular/router/testing';
-import { IndexService } from '@app/services/index/index.service';
+import { DrawingService } from '@app/services/drawing/drawing.service';
+import { DrawingsDataService } from '@app/services/index/drawings-data.service';
 import { DrawingInfo } from '@common/communication/drawing-info';
-import { of } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 import { CarouselComponent } from './carousel.component';
 import SpyObj = jasmine.SpyObj;
 
 describe('CarouselComponent', () => {
     let component: CarouselComponent;
     let fixture: ComponentFixture<CarouselComponent>;
-    let indexServiceSpy: SpyObj<IndexService>;
-    const testDrawings: DrawingInfo[] = [{ id: 996, name: '', tags: [], metadata: '' }];
+    let drawingsDataServiceSpy: SpyObj<DrawingsDataService>;
+    let drawingServiceSpy: SpyObj<DrawingService>;
 
     beforeEach(
         waitForAsync(() => {
-            indexServiceSpy = jasmine.createSpyObj('IndexService', ['getDrawing', 'getAllDrawings', 'postDrawing', 'deleteDrawing']);
-            indexServiceSpy.getAllDrawings.and.returnValue(of(testDrawings));
-            indexServiceSpy.getDrawing.and.returnValue(of(testDrawings[0]));
+            drawingsDataServiceSpy = jasmine.createSpyObj('DrawingsDataService', [
+                'getAllDrawings',
+                'updateCurrentDrawings',
+                'deleteDrawing',
+                'getDrawingPosition',
+                'goToPreviousDrawing',
+                'goToNextDrawing',
+                'addTag',
+                'deleteTag',
+            ]);
+            drawingsDataServiceSpy.tagInput = new FormControl();
+
+            drawingServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas', 'sendDrawing', 'loadDrawing']);
 
             TestBed.configureTestingModule({
-                imports: [RouterTestingModule, HttpClientModule, MatDialogModule, BrowserModule, BrowserAnimationsModule],
+                imports: [
+                    RouterTestingModule,
+                    MatDialogModule,
+                    BrowserModule,
+                    BrowserAnimationsModule,
+                    MatFormFieldModule,
+                    MatIconModule,
+                    MatInputModule,
+                    ReactiveFormsModule,
+                    FormsModule,
+                ],
+                providers: [
+                    { provide: DrawingsDataService, useValue: drawingsDataServiceSpy },
+                    { provide: DrawingService, useValue: drawingServiceSpy },
+                ],
                 declarations: [CarouselComponent],
-                providers: [{ provide: IndexService, useValue: indexServiceSpy }],
             }).compileComponents();
         }),
     );
@@ -33,16 +60,8 @@ describe('CarouselComponent', () => {
     beforeEach(() => {
         fixture = TestBed.createComponent(CarouselComponent);
         component = fixture.componentInstance;
-        const newDrawing: DrawingInfo = {
-            id: 995,
-            name: 'newDraw',
-            tags: ['one'],
-            metadata: '',
-        };
-        // tslint:disable-next-line: no-magic-numbers
-        for (let i = 0; i < 3; i++) {
-            component.drawingsInfo.value.push(newDrawing);
-        }
+        drawingsDataServiceSpy.drawingsInfo = new BehaviorSubject<DrawingInfo[]>([]);
+        drawingsDataServiceSpy.drawingsInfo.next([{ id: 0, name: '', tags: [], metadata: '' }]);
         fixture.detectChanges();
     });
 
@@ -50,36 +69,26 @@ describe('CarouselComponent', () => {
         expect(component).toBeTruthy();
     });
 
-    it('should call index.getAllDrawings() and subscribe when calling getAllDrawings()', () => {
-        component.getAllDrawings();
-        expect(indexServiceSpy.getAllDrawings).toHaveBeenCalled();
-        expect(component.drawingsInfo.value).toEqual(testDrawings);
-    });
-
-    it('should call index.deleteDrawing() when calling deleteDrawing()', () => {
-        component.deleteDrawing(1);
-        expect(indexServiceSpy.deleteDrawing).toHaveBeenCalledWith(1);
-    });
-
-    it('should get rightPosition', () => {
-        expect(component.getDrawingPosition(component.drawingCounter - 1)).toEqual(component.drawingsInfo.value.length - 1);
-        component.drawingCounter = component.drawingsInfo.value.length - 1;
-        expect(component.getDrawingPosition(component.drawingCounter + 1)).toEqual(0);
-    });
-
-    it('should go to previousDrawing', () => {
-        component.drawingCounter = 0;
+    it('should call drawings-data-service methods', () => {
+        component.addTag();
+        expect(drawingsDataServiceSpy.addTag).toHaveBeenCalled();
+        component.deleteTag('tag');
+        expect(drawingsDataServiceSpy.deleteTag).toHaveBeenCalledWith('tag');
         component.goToPreviousDrawing();
-        expect(component.drawingCounter).toEqual(component.drawingsInfo.value.length - 1);
-        component.goToPreviousDrawing();
-        expect(component.drawingCounter).toEqual(component.drawingsInfo.value.length - 2);
+        expect(drawingsDataServiceSpy.goToPreviousDrawing).toHaveBeenCalled();
+        component.goToNextDrawing();
+        expect(drawingsDataServiceSpy.goToNextDrawing).toHaveBeenCalled();
+        component.getDrawingPosition(0);
+        drawingsDataServiceSpy.tags = [''];
+        component.getDrawingPosition(0);
+        expect(drawingsDataServiceSpy.getDrawingPosition).toHaveBeenCalled();
+        component.deleteDrawing(0);
+        expect(drawingsDataServiceSpy.deleteDrawing).toHaveBeenCalledWith(0);
     });
 
-    it('should go to nextDrawing', () => {
-        component.drawingCounter = component.drawingsInfo.value.length - 1;
-        component.goToNextDrawing();
-        expect(component.drawingCounter).toEqual(0);
-        component.goToNextDrawing();
-        expect(component.drawingCounter).toEqual(1);
+    it('should call drawingService methods', () => {
+        component.sendDrawingToEditor(true, drawingsDataServiceSpy.drawingsInfo.value[0]);
+        expect(drawingServiceSpy.clearCanvas).toHaveBeenCalled();
+        expect(drawingServiceSpy.sendDrawing).toHaveBeenCalled();
     });
 });
