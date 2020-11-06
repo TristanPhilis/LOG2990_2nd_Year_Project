@@ -21,7 +21,7 @@ import {
     NEGATIVE_MULTIPLIER,
     SELECTION_BOX_BORDER_SIZE,
     SELECTION_BOX_COLOUR,
-    SHIFT_KEY
+    SHIFT_KEY,
 } from '@app/shared/constant';
 import { DrawingToolId, MouseButton, Options } from '@app/shared/enum';
 import { UndoRedoService } from './undo-redo-service';

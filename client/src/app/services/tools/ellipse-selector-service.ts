@@ -21,7 +21,7 @@ import {
     SELECTION_BOX_COLOUR,
     SHIFT_KEY,
 } from '@app/shared/constant';
-import { drawingToolId, MouseButton, Options } from '@app/shared/enum';
+import { DrawingToolId, MouseButton, Options } from '@app/shared/enum';
 import { UndoRedoService } from './undo-redo-service';
 
 @Injectable({
@@ -280,7 +280,7 @@ export class EllipseSelectorService extends Tool {
         };
 
         return {
-            id: drawingToolId.ellipseSelectionService,
+            id: DrawingToolId.ellipseSelectionService,
             imageData: this.selectedImageData,
             box: this.selectedBox.copy(),
             options,
