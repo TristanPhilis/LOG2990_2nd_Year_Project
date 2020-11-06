@@ -7,6 +7,7 @@ export class BoundingBox extends Box {
     bottom: number;
     left: number;
     right: number;
+    squareSize: number;
 
     constructor() {
         super();
@@ -78,5 +79,29 @@ export class BoundingBox extends Box {
 
     get height(): number {
         return this.bottom - this.top;
+    }
+
+    get center(): Vec2 {
+        return {
+            x: this.left + this.width / 2,
+            y: this.top + this.height / 2,
+        };
+    }
+
+    set squareCenter(centerCoord: Vec2) {
+        this.left = centerCoord.x - this.squareSize / 2;
+        this.right = centerCoord.x + this.squareSize / 2;
+        this.top = centerCoord.y - this.squareSize / 2;
+        this.bottom = centerCoord.y + this.squareSize / 2;
+    }
+
+    copy(): BoundingBox {
+        const copy = new BoundingBox();
+        copy.top = this.top;
+        copy.left = this.left;
+        copy.right = this.right;
+        copy.bottom = this.bottom;
+        copy.squareSize = this.squareSize;
+        return copy;
     }
 }

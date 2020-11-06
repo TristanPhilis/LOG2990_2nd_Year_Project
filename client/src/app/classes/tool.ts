@@ -1,5 +1,11 @@
+import { ColorSelectionService } from '@app/services/color/color-selection-service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
-import { ColorSelection, drawingToolId, JointSelection, SelectionType, Texture, TraceTypes } from '@app/shared/enum';
+import { UndoRedoService } from '@app/services/tools/undo-redo-service';
+import { Options, TraceTypes } from '@app/shared/enum';
+import { Color } from './color';
+import { DrawingAction } from './drawing-action';
+import { DrawingOptions } from './drawing-options';
+import { ToolOption } from './tool-option';
 import { Vec2 } from './vec2';
 
 // This is justified since we have functions that will be managed by the child classes.
@@ -9,27 +15,13 @@ export abstract class Tool {
     mouseDown: boolean = false;
     shiftDown: boolean = false;
     dblClick: boolean = false;
+    options: DrawingOptions;
 
-    // Tool identification
-    id: drawingToolId;
-    name: string;
-    // All tool options
-    colorSelection?: ColorSelection = ColorSelection.primary;
-    color?: string;
-    lineJoint?: JointSelection;
-    size?: number;
-    outlineType?: string;
-    traceType?: TraceTypes;
-    texture?: Texture;
-    toleranceInterval?: number;
-    numberOfSides?: number;
-    selctionType?: SelectionType;
-    angle?: number;
-    lineLength?: number;
-    emissionPerSecond?: number;
-    imageChoice?: string;
-
-    constructor(protected drawingService: DrawingService) {}
+    constructor(
+        protected drawingService: DrawingService,
+        protected undoRedoService: UndoRedoService,
+        protected colorService: ColorSelectionService,
+    ) {}
 
     onMouseDown(event: MouseEvent): void {}
 
@@ -45,6 +37,8 @@ export abstract class Tool {
 
     onKeyUp(event: KeyboardEvent): void {}
 
+    draw(ctx: CanvasRenderingContext2D, action: DrawingAction): void {}
+
     getPositionFromMouse(event: MouseEvent): Vec2 {
         return { x: event.offsetX, y: event.offsetY };
     }
@@ -53,5 +47,43 @@ export abstract class Tool {
         const xDiff = secondCoord.x - firstCoord.x;
         const yDiff = secondCoord.y - firstCoord.y;
         return { x: xDiff, y: yDiff };
+    }
+
+    fill(ctx: CanvasRenderingContext2D, traceType: TraceTypes, primaryColor: Color, secondaryColor: Color): void {
+        ctx.fillStyle = primaryColor.getRgbString();
+        ctx.strokeStyle = secondaryColor.getRgbString();
+        switch (traceType) {
+            case TraceTypes.fill: {
+                ctx.fill();
+                break;
+            }
+            case TraceTypes.stroke: {
+                ctx.stroke();
+                break;
+            }
+            case TraceTypes.fillAndStroke: {
+                ctx.fill();
+                ctx.stroke();
+                break;
+            }
+        }
+    }
+
+    copyToolOptionMap(map: Map<Options, ToolOption>): Map<Options, ToolOption> {
+        const mapCopy = new Map<Options, ToolOption>();
+        for (const option of map) {
+            mapCopy.set(option[0], { value: option[1].value, displayName: option[1].displayName });
+        }
+        return mapCopy;
+    }
+
+    setDefaultOptions(): void {}
+
+    get primaryColor(): Color {
+        return this.colorService.primaryColor;
+    }
+
+    get secondaryColor(): Color {
+        return this.colorService.secondaryColor;
     }
 }

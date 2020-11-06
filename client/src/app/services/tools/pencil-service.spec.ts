@@ -12,7 +12,7 @@ describe('PencilService', () => {
 
     let baseCtxStub: CanvasRenderingContext2D;
     let previewCtxStub: CanvasRenderingContext2D;
-    let drawLineSpy: jasmine.Spy<any>;
+    let drawSpy: jasmine.Spy<any>;
 
     beforeEach(() => {
         baseCtxStub = canvasTestHelper.canvas.getContext('2d') as CanvasRenderingContext2D;
@@ -23,7 +23,7 @@ describe('PencilService', () => {
             providers: [{ provide: DrawingService, useValue: drawServiceSpy }],
         });
         service = TestBed.inject(PencilService);
-        drawLineSpy = spyOn<any>(service, 'drawLine').and.callThrough();
+        drawSpy = spyOn<any>(service, 'draw').and.callThrough();
 
         // Service's spy configuration
         // tslint:disable:no-string-literal
@@ -67,7 +67,7 @@ describe('PencilService', () => {
         service.mouseDown = true;
 
         service.onMouseUp(mouseEvent);
-        expect(drawLineSpy).toHaveBeenCalled();
+        expect(drawSpy).toHaveBeenCalled();
     });
 
     it(' onMouseUp should not call drawLine if mouse was not already down', () => {
@@ -75,7 +75,7 @@ describe('PencilService', () => {
         service.mouseDownCoord = { x: 0, y: 0 };
 
         service.onMouseUp(mouseEvent);
-        expect(drawLineSpy).not.toHaveBeenCalled();
+        expect(drawSpy).not.toHaveBeenCalled();
     });
 
     it(' onMouseMove should call drawLine if mouse was already down', () => {
@@ -84,7 +84,7 @@ describe('PencilService', () => {
 
         service.onMouseMove(mouseEvent);
         expect(drawServiceSpy.clearCanvas).toHaveBeenCalled();
-        expect(drawLineSpy).toHaveBeenCalled();
+        expect(drawSpy).toHaveBeenCalled();
     });
 
     it(' onMouseMove should call drawLine if mouse was already down but dropped outside', () => {
@@ -97,7 +97,7 @@ describe('PencilService', () => {
         } as MouseEvent;
 
         service.onMouseMove(droppedMouseEvent);
-        expect(drawLineSpy).toHaveBeenCalled();
+        expect(drawSpy).toHaveBeenCalled();
     });
 
     it(' onMouseMove should not call drawLine if mouse was not already down', () => {
@@ -106,7 +106,7 @@ describe('PencilService', () => {
 
         service.onMouseMove(mouseEvent);
         expect(drawServiceSpy.clearCanvas).not.toHaveBeenCalled();
-        expect(drawLineSpy).not.toHaveBeenCalled();
+        expect(drawSpy).not.toHaveBeenCalled();
     });
 
     it(' should change the pixel of the canvas ', () => {

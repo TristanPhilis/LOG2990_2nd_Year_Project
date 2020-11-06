@@ -1,9 +1,13 @@
 import { Injectable } from '@angular/core';
+import { DrawingAction } from '@app/classes/drawing-action';
 import { Tool } from '@app/classes/tool';
+import { ToolOption } from '@app/classes/tool-option';
 import { Vec2 } from '@app/classes/vec2';
 import { ColorSelectionService } from '@app/services/color/color-selection-service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
-import { ColorSelection, MouseButton } from '@app/shared/enum';
+import { UndoRedoService } from '@app/services/tools/undo-redo-service';
+import { DEFAULT_OPTIONS } from '@app/shared/constant';
+import { drawingToolId, MouseButton, Options } from '@app/shared/enum';
 
 @Injectable({
     providedIn: 'root',
@@ -11,10 +15,18 @@ import { ColorSelection, MouseButton } from '@app/shared/enum';
 export class PencilService extends Tool {
     private pathData: Vec2[];
 
-    constructor(drawingService: DrawingService, private colorSelectionService: ColorSelectionService) {
-        super(drawingService);
-        this.size = 1;
+    constructor(drawingService: DrawingService, undoRedoService: UndoRedoService, colorService: ColorSelectionService) {
+        super(drawingService, undoRedoService, colorService);
         this.clearPath();
+        this.setDefaultOptions();
+    }
+
+    setDefaultOptions(): void {
+        const toolOptions = new Map<Options, ToolOption>([[Options.size, { value: DEFAULT_OPTIONS.size, displayName: 'Largeur' }]]);
+        this.options = {
+            primaryColor: this.primaryColor,
+            toolOptions,
+        };
     }
 
     onMouseDown(event: MouseEvent): void {
@@ -30,7 +42,9 @@ export class PencilService extends Tool {
         if (this.mouseDown) {
             const mousePosition = this.getPositionFromMouse(event);
             this.pathData.push(mousePosition);
-            this.drawLine(this.drawingService.baseCtx, this.pathData);
+            const action = this.getDrawingAction();
+            this.undoRedoService.saveAction(action);
+            this.draw(this.drawingService.baseCtx, action);
         }
         this.mouseDown = false;
         this.clearPath();
@@ -40,31 +54,40 @@ export class PencilService extends Tool {
         if (this.mouseDown && event.buttons === MouseButton.Left) {
             const mousePosition = this.getPositionFromMouse(event);
             this.pathData.push(mousePosition);
-            this.drawLine(this.drawingService.previewCtx, this.pathData);
+            this.draw(this.drawingService.previewCtx, this.getDrawingAction());
         }
         if (this.mouseDown && !(event.buttons === MouseButton.Left)) {
-            this.drawLine(this.drawingService.baseCtx, this.pathData);
+            const action = this.getDrawingAction();
+            this.undoRedoService.saveAction(action);
+            this.draw(this.drawingService.baseCtx, action);
         }
     }
 
-    private drawLine(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
-        this.drawingService.clearCanvas(this.drawingService.previewCtx);
-        ctx.beginPath();
-        ctx.lineCap = 'round';
-        if (this.size) {
-            ctx.lineWidth = this.size;
+    draw(ctx: CanvasRenderingContext2D, drawingAction: DrawingAction): void {
+        const size = drawingAction.options.toolOptions.get(Options.size);
+        if (drawingAction.path && size) {
+            this.drawingService.clearCanvas(this.drawingService.previewCtx);
+            ctx.beginPath();
+            ctx.lineCap = 'round';
+            ctx.lineWidth = size.value;
+            ctx.strokeStyle = drawingAction.options.primaryColor.getRgbString();
+            for (const point of drawingAction.path) {
+                ctx.lineTo(point.x, point.y);
+            }
+            ctx.stroke();
         }
+    }
 
-        if (this.colorSelection === ColorSelection.primary) {
-            ctx.strokeStyle = this.colorSelectionService.primaryColor.getRgbString();
-        } else if (this.colorSelection === ColorSelection.secondary) {
-            ctx.strokeStyle = this.colorSelectionService.secondaryColor.getRgbString();
-        }
-
-        for (const point of path) {
-            ctx.lineTo(point.x, point.y);
-        }
-        ctx.stroke();
+    getDrawingAction(): DrawingAction {
+        const options = {
+            primaryColor: this.primaryColor,
+            toolOptions: this.copyToolOptionMap(this.options.toolOptions),
+        };
+        return {
+            id: drawingToolId.pencilService,
+            path: this.pathData,
+            options,
+        };
     }
 
     private clearPath(): void {

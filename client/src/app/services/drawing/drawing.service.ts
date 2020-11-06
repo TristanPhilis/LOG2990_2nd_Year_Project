@@ -9,6 +9,7 @@ export class DrawingService {
     previewCtx: CanvasRenderingContext2D;
     canvas: HTMLCanvasElement;
     drawingToLoad: string;
+    mouseIsOverCanvas: boolean = false;
 
     getImageData(): ImageData {
         return this.baseCtx.getImageData(0, 0, this.canvas.width, this.canvas.height);

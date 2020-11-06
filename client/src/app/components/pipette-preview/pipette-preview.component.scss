@@ -1,0 +1,17 @@
+canvas {
+    border: 0.5px solid #000000;
+    border-radius: 50px;
+    position: absolute;
+    left: 0;
+    top: 0;
+    box-sizing: border-box;
+}
+
+#canvas {
+    z-index: 0;
+    // zoom: 6.3;
+}
+
+#canvas-container {
+    position: relative;
+}

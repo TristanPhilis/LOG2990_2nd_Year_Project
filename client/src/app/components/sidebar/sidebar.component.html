@@ -1,7 +1,11 @@
 <div class="container">
     <div>
-        <li *ngFor="let sidebarTool of sideBarToolsTop" class="sidebar-container-top">
-            <button mat-flat-button (click)="onButtonPressTop(sidebarTool)">{{ sidebarTool.name }}</button>
+        <li class="sidebar-container-top">
+            <ng-container *ngFor="let sidebarTool of sideBarToolsTop">
+                <button mat-flat-button (click)="onButtonPressTop(sidebarTool)">{{ sidebarTool.name }}</button>
+            </ng-container>
+            <button mat-flat-button *ngIf="showUndo" (click)="undoRedo.undo()">{{ sideBarUndoRedoButtons[0].name }}</button>
+            <button mat-flat-button *ngIf="showRedo" (click)="undoRedo.redo()">{{ sideBarUndoRedoButtons[1].name }}</button>
         </li>
     </div>
     <div>

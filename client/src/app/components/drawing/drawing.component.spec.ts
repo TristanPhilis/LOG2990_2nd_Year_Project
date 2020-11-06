@@ -1,7 +1,9 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { Tool } from '@app/classes/tool';
+import { ColorSelectionService } from '@app/services/color/color-selection-service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ToolsService } from '@app/services/tools/tools-service';
+import { UndoRedoService } from '@app/services/tools/undo-redo-service';
 import { DrawingComponent } from './drawing.component';
 
 import SpyObj = jasmine.SpyObj;
@@ -17,7 +19,7 @@ describe('DrawingComponent', () => {
 
     beforeEach(
         waitForAsync(() => {
-            toolStub = new ToolStub({} as DrawingService);
+            toolStub = new ToolStub({} as DrawingService, {} as UndoRedoService, {} as ColorSelectionService);
             drawingStub = new DrawingService();
             toolsServiceSpy = jasmine.createSpyObj('ToolsService', ['']);
             toolsServiceSpy.currentDrawingTool = toolStub;

@@ -8,6 +8,7 @@ import { SavePopupComponent } from '@app/components/popup/save-popup/save-popup.
 import { SidebarTool } from '@app/components/sidebar/sidebar-tool/sidebar-tool';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ToolsService } from '@app/services/tools/tools-service';
+import { UndoRedoService } from '@app/services/tools/undo-redo-service';
 import { drawingToolId, sidebarToolID } from '@app/shared/enum';
 
 declare type callback = () => void;
@@ -20,13 +21,19 @@ declare type callback = () => void;
 export class SidebarComponent {
     sideBarToolsTop: SidebarTool[];
     sideBarToolsBottom: SidebarTool[];
+    sideBarUndoRedoButtons: SidebarTool[];
     sideBarToolsTopMap: Map<sidebarToolID, SidebarTool> = new Map<sidebarToolID, SidebarTool>();
     sideBarToolsBottomMap: Map<sidebarToolID, SidebarTool> = new Map<sidebarToolID, SidebarTool>();
 
     showDrawingTools: boolean;
     private isDialogOpen: boolean;
 
-    constructor(private toolsService: ToolsService, private dialog: MatDialog, private drawingService: DrawingService) {
+    constructor(
+        private toolsService: ToolsService,
+        private dialog: MatDialog,
+        private drawingService: DrawingService,
+        public undoRedo: UndoRedoService,
+    ) {
         this.sideBarToolsTop = [
             { id: sidebarToolID.selection, name: 'Selection', defaultDrawingToolid: drawingToolId.rectangleSelectionService },
             { id: sidebarToolID.tracing, name: 'Traçage', defaultDrawingToolid: drawingToolId.pencilService },
@@ -35,9 +42,15 @@ export class SidebarComponent {
             { id: sidebarToolID.text, name: 'Texte' },
             { id: sidebarToolID.paintBucket, name: 'Sceau', defaultDrawingToolid: drawingToolId.bucketService },
             { id: sidebarToolID.stamp, name: 'Étampe' },
-            { id: sidebarToolID.pipette, name: 'Pipette' },
+            { id: sidebarToolID.pipette, name: 'Pipette', defaultDrawingToolid: drawingToolId.pipetteService },
             { id: sidebarToolID.eraser, name: 'Efface', defaultDrawingToolid: drawingToolId.eraserService },
         ];
+
+        this.sideBarUndoRedoButtons = [
+            { id: sidebarToolID.undo, name: 'annuler' },
+            { id: sidebarToolID.redo, name: 'refaire' },
+        ];
+
         this.sideBarToolsBottom = [
             { id: sidebarToolID.createNew, name: 'Nouveau dessin' },
             { id: sidebarToolID.saveCurrent, name: 'Sauvegarder' },
@@ -74,6 +87,7 @@ export class SidebarComponent {
     onButtonPressBottom(id: sidebarToolID): void {
         switch (id) {
             case sidebarToolID.createNew: {
+                this.undoRedo.clearPile();
                 this.isDialogOpen = true;
                 const dialogRef = this.dialog.open(CreateNewDrawingComponent);
                 dialogRef.afterClosed().subscribe(() => {
@@ -141,6 +155,10 @@ export class SidebarComponent {
         if (event.shiftKey) {
             keys += 'S-';
         }
+        if (event.shiftKey && event.ctrlKey) {
+            keys = 'C-';
+            keys += 'S-';
+        }
         keys += event.key.toLowerCase();
         return keys;
     }
@@ -155,6 +173,12 @@ export class SidebarComponent {
             },
             'C-e': () => {
                 this.onButtonPressBottom(sidebarToolID.exportCurrent);
+            },
+            'C-z': () => {
+                this.undoRedo.undo();
+            },
+            'C-S-z': () => {
+                this.undoRedo.redo();
             },
         };
         const func: callback | undefined = kbd[keys];
@@ -182,13 +206,13 @@ export class SidebarComponent {
             l: () => this.onButtonPressTop(this.sideBarToolsTopMap.get(sidebarToolID.line)),
             r: () => {
                 this.onButtonPressTop(this.sideBarToolsTopMap.get(sidebarToolID.selection));
-                this.toolsService._currentDrawingTool = drawingToolId.rectangleSelectionService;
             },
 
             s: () => {
                 this.onButtonPressTop(this.sideBarToolsTopMap.get(sidebarToolID.selection));
                 this.toolsService._currentDrawingTool = drawingToolId.ellipseSelectionService;
             },
+            i: () => this.onButtonPressTop(this.sideBarToolsTopMap.get(sidebarToolID.pipette)),
 
             1: () => {
                 this.onButtonPressTop(this.sideBarToolsTopMap.get(sidebarToolID.shapes));
@@ -207,5 +231,13 @@ export class SidebarComponent {
             const func: callback = kbd[keys];
             func();
         }
+    }
+
+    get showUndo(): boolean {
+        return this.undoRedo.undoPile.length > 0;
+    }
+
+    get showRedo(): boolean {
+        return this.undoRedo.redoPile.length > 0;
     }
 }

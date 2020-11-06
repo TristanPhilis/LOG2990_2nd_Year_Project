@@ -3,6 +3,7 @@ import { BoundingBox } from '@app/classes/bounding-box';
 import { SelectionBox } from '@app/classes/selection-box';
 import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
+import { ColorSelectionService } from '@app/services/color/color-selection-service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import {
     ARROW_DOWN,
@@ -19,13 +20,14 @@ import {
     SHIFT_KEY,
 } from '@app/shared/constant';
 import { MouseButton } from '@app/shared/enum';
+import { UndoRedoService } from './undo-redo-service';
 
 @Injectable({
     providedIn: 'root',
 })
 export class EllipseSelectorService extends Tool {
-    constructor(drawingService: DrawingService) {
-        super(drawingService);
+    constructor(drawingService: DrawingService, undoRedoService: UndoRedoService, colorService: ColorSelectionService) {
+        super(drawingService, undoRedoService, colorService);
 
         this.selectedBox = new BoundingBox();
         this.selectionBox = new SelectionBox();

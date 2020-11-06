@@ -1,17 +1,19 @@
 import { Injectable } from '@angular/core';
 import { Tool } from '@app/classes/tool';
+import { ToolOption } from '@app/classes/tool-option';
 import { BrushService } from '@app/services/tools/brush.service';
 import { BucketService } from '@app/services/tools/bucket-service';
 import { EllipseService } from '@app/services/tools/ellipse-service';
 import { EraserService } from '@app/services/tools/eraser-service';
 import { LineService } from '@app/services/tools/line-service';
 import { PencilService } from '@app/services/tools/pencil-service';
+import { PipetteService } from '@app/services/tools/pipette-service';
 import { PolygonService } from '@app/services/tools/polygon-service';
+import { RectangleSelectorService } from '@app/services/tools/rectangle-selector-service';
 import { RectangleService } from '@app/services/tools/rectangle-service';
-import { drawingToolId, sidebarToolID, TraceTypes } from '@app/shared/enum';
+import { drawingToolId, Options, sidebarToolID } from '@app/shared/enum';
 import { BehaviorSubject } from 'rxjs';
 import { EllipseSelectorService } from './ellipse-selector-service';
-import { RectangleSelectorService } from './rectangle-selector-service';
 
 @Injectable({
     providedIn: 'root',
@@ -35,6 +37,7 @@ export class ToolsService {
         ellipseSelectionService: EllipseSelectorService,
         polygonService: PolygonService,
         bucketService: BucketService,
+        pipetteService: PipetteService,
     ) {
         this.currentDrawingTool = pencilService;
         this.tools = [
@@ -48,7 +51,12 @@ export class ToolsService {
             ellipseSelectionService,
             polygonService,
             bucketService,
+            pipetteService,
         ];
+    }
+
+    getTool(id: drawingToolId): Tool {
+        return this.tools[id];
     }
 
     set _currentDrawingTool(newToolID: drawingToolId) {
@@ -84,11 +92,14 @@ export class ToolsService {
         this.toolSidenavToggle.next(false);
     }
 
-    changeToolSize(size: number): void {
-        this.currentDrawingTool.size = size;
+    updateOptionValue(key: Options, option: ToolOption): void {
+        this.currentDrawingTool.options.toolOptions.set(key, option);
     }
 
-    changeTraceType(traceType: TraceTypes): void {
-        this.currentDrawingTool.traceType = Number(traceType);
+    get currentDrawingToolOptions(): Map<Options, ToolOption> | undefined {
+        if (this.currentDrawingTool.options) {
+            return this.currentDrawingTool.options.toolOptions;
+        }
+        return undefined;
     }
 }
