@@ -5,7 +5,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { GuideComponent } from '@app/components/guide/guide.component';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ToolsService } from '@app/services/tools/tools-service';
-import { drawingToolId, sidebarToolID } from '@app/shared/enum';
+import { DrawingToolId, SidebarToolID } from '@app/shared/enum';
 import { of } from 'rxjs';
 import { SidebarComponent } from './sidebar.component';
 
@@ -62,36 +62,36 @@ describe('SidebarComponent', () => {
     });
 
     it('onButtonPressBottom should set openGuide', () => {
-        component.onButtonPressBottom(sidebarToolID.openGuide);
+        component.onButtonPressBottom(SidebarToolID.openGuide);
         expect(dialogSpy.open).toHaveBeenCalled();
     });
 
     it('should return pencil when c is press on keyboard ', () => {
         const pressC = new KeyboardEvent('keypress', { key: 'c' });
         component.onKeyUp(pressC);
-        expect(toolsService._currentDrawingToolID).toEqual(drawingToolId.pencilService);
+        expect(toolsService.currentDrawingToolID).toEqual(DrawingToolId.pencilService);
     });
 
     it('should return erase when e is press on keyboard ', () => {
         const pressE = new KeyboardEvent('keypress', { key: 'e' });
         component.onKeyUp(pressE);
-        expect(toolsService._currentDrawingToolID).toEqual(drawingToolId.eraserService);
+        expect(toolsService.currentDrawingToolID).toEqual(DrawingToolId.eraserService);
     });
 
     it('should return line when l is press on keyboard ', () => {
         const pressL = new KeyboardEvent('keypress', { key: 'l' });
         component.onKeyUp(pressL);
-        expect(toolsService._currentDrawingToolID).toEqual(drawingToolId.lineService);
+        expect(toolsService.currentDrawingToolID).toEqual(DrawingToolId.lineService);
     });
 
     it('should return rectangle when 1 is press on keyboard ', () => {
         const press1 = new KeyboardEvent('keypress', { key: '1' });
         component.onKeyUp(press1);
-        expect(toolsService._currentDrawingToolID).toEqual(drawingToolId.rectangleService);
+        expect(toolsService.currentDrawingToolID).toEqual(DrawingToolId.rectangleService);
     });
     it('should return ellipse when 2 is press on keyboard ', () => {
         const press2 = new KeyboardEvent('keypress', { key: '2' });
         component.onKeyUp(press2);
-        expect(toolsService._currentDrawingToolID).toEqual(drawingToolId.ellipseService);
+        expect(toolsService.currentDrawingToolID).toEqual(DrawingToolId.ellipseService);
     });
 });

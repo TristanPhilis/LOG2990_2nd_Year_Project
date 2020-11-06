@@ -8,7 +8,7 @@ import { ColorSelectionService } from '@app/services/color/color-selection-servi
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { UndoRedoService } from '@app/services/tools/undo-redo-service';
 import { DEFAULT_OPTIONS, SHIFT_KEY } from '@app/shared/constant';
-import { drawingToolId, MouseButton, Options } from '@app/shared/enum';
+import { DrawingToolId, MouseButton, Options } from '@app/shared/enum';
 
 @Injectable({
     providedIn: 'root',
@@ -114,7 +114,7 @@ export class EllipseService extends Tool {
         const box = new BoundingBox();
         box.updateFromSelectionBox(this.selectionBox, this.shiftDown);
         return {
-            id: drawingToolId.ellipseService,
+            id: DrawingToolId.ellipseService,
             box,
             options,
         };

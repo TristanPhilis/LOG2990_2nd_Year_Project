@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { ToolOption } from '@app/classes/tool-option';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ToolsService } from '@app/services/tools/tools-service';
-import { drawingToolId, Options, sidebarToolID, Texture, TraceTypes } from '@app/shared/enum';
+import { DrawingToolId, Options, SidebarToolID, Texture, TraceTypes } from '@app/shared/enum';
 // tslint:disable:no-any
 
 @Component({
@@ -19,13 +19,13 @@ export class AttributePanelComponent {
 
     constructor(public toolsService: ToolsService, public drawingService: DrawingService) {
         this.tracingTools = [
-            { value: drawingToolId.pencilService, displayName: 'Crayon' },
-            { value: drawingToolId.brushService, displayName: 'Pinceau' },
+            { value: DrawingToolId.pencilService, displayName: 'Crayon' },
+            { value: DrawingToolId.brushService, displayName: 'Pinceau' },
         ];
         this.shapesTools = [
-            { value: drawingToolId.rectangleService, displayName: 'Rectangle' },
-            { value: drawingToolId.ellipseService, displayName: 'Ellipse' },
-            { value: drawingToolId.polygonService, displayName: 'Polygone' },
+            { value: DrawingToolId.rectangleService, displayName: 'Rectangle' },
+            { value: DrawingToolId.ellipseService, displayName: 'Ellipse' },
+            { value: DrawingToolId.polygonService, displayName: 'Polygone' },
         ];
         this.tracingTypes = [
             { value: TraceTypes.fill, displayName: 'Rempli' },
@@ -41,12 +41,8 @@ export class AttributePanelComponent {
         ];
     }
 
-    get sidebarToolID(): typeof sidebarToolID {
-        return sidebarToolID;
-    }
-
-    get drawingToolId(): typeof drawingToolId {
-        return drawingToolId;
+    get SidebarToolID(): typeof SidebarToolID {
+        return SidebarToolID;
     }
 
     get Options(): typeof Options {
@@ -58,8 +54,8 @@ export class AttributePanelComponent {
         return optionsMap ? optionsMap : new Map<Options, ToolOption>();
     }
 
-    handleToolChange(selectedTool: drawingToolId): void {
-        this.toolsService._currentDrawingTool = Number(selectedTool);
+    handleToolChange(selectedTool: DrawingToolId): void {
+        this.toolsService.setCurrentDrawingTool(Number(selectedTool));
     }
 
     updateToolOptionValue(key: Options, value: number): void {

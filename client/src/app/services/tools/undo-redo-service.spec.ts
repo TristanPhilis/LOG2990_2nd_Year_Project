@@ -6,7 +6,7 @@ import { DrawingService } from '@app/services/drawing/drawing.service';
 import { PencilService } from '@app/services/tools/pencil-service';
 import { ToolsService } from '@app/services/tools/tools-service';
 import { UndoRedoService } from '@app/services/tools/undo-redo-service';
-import { drawingToolId, Options } from '@app/shared/enum';
+import { DrawingToolId, Options } from '@app/shared/enum';
 
 // tslint:disable:no-any
 describe('Service: UndoRedo', () => {
@@ -36,7 +36,7 @@ describe('Service: UndoRedo', () => {
                 { x: 25, y: 25 },
                 { x: 40, y: 40 },
             ],
-            id: drawingToolId.lineService,
+            id: DrawingToolId.lineService,
             options: { primaryColor: newColor, toolOptions: map },
         };
     });

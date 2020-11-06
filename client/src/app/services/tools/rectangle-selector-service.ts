@@ -6,7 +6,7 @@ import { Vec2 } from '@app/classes/vec2';
 import { ColorSelectionService } from '@app/services/color/color-selection-service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { UndoRedoService } from '@app/services/tools/undo-redo-service';
-import { drawingToolId, MouseButton, Options } from '@app/shared/enum';
+import { DrawingToolId, MouseButton, Options } from '@app/shared/enum';
 
 @Injectable({
     providedIn: 'root',
@@ -96,7 +96,7 @@ export class RectangleSelectorService extends Tool {
         };
 
         return {
-            id: drawingToolId.rectangleSelectionService,
+            id: DrawingToolId.rectangleSelectionService,
             options,
         };
     }

@@ -10,7 +10,7 @@ import { ColorSelectionService } from '@app/services/color/color-selection-servi
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { UndoRedoService } from '@app/services/tools/undo-redo-service';
 import { A_POSITION, B_POSITION, DEFAULT_OPTIONS, G_POSITION, MAX_TOLERANCE, PIXEL_INTERVAL, R_POSITION } from '@app/shared/constant';
-import { drawingToolId, MouseButton, Options } from '@app/shared/enum';
+import { DrawingToolId, MouseButton, Options } from '@app/shared/enum';
 
 @Injectable({
     providedIn: 'root',
@@ -203,7 +203,7 @@ export class BucketService extends Tool {
             toolOptions: this.copyToolOptionMap(this.options.toolOptions),
         };
         return {
-            id: drawingToolId.bucketService,
+            id: DrawingToolId.bucketService,
             box: this.boundingBox.copy(),
             imageData: newImageData,
             options,
