@@ -1,12 +1,4 @@
 
-
-.nodrawings {
-  position: absolute;
-  bottom: 50%;
-  left: 45%;
-  color: red;
-}
-
 .dialog {
   width: 90%;
   height: 90%;
@@ -44,5 +36,24 @@ li {
 
 .buttons{
   position: absolute;
-  bottom : 30%;
+  bottom : 27%;
+  right : 20%;
+}
+
+.tag {
+  border: 2px solid gray ;
+  border-radius: 5px;
+  margin: 5px;
+  padding-left: 5px;
+  float: left;
+}
+
+
+.tags-container {
+  // display: flex;
+  margin-top: 10px;
+  margin-bottom: 5px;
+  display: flex;
+  max-width: 450px;
+  flex-wrap: wrap;
 }
