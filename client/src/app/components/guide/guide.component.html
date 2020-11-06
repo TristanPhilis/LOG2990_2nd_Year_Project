@@ -4,17 +4,61 @@
 </div>
 
 <!-- Tab content -->
-<body>
-    <div id="Divers" class="tabcontent">
+
+<div id="Divers" class="tabcontent">
+    <div class="tab">
+        <button class="tablinks" (click)="openTab('NouveauDessin')">Créer un nouveau dessin</button>
+        <button class="tablinks" (click)="openTab('ExporterDessin')">Exporter un dessin</button>
+        <button class="tablinks" (click)="openTab('SauvegarderDessin')">Sauvegarder un dessin</button>
+        <button class="tablinks" (click)="openTab('CarrouselDessin')">Carrousel de dessin</button>
+    </div>
+</div>
+
+
+    <div id="NouveauDessin" class="tabcontent">
         <h3>Créer un nouveau dessin</h3>
         <p>
             Grace au boutton créer un nouveau dessin (présent sur point d'entrée de l'application et sur la barre latérale) ou avec les touches "CTRL
             + o" il est possible de créer un nouveau dessin. Si il y a un déssin deja présent lors de l'utilisation de cette fonction l'utilisateur
             recevra un avertissement confirmant ou non vouloir abondonner ses changements.
         </p>
-        <img src="../../shared/images/createNewDrawing.png" alt="" width="500" height="240" />
+        <img src="../../../assets/images/createNewDrawing.png" alt="" width="1366" height="625" />
     </div>
-</body>
+
+
+    <div id="ExporterDessin" class="tabcontent">
+        <h3>Exporter un dessin</h3>
+        <p>
+            Grace au boutton exporter dessin (sur la barre latérale) ou avec les touches "CTRL + e" il est possible d'exporter dessin en format PNG ou JPEG.
+            Il est possible d'appliquer des filtres sur le dessin que l'on veut exporter et de nommer le dessin.
+        </p>
+        <img src="../../../assets/images/exportDrawing.png" alt="" width="1366" height="625" />
+    </div>
+
+
+
+    <div id="SauvegarderDessin" class="tabcontent">
+        <h3>Sauvegarder un dessin</h3>
+        <p>
+            Grace au boutton sauvegarder un dessin (présent sur la barre latérale) ou avec les touches "CTRL
+            + s" il est possible de sauvegarder dessin en format PNG sur le serveur. Afin de sauvegarder le dessin il est possible
+            de creer des etiquettes pour classifier le dessin sauvegarde.
+        </p>
+        <img src="../../../assets/images/saveDrawing.png" alt="" width="1366" height="625" />
+    </div>
+
+
+    <div id="CarrouselDessin" class="tabcontent">
+        <h3>Carrousel de dessin</h3>
+        <p>
+            Grace au boutton Carrousel (présent sur point d'entrée de l'application et sur la barre latérale) ou avec les touches "CTRL
+            + g" il est possible d'acceder a une liste de tout les dessins qui ont ete sauvegarder'. Il est possible de charger un desin en cliquant dessus
+            afin de continuer a dessiner dessus, il est aussi possible de suprimer les dessin sauvegardes. Finalement il est possible de filtrer les dessins
+            grace a leur etiquettes.
+        </p>
+        <img src="../../../assets/images/carrousel.png" alt="" width="1366" height="625" />
+    </div>
+
 
 <div id="Dessiner" class="tabcontent">
     <div class="tab">
@@ -23,8 +67,13 @@
         <button class="tablinks" (click)="openTab('Ligne')">Ligne</button>
         <button class="tablinks" (click)="openTab('Efface')">Efface</button>
         <button class="tablinks" (click)="openTab('Rectangle')">Rectangle</button>
+        <button class="tablinks" (click)="openTab('Polygone')">Polygone</button>
         <button class="tablinks" (click)="openTab('Ellipse')">Ellipse</button>
+        <button class="tablinks" (click)="openTab('Sceau de Peinture')">Sceau de Peinture</button>
+        <button class="tablinks" (click)="openTab('Pipette')">Pipette</button>
         <button class="tablinks" (click)="openTab('Palette de couleur')">Palette de couleur</button>
+        <button class="tablinks" (click)="openTab('Selection')">Selection</button>
+        <button class="tablinks" (click)="openTab('AnnulerRefaire')">Annuler-Refaire</button>
     </div>
 </div>
 
@@ -32,7 +81,7 @@
     <div id="Crayon" class="tabcontent">
         <h3>Crayon</h3>
         <p>
-            Le boutton "pencil" et la touche "c" permet d'acceder a l'outil crayon, ce dernier peut etre utiliser pour dessiner sur le canvas. Il est
+            Le boutton "Crayon" et la touche "c" permet d'acceder a l'outil crayon, ce dernier peut etre utiliser pour dessiner sur le canvas. Il est
             possible de changer la couleur et la largeur du trait grace au option données sur la toolbar.
         </p>
         <iframe
@@ -49,7 +98,7 @@
 <div id="Pinceau" class="tabcontent">
     <h3>Pinceau</h3>
     <p>
-        Le boutton "brush" et la touche "w" permet d'acceder a l'outil pinceau, ce dernier peut etre utiliser pour dessiner sur le canvas avec divers
+        Le boutton "Pinceau" et la touche "w" permet d'acceder a l'outil pinceau, ce dernier peut etre utiliser pour dessiner sur le canvas avec divers
         textures. Il est possible de changer la couleur, la texture et la largeur du trait grace au option données sur la toolbar.
     </p>
     <iframe width="560" height="315" src="https://www.youtube.com/embed/a3e3hCdOxYQ" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
@@ -58,7 +107,7 @@
 <div id="Ligne" class="tabcontent">
     <h3>Ligne</h3>
     <p>
-        Le boutton "line" et la touche "l" permet d'acceder a l'outil ligne, ce dernier peut etre utiliser pour dessiner des lignes droites sur le
+        Le boutton "ligne" et la touche "l" permet d'acceder a l'outil ligne, ce dernier peut etre utiliser pour dessiner des lignes droites sur le
         canvas ou plusieur segments qui se suivent. Il est possible de changer la couleur et la largeur des segments grace au option données sur la
         toolbar.
     </p>
@@ -75,7 +124,7 @@
 <div id="Efface" class="tabcontent">
     <h3>Efface</h3>
     <p>
-        Le boutton "eraser" et la touche "e" permet d'acceder a l'outil efface, ce dernier peut etre utiliser pour effacer der dessin deja present sur
+        Le boutton "Efface" et la touche "e" permet d'acceder a l'outil efface, ce dernier peut etre utiliser pour effacer der dessin deja present sur
         le canvas. Il est possible de changer la largeur de l'efface grace au option données sur la toolbar.
     </p>
     <iframe
@@ -91,7 +140,7 @@
 <div id="Rectangle" class="tabcontent">
     <h3>Rectangle</h3>
     <p>
-        Le boutton "rectangle" et la touche "1" permet d'acceder a l'outil "rectangle", ce dernier peut etre utiliser pour dessiner des rectangles et
+        Le boutton "Rectangle" et la touche "1" permet d'acceder a l'outil "rectangle", ce dernier peut etre utiliser pour dessiner des rectangles et
         carrées sur le canvas. Lors de l'utilisation de cet outil si la touche shift est utilisée un carrée sera tracé a la place d'un rectangle. Il
         est possible de choisir 3 types de tracé (Contour, Plein ou Plein avec contour). Il est possible de choisir la couleur du contour et du
         'filling' séparement, et la largeur du contour grace au option donnée sur la toolbar.
@@ -102,12 +151,42 @@
 <div id="Ellipse" class="tabcontent">
     <h3>Ellipse</h3>
     <p>
-        Le boutton "ellipse" et la touche "2" permet d'acceder a l'outil "ellipse", ce dernier peut etre utiliser pour dessiner des ellipses et
+        Le boutton "Ellipse" et la touche "2" permet d'acceder a l'outil "ellipse", ce dernier peut etre utiliser pour dessiner des ellipses et
         cercles sur le canvas. Lors de l'utilisation de cet outil si la touche shift est utilisée un cercle sera tracé a la place d'une ellipse. Il
         est possible de choisir 3 types de tracé (Contour, Plein ou Plein avec contour). Il est possible de choisir la couleur du contour et du
         'filling' séparement, et la largeur du contour grace au option donnée sur la toolbar.
     </p>
     <iframe width="560" height="315" src="https://www.youtube.com/embed/QAZ7JOEvoxY" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+</div>
+
+<div id="Polygone" class="tabcontent">
+    <h3>Polygone</h3>
+    <p>
+        Le boutton "Polygone" et la touche "3" permet d'acceder a l'outil "Polygone", ce dernier peut etre utiliser pour dessiner des polygones. Lors de l'utilisation de cet outil si la touche shift est utilisée un cercle sera tracé a la place d'une ellipse. Il
+        est possible de choisir 3 types de tracé (Contour, Plein ou Plein avec contour). Il est possible de choisir le nombre de cotes (entre 3 et 12). Il est possible de choisir la couleur du contour et du
+        'filling' séparement, et la largeur du contour grace au option donnée sur la toolbar.
+    </p>
+    <iframe width="560" height="315" src="https://www.youtube.com/embed/XXZLWmgHXxc" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+</div>
+
+<div id="Sceau de Peinture" class="tabcontent">
+    <h3>Sceau de Peinture</h3>
+    <p>
+        Le boutton "Sceau de Peinture" et la touche "B" permet d'acceder a l'outil "Sceau de Peinture", ce dernier peut etre utiliser pour remplir une region avec la couleur principale selectionne. 
+        Il est possible de choisir 2 types de remplicage (pixels contigus ou non contigus) qui peuvent etre selectionner avec le boutton gauche (contigus) ou droit (non contigus). Il est possible de choisir  
+        la tolerance d'ecart qui permet de definir l'etendue de la region a remplir.
+    </p>
+    <iframe width="560" height="315" src="https://www.youtube.com/embed/RtX2WHw6lhM" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+</div>
+
+<div id="Pipette" class="tabcontent">
+    <h3>Pipette</h3>
+    <p>
+        Le boutton "Pipette" et la touche "I" permet d'acceder a l'outil "Pipette", ce dernier peut etre utiliser pour choisir une couleur qui sera saisie du pixel sous le pointeur de la souris. 
+        Avec un clic gauche la couleur sera donner a la couleur primaire, avec un clic droit elle sera donne a la couleur secondaire. Un cercle de previsualisation sera present afin de montrer la 
+        surdimension des pixels sous le pointeur et ceux qui l'entoure. Le pixel centre sera mis en evidence par la previsualisation.
+    </p>
+    <iframe width="560" height="315" src="https://www.youtube.com/embed/shJ-9WxkeOU" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 </div>
 
 <div id="Palette de couleur" class="tabcontent">
@@ -124,4 +203,14 @@
         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
         allowfullscreen
     ></iframe>
+</div>
+
+<div id="AnnulerRefaire" class="tabcontent">
+    <h3>Annuler-Refaire</h3>
+    <p>
+        L'outil "annuler et refaire" peuvent etre utiliser en cliquant leur bouton respectifs sur la barre lateral ou en utilisant les touches "CTRL" + "Z" pour annuler
+        et "CTRL" + "SHIFT" + "Z" pour refaire. "Annuler" peut seulement etre utilisé lorsque quelque chose a deja ete dessine sur le canvas, et l'outil "refaire" peut
+        seulement etre utilisé lorsque quelque chose a deja ete annule.
+    </p>
+    <iframe width="560" height="315" src="https://www.youtube.com/embed/hJNyH8UYcTw" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 </div>
