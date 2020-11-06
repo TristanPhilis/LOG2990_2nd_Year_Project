@@ -1,13 +1,18 @@
 import { TestBed } from '@angular/core/testing';
 import { canvasTestHelper } from '@app/classes/canvas-test-helper';
+import { Color } from '@app/classes/color';
 import { Vec2 } from '@app/classes/vec2';
+import { ColorSelectionService } from '@app/services/color/color-selection-service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ARROW_DOWN, ARROW_LEFT, ARROW_RIGHT, ARROW_UP, ESCAPE_KEY, SHIFT_KEY } from '@app/shared/constant';
 import { EllipseSelectorService } from './ellipse-selector-service';
+import { UndoRedoService } from './undo-redo-service';
 
 // tslint:disable:no-any
 describe('EllipseSelectorService', () => {
     let service: EllipseSelectorService;
+    let undoRedoServiceSpy: jasmine.SpyObj<UndoRedoService>;
+    let colorServiceSpy: jasmine.SpyObj<ColorSelectionService>;
     let mouseEventLClick: MouseEvent;
     let mouseEventRClick: MouseEvent;
     let drawServiceSpy: jasmine.SpyObj<DrawingService>;
@@ -18,16 +23,24 @@ describe('EllipseSelectorService', () => {
     let drawSelectionBoxSpy: jasmine.Spy<any>;
     let placeImageSpy: jasmine.Spy<any>;
     let updateSelectedAreaPreviewSpy: jasmine.Spy<any>;
-
     let initializeSelectionBoxSpy: jasmine.Spy<any>;
 
     beforeEach(() => {
+        undoRedoServiceSpy = jasmine.createSpyObj('UndoRedoService', ['saveAction']);
+        const defaultColor = new Color(0, 0, 0);
+        colorServiceSpy = jasmine.createSpyObj('colorServiceSpy', ['']);
+        colorServiceSpy.primaryColor = defaultColor;
+        colorServiceSpy.secondaryColor = defaultColor;
         baseCtxStub = canvasTestHelper.canvas.getContext('2d') as CanvasRenderingContext2D;
         previewCtxStub = canvasTestHelper.drawCanvas.getContext('2d') as CanvasRenderingContext2D;
         drawServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas']);
 
         TestBed.configureTestingModule({
-            providers: [{ provide: DrawingService, useValue: drawServiceSpy }],
+            providers: [
+                { provide: DrawingService, useValue: drawServiceSpy },
+                { provide: UndoRedoService, useValue: undoRedoServiceSpy },
+                { provide: ColorSelectionService, useValue: colorServiceSpy },
+            ],
         });
         service = TestBed.inject(EllipseSelectorService);
         initializeSelectedBoxSpy = spyOn<any>(service, 'initializeSelectedBox').and.callThrough();
@@ -117,7 +130,6 @@ describe('EllipseSelectorService', () => {
         service.selectionBox.updateOpposingCorner({ x: 4, y: 4 });
         service.mouseDown = true;
         service.isAreaSelected = false;
-        service.wasItCircle = false;
         const ellipseSpy = spyOn<any>(drawServiceSpy.previewCtx, 'ellipse');
         service.onMouseMove(mouseEventLClick);
         expect(ellipseSpy).toHaveBeenCalled();
@@ -162,21 +174,6 @@ describe('EllipseSelectorService', () => {
         service.onMouseMove(mouseEventLClick);
         service.onMouseUp(mouseEventLClick);
         service.isAreaSelected = true;
-        service.selectedImageData = new ImageData(size, size);
-        service.placeImage();
-        expect(drawImageSpy).toHaveBeenCalled();
-    });
-
-    it(' placeImage should call putImageData if an area has been selected and wasCircle is true', () => {
-        const size = 10;
-        spyOn<any>(service, 'imagedata_to_image').and.returnValue(new Image(size, size));
-        const drawImageSpy = spyOn<any>(baseCtxStub, 'drawImage').and.callThrough();
-        service.isAreaSelected = false;
-        service.onMouseDown(mouseEventLClick);
-        service.onMouseMove(mouseEventLClick);
-        service.onMouseUp(mouseEventLClick);
-        service.isAreaSelected = true;
-        service.wasItCircle = true;
         service.selectedImageData = new ImageData(size, size);
         service.placeImage();
         expect(drawImageSpy).toHaveBeenCalled();

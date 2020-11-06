@@ -1,13 +1,18 @@
 import { TestBed } from '@angular/core/testing';
 import { canvasTestHelper } from '@app/classes/canvas-test-helper';
+import { Color } from '@app/classes/color';
 import { Vec2 } from '@app/classes/vec2';
+import { ColorSelectionService } from '@app/services/color/color-selection-service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ARROW_DOWN, ARROW_LEFT, ARROW_RIGHT, ARROW_UP, ESCAPE_KEY, SHIFT_KEY } from '@app/shared/constant';
 import { RectangleSelectorService } from './rectangle-selector-service';
+import { UndoRedoService } from './undo-redo-service';
 
 // tslint:disable:no-any
 describe('RectangleSelectorService', () => {
     let service: RectangleSelectorService;
+    let undoRedoServiceSpy: jasmine.SpyObj<UndoRedoService>;
+    let colorServiceSpy: jasmine.SpyObj<ColorSelectionService>;
     let mouseEventLClick: MouseEvent;
     let mouseEventRClick: MouseEvent;
     let drawServiceSpy: jasmine.SpyObj<DrawingService>;
@@ -24,12 +29,21 @@ describe('RectangleSelectorService', () => {
     let putImageDataSpy: jasmine.Spy<any>;
 
     beforeEach(() => {
+        undoRedoServiceSpy = jasmine.createSpyObj('UndoRedoService', ['saveAction']);
+        const defaultColor = new Color(0, 0, 0);
+        colorServiceSpy = jasmine.createSpyObj('colorServiceSpy', ['']);
+        colorServiceSpy.primaryColor = defaultColor;
+        colorServiceSpy.secondaryColor = defaultColor;
         baseCtxStub = canvasTestHelper.canvas.getContext('2d') as CanvasRenderingContext2D;
         previewCtxStub = canvasTestHelper.drawCanvas.getContext('2d') as CanvasRenderingContext2D;
         drawServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas']);
 
         TestBed.configureTestingModule({
-            providers: [{ provide: DrawingService, useValue: drawServiceSpy }],
+            providers: [
+                { provide: DrawingService, useValue: drawServiceSpy },
+                { provide: UndoRedoService, useValue: undoRedoServiceSpy },
+                { provide: ColorSelectionService, useValue: colorServiceSpy },
+            ],
         });
         service = TestBed.inject(RectangleSelectorService);
         initializeSelectedBoxSpy = spyOn<any>(service, 'initializeSelectedBox').and.callThrough();
