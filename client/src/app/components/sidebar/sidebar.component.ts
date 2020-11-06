@@ -5,11 +5,11 @@ import { CreateNewDrawingComponent } from '@app/components/create-new-drawing/cr
 import { GuideComponent } from '@app/components/guide/guide.component';
 import { ExportPopupComponent } from '@app/components/popup/export-popup/export-popup.component';
 import { SavePopupComponent } from '@app/components/popup/save-popup/save-popup.component';
+import { SidebarTool } from '@app/components/sidebar/sidebar-tool/sidebar-tool';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ToolsService } from '@app/services/tools/tools-service';
 import { UndoRedoService } from '@app/services/tools/undo-redo-service';
 import { drawingToolId, sidebarToolID } from '@app/shared/enum';
-import { SidebarTool } from './sidebar-tool/sidebar-tool';
 
 declare type callback = () => void;
 
@@ -98,6 +98,22 @@ export class SidebarComponent {
             case sidebarToolID.openGuide: {
                 this.isDialogOpen = true;
                 const dialogRef = this.dialog.open(GuideComponent);
+                dialogRef.afterClosed().subscribe(() => {
+                    this.isDialogOpen = false;
+                });
+                break;
+            }
+            case sidebarToolID.openCarrousel: {
+                this.isDialogOpen = true;
+                const dialogRef = this.dialog.open(CarouselComponent);
+                dialogRef.afterClosed().subscribe(() => {
+                    this.isDialogOpen = false;
+                });
+                break;
+            }
+            case sidebarToolID.saveCurrent: {
+                this.isDialogOpen = true;
+                const dialogRef = this.dialog.open(SavePopupComponent);
                 dialogRef.afterClosed().subscribe(() => {
                     this.isDialogOpen = false;
                 });
@@ -194,6 +210,14 @@ export class SidebarComponent {
             b: () => this.onButtonPressTop(this.sideBarToolsTopMap.get(sidebarToolID.paintBucket)),
             e: () => this.onButtonPressTop(this.sideBarToolsTopMap.get(sidebarToolID.eraser)),
             l: () => this.onButtonPressTop(this.sideBarToolsTopMap.get(sidebarToolID.line)),
+            r: () => {
+                this.onButtonPressTop(this.sideBarToolsTopMap.get(sidebarToolID.selection));
+            },
+
+            s: () => {
+                this.onButtonPressTop(this.sideBarToolsTopMap.get(sidebarToolID.selection));
+                this.toolsService._currentDrawingTool = drawingToolId.ellipseSelectionService;
+            },
             i: () => this.onButtonPressTop(this.sideBarToolsTopMap.get(sidebarToolID.pipette)),
 
             1: () => {

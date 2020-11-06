@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { ToolOption } from '@app/classes/tool-option';
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { RectangleSelectorService } from '@app/services/tools/rectangle-selector-service';
 import { ToolsService } from '@app/services/tools/tools-service';
 import { drawingToolId, Options, sidebarToolID, Texture, TraceTypes } from '@app/shared/enum';
 // tslint:disable:no-any
@@ -12,12 +13,21 @@ import { drawingToolId, Options, sidebarToolID, Texture, TraceTypes } from '@app
 })
 export class AttributePanelComponent {
     showTools: boolean;
+    selectionTools: ToolOption[];
     tracingTools: ToolOption[];
     shapesTools: ToolOption[];
     tracingTypes: ToolOption[];
     textures: ToolOption[];
 
-    constructor(public toolsService: ToolsService, public drawingService: DrawingService) {
+    constructor(
+        public toolsService: ToolsService,
+        public drawingService: DrawingService,
+        public rectangleSelectionService: RectangleSelectorService,
+    ) {
+        this.selectionTools = [
+            { value: drawingToolId.rectangleSelectionService, displayName: 'Selection Rectangulaire' },
+            { value: drawingToolId.ellipseSelectionService, displayName: 'Selection Elliptique' },
+        ];
         this.tracingTools = [
             { value: drawingToolId.pencilService, displayName: 'Crayon' },
             { value: drawingToolId.brushService, displayName: 'Pinceau' },

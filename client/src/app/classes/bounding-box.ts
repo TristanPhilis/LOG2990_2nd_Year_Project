@@ -8,6 +8,7 @@ export class BoundingBox extends Box {
     left: number;
     right: number;
     squareSize: number;
+    oldSelectedBox: BoundingBox;
 
     constructor() {
         super();
@@ -102,6 +103,9 @@ export class BoundingBox extends Box {
         copy.right = this.right;
         copy.bottom = this.bottom;
         copy.squareSize = this.squareSize;
+        if (this.oldSelectedBox) {
+            copy.oldSelectedBox = this.oldSelectedBox.copy();
+        }
         return copy;
     }
 }

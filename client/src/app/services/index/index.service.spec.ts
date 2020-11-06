@@ -40,7 +40,6 @@ describe('IndexService', () => {
         const postReq = httpMock.expectOne(baseUrl + '/send');
         expect(postReq.request.method).toBe('POST');
         expect(req.request.method).toBe('GET');
-
         // actually send the request
         req.flush(expectedDrawing);
         postReq.flush(expectedDrawing);

@@ -26,6 +26,7 @@ export enum drawingToolId {
     lineService,
     brushService,
     rectangleSelectionService,
+    ellipseSelectionService,
     polygonService,
     bucketService,
     pipetteService,

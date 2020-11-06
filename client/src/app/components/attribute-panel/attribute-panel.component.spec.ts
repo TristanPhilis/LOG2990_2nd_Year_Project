@@ -32,4 +32,8 @@ describe('AttributePanelComponent', () => {
     it('should create', () => {
         expect(component).toBeTruthy();
     });
+
+    it('Should change the current drawing tool', () => {
+        // allo
+    });
 });
