@@ -66,16 +66,18 @@ export class DatabaseService {
     }
 
     async deleteDrawing(drawingId: number): Promise<void> {
-        return this.collection
-            .findOneAndDelete({ id: drawingId })
-            .then((deletedDrawing) => {
-                if (deletedDrawing.value === null) {
-                    throw new Error('Invalid id, could not find the drawing to remove');
-                }
-            })
-            .catch((error: Error) => {
-                throw error;
-            });
+        return new Promise<void>((resolve, reject) => {
+            this.collection
+                .findOneAndDelete({ id: drawingId })
+                .then((deletedDrawing) => {
+                    if (deletedDrawing.value === null) {
+                        reject(new Error('Invalid id, could not find the drawing to remove'));
+                    } else {
+                        resolve();
+                    }
+                })
+                .catch();
+        });
     }
 
     private validateDrawing(drawing: DrawingInfo): boolean {

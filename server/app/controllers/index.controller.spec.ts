@@ -1,4 +1,5 @@
 import { Application } from '@app/app';
+import { DatabaseService } from '@app/services/database/database.service';
 import { IndexService } from '@app/services/index.service';
 import { TYPES } from '@app/types';
 import { DrawingInfo } from '@common/communication/drawing-info';
@@ -12,6 +13,7 @@ import { Stubbed, testingContainer } from '../../test/test-utils';
 describe('IndexController', () => {
     const baseDrawing: DrawingInfo = { id: 996, name: '', tags: [], metadata: '' };
     let indexService: Stubbed<IndexService>;
+    let databaseService: Stubbed<DatabaseService>;
     let app: Express.Application;
 
     beforeEach(async () => {
@@ -30,6 +32,7 @@ describe('IndexController', () => {
             start: sandbox.stub().resolves(),
             closeConnection: sandbox.stub().resolves(),
         });
+        databaseService = container.get(TYPES.DatabaseService);
         indexService = container.get(TYPES.IndexService);
         app = container.get<Application>(TYPES.Application).app;
     });
@@ -44,7 +47,7 @@ describe('IndexController', () => {
     });
 
     it('should return deletedDrawing from index service on valid delete request to root', async () => {
-        return supertest(app).del('/api/index/:id').set('Accept', 'application/json').expect(Httpstatus.StatusCodes.OK);
+        return supertest(app).del('/api/index/992').set('Accept', 'application/json').expect(Httpstatus.StatusCodes.OK);
     });
 
     it('should store drawing in the array on valid post request to /send', async () => {
@@ -59,6 +62,20 @@ describe('IndexController', () => {
             .expect(Httpstatus.StatusCodes.OK)
             .then((response: any) => {
                 expect(response.body).to.deep.equal([baseDrawing, baseDrawing]);
+            });
+    });
+
+    // tslint:disable-next-line: promise-function-async
+    it('should throw', () => {
+        databaseService.deleteDrawing.usingPromise(Promise).rejects('error');
+
+        return supertest(app)
+            .del('/api/index/992')
+            .then((response: any) => {
+                expect(response.statusCode).to.deep.equal(Httpstatus.StatusCodes.NOT_FOUND);
+            })
+            .catch((error) => {
+                throw error;
             });
     });
 });

@@ -1,133 +1,91 @@
-import { Component } from '@angular/core';
+import { AfterViewChecked, Component, HostListener, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { CreateNewDrawingComponent } from '@app/components/create-new-drawing/create-new-drawing.component';
 import { DrawingService } from '@app/services/drawing/drawing.service';
-import { IndexService } from '@app/services/index/index.service';
+import { DrawingsDataService } from '@app/services/index/drawings-data.service';
 import { DrawingInfo } from '@common/communication/drawing-info';
-import { BehaviorSubject } from 'rxjs';
-import { map } from 'rxjs/operators';
-
-const CURRENT_DRAWINGS_MAX_SIZE = 3;
 @Component({
     selector: 'app-carousel',
     templateUrl: './carousel.component.html',
     styleUrls: ['./carousel.component.scss'],
 })
-export class CarouselComponent {
-    drawingsInfo: BehaviorSubject<DrawingInfo[]>;
-    drawingCounter: number;
-    currentDrawings: DrawingInfo[];
-    constructor(private basicService: IndexService, private drawingService: DrawingService, private dialog: MatDialog, private router: Router) {
-        this.drawingCounter = 0;
-        this.drawingsInfo = new BehaviorSubject<DrawingInfo[]>([]);
-        this.currentDrawings = [];
-        this.getAllDrawings();
+export class CarouselComponent implements OnInit, AfterViewChecked {
+    noDrawingFiltered: boolean;
+    noDrawings: boolean;
+    displayedMessage: string;
+    constructor(
+        private drawingService: DrawingService,
+        public drawingsDataService: DrawingsDataService,
+        private dialog: MatDialog,
+        private router: Router,
+    ) {
+        this.drawingsDataService.getAllDrawings();
     }
 
-    updateCurrentDrawings(): void {
-        switch (this.drawingsInfo.value.length) {
-            case 0:
-                break;
-            case 1:
-                this.currentDrawings = [this.drawingsInfo.value[0]];
-                break;
-            case 2:
-                this.currentDrawings = [
-                    this.drawingsInfo.value[this.getDrawingPosition(this.drawingCounter - 1)],
-                    this.drawingsInfo.value[this.getDrawingPosition(this.drawingCounter)],
-                ];
-                break;
-            default:
-                for (let i = 0; i < CURRENT_DRAWINGS_MAX_SIZE; i++) {
-                    this.currentDrawings[i] = this.drawingsInfo.value[this.getDrawingPosition(this.drawingCounter - 1 + i)];
-                }
-                break;
-        }
+    ngOnInit(): void {
+        this.drawingsDataService.tags = [];
     }
 
-    getAllDrawings(): void {
-        this.basicService
-            .getAllDrawings()
-            .pipe(
-                map((drawingInfo: DrawingInfo[]) => {
-                    return drawingInfo;
-                }),
-            )
-            .subscribe(
-                (drawingsInfo) => {
-                    this.drawingsInfo.next(drawingsInfo);
-                },
-                (error: Error) => {
-                    throw error;
-                },
-                () => {
-                    this.updateCurrentDrawings();
-                },
-            );
+    ngAfterViewChecked(): void {
+        this.noDrawings = this.drawingsDataService.drawingsInfo?.value.length === 0;
+        this.noDrawingFiltered = this.drawingsDataService.filteredDrawings?.length === 0;
+        if (this.noDrawings) this.displayedMessage = "Il n'y a présentement aucun dessin";
+        else this.displayedMessage = 'Aucun dessin ne correspond a votre recherche';
+    }
+
+    @HostListener('window: keyup', ['$event'])
+    onKeyUp(event: KeyboardEvent): void {
+        if (event.key === 'ArrowLeft') this.goToPreviousDrawing();
+        if (event.key === 'ArrowRight') this.goToNextDrawing();
+    }
+
+    addTag(): void {
+        this.drawingsDataService.addTag();
+    }
+
+    deleteTag(tag: string): void {
+        this.drawingsDataService.deleteTag(tag);
+    }
+
+    deleteDrawing(id: number): void {
+        this.drawingsDataService.deleteDrawing(id);
+    }
+
+    getDrawingPosition(counter: number): number {
+        if (this.drawingsDataService.tags.length === 0)
+            return this.drawingsDataService.getDrawingPosition(counter, this.drawingsDataService.drawingsInfo.value);
+        else return this.drawingsDataService.getDrawingPosition(counter, this.drawingsDataService.filteredDrawings);
     }
 
     goToPreviousDrawing(): void {
-        if (this.drawingCounter === 0) {
-            this.drawingCounter = this.drawingsInfo.value.length - 1;
-        } else {
-            this.drawingCounter--;
-        }
-        this.updateCurrentDrawings();
+        this.drawingsDataService.goToPreviousDrawing();
     }
 
     goToNextDrawing(): void {
-        if (this.drawingCounter === this.drawingsInfo.value.length - 1) {
-            this.drawingCounter = 0;
-        } else {
-            this.drawingCounter++;
-        }
-        this.updateCurrentDrawings();
-    }
-
-    deleteDrawing(drawingId: number): void {
-        this.basicService.deleteDrawing(drawingId)?.subscribe(
-            (deletedDrawingId: number) => {
-                for (const drawingInfo of this.drawingsInfo.value) {
-                    if (drawingInfo.id === deletedDrawingId) {
-                        const index = this.drawingsInfo.value.indexOf(drawingInfo);
-                        this.drawingsInfo.value.splice(index, 1);
-                    }
-                }
-            },
-            () => {
-                throw new Error('Error: Drawing does not exist');
-            },
-            () => {
-                this.updateCurrentDrawings();
-            },
-        );
+        this.drawingsDataService.goToNextDrawing();
     }
 
     loadDrawing(drawing: DrawingInfo): void {
         const newDrawingRef = this.dialog.open(CreateNewDrawingComponent);
         newDrawingRef.afterClosed().subscribe((result) => {
-            if (result) {
-                this.drawingService.fillCanvas('white');
-                this.drawingService.sendDrawing(drawing.metadata);
-                this.router
-                    .navigate(['/editor'])
-                    .then(() => {
-                        this.drawingService.loadDrawing(this.drawingService.baseCtx);
-                    })
-                    .catch();
-            } else {
-                const carouselRef = this.dialog.open(CarouselComponent);
-                carouselRef.afterClosed().subscribe();
-            }
+            this.sendDrawingToEditor(result, drawing);
         });
     }
-
-    getDrawingPosition(counter: number): number {
-        let position = counter % this.drawingsInfo.value.length;
-        if (position < 0) {
-            position += this.drawingsInfo.value.length;
+    // tslint:disable-next-line: no-any Here result is of unknown type
+    sendDrawingToEditor(result: any, drawing: DrawingInfo): void {
+        if (result) {
+            this.drawingService.clearCanvas(this.drawingService.baseCtx);
+            this.drawingService.sendDrawing(drawing.metadata);
+            this.router
+                .navigate(['/editor'])
+                .then(() => {
+                    this.drawingService.loadDrawing(this.drawingService.baseCtx);
+                })
+                .catch();
+        } else {
+            const carouselRef = this.dialog.open(CarouselComponent);
+            carouselRef.afterClosed().subscribe();
         }
-        return position;
     }
 }

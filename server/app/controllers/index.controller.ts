@@ -55,7 +55,7 @@ export class IndexController {
                     res.sendStatus(Httpstatus.StatusCodes.CREATED);
                 })
                 .catch((error: Error) => {
-                    res.status(Httpstatus.StatusCodes.NOT_FOUND).send(error.message);
+                    res.status(Httpstatus.StatusCodes.BAD_REQUEST).send(error.message);
                 });
         });
 
@@ -68,7 +68,7 @@ export class IndexController {
                     res.json(id);
                 })
                 .catch((error: Error) => {
-                    // res.status(Httpstatus.StatusCodes.NOT_FOUND).send(error.message);
+                    res.status(Httpstatus.StatusCodes.NOT_FOUND).send(error.message);
                 });
         });
     }
