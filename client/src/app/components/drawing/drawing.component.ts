@@ -11,7 +11,7 @@ import { ToolsService } from '@app/services/tools/tools-service';
 })
 export class DrawingComponent implements AfterViewInit, OnChanges {
     @ViewChild('baseCanvas', { static: false }) baseCanvas: ElementRef<HTMLCanvasElement>;
-    // On utilise ce canvas pour dessiner sans affecter le dessin final
+    // We use this canvas to draw without affecting the final drawing
     @ViewChild('previewCanvas', { static: false }) previewCanvas: ElementRef<HTMLCanvasElement>;
 
     private baseCtx: CanvasRenderingContext2D;
@@ -20,7 +20,7 @@ export class DrawingComponent implements AfterViewInit, OnChanges {
     @Input()
     private canvasSize: Vec2;
 
-    constructor(private drawingService: DrawingService, private toolsService: ToolsService) {}
+    constructor(public drawingService: DrawingService, private toolsService: ToolsService) {}
 
     ngAfterViewInit(): void {
         this.baseCtx = this.baseCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
@@ -28,7 +28,7 @@ export class DrawingComponent implements AfterViewInit, OnChanges {
         this.drawingService.baseCtx = this.baseCtx;
         this.drawingService.previewCtx = this.previewCtx;
         this.drawingService.canvas = this.baseCanvas.nativeElement;
-        console.log('drawingViewInit');
+        this.drawingService.fillCanvas('white');
     }
 
     ngOnChanges(changes: SimpleChanges): void {
@@ -45,7 +45,13 @@ export class DrawingComponent implements AfterViewInit, OnChanges {
         this.baseCanvas.nativeElement.height = this.height;
         this.previewCanvas.nativeElement.width = this.width;
         this.previewCanvas.nativeElement.height = this.height;
+        this.drawingService.fillCanvas('white');
         this.drawingService.setImageData(savedImageData);
+    }
+
+    @HostListener('contextmenu', ['$event'])
+    disableContextMenu(event: MouseEvent): void {
+        event.preventDefault();
     }
 
     @HostListener('mousemove', ['$event'])

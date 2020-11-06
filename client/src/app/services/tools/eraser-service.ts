@@ -1,33 +1,36 @@
 import { Injectable } from '@angular/core';
+import { BoundingBox } from '@app/classes/bounding-box';
+import { DrawingAction } from '@app/classes/drawing-action';
 import { Tool } from '@app/classes/tool';
+import { ToolOption } from '@app/classes/tool-option';
 import { Vec2 } from '@app/classes/vec2';
+import { ColorSelectionService } from '@app/services/color/color-selection-service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
-import { MouseButton } from '@app/shared/enum';
+import { UndoRedoService } from '@app/services/tools/undo-redo-service';
+import { drawingToolId, MouseButton, Options } from '@app/shared/enum';
 
-// Ceci est une implémentation de base de l'outil Crayon pour aider à débuter le projet
-// L'implémentation ici ne couvre pas tous les critères d'accepetation du projet
-// Vous êtes encouragés de modifier et compléter le code.
-// N'oubliez pas de regarder les tests dans le fichier spec.ts aussi!
+export const MINIMUM_ERASER_SIZE = 5;
+
 @Injectable({
     providedIn: 'root',
 })
 export class EraserService extends Tool {
     private pathData: Vec2[];
-    private thickness: number;
-    private five: number = 5;
+    private boundingBox: BoundingBox;
 
-    constructor(drawingService: DrawingService) {
-        super(drawingService);
-        this.thickness = this.five; // Remplacer par un observable
+    constructor(drawingService: DrawingService, undoRedoService: UndoRedoService, colorService: ColorSelectionService) {
+        super(drawingService, undoRedoService, colorService);
         this.clearPath();
+        this.boundingBox = new BoundingBox();
+        this.setDefaultOptions();
     }
 
-    set _thickness(newThickness: number) {
-        this.thickness = newThickness;
-    }
-
-    get _thickness(): number {
-        return this.thickness;
+    setDefaultOptions(): void {
+        const toolOptions = new Map<Options, ToolOption>([[Options.eraserSize, { value: MINIMUM_ERASER_SIZE, displayName: 'Grosseur' }]]);
+        this.options = {
+            primaryColor: this.primaryColor,
+            toolOptions,
+        };
     }
 
     onMouseDown(event: MouseEvent): void {
@@ -43,34 +46,56 @@ export class EraserService extends Tool {
         if (this.mouseDown) {
             const mousePosition = this.getPositionFromMouse(event);
             this.pathData.push(mousePosition);
-            this.eraseLine(this.drawingService.baseCtx, this.pathData);
+            this.draw(this.drawingService.baseCtx, this.getDrawingAction());
+            this.undoRedoService.saveAction(this.getDrawingAction());
         }
         this.mouseDown = false;
         this.clearPath();
     }
 
     onMouseMove(event: MouseEvent): void {
-        if (this.mouseDown && event.buttons === MouseButton.Left) {
-            const mousePosition = this.getPositionFromMouse(event);
-            this.pathData.push(mousePosition);
-            this.eraseLine(this.drawingService.previewCtx, this.pathData);
-            this.eraseLine(this.drawingService.baseCtx, this.pathData);
-        }
-        if (this.mouseDown && !(event.buttons === MouseButton.Left)) {
-            this.eraseLine(this.drawingService.baseCtx, this.pathData);
+        const size = this.options.toolOptions.get(Options.size);
+        this.boundingBox.squareSize = size ? size.value : MINIMUM_ERASER_SIZE;
+        const currentCoord = this.getPositionFromMouse(event);
+        this.boundingBox.squareCenter = currentCoord;
+        this.drawEraserBorder();
+        if (this.mouseDown) {
+            this.pathData.push(currentCoord);
+            this.draw(this.drawingService.baseCtx, this.getDrawingAction());
         }
     }
 
-    private eraseLine(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
-        ctx.globalCompositeOperation = 'destination-out';
-        ctx.beginPath();
-        ctx.lineCap = 'round';
-        ctx.lineWidth = this.thickness;
-        for (const point of path) {
-            ctx.lineTo(point.x, point.y);
+    drawEraserBorder(): void {
+        const ctx = this.drawingService.previewCtx;
+        this.drawingService.clearCanvas(ctx);
+        ctx.strokeStyle = 'black';
+        const borderSize = 1;
+        ctx.lineWidth = borderSize;
+        ctx.strokeRect(this.boundingBox.position.x, this.boundingBox.position.y, this.boundingBox.width, this.boundingBox.height);
+    }
+
+    draw(ctx: CanvasRenderingContext2D, drawingAction: DrawingAction): void {
+        const box = drawingAction.box as BoundingBox;
+        if (drawingAction.path && box) {
+            ctx.fillStyle = 'white';
+            for (const point of drawingAction.path) {
+                box.squareCenter = point;
+                ctx.fillRect(box.position.x, box.position.y, box.width, box.height);
+            }
         }
-        ctx.stroke();
-        ctx.globalCompositeOperation = 'source-over';
+    }
+
+    getDrawingAction(): DrawingAction {
+        const options = {
+            primaryColor: this.primaryColor,
+            toolOptions: this.copyToolOptionMap(this.options.toolOptions),
+        };
+        return {
+            id: drawingToolId.eraserService,
+            path: this.pathData,
+            box: this.boundingBox.copy(),
+            options,
+        };
     }
 
     private clearPath(): void {

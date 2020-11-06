@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { ColorSliderComponent } from './color-slider.component';
 
 describe('ColorSliderComponent', () => {
@@ -8,11 +8,13 @@ describe('ColorSliderComponent', () => {
     // tslint:disable-next-line:no-any
     let colorChangeSpy: jasmine.Spy<any>;
 
-    beforeEach(async(() => {
-        TestBed.configureTestingModule({
-            declarations: [ColorSliderComponent],
-        }).compileComponents();
-    }));
+    beforeEach(
+        waitForAsync(() => {
+            TestBed.configureTestingModule({
+                declarations: [ColorSliderComponent],
+            }).compileComponents();
+        }),
+    );
 
     beforeEach(() => {
         fixture = TestBed.createComponent(ColorSliderComponent);

@@ -1,13 +1,9 @@
 import { Component } from '@angular/core';
-import { ToolOptionComponent } from '@app/components/sidebar/tool-option/tool-option.component';
-import { BrushService } from '@app/services/tools/brush.service';
-import { EllipseService } from '@app/services/tools/ellipse-service';
-import { EraserService } from '@app/services/tools/eraser-service';
-import { LineService } from '@app/services/tools/line-service';
-import { PencilService } from '@app/services/tools/pencil-service';
-import { RectangleService } from '@app/services/tools/rectangle-service';
+import { ToolOption } from '@app/classes/tool-option';
+import { DrawingService } from '@app/services/drawing/drawing.service';
+import { RectangleSelectorService } from '@app/services/tools/rectangle-selector-service';
 import { ToolsService } from '@app/services/tools/tools-service';
-import { drawingToolId, sidebarToolID, TraceTypes } from '@app/shared/enum';
+import { drawingToolId, Options, sidebarToolID, Texture, TraceTypes } from '@app/shared/enum';
 // tslint:disable:no-any
 
 @Component({
@@ -17,31 +13,41 @@ import { drawingToolId, sidebarToolID, TraceTypes } from '@app/shared/enum';
 })
 export class AttributePanelComponent {
     showTools: boolean;
-    tracingTools: ToolOptionComponent[];
-    shapesTools: ToolOptionComponent[];
-    tracingTypes: ToolOptionComponent[];
+    selectionTools: ToolOption[];
+    tracingTools: ToolOption[];
+    shapesTools: ToolOption[];
+    tracingTypes: ToolOption[];
+    textures: ToolOption[];
 
     constructor(
         public toolsService: ToolsService,
-        private pencilService: PencilService,
-        private rectangleService: RectangleService,
-        private ellipseService: EllipseService,
-        private lineService: LineService,
-        private eraserService: EraserService,
-        private brushService: BrushService,
+        public drawingService: DrawingService,
+        public rectangleSelectionService: RectangleSelectorService,
     ) {
+        this.selectionTools = [
+            { value: drawingToolId.rectangleSelectionService, displayName: 'Selection Rectangulaire' },
+            { value: drawingToolId.ellipseSelectionService, displayName: 'Selection Elliptique' },
+        ];
         this.tracingTools = [
-            { id: drawingToolId.pencilService, name: 'Pencil', thickness: 10, color: 'dark' },
-            { id: drawingToolId.brushService, name: 'Brush', thickness: 10, color: 'dark' },
+            { value: drawingToolId.pencilService, displayName: 'Crayon' },
+            { value: drawingToolId.brushService, displayName: 'Pinceau' },
         ];
         this.shapesTools = [
-            { id: drawingToolId.rectangleService, name: 'Rectangle', thickness: 10, color: 'dark' },
-            { id: drawingToolId.ellipseService, name: 'Ellipse', thickness: 10, color: 'dark' },
+            { value: drawingToolId.rectangleService, displayName: 'Rectangle' },
+            { value: drawingToolId.ellipseService, displayName: 'Ellipse' },
+            { value: drawingToolId.polygonService, displayName: 'Polygone' },
         ];
         this.tracingTypes = [
-            { id: TraceTypes.fill, name: 'Fill' },
-            { id: TraceTypes.stroke, name: 'Stroke' },
-            { id: TraceTypes.fillAndStroke, name: 'Fill and Stroke' },
+            { value: TraceTypes.fill, displayName: 'Rempli' },
+            { value: TraceTypes.stroke, displayName: 'Contour' },
+            { value: TraceTypes.fillAndStroke, displayName: 'Contour et rempli' },
+        ];
+        this.textures = [
+            { value: Texture.one, displayName: 'Texture Une' },
+            { value: Texture.two, displayName: 'Texture Deux' },
+            { value: Texture.three, displayName: 'Texture Trois' },
+            { value: Texture.four, displayName: 'Texture Quatre' },
+            { value: Texture.five, displayName: 'Texture Cinq' },
         ];
     }
 
@@ -49,65 +55,24 @@ export class AttributePanelComponent {
         return sidebarToolID;
     }
 
-    handleChange(selectedTool: drawingToolId): void {
+    get Options(): typeof Options {
+        return Options;
+    }
+
+    get toolOptions(): Map<Options, ToolOption> {
+        const optionsMap = this.toolsService.currentDrawingToolOptions;
+        return optionsMap ? optionsMap : new Map<Options, ToolOption>();
+    }
+
+    handleToolChange(selectedTool: drawingToolId): void {
         this.toolsService._currentDrawingTool = Number(selectedTool);
     }
 
-    handleTraceTypeChange(event: any): void {
-        switch (this.toolsService._selectedSideBarToolID) {
-            case sidebarToolID.shapes: {
-                switch (this.toolsService._currentDrawingToolID) {
-                    case drawingToolId.rectangleService: {
-                        this.rectangleService._traceType = event.target.value;
-                        break;
-                    }
-                    case drawingToolId.ellipseService: {
-                        // this.ellipseService._traceType = type;
-                        break;
-                    }
-                }
-                break;
-            }
-        }
-    }
-
-    // need any to acces target.valueAsNumber
-    // tslint:disable-next-line:no-any
-    sliderChange(event: any): void {
-        switch (this.toolsService._selectedSideBarToolID) {
-            case sidebarToolID.tracing: {
-                switch (this.toolsService._currentDrawingToolID) {
-                    case drawingToolId.pencilService: {
-                        this.pencilService._thickness = event.target.value;
-                        break;
-                    }
-                    case drawingToolId.brushService: {
-                        this.brushService._thickness = event.target.value;
-                    }
-                }
-                break;
-            }
-            case sidebarToolID.shapes: {
-                switch (this.toolsService._currentDrawingToolID) {
-                    case drawingToolId.rectangleService: {
-                        this.rectangleService._thickness = event.target.value;
-                        break;
-                    }
-                    case drawingToolId.ellipseService: {
-                        this.ellipseService._thickness = event.target.value;
-                        break;
-                    }
-                }
-                break;
-            }
-            case sidebarToolID.line: {
-                this.lineService._thickness = event.target.value;
-                break;
-            }
-            case sidebarToolID.eraser: {
-                this.eraserService._thickness = event.target.value;
-                break;
-            }
+    updateToolOptionValue(key: Options, value: number): void {
+        const option = this.toolOptions.get(key);
+        if (option) {
+            option.value = Number(value);
+            this.toolsService.updateOptionValue(key, option);
         }
     }
 }

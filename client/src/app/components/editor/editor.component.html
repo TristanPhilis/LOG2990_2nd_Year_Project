@@ -1,6 +1,15 @@
 <div class="container">
-    <app-sidebar></app-sidebar>
-    <app-attribute-panel></app-attribute-panel>
+    <mat-sidenav-container class="example-container">
+        <mat-sidenav mode="side" opened [disableClose]="true">
+            <app-sidebar></app-sidebar>
+        </mat-sidenav>
+    </mat-sidenav-container>
+    <mat-sidenav-container>
+        <mat-sidenav #toolAttributeSidenav mode="side" closed>
+            <app-attribute-panel></app-attribute-panel>
+        </mat-sidenav>
+    </mat-sidenav-container>
+
     <div #workzone class="drawing-container">
         <app-drawing [canvasSize]="canvasSize" class="drawing" tabindex="0"></app-drawing>
         <div #bottomAnchor id="bottomAnchor" class="anchor" (mousedown)="onMouseDown($event, 0)"></div>

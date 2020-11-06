@@ -1,7 +1,5 @@
 import { Injectable } from '@angular/core';
 import { Color } from '@app/classes/color';
-import { ColorSelection } from '@app/shared/enum';
-
 const MAX_HISTORY_SIZE = 10;
 
 @Injectable({
@@ -10,8 +8,6 @@ const MAX_HISTORY_SIZE = 10;
 export class ColorSelectionService {
     primaryColor: Color;
     secondaryColor: Color;
-    selectedColor: ColorSelection;
-    showColorPicker: boolean;
     private colorsHistory: Color[];
 
     constructor() {
@@ -49,8 +45,8 @@ export class ColorSelectionService {
         this.secondaryColor = temp;
     }
 
-    selectNewColor(color: Color): void {
-        if (this.selectedColor === ColorSelection.primary) {
+    selectNewColor(color: Color, isPrimaryColor: boolean): void {
+        if (isPrimaryColor) {
             this.primaryColor = color;
         } else {
             this.secondaryColor = color;

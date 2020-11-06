@@ -1,5 +1,5 @@
 import { SimpleChange } from '@angular/core';
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { Color } from '@app/classes/color';
 import { ColorPaletteComponent } from './color-palette.component';
 
@@ -10,11 +10,13 @@ describe('ColorPaletteComponent', () => {
     let mouseEvent: MouseEvent;
     let colorChangeSpy: jasmine.Spy<any>;
 
-    beforeEach(async(() => {
-        TestBed.configureTestingModule({
-            declarations: [ColorPaletteComponent],
-        }).compileComponents();
-    }));
+    beforeEach(
+        waitForAsync(() => {
+            TestBed.configureTestingModule({
+                declarations: [ColorPaletteComponent],
+            }).compileComponents();
+        }),
+    );
 
     beforeEach(() => {
         fixture = TestBed.createComponent(ColorPaletteComponent);
@@ -58,6 +60,8 @@ describe('ColorPaletteComponent', () => {
     it('should emit color on hue change', () => {
         const newColor = new Color(1, 1, 1);
         // tslint:disable-next-line:no-string-literal
+        component['hue'] = newColor;
+        // tslint:disable-next-line:no-string-literal
         component['mouseCoord'] = { x: 0, y: 0 };
         component.ngOnChanges({
             hue: new SimpleChange(null, newColor, false),
@@ -82,21 +86,5 @@ describe('ColorPaletteComponent', () => {
         });
         fixture.detectChanges();
         expect(colorChangeSpy).not.toHaveBeenCalled();
-    });
-
-    it('Should show the right hue', () => {
-        // tslint:disable-next-line:no-magic-numbers
-        const newColor = new Color(255, 155, 0);
-        // tslint:disable-next-line:no-string-literal
-        component['hue'] = newColor;
-        component.draw();
-        // tslint:disable-next-line:no-string-literal
-        const ctx = component['paletteCtx'];
-        const pixelOffset = 0.1;
-        // tslint:disable-next-line:no-string-literal
-        const imageData = ctx.getImageData(component['paletteWidth'] - pixelOffset, pixelOffset, 1, 1);
-        expect(imageData.data[0]).toEqual(newColor.r);
-        expect(imageData.data[1]).toEqual(newColor.g);
-        expect(imageData.data[2]).toEqual(newColor.b);
     });
 });

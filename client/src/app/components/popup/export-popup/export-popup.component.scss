@@ -1,0 +1,44 @@
+#canvas {
+    border: 2px solid black;
+}
+
+.container {
+    display: flex;
+    flex-wrap: wrap;
+    width: fit-content;
+}
+
+.column{
+    width: 300px;
+    padding-top: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: space-between;
+}
+
+.type-container {
+    display: block;
+}
+
+.preview-container {
+    width: 300px;
+    height: 300px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+p {
+    margin: 0;
+}
+
+.radio-button {
+    margin: 10px;
+}
+
+button {
+    margin: auto;
+    width: 20%;
+}
+
+

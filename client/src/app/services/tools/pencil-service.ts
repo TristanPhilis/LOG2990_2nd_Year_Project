@@ -1,35 +1,32 @@
 import { Injectable } from '@angular/core';
+import { DrawingAction } from '@app/classes/drawing-action';
 import { Tool } from '@app/classes/tool';
+import { ToolOption } from '@app/classes/tool-option';
 import { Vec2 } from '@app/classes/vec2';
+import { ColorSelectionService } from '@app/services/color/color-selection-service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
-import { MouseButton } from '@app/shared/enum';
+import { UndoRedoService } from '@app/services/tools/undo-redo-service';
+import { DEFAULT_OPTIONS } from '@app/shared/constant';
+import { drawingToolId, MouseButton, Options } from '@app/shared/enum';
 
-// Ceci est une implémentation de base de l'outil Crayon pour aider à débuter le projet
-// L'implémentation ici ne couvre pas tous les critères d'accepetation du projet
-// Vous êtes encouragés de modifier et compléter le code.
-// N'oubliez pas de regarder les tests dans le fichier spec.ts aussi!
 @Injectable({
     providedIn: 'root',
 })
 export class PencilService extends Tool {
     private pathData: Vec2[];
-    // Todo: Attributs globaux
-    // private color: string;
-    // private opacity: number;
-    private thickness: number;
 
-    constructor(drawingService: DrawingService) {
-        super(drawingService);
-        this.thickness = 1;
+    constructor(drawingService: DrawingService, undoRedoService: UndoRedoService, colorService: ColorSelectionService) {
+        super(drawingService, undoRedoService, colorService);
         this.clearPath();
+        this.setDefaultOptions();
     }
 
-    set _thickness(newThickness: number) {
-        this.thickness = newThickness;
-    }
-
-    get _thickness(): number {
-        return this.thickness;
+    setDefaultOptions(): void {
+        const toolOptions = new Map<Options, ToolOption>([[Options.size, { value: DEFAULT_OPTIONS.size, displayName: 'Largeur' }]]);
+        this.options = {
+            primaryColor: this.primaryColor,
+            toolOptions,
+        };
     }
 
     onMouseDown(event: MouseEvent): void {
@@ -45,7 +42,9 @@ export class PencilService extends Tool {
         if (this.mouseDown) {
             const mousePosition = this.getPositionFromMouse(event);
             this.pathData.push(mousePosition);
-            this.drawLine(this.drawingService.baseCtx, this.pathData);
+            const action = this.getDrawingAction();
+            this.undoRedoService.saveAction(action);
+            this.draw(this.drawingService.baseCtx, action);
         }
         this.mouseDown = false;
         this.clearPath();
@@ -55,23 +54,40 @@ export class PencilService extends Tool {
         if (this.mouseDown && event.buttons === MouseButton.Left) {
             const mousePosition = this.getPositionFromMouse(event);
             this.pathData.push(mousePosition);
-            this.drawLine(this.drawingService.previewCtx, this.pathData);
+            this.draw(this.drawingService.previewCtx, this.getDrawingAction());
         }
         if (this.mouseDown && !(event.buttons === MouseButton.Left)) {
-            this.drawLine(this.drawingService.baseCtx, this.pathData);
+            const action = this.getDrawingAction();
+            this.undoRedoService.saveAction(action);
+            this.draw(this.drawingService.baseCtx, action);
         }
     }
 
-    private drawLine(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
-        this.drawingService.clearCanvas(this.drawingService.previewCtx);
-        ctx.beginPath();
-        ctx.lineCap = 'round';
-        ctx.lineWidth = this.thickness;
-        for (const point of path) {
-            ctx.lineTo(point.x, point.y);
+    draw(ctx: CanvasRenderingContext2D, drawingAction: DrawingAction): void {
+        const size = drawingAction.options.toolOptions.get(Options.size);
+        if (drawingAction.path && size) {
+            this.drawingService.clearCanvas(this.drawingService.previewCtx);
+            ctx.beginPath();
+            ctx.lineCap = 'round';
+            ctx.lineWidth = size.value;
+            ctx.strokeStyle = drawingAction.options.primaryColor.getRgbString();
+            for (const point of drawingAction.path) {
+                ctx.lineTo(point.x, point.y);
+            }
+            ctx.stroke();
         }
-        // ctx.strokeStyle = `rgba(${0},${0},${0},${0.05})`;
-        ctx.stroke();
+    }
+
+    getDrawingAction(): DrawingAction {
+        const options = {
+            primaryColor: this.primaryColor,
+            toolOptions: this.copyToolOptionMap(this.options.toolOptions),
+        };
+        return {
+            id: drawingToolId.pencilService,
+            path: this.pathData,
+            options,
+        };
     }
 
     private clearPath(): void {

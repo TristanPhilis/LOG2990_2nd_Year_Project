@@ -10,7 +10,6 @@
         "module": "es2020",
         "moduleResolution": "node",
         "importHelpers": true,
-        "emitDecoratorMetadata": true,
         "strictNullChecks": true,
         "noImplicitAny": true,
         "noImplicitThis": true,
