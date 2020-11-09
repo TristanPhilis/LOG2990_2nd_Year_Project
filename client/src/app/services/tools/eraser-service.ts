@@ -54,7 +54,7 @@ export class EraserService extends Tool {
     }
 
     onMouseMove(event: MouseEvent): void {
-        const size = this.options.toolOptions.get(Options.size);
+        const size = this.options.toolOptions.get(Options.eraserSize);
         this.boundingBox.squareSize = size ? size.value : MINIMUM_ERASER_SIZE;
         const currentCoord = this.getPositionFromMouse(event);
         this.boundingBox.squareCenter = currentCoord;
