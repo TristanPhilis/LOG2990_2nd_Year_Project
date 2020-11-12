@@ -1,18 +1,28 @@
 canvas {
-    cursor: crosshair;
-    border: 2px solid #000000;
     position: absolute;
     left: 0;
     top: 0;
-    box-sizing: border-box; 
+    border: 2px solid #000000;
+    box-sizing: border-box;
 }
 
-#canvas {
+#mainCanvas {
+    border: 2px solid #000000;
     z-index: 0;
 }
 
-#drawCanvas {
+#previewCanvas {
     z-index: 1;
+}
+
+#selectionLayer {
+    z-index: 2;
+    border: none;
+}
+
+#gridLayer {
+    cursor: crosshair;
+    z-index: 3;
 }
 
 #canvas-container {

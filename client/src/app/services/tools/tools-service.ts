@@ -9,11 +9,10 @@ import { LineService } from '@app/services/tools/line-service';
 import { PencilService } from '@app/services/tools/pencil-service';
 import { PipetteService } from '@app/services/tools/pipette-service';
 import { PolygonService } from '@app/services/tools/polygon-service';
-import { RectangleSelectorService } from '@app/services/tools/rectangle-selector-service';
 import { RectangleService } from '@app/services/tools/rectangle-service';
+import { SelectionService } from '@app/services/tools/selection/selection-service';
 import { drawingToolId, Options, sidebarToolID } from '@app/shared/enum';
 import { BehaviorSubject } from 'rxjs';
-import { EllipseSelectorService } from './ellipse-selector-service';
 
 @Injectable({
     providedIn: 'root',
@@ -33,8 +32,7 @@ export class ToolsService {
         eraserService: EraserService,
         lineService: LineService,
         brushService: BrushService,
-        rectangleSelectionService: RectangleSelectorService,
-        ellipseSelectionService: EllipseSelectorService,
+        selectionService: SelectionService,
         polygonService: PolygonService,
         bucketService: BucketService,
         pipetteService: PipetteService,
@@ -47,8 +45,7 @@ export class ToolsService {
             eraserService,
             lineService,
             brushService,
-            rectangleSelectionService,
-            ellipseSelectionService,
+            selectionService,
             polygonService,
             bucketService,
             pipetteService,
@@ -92,14 +89,17 @@ export class ToolsService {
         this.toolSidenavToggle.next(false);
     }
 
-    updateOptionValue(key: Options, option: ToolOption): void {
-        this.currentDrawingTool.options.toolOptions.set(key, option);
+    updateOptionValue(key: Options, value: number): void {
+        const option = this.currentDrawingToolOptions.get(key);
+        if (option) {
+            option.value = Number(value);
+            this.currentDrawingTool.options.toolOptions.set(key, option);
+            this.currentDrawingTool.onOptionValueChange();
+        }
     }
 
-    get currentDrawingToolOptions(): Map<Options, ToolOption> | undefined {
-        if (this.currentDrawingTool.options) {
-            return this.currentDrawingTool.options.toolOptions;
-        }
-        return undefined;
+    get currentDrawingToolOptions(): Map<Options, ToolOption> {
+        const options = this.currentDrawingTool.options;
+        return options ? options.toolOptions : new Map<Options, ToolOption>();
     }
 }

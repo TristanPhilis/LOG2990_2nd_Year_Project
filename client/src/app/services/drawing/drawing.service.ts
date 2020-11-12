@@ -8,6 +8,8 @@ import { Vec2 } from '@app/classes/vec2';
 export class DrawingService {
     baseCtx: CanvasRenderingContext2D;
     previewCtx: CanvasRenderingContext2D;
+    gridCtx: CanvasRenderingContext2D;
+    selectionCtx: CanvasRenderingContext2D;
     canvas: HTMLCanvasElement;
     drawingToLoad: string;
     mouseIsOverCanvas: boolean = false;

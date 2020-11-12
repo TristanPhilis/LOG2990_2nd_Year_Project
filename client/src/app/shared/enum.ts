@@ -25,8 +25,7 @@ export enum drawingToolId {
     eraserService,
     lineService,
     brushService,
-    rectangleSelectionService,
-    ellipseSelectionService,
+    selectionService,
     polygonService,
     bucketService,
     pipetteService,
@@ -63,6 +62,7 @@ export enum JointSelection {
 export enum SelectionType {
     rectangle,
     ellipse,
+    magic,
 }
 
 export enum Options {
@@ -76,4 +76,5 @@ export enum Options {
     lineLength,
     emissionPerSecond,
     imageChoice,
+    selectionType,
 }

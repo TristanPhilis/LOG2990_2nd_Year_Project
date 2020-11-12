@@ -4,13 +4,13 @@ import { Color } from '@app/classes/color';
 import { Vec2 } from '@app/classes/vec2';
 import { ColorSelectionService } from '@app/services/color/color-selection-service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { UndoRedoService } from '@app/services/tools/undo-redo-service';
 import { ARROW_DOWN, ARROW_LEFT, ARROW_RIGHT, ARROW_UP, ESCAPE_KEY, SHIFT_KEY } from '@app/shared/constant';
-import { EllipseSelectorService } from './ellipse-selector-service';
-import { UndoRedoService } from './undo-redo-service';
+import { RectangleSelectorService } from './rectangle-selector-service';
 
 // tslint:disable:no-any
-describe('EllipseSelectorService', () => {
-    let service: EllipseSelectorService;
+describe('RectangleSelectorService', () => {
+    let service: RectangleSelectorService;
     let undoRedoServiceSpy: jasmine.SpyObj<UndoRedoService>;
     let colorServiceSpy: jasmine.SpyObj<ColorSelectionService>;
     let mouseEventLClick: MouseEvent;
@@ -23,7 +23,10 @@ describe('EllipseSelectorService', () => {
     let drawSelectionBoxSpy: jasmine.Spy<any>;
     let placeImageSpy: jasmine.Spy<any>;
     let updateSelectedAreaPreviewSpy: jasmine.Spy<any>;
+
     let initializeSelectionBoxSpy: jasmine.Spy<any>;
+
+    let putImageDataSpy: jasmine.Spy<any>;
 
     beforeEach(() => {
         undoRedoServiceSpy = jasmine.createSpyObj('UndoRedoService', ['saveAction']);
@@ -33,7 +36,7 @@ describe('EllipseSelectorService', () => {
         colorServiceSpy.secondaryColor = defaultColor;
         baseCtxStub = canvasTestHelper.canvas.getContext('2d') as CanvasRenderingContext2D;
         previewCtxStub = canvasTestHelper.drawCanvas.getContext('2d') as CanvasRenderingContext2D;
-        drawServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas']);
+        drawServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas', 'fillCanvasAtLocation']);
 
         TestBed.configureTestingModule({
             providers: [
@@ -42,11 +45,9 @@ describe('EllipseSelectorService', () => {
                 { provide: ColorSelectionService, useValue: colorServiceSpy },
             ],
         });
-        service = TestBed.inject(EllipseSelectorService);
+        service = TestBed.inject(RectangleSelectorService);
         initializeSelectedBoxSpy = spyOn<any>(service, 'initializeSelectedBox').and.callThrough();
         placeImageSpy = spyOn<any>(service, 'placeImage').and.callThrough();
-
-        // clearBaseCanvasSelectedAreaSpy = spyOn<any>(service, 'clearBaseCanvasSelectedArea').and.callThrough();
         // Service's Spy configuration
         // tslint:disable:no-string-literal
         service['drawingService'].baseCtx = baseCtxStub; // Jasmine doesnt copy properties with underlying data
@@ -71,8 +72,6 @@ describe('EllipseSelectorService', () => {
 
     it(' mouseDown should call initializeCurrentCoord to correct position if no area has been selected', () => {
         initializeSelectionBoxSpy = spyOn<any>(service, 'initializeSelectionBox').and.callThrough();
-        const size = 10;
-        spyOn<any>(service, 'imagedata_to_image').and.returnValue(new Image(size, size));
         const expectedResult: Vec2 = { x: 25, y: 25 };
         service.onMouseDown(mouseEventLClick);
         expect(initializeSelectionBoxSpy).toHaveBeenCalledWith(expectedResult);
@@ -90,8 +89,6 @@ describe('EllipseSelectorService', () => {
 
     it(' mouseDown should call initializeSelectionBox when area has been selected and you click outside of the area', () => {
         initializeSelectionBoxSpy = spyOn<any>(service, 'initializeSelectionBox').and.callThrough();
-        const size = 10;
-        spyOn<any>(service, 'imagedata_to_image').and.returnValue(new Image(size, size));
         service.isAreaSelected = true;
         service.mouseDown = true;
         spyOn(service.selectedBox, 'isInBox').and.returnValue(false);
@@ -130,21 +127,21 @@ describe('EllipseSelectorService', () => {
         service.selectionBox.updateOpposingCorner({ x: 4, y: 4 });
         service.mouseDown = true;
         service.isAreaSelected = false;
-        const ellipseSpy = spyOn<any>(drawServiceSpy.previewCtx, 'ellipse');
+        service.shiftDown = false;
+        const rectSpy = spyOn<any>(drawServiceSpy.previewCtx, 'rect');
         service.onMouseMove(mouseEventLClick);
-        expect(ellipseSpy).toHaveBeenCalled();
+        expect(rectSpy).toHaveBeenCalled();
     });
 
-    it(' onMouseMove should draw selectionBox if mouse was already down and nothingg was selected and shift was down', () => {
+    it(' onMouseMove should draw selectionBox if mouse was already down but nothing was selected and shift was down', () => {
         service.selectionBox.setAnchor({ x: 4, y: 4 });
         service.selectionBox.updateOpposingCorner({ x: 4, y: 4 });
-        spyOn<any>(service, 'translateSelectedBoxFromMouseMove');
         service.mouseDown = true;
         service.isAreaSelected = false;
         service.shiftDown = true;
-        const arcSpy = spyOn<any>(drawServiceSpy.previewCtx, 'arc');
+        const rectSpy = spyOn<any>(drawServiceSpy.previewCtx, 'rect');
         service.onMouseMove(mouseEventLClick);
-        expect(arcSpy).toHaveBeenCalled();
+        expect(rectSpy).toHaveBeenCalled();
     });
 
     it(' onMouseMove should call initialize if mouse was already down (but not left click) and nothing was selected', () => {
@@ -165,18 +162,27 @@ describe('EllipseSelectorService', () => {
         expect(updateSelectedAreaPreviewSpy).toHaveBeenCalled();
     });
 
+    it(' onMouseMove should call updateSelectedAreaPreview if mouse was already down and was selected', () => {
+        updateSelectedAreaPreviewSpy = spyOn<any>(service, 'updateSelectedAreaPreview');
+        service.isAreaSelected = true;
+        service.mouseDown = true;
+        const vector: Vec2 = { x: 25, y: 25 };
+        spyOn<any>(service, 'translateSelectedBoxFromMouseMove').withArgs(vector);
+        service.onMouseMove(mouseEventLClick);
+        expect(updateSelectedAreaPreviewSpy).toHaveBeenCalled();
+    });
+
     it(' placeImage should call putImageData if an area has been selected', () => {
-        const size = 10;
-        spyOn<any>(service, 'imagedata_to_image').and.returnValue(new Image(size, size));
-        const drawImageSpy = spyOn<any>(baseCtxStub, 'drawImage').and.callThrough();
+        putImageDataSpy = spyOn<any>(baseCtxStub, 'putImageData').and.callThrough();
         service.isAreaSelected = false;
         service.onMouseDown(mouseEventLClick);
         service.onMouseMove(mouseEventLClick);
         service.onMouseUp(mouseEventLClick);
         service.isAreaSelected = true;
+        const size = 10;
         service.selectedImageData = new ImageData(size, size);
         service.placeImage();
-        expect(drawImageSpy).toHaveBeenCalled();
+        expect(putImageDataSpy).toHaveBeenCalled();
     });
 
     it('onKeyDown Should call drawSelectionBox when shift key is and no area has been selected', () => {
@@ -196,8 +202,6 @@ describe('EllipseSelectorService', () => {
         const keyEvent = {
             key: 'ArrowUp',
         } as KeyboardEvent;
-        const size = 10;
-        spyOn<any>(service, 'imagedata_to_image').and.returnValue(new Image(size, size));
         updateSelectedAreaPreviewSpy = spyOn<any>(service, 'updateSelectedAreaPreview').and.callThrough();
         spyOn<any>(drawServiceSpy.previewCtx, 'putImageData');
         service.onKeyDown(keyEvent);
@@ -210,8 +214,6 @@ describe('EllipseSelectorService', () => {
         const keyEvent = {
             key: 'ArrowDown',
         } as KeyboardEvent;
-        const size = 10;
-        spyOn<any>(service, 'imagedata_to_image').and.returnValue(new Image(size, size));
         updateSelectedAreaPreviewSpy = spyOn<any>(service, 'updateSelectedAreaPreview').and.callThrough();
         spyOn<any>(drawServiceSpy.previewCtx, 'putImageData');
         service.onKeyDown(keyEvent);
@@ -224,8 +226,6 @@ describe('EllipseSelectorService', () => {
         const keyEvent = {
             key: 'ArrowRight',
         } as KeyboardEvent;
-        const size = 10;
-        spyOn<any>(service, 'imagedata_to_image').and.returnValue(new Image(size, size));
         updateSelectedAreaPreviewSpy = spyOn<any>(service, 'updateSelectedAreaPreview').and.callThrough();
         spyOn<any>(drawServiceSpy.previewCtx, 'putImageData');
         service.onKeyDown(keyEvent);
@@ -238,8 +238,6 @@ describe('EllipseSelectorService', () => {
         const keyEvent = {
             key: 'ArrowLeft',
         } as KeyboardEvent;
-        const size = 10;
-        spyOn<any>(service, 'imagedata_to_image').and.returnValue(new Image(size, size));
         updateSelectedAreaPreviewSpy = spyOn<any>(service, 'updateSelectedAreaPreview').and.callThrough();
         spyOn<any>(drawServiceSpy.previewCtx, 'putImageData');
         service.onKeyDown(keyEvent);

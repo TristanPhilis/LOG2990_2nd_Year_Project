@@ -79,6 +79,8 @@ export abstract class Tool {
 
     setDefaultOptions(): void {}
 
+    onOptionValueChange(): void {}
+
     get primaryColor(): Color {
         return this.colorService.primaryColor;
     }

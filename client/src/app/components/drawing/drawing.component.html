@@ -1,4 +1,11 @@
-<div (mouseover)="drawingService.mouseIsOverCanvas = true" (mouseout)="drawingService.mouseIsOverCanvas = false" id="canvas-container">
-    <canvas id="canvas" #baseCanvas></canvas>
+<div id="canvas-container">
+    <canvas id="mainCanvas" #baseCanvas></canvas>
     <canvas id="previewLayer" #previewCanvas></canvas>
+    <canvas id="selectionLayer" #selectionCanvas></canvas>
+    <canvas
+        id="gridLayer"
+        #gridCanvas
+        (mouseover)="drawingService.mouseIsOverCanvas = true"
+        (mouseout)="drawingService.mouseIsOverCanvas = false"
+    ></canvas>
 </div>

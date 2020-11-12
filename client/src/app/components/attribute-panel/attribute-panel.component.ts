@@ -1,9 +1,9 @@
 import { Component } from '@angular/core';
 import { ToolOption } from '@app/classes/tool-option';
 import { DrawingService } from '@app/services/drawing/drawing.service';
-import { RectangleSelectorService } from '@app/services/tools/rectangle-selector-service';
+import { SelectionService } from '@app/services/tools/selection/selection-service';
 import { ToolsService } from '@app/services/tools/tools-service';
-import { drawingToolId, Options, sidebarToolID, Texture, TraceTypes } from '@app/shared/enum';
+import { drawingToolId, Options, SelectionType, sidebarToolID, Texture, TraceTypes } from '@app/shared/enum';
 // tslint:disable:no-any
 
 @Component({
@@ -13,21 +13,13 @@ import { drawingToolId, Options, sidebarToolID, Texture, TraceTypes } from '@app
 })
 export class AttributePanelComponent {
     showTools: boolean;
-    selectionTools: ToolOption[];
+    selectorTypes: ToolOption[];
     tracingTools: ToolOption[];
     shapesTools: ToolOption[];
     tracingTypes: ToolOption[];
     textures: ToolOption[];
 
-    constructor(
-        public toolsService: ToolsService,
-        public drawingService: DrawingService,
-        public rectangleSelectionService: RectangleSelectorService,
-    ) {
-        this.selectionTools = [
-            { value: drawingToolId.rectangleSelectionService, displayName: 'Selection Rectangulaire' },
-            { value: drawingToolId.ellipseSelectionService, displayName: 'Selection Elliptique' },
-        ];
+    constructor(public toolsService: ToolsService, public drawingService: DrawingService, public selectionService: SelectionService) {
         this.tracingTools = [
             { value: drawingToolId.pencilService, displayName: 'Crayon' },
             { value: drawingToolId.brushService, displayName: 'Pinceau' },
@@ -36,6 +28,11 @@ export class AttributePanelComponent {
             { value: drawingToolId.rectangleService, displayName: 'Rectangle' },
             { value: drawingToolId.ellipseService, displayName: 'Ellipse' },
             { value: drawingToolId.polygonService, displayName: 'Polygone' },
+        ];
+        this.selectorTypes = [
+            { value: SelectionType.rectangle, displayName: 'Rectangulaire' },
+            { value: SelectionType.ellipse, displayName: 'Elliptique' },
+            { value: SelectionType.magic, displayName: 'Baguette magique' },
         ];
         this.tracingTypes = [
             { value: TraceTypes.fill, displayName: 'Rempli' },
@@ -60,8 +57,7 @@ export class AttributePanelComponent {
     }
 
     get toolOptions(): Map<Options, ToolOption> {
-        const optionsMap = this.toolsService.currentDrawingToolOptions;
-        return optionsMap ? optionsMap : new Map<Options, ToolOption>();
+        return this.toolsService.currentDrawingToolOptions;
     }
 
     handleToolChange(selectedTool: drawingToolId): void {
@@ -69,10 +65,6 @@ export class AttributePanelComponent {
     }
 
     updateToolOptionValue(key: Options, value: number): void {
-        const option = this.toolOptions.get(key);
-        if (option) {
-            option.value = Number(value);
-            this.toolsService.updateOptionValue(key, option);
-        }
+        this.toolsService.updateOptionValue(key, value);
     }
 }

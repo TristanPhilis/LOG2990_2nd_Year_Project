@@ -2,47 +2,81 @@ import { Injectable } from '@angular/core';
 import { BoundingBox } from '@app/classes/bounding-box';
 import { DrawingAction } from '@app/classes/drawing-action';
 import { SelectionBox } from '@app/classes/selection-box';
+import { Selector } from '@app/classes/selector';
 import { Tool } from '@app/classes/tool';
 import { ToolOption } from '@app/classes/tool-option';
 import { Vec2 } from '@app/classes/vec2';
 import { ColorSelectionService } from '@app/services/color/color-selection-service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { UndoRedoService } from '@app/services/tools/undo-redo-service';
+import { CanvasManipulationService } from '@app/services/utils/canvas-manipulation-service';
 import {
     ARROW_DOWN,
     ARROW_LEFT,
     ARROW_RIGHT,
     ARROW_UP,
-    A_KEY,
-    CONTROL,
     DASHLINE_EMPTY,
     DASHLINE_FULL,
+    DEFAULT_OPTIONS,
     DEPLACEMENT,
     ESCAPE_KEY,
     NEGATIVE_MULTIPLIER,
-    SELECTION_BOX_BORDER_SIZE,
     SELECTION_BOX_COLOUR,
     SHIFT_KEY,
 } from '@app/shared/constant';
-import { drawingToolId, MouseButton, Options } from '@app/shared/enum';
-import { UndoRedoService } from './undo-redo-service';
+import { drawingToolId, MouseButton, Options, SelectionType } from '@app/shared/enum';
+import { EllipseSelectorService } from './ellipse-selector-service';
+import { MagicSelectorService } from './magic-selector-service';
+import { RectangleSelectorService } from './rectangle-selector-service';
 
 @Injectable({
     providedIn: 'root',
 })
-export class RectangleSelectorService extends Tool {
-    constructor(drawingService: DrawingService, undoRedoService: UndoRedoService, colorService: ColorSelectionService) {
-        super(drawingService, undoRedoService, colorService);
-
-        this.selectedBox = new BoundingBox();
-        this.selectionBox = new SelectionBox();
-        this.isAreaSelected = false;
-    }
+export class SelectionService extends Tool {
+    currentSelector: Selector;
+    selectorOptions: Selector[];
     isAreaSelected: boolean;
     selectedImageData: ImageData;
     selectedBox: BoundingBox;
     selectionBox: SelectionBox;
     draggingAnchorRelativePosition: Vec2;
     keyMap: boolean[] = [];
+
+    constructor(
+        drawingService: DrawingService,
+        undoRedoService: UndoRedoService,
+        colorService: ColorSelectionService,
+        private rectangleSelector: RectangleSelectorService,
+        private ellipseSelector: EllipseSelectorService,
+        private magicSelector: MagicSelectorService,
+        private canvasUtil: CanvasManipulationService,
+    ) {
+        super(drawingService, undoRedoService, colorService);
+        this.setDefaultOptions();
+
+        this.selectorOptions = [this.rectangleSelector, this.ellipseSelector, this.magicSelector];
+        this.currentSelector = this.rectangleSelector;
+        this.selectedBox = new BoundingBox();
+        this.selectionBox = new SelectionBox();
+        this.isAreaSelected = false;
+    }
+
+    setDefaultOptions(): void {
+        const toolOptions = new Map<Options, ToolOption>([
+            [Options.selectionType, { value: DEFAULT_OPTIONS.selectionType, displayName: 'Type de sélection' }],
+        ]);
+        this.options = {
+            primaryColor: this.primaryColor,
+            toolOptions,
+        };
+    }
+
+    onOptionValueChange(): void {
+        const selectionType = this.options.toolOptions.get(Options.selectionType);
+        if (selectionType) {
+            this.currentSelector = this.selectorOptions[selectionType.value];
+        }
+    }
 
     onMouseDown(event: MouseEvent): void {
         this.mouseDown = event.buttons === MouseButton.Left;
@@ -56,7 +90,11 @@ export class RectangleSelectorService extends Tool {
                     };
                 } else {
                     this.placeImage();
-                    this.initializeSelectionBox(currentCoord);
+                    if (this.currentSelector.id === SelectionType.magic) {
+                        this.mouseDown = false;
+                    } else {
+                        this.initializeSelectionBox(currentCoord);
+                    }
                 }
             } else {
                 this.initializeSelectionBox(currentCoord);
@@ -77,7 +115,7 @@ export class RectangleSelectorService extends Tool {
         if (this.mouseDown && event.buttons === MouseButton.Left && !this.isAreaSelected) {
             const currentCoord = this.getPositionFromMouse(event);
             this.selectionBox.updateOpposingCorner(currentCoord);
-            this.drawSelectionBox();
+            this.currentSelector.drawSelectionBox(this.selectionBox, this.shiftDown);
         }
 
         if (this.mouseDown && !(event.buttons === MouseButton.Left) && !this.isAreaSelected) {
@@ -99,7 +137,7 @@ export class RectangleSelectorService extends Tool {
         if (event.key === SHIFT_KEY) {
             this.shiftDown = false;
             if (this.mouseDown && !this.isAreaSelected) {
-                this.drawSelectionBox();
+                this.currentSelector.drawSelectionBox(this.selectionBox, this.shiftDown);
             }
         }
         event = event || event;
@@ -109,14 +147,14 @@ export class RectangleSelectorService extends Tool {
 
     onKeyDown(event: KeyboardEvent): void {
         event = event || event;
-        // Need to use keyCode to travel through the keyMap
+        // Need to use keyCode to travel in the keyMap
         // tslint:disable-next-line: deprecation
         this.keyMap[event.keyCode] = event.type === 'keydown';
 
         if (event.key === SHIFT_KEY) {
             this.shiftDown = true;
             if (this.mouseDown && !this.isAreaSelected) {
-                this.drawSelectionBox();
+                this.currentSelector.drawSelectionBox(this.selectionBox, this.shiftDown);
             }
         } else if (this.isAreaSelected) {
             if (this.keyMap[ARROW_DOWN]) {
@@ -135,25 +173,57 @@ export class RectangleSelectorService extends Tool {
                 this.selectedBox.translateX(DEPLACEMENT);
                 this.updateSelectedAreaPreview();
             }
-            if (this.keyMap[CONTROL] && this.keyMap[A_KEY]) {
-                this.selectAllCanvas();
-            }
         }
     }
 
-    private initializeSelectionBox(coord: Vec2): void {
+    initializeSelectionBox(coord: Vec2): void {
         this.selectionBox.setAnchor(coord);
         this.selectionBox.updateOpposingCorner(coord);
     }
 
-    private initializeSelectedBox(): void {
+    initializeSelectedBox(): void {
         this.selectedBox.updateFromSelectionBox(this.selectionBox, this.shiftDown);
         this.selectedBox.oldSelectedBox = this.selectedBox.copy();
         this.isAreaSelected = this.selectedBox.width > 0 && this.selectedBox.height > 0;
         if (this.isAreaSelected) {
-            this.copyArea(this.drawingService.baseCtx);
+            this.selectedImageData = this.currentSelector.copyArea(this.selectedBox);
+            debugger;
             this.updateSelectedAreaPreview();
         }
+    }
+
+    private translateSelectedBoxFromMouseMove(coord: Vec2): void {
+        const distanceFromLeft = coord.x - this.selectedBox.left;
+        const xTranslate = distanceFromLeft - this.draggingAnchorRelativePosition.x;
+        this.selectedBox.translateX(xTranslate);
+        const distanceFromTop = coord.y - this.selectedBox.top;
+        const yTranslate = distanceFromTop - this.draggingAnchorRelativePosition.y;
+        this.selectedBox.translateY(yTranslate);
+    }
+
+    private updateSelectedAreaPreview(): void {
+        this.drawingService.clearCanvas(this.drawingService.previewCtx);
+        this.drawSelectedBox();
+        this.drawingService.previewCtx.putImageData(this.selectedImageData, this.selectedBox.position.x, this.selectedBox.position.y);
+    }
+
+    placeImage(): void {
+        this.drawingService.clearCanvas(this.drawingService.previewCtx);
+        if (this.isAreaSelected) {
+            const ctx = this.drawingService.baseCtx;
+            const action = this.getDrawingAction();
+            this.undoRedoService.saveAction(action);
+            this.draw(ctx, action);
+        }
+        this.isAreaSelected = false;
+        this.selectedImageData = { data: new Uint8ClampedArray(), width: 0, height: 0 };
+    }
+
+    selectAllCanvas(): void {
+        this.selectionBox.setAnchor({ x: 0, y: 0 });
+        this.selectionBox.updateOpposingCorner({ x: this.drawingService.canvas.width, y: this.drawingService.canvas.height });
+        this.initializeSelectedBox();
+        this.mouseDown = false;
     }
 
     private drawSelectedBox(): void {
@@ -192,93 +262,26 @@ export class RectangleSelectorService extends Tool {
         ctx.fill();
     }
 
-    private drawSelectionBox(): void {
-        const ctx = this.drawingService.previewCtx;
-        this.drawingService.clearCanvas(ctx);
-        ctx.lineWidth = SELECTION_BOX_BORDER_SIZE;
-        ctx.beginPath();
-        ctx.strokeStyle = SELECTION_BOX_COLOUR;
-        ctx.setLineDash([DASHLINE_EMPTY, DASHLINE_FULL]);
-
-        if (this.shiftDown) {
-            const squareSize = this.selectionBox.squareSize;
-            ctx.rect(this.selectionBox.squarePosition.x, this.selectionBox.squarePosition.y, squareSize, squareSize);
-        } else {
-            ctx.rect(this.selectionBox.position.x, this.selectionBox.position.y, this.selectionBox.width, this.selectionBox.height);
-        }
-
-        ctx.stroke();
-        ctx.setLineDash([]);
-    }
-
-    private clearBaseCanvasSelectedArea(box: BoundingBox): void {
-        this.drawingService.fillCanvasAtLocation('white', box);
-    }
-
-    private translateSelectedBoxFromMouseMove(coord: Vec2): void {
-        const distanceFromLeft = coord.x - this.selectedBox.left;
-        const xTranslate = distanceFromLeft - this.draggingAnchorRelativePosition.x;
-        this.selectedBox.translateX(xTranslate);
-
-        const distanceFromTop = coord.y - this.selectedBox.top;
-        const yTranslate = distanceFromTop - this.draggingAnchorRelativePosition.y;
-        this.selectedBox.translateY(yTranslate);
-    }
-
-    private updateSelectedAreaPreview(): void {
-        this.drawingService.clearCanvas(this.drawingService.previewCtx);
-        this.drawSelectedBox();
-        this.drawingService.previewCtx.putImageData(this.selectedImageData, this.selectedBox.position.x, this.selectedBox.position.y);
-    }
-
-    placeImage(): void {
-        this.drawingService.clearCanvas(this.drawingService.previewCtx);
-        if (this.isAreaSelected) {
-            const ctx = this.drawingService.baseCtx;
-            const action = this.getDrawingAction();
-            this.undoRedoService.saveAction(action);
-            this.draw(ctx, action);
-        }
-        this.isAreaSelected = false;
-        this.selectedImageData = { data: new Uint8ClampedArray(), width: 0, height: 0 };
-    }
-
     draw(ctx: CanvasRenderingContext2D, drawingAction: DrawingAction): void {
         const box = drawingAction.box as BoundingBox;
         const imageData = drawingAction.imageData;
-        if (box && imageData) {
-            this.clearBaseCanvasSelectedArea(box.oldSelectedBox);
-            ctx.putImageData(imageData, box.position.x, box.position.y);
+        debugger;
+        const selectorId = drawingAction.options.toolOptions.get(Options.selectionType);
+        if (box && imageData && selectorId) {
+            this.selectorOptions[selectorId.value].clearBaseCanvasSelectedArea(box.oldSelectedBox);
+            const image = this.canvasUtil.getImageFromImageData(imageData);
+            ctx.drawImage(image, box.position.x, box.position.y);
         }
-    }
-
-    private copyArea(ctx: CanvasRenderingContext2D): void {
-        this.selectedImageData = ctx.getImageData(
-            this.selectedBox.position.x,
-            this.selectedBox.position.y,
-            this.selectedBox.width,
-            this.selectedBox.height,
-        );
-        this.clearBaseCanvasSelectedArea(this.selectedBox);
-        this.updateSelectedAreaPreview();
-    }
-
-    selectAllCanvas(): void {
-        this.initializeSelectionBox({ x: 0, y: 0 });
-        this.selectionBox.updateOpposingCorner({ x: this.drawingService.canvas.width, y: this.drawingService.canvas.height });
-        this.drawSelectionBox();
-        this.initializeSelectedBox();
-        this.mouseDown = false;
     }
 
     getDrawingAction(): DrawingAction {
         const options = {
             primaryColor: this.primaryColor,
-            toolOptions: new Map<Options, ToolOption>(),
+            toolOptions: this.copyToolOptionMap(this.options.toolOptions),
         };
 
         return {
-            id: drawingToolId.rectangleSelectionService,
+            id: drawingToolId.selectionService,
             imageData: this.selectedImageData,
             box: this.selectedBox.copy(),
             options,

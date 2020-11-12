@@ -9,7 +9,7 @@ import { SidebarTool } from '@app/components/sidebar/sidebar-tool/sidebar-tool';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ToolsService } from '@app/services/tools/tools-service';
 import { UndoRedoService } from '@app/services/tools/undo-redo-service';
-import { drawingToolId, sidebarToolID } from '@app/shared/enum';
+import { drawingToolId, Options, SelectionType, sidebarToolID } from '@app/shared/enum';
 
 declare type callback = () => void;
 
@@ -35,7 +35,7 @@ export class SidebarComponent {
         public undoRedo: UndoRedoService,
     ) {
         this.sideBarToolsTop = [
-            { id: sidebarToolID.selection, name: 'Selection', defaultDrawingToolid: drawingToolId.rectangleSelectionService },
+            { id: sidebarToolID.selection, name: 'Selection', defaultDrawingToolid: drawingToolId.selectionService },
             { id: sidebarToolID.tracing, name: 'Traçage', defaultDrawingToolid: drawingToolId.pencilService },
             { id: sidebarToolID.shapes, name: 'Figures', defaultDrawingToolid: drawingToolId.rectangleService },
             { id: sidebarToolID.line, name: 'Ligne', defaultDrawingToolid: drawingToolId.lineService },
@@ -212,11 +212,12 @@ export class SidebarComponent {
             l: () => this.onButtonPressTop(this.sideBarToolsTopMap.get(sidebarToolID.line)),
             r: () => {
                 this.onButtonPressTop(this.sideBarToolsTopMap.get(sidebarToolID.selection));
+                this.toolsService.updateOptionValue(Options.selectionType, SelectionType.ellipse);
             },
 
             s: () => {
                 this.onButtonPressTop(this.sideBarToolsTopMap.get(sidebarToolID.selection));
-                this.toolsService._currentDrawingTool = drawingToolId.ellipseSelectionService;
+                this.toolsService.updateOptionValue(Options.selectionType, SelectionType.ellipse);
             },
             i: () => this.onButtonPressTop(this.sideBarToolsTopMap.get(sidebarToolID.pipette)),
 
