@@ -1,7 +1,7 @@
 <app-sidebar-color-options></app-sidebar-color-options>
 
 <!-- Tracing Tools -->
-<div *ngIf="this.toolsService._selectedSideBarToolID === sidebarToolID.tracing" class="attribute-container">
+<div *ngIf="this.toolsService.selectedSideBarToolID === SidebarToolID.tracing" class="attribute-container">
     <label for="tracing">Outil de traçage</label>
     <select (change)="handleToolChange($event.target.value)" id="tracing">
         <option *ngFor="let tool of tracingTools" value="{{ tool.value }}">{{ tool.displayName }}</option>
@@ -9,7 +9,7 @@
 </div>
 
 <!-- Shapes Tools -->
-<div *ngIf="this.toolsService._selectedSideBarToolID === sidebarToolID.shapes" class="attribute-container">
+<div *ngIf="this.toolsService.selectedSideBarToolID === SidebarToolID.shapes" class="attribute-container">
     <label for="shapes">Formes</label>
     <select (change)="handleToolChange($event.target.value)" id="shapes">
         <option *ngFor="let tool of shapesTools" value="{{ tool.value }}">{{ tool.displayName }}</option>
@@ -17,7 +17,7 @@
 </div>
 
 <!-- Pipette Tool -->
-<div *ngIf="this.toolsService._selectedSideBarToolID === sidebarToolID.pipette && drawingService.mouseIsOverCanvas" class="attribute-container">
+<div *ngIf="this.toolsService.selectedSideBarToolID === SidebarToolID.pipette && drawingService.mouseIsOverCanvas" class="attribute-container">
     <app-pipette-preview></app-pipette-preview>
 </div>
 

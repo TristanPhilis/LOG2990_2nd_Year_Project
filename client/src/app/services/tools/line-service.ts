@@ -7,7 +7,7 @@ import { ColorSelectionService } from '@app/services/color/color-selection-servi
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { UndoRedoService } from '@app/services/tools/undo-redo-service';
 import { BACKSPACE_KEY, BASE_SNAP_ANGLE, DEFAULT_OPTIONS, ESCAPE_KEY, MIDDLE_SNAP_ANGLE, SHIFT_KEY } from '@app/shared/constant';
-import { drawingToolId, Options } from '@app/shared/enum';
+import { DrawingToolId, Options } from '@app/shared/enum';
 
 @Injectable({
     providedIn: 'root',
@@ -176,7 +176,7 @@ export class LineService extends Tool {
             toolOptions: this.copyToolOptionMap(this.options.toolOptions),
         };
         return {
-            id: drawingToolId.lineService,
+            id: DrawingToolId.lineService,
             path: this.pathData,
             options,
         };

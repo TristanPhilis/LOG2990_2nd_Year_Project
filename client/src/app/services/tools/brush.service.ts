@@ -7,7 +7,7 @@ import { ColorSelectionService } from '@app/services/color/color-selection-servi
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { UndoRedoService } from '@app/services/tools/undo-redo-service';
 import { DEFAULT_OPTIONS, TEXTURES } from '@app/shared/constant';
-import { drawingToolId, MouseButton, Options } from '@app/shared/enum';
+import { DrawingToolId, MouseButton, Options } from '@app/shared/enum';
 
 @Injectable({
     providedIn: 'root',
@@ -97,7 +97,7 @@ export class BrushService extends Tool {
         };
 
         return {
-            id: drawingToolId.brushService,
+            id: DrawingToolId.brushService,
             path: this.pathData,
             options,
         };
