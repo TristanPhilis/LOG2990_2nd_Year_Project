@@ -1,4 +1,4 @@
-export enum sidebarToolID {
+export enum SidebarToolID {
     move,
     selection,
     tracing,
@@ -18,7 +18,7 @@ export enum sidebarToolID {
     redo,
 }
 
-export enum drawingToolId {
+export enum DrawingToolId {
     pencilService,
     rectangleService,
     ellipseService,

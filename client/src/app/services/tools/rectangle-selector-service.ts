@@ -23,7 +23,7 @@ import {
     SELECTION_BOX_COLOUR,
     SHIFT_KEY,
 } from '@app/shared/constant';
-import { drawingToolId, MouseButton, Options } from '@app/shared/enum';
+import { DrawingToolId, MouseButton, Options } from '@app/shared/enum';
 import { UndoRedoService } from './undo-redo-service';
 
 @Injectable({
@@ -278,7 +278,7 @@ export class RectangleSelectorService extends Tool {
         };
 
         return {
-            id: drawingToolId.rectangleSelectionService,
+            id: DrawingToolId.rectangleSelectionService,
             imageData: this.selectedImageData,
             box: this.selectedBox.copy(),
             options,

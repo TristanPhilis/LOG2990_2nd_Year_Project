@@ -11,7 +11,7 @@ import { PipetteService } from '@app/services/tools/pipette-service';
 import { PolygonService } from '@app/services/tools/polygon-service';
 import { RectangleSelectorService } from '@app/services/tools/rectangle-selector-service';
 import { RectangleService } from '@app/services/tools/rectangle-service';
-import { drawingToolId, Options, sidebarToolID } from '@app/shared/enum';
+import { DrawingToolId, Options, SidebarToolID } from '@app/shared/enum';
 import { BehaviorSubject } from 'rxjs';
 import { EllipseSelectorService } from './ellipse-selector-service';
 
@@ -22,8 +22,8 @@ export class ToolsService {
     currentDrawingTool: Tool;
     private tools: Tool[];
 
-    private selectedSideBarToolID: sidebarToolID;
-    private currentDrawingToolID: drawingToolId;
+    selectedSideBarToolID: SidebarToolID;
+    currentDrawingToolID: DrawingToolId;
     toolSidenavToggle: BehaviorSubject<boolean> = new BehaviorSubject(false);
 
     constructor(
@@ -55,29 +55,13 @@ export class ToolsService {
         ];
     }
 
-    getTool(id: drawingToolId): Tool {
+    getTool(id: DrawingToolId): Tool {
         return this.tools[id];
     }
 
-    set _currentDrawingTool(newToolID: drawingToolId) {
+    setCurrentDrawingTool(newToolID: DrawingToolId): void {
         this.currentDrawingTool = this.tools[newToolID];
         this.currentDrawingToolID = newToolID;
-    }
-
-    get _currentDrawingToolID(): drawingToolId {
-        return this.currentDrawingToolID;
-    }
-
-    set _currentDrawingToolID(id: drawingToolId) {
-        this.currentDrawingToolID = id;
-    }
-
-    get _selectedSideBarToolID(): sidebarToolID {
-        return this.selectedSideBarToolID;
-    }
-
-    set _selectedSideBarToolID(id: sidebarToolID) {
-        this.selectedSideBarToolID = id;
     }
 
     toggleToolSidenav(): void {

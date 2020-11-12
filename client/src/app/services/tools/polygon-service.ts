@@ -10,7 +10,7 @@ import { ColorSelectionService } from '@app/services/color/color-selection-servi
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { UndoRedoService } from '@app/services/tools/undo-redo-service';
 import { DASHLINE_EMPTY, DASHLINE_FULL, DEFAULT_OPTIONS } from '@app/shared/constant';
-import { drawingToolId, MouseButton, Options } from '@app/shared/enum';
+import { DrawingToolId, MouseButton, Options } from '@app/shared/enum';
 
 export const MAX_SIDES = 12;
 export const MIN_SIDES = 3;
@@ -131,7 +131,7 @@ export class PolygonService extends Tool {
         const box = new BoundingBox();
         box.updateFromSelectionBox(this.selectionBox, true);
         return {
-            id: drawingToolId.polygonService,
+            id: DrawingToolId.polygonService,
             box,
             options,
         };
