@@ -21,6 +21,11 @@
     <app-pipette-preview></app-pipette-preview>
 </div>
 
+<!-- Grid Tool -->
+<div *ngIf="this.toolsService.selectedSideBarToolID === SidebarToolID.grid" class="attribute-container">
+    <app-grid-options></app-grid-options>
+</div>
+
 <div *ngIf="toolOptions" class="attribute-container">
     <ng-container *ngFor="let option of toolOptions | keyvalue">
         <!-- Trace type list -->
@@ -74,6 +79,7 @@
         </ng-container>
         <!-- Selection types -->
         <ng-container *ngIf="option.key === Options.selectionType">
+            <app-magnet-option></app-magnet-option>
             <label for="selection">Type de selection</label>
             <select (change)="updateToolOptionValue(option.key, $event.target.value)" id="selection">
                 <option *ngFor="let type of selectorTypes" value="{{ type.value }}">{{ type.displayName }}</option>

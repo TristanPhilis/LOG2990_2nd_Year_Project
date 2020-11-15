@@ -1,5 +1,8 @@
 import { Injectable } from '@angular/core';
-import { DrawingService } from '../drawing/drawing.service';
+import { DrawingService } from '@app/services/drawing/drawing.service';
+
+export const DEFAULT_TRANSPARENCY = 0.5;
+export const DEFAULT_GRID_SIZE = 10;
 
 @Injectable({
     providedIn: 'root',
@@ -7,16 +10,38 @@ import { DrawingService } from '../drawing/drawing.service';
 export class GridService {
     squareSize: number;
     transparency: number;
+    isShown: boolean;
     constructor(private drawingService: DrawingService) {
         this.setDefaultOptions();
     }
 
     setDefaultOptions(): void {
-        this.squareSize = 10;
-        this.transparency = 0.5;
+        this.isShown = false;
+        this.squareSize = DEFAULT_GRID_SIZE;
+        this.transparency = DEFAULT_TRANSPARENCY;
     }
 
-    setContextOptions(): void {
+    onOptionChange(): void {
+        if (this.isShown) {
+            this.clearGrid();
+            this.drawGrid();
+        }
+    }
+
+    toggleGrid(): void {
+        if (this.isShown) {
+            this.clearGrid();
+        } else {
+            this.drawGrid();
+        }
+        this.isShown = !this.isShown;
+    }
+
+    private clearGrid(): void {
+        this.drawingService.clearCanvas(this.drawingService.gridCtx);
+    }
+
+    private setContextOptions(): void {
         const ctx = this.drawingService.gridCtx;
         ctx.globalAlpha = this.transparency;
         ctx.strokeStyle = 'black';
@@ -40,9 +65,5 @@ export class GridService {
             ctx.lineTo(width, yPosition);
         }
         ctx.stroke();
-    }
-
-    removegrid(): void {
-        this.drawingService.clearCanvas(this.drawingService.gridCtx);
     }
 }

@@ -1,28 +1,44 @@
-import { Injectable, Injector } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { DrawingAction } from '@app/classes/drawing-action';
+import { ResizeAction } from '@app/classes/resize-action';
+import { Tool } from '@app/classes/tool';
+import { CanvasSizeService } from '@app/services/drawing/canvas-size-service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ToolsService } from '@app/services/tools/tools-service';
+
+export type Action = DrawingAction | ResizeAction;
 
 @Injectable({
     providedIn: 'root',
 })
 export class UndoRedoService {
-    undoPile: DrawingAction[];
-    redoPile: DrawingAction[];
+    undoPile: Action[];
+    redoPile: Action[];
     undidAction: boolean;
-    toolsService: ToolsService;
-    // Comment to be removed
+    resizeActionIndexes: number[];
 
-    constructor(private drawingService: DrawingService, injector: Injector) {
+    constructor(private drawingService: DrawingService, private canvasResizeService: CanvasSizeService, private toolsService: ToolsService) {
         this.clearPile();
         this.undidAction = false;
-        setTimeout(() => {
-            this.toolsService = injector.get(ToolsService);
+        this.subscribeToToolsActions();
+        this.canvasResizeService.action.subscribe((action: Action) => {
+            this.saveAction(action);
         });
     }
 
-    saveAction(action: DrawingAction): void {
+    private subscribeToToolsActions(): void {
+        this.toolsService.getTools().forEach((tool: Tool) => {
+            tool.action.subscribe((action: Action) => {
+                this.saveAction(action);
+            });
+        });
+    }
+
+    saveAction(action: Action): void {
         this.undoPile.push(action);
+        if (this.isResizeAction(action)) {
+            this.resizeActionIndexes.push(this.undoPile.length - 1);
+        }
         if (this.undidAction) {
             this.redoPile = [];
             this.undidAction = false;
@@ -34,10 +50,22 @@ export class UndoRedoService {
         const lastIn = this.undoPile.pop();
         if (lastIn !== undefined) {
             this.redoPile.push(lastIn);
-
-            this.drawingService.fillCanvas('white');
-            for (const action of this.undoPile) {
-                this.toolsService.getTool(action.id).draw(this.drawingService.baseCtx, action);
+            if (this.isResizeAction(lastIn)) {
+                this.resizeActionIndexes.pop();
+                this.processResizeAction(lastIn, true);
+            } else {
+                this.drawingService.fillCanvas('white');
+                let startIndex = 0;
+                // Redraw the canvas from the most recent resize action
+                if (this.resizeActionIndexes.length > 0) {
+                    const resizeActionIndex = this.resizeActionIndexes[this.resizeActionIndexes.length - 1];
+                    startIndex = resizeActionIndex + 1;
+                    this.processResizeAction(this.undoPile[resizeActionIndex], false);
+                }
+                for (let i = startIndex; i < this.undoPile.length; i++) {
+                    const drawingAction = this.undoPile[i] as DrawingAction;
+                    this.toolsService.getTool(drawingAction.id).draw(this.drawingService.baseCtx, drawingAction);
+                }
             }
         }
     }
@@ -46,12 +74,29 @@ export class UndoRedoService {
         const lastIn = this.redoPile.pop();
         if (lastIn !== undefined) {
             this.undoPile.push(lastIn);
-            this.toolsService.getTool(lastIn.id).draw(this.drawingService.baseCtx, lastIn);
+            if (this.isResizeAction(lastIn)) {
+                this.resizeActionIndexes.push(this.undoPile.length - 1);
+                this.processResizeAction(lastIn, false);
+            } else {
+                const action = lastIn as DrawingAction;
+                this.toolsService.getTool(action.id).draw(this.drawingService.baseCtx, action);
+            }
         }
     }
 
     clearPile(): void {
         this.undoPile = [];
         this.redoPile = [];
+        this.resizeActionIndexes = [];
+    }
+
+    private isResizeAction(action: Action): boolean {
+        return !('id' in action);
+    }
+
+    private processResizeAction(action: Action, useOldSize: boolean): void {
+        action = action as ResizeAction;
+        const size = useOldSize ? action.oldSize : action.newSize;
+        this.canvasResizeService.completeResize(size, action.imageData);
     }
 }

@@ -13,8 +13,12 @@ export class MagicSelectorService extends Selector {
         super(drawingService);
         this.id = SelectionType.magic;
     }
-    clearBaseCanvasSelectedArea(box: BoundingBox): void {}
-    drawSelectionBox(box: SelectionBox, shiftDown: boolean): void {}
+    clearBaseCanvasSelectedArea(box: BoundingBox): void {
+        return;
+    }
+    drawSelectionBox(box: SelectionBox, shiftDown: boolean): void {
+        return;
+    }
     copyArea(box: BoundingBox): ImageData {
         return new ImageData(0, 0);
     }

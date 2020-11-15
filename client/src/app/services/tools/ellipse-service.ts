@@ -6,7 +6,6 @@ import { Tool } from '@app/classes/tool';
 import { ToolOption } from '@app/classes/tool-option';
 import { ColorSelectionService } from '@app/services/color/color-selection-service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
-import { UndoRedoService } from '@app/services/tools/undo-redo-service';
 import { DEFAULT_OPTIONS, SHIFT_KEY } from '@app/shared/constant';
 import { DrawingToolId, MouseButton, Options } from '@app/shared/enum';
 
@@ -16,8 +15,8 @@ import { DrawingToolId, MouseButton, Options } from '@app/shared/enum';
 export class EllipseService extends Tool {
     selectionBox: SelectionBox;
 
-    constructor(drawingService: DrawingService, undoRedoService: UndoRedoService, colorService: ColorSelectionService) {
-        super(drawingService, undoRedoService, colorService);
+    constructor(drawingService: DrawingService, colorService: ColorSelectionService) {
+        super(drawingService, colorService);
         this.setDefaultOptions();
         this.selectionBox = new SelectionBox();
     }
@@ -52,7 +51,7 @@ export class EllipseService extends Tool {
         if (this.mouseDown && !(event.buttons === MouseButton.Left)) {
             this.mouseDown = false;
             const drawingAction = this.getDrawingAction();
-            this.undoRedoService.saveAction(drawingAction);
+            this.action.next(drawingAction);
             this.draw(this.drawingService.baseCtx, drawingAction);
         }
     }
@@ -62,7 +61,7 @@ export class EllipseService extends Tool {
             const currentPosition = this.getPositionFromMouse(event);
             this.selectionBox.updateOpposingCorner(currentPosition);
             const drawingAction = this.getDrawingAction();
-            this.undoRedoService.saveAction(drawingAction);
+            this.action.next(drawingAction);
             this.draw(this.drawingService.baseCtx, drawingAction);
         }
         this.mouseDown = false;

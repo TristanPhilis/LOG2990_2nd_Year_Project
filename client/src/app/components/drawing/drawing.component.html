@@ -8,4 +8,10 @@
         (mouseover)="drawingService.mouseIsOverCanvas = true"
         (mouseout)="drawingService.mouseIsOverCanvas = false"
     ></canvas>
+    <div class="preview-container">
+        <div #bottomAnchor id="bottomAnchor" class="anchor" (mousedown)="onAnchorPressed($event, AnchorsPosition.middleBottom)"></div>
+        <div #rightAnchor id="rightAnchor" class="anchor" (mousedown)="onAnchorPressed($event, AnchorsPosition.middleRight)"></div>
+        <div #cornerAnchor id="cornerAnchor" class="anchor" (mousedown)="onAnchorPressed($event, AnchorsPosition.bottomRight)"></div>
+        <div *ngIf="isResizing" class="resize-preview" [style.width.px]="previewSize.x" [style.height.px]="previewSize.y"></div>
+    </div>
 </div>

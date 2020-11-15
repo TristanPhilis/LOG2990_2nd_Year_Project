@@ -7,7 +7,6 @@ import { ColorSelectionService } from '@app/services/color/color-selection-servi
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { A_POSITION, B_POSITION, G_POSITION, PREVIEW_RADIUS_SIZE, PREVIEW_SCALE, PREVIEW_SELECTION_SIZE, R_POSITION } from '@app/shared/constant';
 import { MouseButton } from '@app/shared/enum';
-import { UndoRedoService } from './undo-redo-service';
 @Injectable({
     providedIn: 'root',
 })
@@ -15,8 +14,8 @@ export class PipetteService extends Tool {
     private previewSquare: BoundingBox = new BoundingBox();
     pipettePreviewCtx: CanvasRenderingContext2D;
 
-    constructor(drawingService: DrawingService, undoRedoService: UndoRedoService, colorService: ColorSelectionService) {
-        super(drawingService, undoRedoService, colorService);
+    constructor(drawingService: DrawingService, colorService: ColorSelectionService) {
+        super(drawingService, colorService);
         this.previewSquare.squareSize = PREVIEW_SELECTION_SIZE;
     }
 

@@ -16,6 +16,7 @@ export enum SidebarToolID {
     openGuide,
     undo,
     redo,
+    grid,
 }
 
 export enum DrawingToolId {
@@ -77,4 +78,22 @@ export enum Options {
     emissionPerSecond,
     imageChoice,
     selectionType,
+}
+
+export enum CanvasAnchorsId {
+    bottom,
+    right,
+    corner,
+}
+
+export enum AnchorsPosition {
+    topLeft,
+    middleTop,
+    topRight,
+    middleRight,
+    bottomRight,
+    middleBottom,
+    bottomLeft,
+    middleLeft,
+    center,
 }

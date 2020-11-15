@@ -56,6 +56,10 @@ export class ToolsService {
         return this.tools[id];
     }
 
+    getTools(): Tool[] {
+        return this.tools;
+    }
+
     setCurrentDrawingTool(newToolID: DrawingToolId): void {
         this.currentDrawingTool = this.tools[newToolID];
         this.currentDrawingToolID = newToolID;

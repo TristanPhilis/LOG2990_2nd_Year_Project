@@ -1,8 +1,10 @@
 import { AfterViewInit, Component, ElementRef, HostListener, Input, OnChanges, SimpleChanges, ViewChild } from '@angular/core';
 import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
+import { CanvasSizeService } from '@app/services/drawing/canvas-size-service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ToolsService } from '@app/services/tools/tools-service';
+import { AnchorsPosition, MouseButton } from '@app/shared/enum';
 
 @Component({
     selector: 'app-drawing',
@@ -14,60 +16,50 @@ export class DrawingComponent implements AfterViewInit, OnChanges {
     @ViewChild('previewCanvas', { static: false }) previewCanvas: ElementRef<HTMLCanvasElement>;
     @ViewChild('selectionCanvas', { static: false }) selectionCanvas: ElementRef<HTMLCanvasElement>;
     @ViewChild('gridCanvas', { static: false }) gridCanvas: ElementRef<HTMLCanvasElement>;
+    @ViewChild('bottomAnchor', { static: false }) bottomAnchor: ElementRef<HTMLDivElement>;
+    @ViewChild('rightAnchor', { static: false }) rightAnchor: ElementRef<HTMLDivElement>;
+    @ViewChild('cornerAnchor', { static: false }) cornerAnchor: ElementRef<HTMLDivElement>;
 
-    private baseCtx: CanvasRenderingContext2D;
-    private previewCtx: CanvasRenderingContext2D;
-
-    @Input()
-    private canvasSize: Vec2;
+    isResizing: boolean;
 
     @Input()
     private workzoneRect: DOMRect;
 
-    constructor(public drawingService: DrawingService, private toolsService: ToolsService) {}
+    constructor(public drawingService: DrawingService, private toolsService: ToolsService, private canvasSizeService: CanvasSizeService) {}
 
     ngAfterViewInit(): void {
-        this.selectionCanvas;
-        this.baseCtx = this.baseCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
-        this.previewCtx = this.previewCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
-        this.drawingService.baseCtx = this.baseCtx;
-        this.drawingService.previewCtx = this.previewCtx;
-        this.drawingService.selectionCtx = this.selectionCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
-        this.drawingService.gridCtx = this.gridCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
         this.drawingService.canvas = this.baseCanvas.nativeElement;
-        this.drawingService.fillCanvas('white');
+        this.drawingService.baseCtx = this.baseCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
+
+        this.drawingService.previewCanvas = this.previewCanvas.nativeElement;
+        this.drawingService.previewCtx = this.previewCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
+
+        this.drawingService.gridCanvas = this.gridCanvas.nativeElement;
+        this.drawingService.gridCtx = this.gridCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
+
+        this.drawingService.selectionCtx = this.selectionCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
+        this.drawingService.selectionCanvas = this.selectionCanvas.nativeElement;
+
+        this.canvasSizeService.bottomAnchor = this.bottomAnchor.nativeElement;
+        this.canvasSizeService.cornerAnchor = this.cornerAnchor.nativeElement;
+        this.canvasSizeService.rightAnchor = this.rightAnchor.nativeElement;
     }
 
     ngOnChanges(changes: SimpleChanges): void {
-        const canvasSizeKey = 'canvasSize';
         const workzoneRectKey = 'workzoneRect';
-        const canvasChange = changes[canvasSizeKey];
         const workzoneChange = changes[workzoneRectKey];
 
-        if (canvasChange && !canvasChange.firstChange) {
-            this.resizeCanvas();
-        }
-
         if (workzoneChange && !workzoneChange.firstChange) {
-            this.setSelectionCanvasSize();
+            this.canvasSizeService.setInitialCanvasSize(this.workzoneRect.width, this.workzoneRect.height);
         }
     }
 
-    setSelectionCanvasSize(): void {
-        this.selectionCanvas.nativeElement.width = this.workzoneRect.width;
-        this.selectionCanvas.nativeElement.height = this.workzoneRect.height;
-    }
-
-    resizeCanvas(): void {
-        const savedImageData = this.drawingService.getImageData();
-        this.baseCanvas.nativeElement.width = this.width;
-        this.baseCanvas.nativeElement.height = this.height;
-        this.previewCanvas.nativeElement.width = this.width;
-        this.previewCanvas.nativeElement.height = this.height;
-        this.gridCanvas.nativeElement.width = this.width;
-        this.gridCanvas.nativeElement.height = this.height;
-        this.drawingService.fillCanvas('white');
-        this.drawingService.setImageData(savedImageData);
+    onAnchorPressed(event: MouseEvent, anchor: AnchorsPosition): void {
+        if (event.buttons !== MouseButton.Left) {
+            return;
+        }
+        this.isResizing = true;
+        this.canvasSizeService.initializeResizing(anchor);
     }
 
     @HostListener('contextmenu', ['$event'])
@@ -77,27 +69,42 @@ export class DrawingComponent implements AfterViewInit, OnChanges {
 
     @HostListener('mousemove', ['$event'])
     onMouseMove(event: MouseEvent): void {
-        this.currentTool.onMouseMove(event);
+        if (this.isResizing) {
+            this.canvasSizeService.onMouseMove(event);
+        } else {
+            this.currentTool.onMouseMove(event);
+        }
     }
 
     @HostListener('mousedown', ['$event'])
     onMouseDown(event: MouseEvent): void {
-        this.currentTool.onMouseDown(event);
+        if (this.drawingService.mouseIsOverCanvas) {
+            this.currentTool.onMouseDown(event);
+        }
     }
 
     @HostListener('mouseup', ['$event'])
     onMouseUp(event: MouseEvent): void {
-        this.currentTool.onMouseUp(event);
+        if (this.isResizing) {
+            this.canvasSizeService.onMouseUp(event);
+            this.isResizing = false;
+        } else {
+            this.currentTool.onMouseUp(event);
+        }
     }
 
     @HostListener('click', ['$event'])
     onMouseClick(event: MouseEvent): void {
-        this.currentTool.onMouseClick(event);
+        if (this.drawingService.mouseIsOverCanvas) {
+            this.currentTool.onMouseClick(event);
+        }
     }
 
     @HostListener('dblclick', ['$event'])
     onMouseDoubleClick(event: MouseEvent): void {
-        this.currentTool.onMouseDoubleClick(event);
+        if (this.drawingService.mouseIsOverCanvas) {
+            this.currentTool.onMouseDoubleClick(event);
+        }
     }
 
     @HostListener('keydown', ['$event'])
@@ -110,12 +117,12 @@ export class DrawingComponent implements AfterViewInit, OnChanges {
         this.currentTool.onKeyUp(event);
     }
 
-    get width(): number {
-        return this.canvasSize.x;
+    get AnchorsPosition(): typeof AnchorsPosition {
+        return AnchorsPosition;
     }
 
-    get height(): number {
-        return this.canvasSize.y;
+    get previewSize(): Vec2 {
+        return this.canvasSizeService.previewSize;
     }
 
     get currentTool(): Tool {

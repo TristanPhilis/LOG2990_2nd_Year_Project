@@ -8,7 +8,6 @@ import { ToolOption } from '@app/classes/tool-option';
 import { Vec2 } from '@app/classes/vec2';
 import { ColorSelectionService } from '@app/services/color/color-selection-service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
-import { UndoRedoService } from '@app/services/tools/undo-redo-service';
 import { CanvasManipulationService } from '@app/services/utils/canvas-manipulation-service';
 import {
     ARROW_DOWN,
@@ -44,14 +43,13 @@ export class SelectionService extends Tool {
 
     constructor(
         drawingService: DrawingService,
-        undoRedoService: UndoRedoService,
         colorService: ColorSelectionService,
         private rectangleSelector: RectangleSelectorService,
         private ellipseSelector: EllipseSelectorService,
         private magicSelector: MagicSelectorService,
         private canvasUtil: CanvasManipulationService,
     ) {
-        super(drawingService, undoRedoService, colorService);
+        super(drawingService, colorService);
         this.setDefaultOptions();
 
         this.selectorOptions = [this.rectangleSelector, this.ellipseSelector, this.magicSelector];
@@ -112,21 +110,23 @@ export class SelectionService extends Tool {
     }
 
     onMouseMove(event: MouseEvent): void {
-        if (this.mouseDown && event.buttons === MouseButton.Left && !this.isAreaSelected) {
-            const currentCoord = this.getPositionFromMouse(event);
-            this.selectionBox.updateOpposingCorner(currentCoord);
-            this.currentSelector.drawSelectionBox(this.selectionBox, this.shiftDown);
-        }
+        if (this.mouseDown && this.drawingService.mouseIsOverCanvas) {
+            if (event.buttons === MouseButton.Left && !this.isAreaSelected) {
+                const currentCoord = this.getPositionFromMouse(event);
+                this.selectionBox.updateOpposingCorner(currentCoord);
+                this.currentSelector.drawSelectionBox(this.selectionBox, this.shiftDown);
+            }
 
-        if (this.mouseDown && !(event.buttons === MouseButton.Left) && !this.isAreaSelected) {
-            this.initializeSelectedBox();
-            this.mouseDown = false;
-        }
+            if (!(event.buttons === MouseButton.Left) && !this.isAreaSelected) {
+                this.initializeSelectedBox();
+                this.mouseDown = false;
+            }
 
-        if (this.mouseDown && event.buttons === MouseButton.Left && this.isAreaSelected) {
-            const currentCoord = this.getPositionFromMouse(event);
-            this.translateSelectedBoxFromMouseMove(currentCoord);
-            this.updateSelectedAreaPreview();
+            if (event.buttons === MouseButton.Left && this.isAreaSelected) {
+                const currentCoord = this.getPositionFromMouse(event);
+                this.translateSelectedBoxFromMouseMove(currentCoord);
+                this.updateSelectedAreaPreview();
+            }
         }
     }
 
@@ -187,7 +187,6 @@ export class SelectionService extends Tool {
         this.isAreaSelected = this.selectedBox.width > 0 && this.selectedBox.height > 0;
         if (this.isAreaSelected) {
             this.selectedImageData = this.currentSelector.copyArea(this.selectedBox);
-            debugger;
             this.updateSelectedAreaPreview();
         }
     }
@@ -208,11 +207,11 @@ export class SelectionService extends Tool {
     }
 
     placeImage(): void {
-        this.drawingService.clearCanvas(this.drawingService.previewCtx);
+        this.drawingService.clearCanvas(this.drawingService.selectionCtx);
         if (this.isAreaSelected) {
             const ctx = this.drawingService.baseCtx;
             const action = this.getDrawingAction();
-            this.undoRedoService.saveAction(action);
+            this.action.next(action);
             this.draw(ctx, action);
         }
         this.isAreaSelected = false;
@@ -227,7 +226,7 @@ export class SelectionService extends Tool {
     }
 
     private drawSelectedBox(): void {
-        const ctx = this.drawingService.previewCtx;
+        const ctx = this.drawingService.selectionCtx;
         this.drawingService.clearCanvas(ctx);
         ctx.beginPath();
         ctx.strokeStyle = SELECTION_BOX_COLOUR;
@@ -265,7 +264,6 @@ export class SelectionService extends Tool {
     draw(ctx: CanvasRenderingContext2D, drawingAction: DrawingAction): void {
         const box = drawingAction.box as BoundingBox;
         const imageData = drawingAction.imageData;
-        debugger;
         const selectorId = drawingAction.options.toolOptions.get(Options.selectionType);
         if (box && imageData && selectorId) {
             this.selectorOptions[selectorId.value].clearBaseCanvasSelectedArea(box.oldSelectedBox);
