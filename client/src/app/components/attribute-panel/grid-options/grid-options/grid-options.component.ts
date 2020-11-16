@@ -2,6 +2,9 @@ import { Component } from '@angular/core';
 import { GridService } from '@app/services/grid/grid-service';
 import { PERCENT_MULTIPLIER } from '@app/shared/constant';
 
+const REMOVE = 'Enlever';
+const SHOW = 'Afficher';
+
 @Component({
     selector: 'app-grid-options',
     templateUrl: './grid-options.component.html',
@@ -33,6 +36,6 @@ export class GridOptionsComponent {
     }
 
     get buttonText(): string {
-        return this.gridService.isShown ? 'Enlever' : 'Afficher';
+        return this.gridService.isShown ? REMOVE : SHOW;
     }
 }

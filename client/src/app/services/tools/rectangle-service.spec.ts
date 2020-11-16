@@ -6,13 +6,11 @@ import { ColorSelectionService } from '@app/services/color/color-selection-servi
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { SHIFT_KEY } from '@app/shared/constant';
 import { RectangleService } from './rectangle-service';
-import { UndoRedoService } from './undo-redo-service';
 
 // tslint:disable:no-any
 describe('RectangleService', () => {
     let service: RectangleService;
     let drawServiceSpy: jasmine.SpyObj<DrawingService>;
-    let undoRedoServiceSpy: jasmine.SpyObj<UndoRedoService>;
     let colorServiceSpy: jasmine.SpyObj<ColorSelectionService>;
     let mouseEvent: MouseEvent;
     let mouseEventRClick: MouseEvent;
@@ -23,9 +21,9 @@ describe('RectangleService', () => {
     let drawSpy: jasmine.Spy<any>;
     let setAnchorSpy: jasmine.Spy<any>;
     let updateOpposingCornerSpy: jasmine.Spy<any>;
+    let saveActionSpy: jasmine.Spy<any>;
 
     beforeEach(() => {
-        undoRedoServiceSpy = jasmine.createSpyObj('UndoRedoService', ['saveAction']);
         const defaultColor = new Color(0, 0, 0);
         colorServiceSpy = jasmine.createSpyObj('colorServiceSpy', ['']);
         colorServiceSpy.primaryColor = defaultColor;
@@ -37,7 +35,6 @@ describe('RectangleService', () => {
         TestBed.configureTestingModule({
             providers: [
                 { provide: DrawingService, useValue: drawServiceSpy },
-                { provide: UndoRedoService, useValue: undoRedoServiceSpy },
                 { provide: ColorSelectionService, useValue: colorServiceSpy },
             ],
         });
@@ -45,6 +42,7 @@ describe('RectangleService', () => {
         drawSpy = spyOn<any>(service, 'draw').and.callThrough();
         setAnchorSpy = spyOn<any>(service.selectionBox, 'setAnchor');
         updateOpposingCornerSpy = spyOn<any>(service.selectionBox, 'updateOpposingCorner');
+        saveActionSpy = spyOn<any>(service.action, 'next');
 
         // Service's Spy configuration
         // tslint:disable:no-string-literal
@@ -94,7 +92,7 @@ describe('RectangleService', () => {
         service.mouseDown = true;
         service.onMouseUp(mouseEventLClick);
         expect(drawSpy).toHaveBeenCalled();
-        expect(undoRedoServiceSpy.saveAction).toHaveBeenCalled();
+        expect(saveActionSpy).toHaveBeenCalled();
     });
 
     it(' onMouseUp should not call drawRectangle if mouse was not already down', () => {
@@ -121,7 +119,7 @@ describe('RectangleService', () => {
 
         service.onMouseMove(mouseEventRClick);
         expect(drawSpy).toHaveBeenCalled();
-        expect(undoRedoServiceSpy.saveAction).toHaveBeenCalled();
+        expect(saveActionSpy).toHaveBeenCalled();
     });
 
     it('onKeyDown Should call drawRectangle with shiftDown to true when shift is pressed and mouse is down', () => {

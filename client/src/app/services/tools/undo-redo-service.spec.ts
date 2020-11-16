@@ -7,6 +7,7 @@ import { PencilService } from '@app/services/tools/pencil-service';
 import { ToolsService } from '@app/services/tools/tools-service';
 import { UndoRedoService } from '@app/services/tools/undo-redo-service';
 import { DrawingToolId, Options } from '@app/shared/enum';
+import { Subject } from 'rxjs';
 
 // tslint:disable:no-any
 describe('Service: UndoRedo', () => {
@@ -22,14 +23,18 @@ describe('Service: UndoRedo', () => {
 
     beforeEach(() => {
         drawServiceSpy = jasmine.createSpyObj('DrawingService', ['fillCanvas']);
-        toolsServiceSpy = jasmine.createSpyObj('toolsService', ['getTool']);
+        toolsServiceSpy = jasmine.createSpyObj('toolsService', ['getTool', 'getTools']);
         pencilSpy = jasmine.createSpyObj('pencilService', ['draw']);
+        pencilSpy.action = new Subject();
         toolsServiceSpy.getTool.and.returnValue(pencilSpy);
+        toolsServiceSpy.getTools.and.returnValue([pencilSpy]);
         TestBed.configureTestingModule({
-            providers: [{ provide: DrawingService, useValue: drawServiceSpy }],
+            providers: [
+                { provide: DrawingService, useValue: drawServiceSpy },
+                { provide: ToolsService, useValue: toolsServiceSpy },
+            ],
         });
         service = TestBed.inject(UndoRedoService);
-        service.toolsService = toolsServiceSpy;
 
         action = {
             path: [

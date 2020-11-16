@@ -18,10 +18,7 @@ export abstract class Tool {
     options: DrawingOptions;
     action: Subject<DrawingAction>;
 
-    constructor(
-        protected drawingService: DrawingService,
-        /*protected undoRedoService: UndoRedoService,*/ protected colorService: ColorSelectionService,
-    ) {
+    constructor(protected drawingService: DrawingService, protected colorService: ColorSelectionService) {
         this.action = new Subject<DrawingAction>();
     }
 

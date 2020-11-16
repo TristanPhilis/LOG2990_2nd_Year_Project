@@ -24,10 +24,6 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
     toolAttributeSidenav: MatSidenav;
 
     workzoneRect: DOMRect;
-    mouseDown: boolean;
-    resizeX: boolean;
-    resizeY: boolean;
-
     private unsubscribe$: Subject<void> = new Subject<void>();
 
     constructor(private cd: ChangeDetectorRef, public toolService: ToolsService, private drawingService: DrawingService) {}

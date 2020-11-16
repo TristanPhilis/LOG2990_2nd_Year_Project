@@ -2,6 +2,9 @@ import { Component, ElementRef, ViewChild } from '@angular/core';
 import { MagnetismService } from '@app/services/magnetism/magnetism-service';
 import { AnchorsPosition } from '@app/shared/enum';
 
+const ACTIVATE = 'Activer';
+const DEACTIVATE = 'Désactiver';
+
 @Component({
     selector: 'app-magnet-option',
     templateUrl: './magnet-option.component.html',
@@ -35,7 +38,7 @@ export class MagnetOptionComponent {
     }
 
     get buttonText(): string {
-        return this.magnetismService.isActive ? 'Désactiver' : 'Activer';
+        return this.isMagnetismActivated ? DEACTIVATE : ACTIVATE;
     }
 
     get AnchorsPosition(): typeof AnchorsPosition {

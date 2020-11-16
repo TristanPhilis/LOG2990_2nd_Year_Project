@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, OnDestroy } from '@angular/core';
 import { DrawingAction } from '@app/classes/drawing-action';
 import { ResizeAction } from '@app/classes/resize-action';
 import { Tool } from '@app/classes/tool';
@@ -11,7 +11,7 @@ export type Action = DrawingAction | ResizeAction;
 @Injectable({
     providedIn: 'root',
 })
-export class UndoRedoService {
+export class UndoRedoService implements OnDestroy {
     undoPile: Action[];
     redoPile: Action[];
     undidAction: boolean;
@@ -23,6 +23,13 @@ export class UndoRedoService {
         this.subscribeToToolsActions();
         this.canvasResizeService.action.subscribe((action: Action) => {
             this.saveAction(action);
+        });
+    }
+
+    ngOnDestroy(): void {
+        this.canvasResizeService.action.complete();
+        this.toolsService.getTools().forEach((tool: Tool) => {
+            tool.action.complete();
         });
     }
 
