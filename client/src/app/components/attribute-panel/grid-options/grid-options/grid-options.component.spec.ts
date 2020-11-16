@@ -38,7 +38,7 @@ describe('GridOptionsComponent', () => {
         const inputValue = 70;
         const expectedResult = 0.7;
         component.updateTransparency(inputValue);
-        expect(gridServiceSpy.transparency).toBeCloseTo(expectedResult, 3);
+        expect(gridServiceSpy.transparency).toBeCloseTo(expectedResult, 2);
         expect(gridServiceSpy.onOptionChange).toHaveBeenCalled();
     });
 

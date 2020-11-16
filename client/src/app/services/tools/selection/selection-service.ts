@@ -27,6 +27,7 @@ import { DrawingToolId, MouseButton, Options, SelectionType } from '@app/shared/
 import { EllipseSelectorService } from './ellipse-selector-service';
 import { MagicSelectorService } from './magic-selector-service';
 import { RectangleSelectorService } from './rectangle-selector-service';
+import { SelectionMouvementService } from './selection-mouvement-service';
 
 @Injectable({
     providedIn: 'root',
@@ -38,7 +39,6 @@ export class SelectionService extends Tool {
     selectedImageData: ImageData;
     selectedBox: BoundingBox;
     selectionBox: SelectionBox;
-    draggingAnchorRelativePosition: Vec2;
     keyMap: boolean[] = [];
 
     constructor(
@@ -48,6 +48,7 @@ export class SelectionService extends Tool {
         private ellipseSelector: EllipseSelectorService,
         private magicSelector: MagicSelectorService,
         private canvasUtil: CanvasManipulationService,
+        private mouvementService: SelectionMouvementService,
     ) {
         super(drawingService, colorService);
         this.setDefaultOptions();
@@ -82,10 +83,7 @@ export class SelectionService extends Tool {
             const currentCoord = this.getPositionFromMouse(event);
             if (this.isAreaSelected) {
                 if (this.selectedBox.isInBox(currentCoord)) {
-                    this.draggingAnchorRelativePosition = {
-                        x: currentCoord.x - this.selectedBox.position.x,
-                        y: currentCoord.y - this.selectedBox.position.y,
-                    };
+                    this.selectedBox.mouseCoord = currentCoord;
                 } else {
                     this.placeImage();
                     if (this.currentSelector.id === SelectionType.magic) {
@@ -124,7 +122,7 @@ export class SelectionService extends Tool {
 
             if (event.buttons === MouseButton.Left && this.isAreaSelected) {
                 const currentCoord = this.getPositionFromMouse(event);
-                this.translateSelectedBoxFromMouseMove(currentCoord);
+                this.mouvementService.processMouseMouvement(this.selectedBox, currentCoord);
                 this.updateSelectedAreaPreview();
             }
         }
@@ -189,15 +187,6 @@ export class SelectionService extends Tool {
             this.selectedImageData = this.currentSelector.copyArea(this.selectedBox);
             this.updateSelectedAreaPreview();
         }
-    }
-
-    private translateSelectedBoxFromMouseMove(coord: Vec2): void {
-        const distanceFromLeft = coord.x - this.selectedBox.left;
-        const xTranslate = distanceFromLeft - this.draggingAnchorRelativePosition.x;
-        this.selectedBox.translateX(xTranslate);
-        const distanceFromTop = coord.y - this.selectedBox.top;
-        const yTranslate = distanceFromTop - this.draggingAnchorRelativePosition.y;
-        this.selectedBox.translateY(yTranslate);
     }
 
     private updateSelectedAreaPreview(): void {
