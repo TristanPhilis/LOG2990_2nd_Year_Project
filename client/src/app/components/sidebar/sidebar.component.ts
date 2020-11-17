@@ -9,7 +9,7 @@ import { SidebarTool } from '@app/components/sidebar/sidebar-tool/sidebar-tool';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ToolsService } from '@app/services/tools/tools-service';
 import { UndoRedoService } from '@app/services/tools/undo-redo-service';
-import { DrawingToolId, SidebarToolID } from '@app/shared/enum';
+import { DrawingToolId, Options, SelectionType, SidebarToolID } from '@app/shared/enum';
 
 declare type callback = () => void;
 
@@ -35,7 +35,8 @@ export class SidebarComponent {
         public undoRedo: UndoRedoService,
     ) {
         this.sideBarToolsTop = [
-            { id: SidebarToolID.selection, name: 'Selection', defaultDrawingToolid: DrawingToolId.rectangleSelectionService },
+            { id: SidebarToolID.selection, name: 'Selection', defaultDrawingToolid: DrawingToolId.selectionService },
+            { id: SidebarToolID.grid, name: 'Grille' },
             { id: SidebarToolID.tracing, name: 'Traçage', defaultDrawingToolid: DrawingToolId.pencilService },
             { id: SidebarToolID.shapes, name: 'Figures', defaultDrawingToolid: DrawingToolId.rectangleService },
             { id: SidebarToolID.line, name: 'Ligne', defaultDrawingToolid: DrawingToolId.lineService },
@@ -211,11 +212,12 @@ export class SidebarComponent {
             l: () => this.onButtonPressTop(this.sideBarToolsTopMap.get(SidebarToolID.line)),
             r: () => {
                 this.onButtonPressTop(this.sideBarToolsTopMap.get(SidebarToolID.selection));
+                this.toolsService.updateOptionValue(Options.selectionType, SelectionType.ellipse);
             },
 
             s: () => {
                 this.onButtonPressTop(this.sideBarToolsTopMap.get(SidebarToolID.selection));
-                this.toolsService.setCurrentDrawingTool(DrawingToolId.ellipseSelectionService);
+                this.toolsService.updateOptionValue(Options.selectionType, SelectionType.ellipse);
             },
             i: () => this.onButtonPressTop(this.sideBarToolsTopMap.get(SidebarToolID.pipette)),
 

@@ -8,7 +8,6 @@ import { ToolOption } from '@app/classes/tool-option';
 import { Vec2 } from '@app/classes/vec2';
 import { ColorSelectionService } from '@app/services/color/color-selection-service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
-import { UndoRedoService } from '@app/services/tools/undo-redo-service';
 import { A_POSITION, B_POSITION, DEFAULT_OPTIONS, G_POSITION, MAX_TOLERANCE, PIXEL_INTERVAL, R_POSITION } from '@app/shared/constant';
 import { DrawingToolId, MouseButton, Options } from '@app/shared/enum';
 
@@ -25,8 +24,8 @@ export class BucketService extends Tool {
     initialColor: Color;
     boundingBox: BoundingBox;
 
-    constructor(drawingService: DrawingService, undoRedoService: UndoRedoService, colorService: ColorSelectionService) {
-        super(drawingService, undoRedoService, colorService);
+    constructor(drawingService: DrawingService, colorService: ColorSelectionService) {
+        super(drawingService, colorService);
         this.pixelsData = new Uint8ClampedArray();
         this.boundingBox = new BoundingBox();
         this.visitedPixel = [];
@@ -52,7 +51,7 @@ export class BucketService extends Tool {
         if (this.tolerance === MAX_TOLERANCE) {
             this.drawingService.fillCanvas(this.primaryColor.getRgbString());
             this.setParamsForMaxTolerance();
-            this.undoRedoService.saveAction(this.getDrawingAction());
+            this.action.next(this.getDrawingAction());
         } else {
             const initialCoord = this.getPositionFromMouse(event);
             this.initSearchParams(initialCoord);
@@ -98,7 +97,7 @@ export class BucketService extends Tool {
             }
         }
         const action = this.getDrawingAction();
-        this.undoRedoService.saveAction(action);
+        this.action.next(action);
         this.draw(this.drawingService.baseCtx, action);
     }
 
@@ -111,7 +110,7 @@ export class BucketService extends Tool {
             }
         }
         const action = this.getDrawingAction();
-        this.undoRedoService.saveAction(action);
+        this.action.next(action);
         this.draw(this.drawingService.baseCtx, action);
     }
 

@@ -7,7 +7,6 @@ import { ToolOption } from '@app/classes/tool-option';
 import { Vec2 } from '@app/classes/vec2';
 import { ColorSelectionService } from '@app/services/color/color-selection-service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
-import { UndoRedoService } from '@app/services/tools/undo-redo-service';
 import { DEFAULT_OPTIONS, SHIFT_KEY } from '@app/shared/constant';
 import { DrawingToolId, MouseButton, Options } from '@app/shared/enum';
 
@@ -18,8 +17,8 @@ export class RectangleService extends Tool {
     initialCoord: Vec2;
     selectionBox: SelectionBox;
 
-    constructor(drawingService: DrawingService, undoRedoService: UndoRedoService, colorService: ColorSelectionService) {
-        super(drawingService, undoRedoService, colorService);
+    constructor(drawingService: DrawingService, colorService: ColorSelectionService) {
+        super(drawingService, colorService);
         this.setDefaultOptions();
         this.selectionBox = new SelectionBox();
     }
@@ -49,7 +48,7 @@ export class RectangleService extends Tool {
             const currentCoord = this.getPositionFromMouse(event);
             this.selectionBox.updateOpposingCorner(currentCoord);
             const action = this.getDrawingAction();
-            this.undoRedoService.saveAction(action);
+            this.action.next(action);
             this.draw(this.drawingService.baseCtx, action);
         }
         this.mouseDown = false;
@@ -63,7 +62,7 @@ export class RectangleService extends Tool {
         }
         if (this.mouseDown && !(event.buttons === MouseButton.Left)) {
             const action = this.getDrawingAction();
-            this.undoRedoService.saveAction(action);
+            this.action.next(action);
             this.draw(this.drawingService.baseCtx, action);
             this.mouseDown = false;
         }

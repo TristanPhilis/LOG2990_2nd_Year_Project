@@ -5,7 +5,6 @@ import { ToolOption } from '@app/classes/tool-option';
 import { Vec2 } from '@app/classes/vec2';
 import { ColorSelectionService } from '@app/services/color/color-selection-service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
-import { UndoRedoService } from '@app/services/tools/undo-redo-service';
 import { DEFAULT_OPTIONS, TEXTURES } from '@app/shared/constant';
 import { DrawingToolId, MouseButton, Options } from '@app/shared/enum';
 
@@ -16,8 +15,8 @@ export class BrushService extends Tool {
     private pathData: Vec2[];
     private availableTextures: string[];
 
-    constructor(drawingService: DrawingService, undoRedoService: UndoRedoService, colorService: ColorSelectionService) {
-        super(drawingService, undoRedoService, colorService);
+    constructor(drawingService: DrawingService, colorService: ColorSelectionService) {
+        super(drawingService, colorService);
         this.clearPath();
         this.setDefaultOptions();
         this.availableTextures = TEXTURES;
@@ -48,7 +47,7 @@ export class BrushService extends Tool {
             const mousePosition = this.getPositionFromMouse(event);
             this.pathData.push(mousePosition);
             const drawingAction = this.getDrawingAction();
-            this.undoRedoService.saveAction(drawingAction);
+            this.action.next(drawingAction);
             this.draw(this.drawingService.baseCtx, drawingAction);
         }
         this.mouseDown = false;

@@ -5,22 +5,20 @@ import { ColorSelectionService } from '@app/services/color/color-selection-servi
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { BACKSPACE_KEY, ESCAPE_KEY, MIDDLE_SNAP_ANGLE, SHIFT_KEY } from '@app/shared/constant';
 import { LineService } from './line-service';
-import { UndoRedoService } from './undo-redo-service';
 
 // tslint:disable:no-any
 describe('LineService', () => {
     let service: LineService;
     let drawServiceSpy: jasmine.SpyObj<DrawingService>;
-    let undoRedoServiceSpy: jasmine.SpyObj<UndoRedoService>;
     let colorServiceSpy: jasmine.SpyObj<ColorSelectionService>;
     let mouseEvent: MouseEvent;
 
     let baseCtxStub: CanvasRenderingContext2D;
     let previewCtxStub: CanvasRenderingContext2D;
     let drawSpy: jasmine.Spy<any>;
+    let saveActionSpy: jasmine.Spy<any>;
 
     beforeEach(() => {
-        undoRedoServiceSpy = jasmine.createSpyObj('UndoRedoService', ['saveAction']);
         const defaultColor = new Color(0, 0, 0);
         colorServiceSpy = jasmine.createSpyObj('colorServiceSpy', ['']);
         colorServiceSpy.primaryColor = defaultColor;
@@ -32,12 +30,12 @@ describe('LineService', () => {
         TestBed.configureTestingModule({
             providers: [
                 { provide: DrawingService, useValue: drawServiceSpy },
-                { provide: UndoRedoService, useValue: undoRedoServiceSpy },
                 { provide: ColorSelectionService, useValue: colorServiceSpy },
             ],
         });
         service = TestBed.inject(LineService);
         drawSpy = spyOn<any>(service, 'draw').and.callThrough();
+        saveActionSpy = spyOn<any>(service.action, 'next');
 
         // Spy Service configuration
         // tslint:disable-next-line:no-string-literal
@@ -98,7 +96,7 @@ describe('LineService', () => {
         service.onMouseDoubleClick(mouseEvent);
         expect(drawSpy).toHaveBeenCalled();
         expect(endLineSpy).toHaveBeenCalled();
-        expect(undoRedoServiceSpy.saveAction).toHaveBeenCalled();
+        expect(saveActionSpy).toHaveBeenCalled();
     });
 
     it('onMouseDoubleClick should not call drawnLine if line not started', () => {
