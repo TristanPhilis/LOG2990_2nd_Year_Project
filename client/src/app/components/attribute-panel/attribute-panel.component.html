@@ -46,6 +46,13 @@
                 <option *ngFor="let texture of textures" value="{{ texture.value }}">{{ texture.displayName }}</option>
             </select>
         </ng-container>
+        <!-- Stamp Images -->
+        <ng-container *ngIf="option.key === Options.stamp">
+            <label for="stampType">{{ option.value.displayName }}</label>
+            <select (change)="this.updateToolOptionValue(option.key, $event.target.value)" id="stampType">
+                <option *ngFor="let stamp of stamps" value="{{ stamp.value }}">{{ stamp.displayName }}</option>
+            </select>
+        </ng-container>
         <!-- Size -->
         <ng-container *ngIf="option.key === Options.size">
             <label for="tracingThickness">{{ option.value.displayName }}</label>
@@ -56,6 +63,20 @@
                     max="100"
                     value="1"
                     id="tracingThickness"
+                    (input)="this.updateToolOptionValue(option.key, $event.target.value)"
+                />
+            </div>
+        </ng-container>
+        <!-- Stamp Size-->
+        <ng-container *ngIf="option.key === Options.stampSize">
+            <label for="tracingThickness">{{ option.value.displayName }}</label>
+            <div class="slide-container">
+                <input
+                    type="range"
+                    min="1"
+                    max="10"
+                    value="1"
+                    id="stampThicknessThickness"
                     (input)="this.updateToolOptionValue(option.key, $event.target.value)"
                 />
             </div>

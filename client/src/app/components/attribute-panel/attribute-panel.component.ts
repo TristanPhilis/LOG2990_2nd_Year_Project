@@ -3,7 +3,7 @@ import { ToolOption } from '@app/classes/tool-option';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { RectangleSelectorService } from '@app/services/tools/rectangle-selector-service';
 import { ToolsService } from '@app/services/tools/tools-service';
-import { DrawingToolId, Options, SidebarToolID, Texture, TraceTypes } from '@app/shared/enum';
+import { DrawingToolId, Options, SidebarToolID, Stamp, Texture, TraceTypes } from '@app/shared/enum';
 // tslint:disable:no-any
 
 @Component({
@@ -18,6 +18,7 @@ export class AttributePanelComponent {
     shapesTools: ToolOption[];
     tracingTypes: ToolOption[];
     textures: ToolOption[];
+    stamps: ToolOption[];
 
     constructor(
         public toolsService: ToolsService,
@@ -48,6 +49,13 @@ export class AttributePanelComponent {
             { value: Texture.three, displayName: 'Texture Trois' },
             { value: Texture.four, displayName: 'Texture Quatre' },
             { value: Texture.five, displayName: 'Texture Cinq' },
+        ];
+        this.stamps = [
+            { value: Stamp.one, displayName: 'Sourire' },
+            { value: Stamp.two, displayName: 'Grimace' },
+            { value: Stamp.three, displayName: 'Etoile' },
+            { value: Stamp.four, displayName: 'Licorne' },
+            { value: Stamp.five, displayName: 'Crane' },
         ];
     }
 

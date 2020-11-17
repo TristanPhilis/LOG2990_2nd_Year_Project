@@ -14,6 +14,7 @@ import { RectangleService } from '@app/services/tools/rectangle-service';
 import { DrawingToolId, Options, SidebarToolID } from '@app/shared/enum';
 import { BehaviorSubject } from 'rxjs';
 import { EllipseSelectorService } from './ellipse-selector-service';
+import { StampService } from './stamp.service';
 
 @Injectable({
     providedIn: 'root',
@@ -38,6 +39,7 @@ export class ToolsService {
         polygonService: PolygonService,
         bucketService: BucketService,
         pipetteService: PipetteService,
+        stampService: StampService,
     ) {
         this.currentDrawingTool = pencilService;
         this.tools = [
@@ -52,6 +54,7 @@ export class ToolsService {
             polygonService,
             bucketService,
             pipetteService,
+            stampService,
         ];
     }
 

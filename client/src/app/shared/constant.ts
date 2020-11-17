@@ -1,4 +1,4 @@
-import { Texture, TraceTypes } from './enum';
+import { Texture, TraceTypes, Stamp } from './enum';
 export const MIN_CANVAS_SIZE = 250;
 export const SHIFT_KEY = 'Shift';
 export const BACKSPACE_KEY = 'Backspace';
@@ -32,7 +32,9 @@ export const PIXEL_INTERVAL = 4;
 
 export const DEFAULT_OPTIONS = {
     size: 1,
+    angle: 0,
     texture: Texture.one,
+    stamp: Stamp.one,
     traceType: TraceTypes.fill,
     tolerance: MIN_TOLERANCE,
 };
@@ -44,6 +46,8 @@ export const TEXTURES = [
     '/assets/textureFour.jpg',
     '/assets/textureFive.jpg',
 ];
+
+export const STAMPS = ['/assets/stampOne.png', '/assets/stampTwo.png', '/assets/stampThree.png', '/assets/stampFour.png', '/assets/stampFive.png'];
 
 export const PREVIEW_SELECTION_SIZE = 20;
 export const PREVIEW_SCALE = 5;
