@@ -6,7 +6,7 @@ import { Vec2 } from '@app/classes/vec2';
 import { ColorSelectionService } from '@app/services/color/color-selection-service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { UndoRedoService } from '@app/services/tools/undo-redo-service';
-import { DEFAULT_OPTIONS, STAMPS } from '@app/shared/constant';
+import { ANGLE_ROTATION, DEFAULT_OPTIONS, ROTATION_COMPLETE, ROTATION_DEMI, STAMPS } from '@app/shared/constant';
 import { DrawingToolId, MouseButton, Options } from '@app/shared/enum';
 
 @Injectable({
@@ -58,32 +58,33 @@ export class StampService extends Tool {
     }
 
     draw(ctx: CanvasRenderingContext2D, drawingAction: DrawingAction): void {
-        const stampScaleModifier = drawingAction.options.toolOptions.get(Options.size);
+        const stampScaleModifier = drawingAction.options.toolOptions.get(Options.stampSize);
         const stamp = drawingAction.options.toolOptions.get(Options.stamp);
-        if (drawingAction && stamp && stampScaleModifier) {
-            console.log('yes');
+        const image = new Image();
+        if (stamp && stampScaleModifier) {
             this.stampScaleModifier = stampScaleModifier.value;
-            this.chosenStamp.src = this.availableStamps[stamp.value];
+            image.src = this.availableStamps[stamp.value];
         }
 
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
-        const imagePositionX = this.mousePosition.x / this.stampScaleModifier - this.chosenStamp.width / 2;
-        const imagePositionY = this.mousePosition.y / this.stampScaleModifier - this.chosenStamp.height / 2;
+        console.log(image.width);
+        const imagePositionX = this.mousePosition.x / this.stampScaleModifier - image.width / 2;
+        const imagePositionY = this.mousePosition.y / this.stampScaleModifier - image.height / 2;
         ctx.scale(this.stampScaleModifier, this.stampScaleModifier);
         ctx.translate(this.mousePosition.x / this.stampScaleModifier, this.mousePosition.y / this.stampScaleModifier);
-        ctx.rotate((Math.PI * this.stampAngle) / 180);
+        ctx.rotate((Math.PI * this.stampAngle) / ROTATION_DEMI);
         ctx.translate(-this.mousePosition.x / this.stampScaleModifier, -this.mousePosition.y / this.stampScaleModifier);
-        ctx.drawImage(this.chosenStamp, imagePositionX, imagePositionY);
+        ctx.drawImage(image, imagePositionX, imagePositionY);
         ctx.setTransform(1, 0, 0, 1, 0, 0);
     }
 
     onWheel(event: WheelEvent): void {
-        const changeAngle = event.altKey ? 1 : 1 * 15;
+        const changeAngle = event.altKey ? 1 : 1 * ANGLE_ROTATION;
         let newAngle = this.stampAngle + Math.sign(event.deltaY) * changeAngle;
         if (newAngle < 0) {
-            newAngle += 360;
-        } else if (newAngle > 360) {
-            newAngle -= 360;
+            newAngle += ROTATION_COMPLETE;
+        } else if (newAngle > ROTATION_COMPLETE) {
+            newAngle -= ROTATION_COMPLETE;
         }
 
         this.stampAngle = newAngle;
