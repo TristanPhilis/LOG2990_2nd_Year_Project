@@ -5,7 +5,6 @@ import { ToolOption } from '@app/classes/tool-option';
 import { Vec2 } from '@app/classes/vec2';
 import { ColorSelectionService } from '@app/services/color/color-selection-service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
-import { UndoRedoService } from '@app/services/tools/undo-redo-service';
 import { DEFAULT_OPTIONS } from '@app/shared/constant';
 import { DrawingToolId, MouseButton, Options } from '@app/shared/enum';
 
@@ -15,8 +14,8 @@ import { DrawingToolId, MouseButton, Options } from '@app/shared/enum';
 export class PencilService extends Tool {
     private pathData: Vec2[];
 
-    constructor(drawingService: DrawingService, undoRedoService: UndoRedoService, colorService: ColorSelectionService) {
-        super(drawingService, undoRedoService, colorService);
+    constructor(drawingService: DrawingService, colorService: ColorSelectionService) {
+        super(drawingService, colorService);
         this.clearPath();
         this.setDefaultOptions();
     }
@@ -43,7 +42,7 @@ export class PencilService extends Tool {
             const mousePosition = this.getPositionFromMouse(event);
             this.pathData.push(mousePosition);
             const action = this.getDrawingAction();
-            this.undoRedoService.saveAction(action);
+            this.action.next(action);
             this.draw(this.drawingService.baseCtx, action);
         }
         this.mouseDown = false;
@@ -58,7 +57,7 @@ export class PencilService extends Tool {
         }
         if (this.mouseDown && !(event.buttons === MouseButton.Left)) {
             const action = this.getDrawingAction();
-            this.undoRedoService.saveAction(action);
+            this.action.next(action);
             this.draw(this.drawingService.baseCtx, action);
         }
     }

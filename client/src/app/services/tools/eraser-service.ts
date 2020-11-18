@@ -6,7 +6,6 @@ import { ToolOption } from '@app/classes/tool-option';
 import { Vec2 } from '@app/classes/vec2';
 import { ColorSelectionService } from '@app/services/color/color-selection-service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
-import { UndoRedoService } from '@app/services/tools/undo-redo-service';
 import { DrawingToolId, MouseButton, Options } from '@app/shared/enum';
 
 export const MINIMUM_ERASER_SIZE = 5;
@@ -18,8 +17,8 @@ export class EraserService extends Tool {
     private pathData: Vec2[];
     private boundingBox: BoundingBox;
 
-    constructor(drawingService: DrawingService, undoRedoService: UndoRedoService, colorService: ColorSelectionService) {
-        super(drawingService, undoRedoService, colorService);
+    constructor(drawingService: DrawingService, colorService: ColorSelectionService) {
+        super(drawingService, colorService);
         this.clearPath();
         this.boundingBox = new BoundingBox();
         this.setDefaultOptions();
@@ -47,7 +46,7 @@ export class EraserService extends Tool {
             const mousePosition = this.getPositionFromMouse(event);
             this.pathData.push(mousePosition);
             this.draw(this.drawingService.baseCtx, this.getDrawingAction());
-            this.undoRedoService.saveAction(this.getDrawingAction());
+            this.action.next(this.getDrawingAction());
         }
         this.mouseDown = false;
         this.clearPath();

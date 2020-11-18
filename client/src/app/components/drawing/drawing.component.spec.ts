@@ -3,7 +3,6 @@ import { Tool } from '@app/classes/tool';
 import { ColorSelectionService } from '@app/services/color/color-selection-service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ToolsService } from '@app/services/tools/tools-service';
-import { UndoRedoService } from '@app/services/tools/undo-redo-service';
 import { DrawingComponent } from './drawing.component';
 
 import SpyObj = jasmine.SpyObj;
@@ -14,20 +13,20 @@ describe('DrawingComponent', () => {
     let component: DrawingComponent;
     let fixture: ComponentFixture<DrawingComponent>;
     let toolStub: ToolStub;
-    let drawingStub: DrawingService;
+    let drawServiceSpy: jasmine.SpyObj<DrawingService>;
     let toolsServiceSpy: SpyObj<ToolsService>;
 
     beforeEach(
         waitForAsync(() => {
-            toolStub = new ToolStub({} as DrawingService, {} as UndoRedoService, {} as ColorSelectionService);
-            drawingStub = new DrawingService();
+            toolStub = new ToolStub({} as DrawingService, {} as ColorSelectionService);
+            drawServiceSpy = jasmine.createSpyObj('DrawingService', ['']);
             toolsServiceSpy = jasmine.createSpyObj('ToolsService', ['']);
             toolsServiceSpy.currentDrawingTool = toolStub;
             TestBed.configureTestingModule({
                 declarations: [DrawingComponent],
                 providers: [
                     { provide: ToolsService, useValue: toolsServiceSpy },
-                    { provide: DrawingService, useValue: drawingStub },
+                    { provide: DrawingService, useValue: drawServiceSpy },
                 ],
             }).compileComponents();
         }),
@@ -52,15 +51,22 @@ describe('DrawingComponent', () => {
         const event = {} as MouseEvent;
         const mouseEventSpy = spyOn(toolsServiceSpy.currentDrawingTool, 'onMouseMove').and.callThrough();
         component.onMouseMove(event);
-        expect(mouseEventSpy).toHaveBeenCalled();
         expect(mouseEventSpy).toHaveBeenCalledWith(event);
     });
 
-    it(" should call the tool's mouse down when receiving a mouse down event", () => {
+    it(" should not call the tool's mouse down when mouse is outside of canvas", () => {
+        drawServiceSpy.mouseIsOverCanvas = false;
         const event = {} as MouseEvent;
         const mouseEventSpy = spyOn(toolsServiceSpy.currentDrawingTool, 'onMouseDown').and.callThrough();
         component.onMouseDown(event);
-        expect(mouseEventSpy).toHaveBeenCalled();
+        expect(mouseEventSpy).not.toHaveBeenCalled();
+    });
+
+    it(" should call the tool's mouse down when mouse is inside of canvas", () => {
+        drawServiceSpy.mouseIsOverCanvas = true;
+        const event = {} as MouseEvent;
+        const mouseEventSpy = spyOn(toolsServiceSpy.currentDrawingTool, 'onMouseDown').and.callThrough();
+        component.onMouseDown(event);
         expect(mouseEventSpy).toHaveBeenCalledWith(event);
     });
 
@@ -68,7 +74,6 @@ describe('DrawingComponent', () => {
         const event = {} as MouseEvent;
         const mouseEventSpy = spyOn(toolsServiceSpy.currentDrawingTool, 'onMouseUp').and.callThrough();
         component.onMouseUp(event);
-        expect(mouseEventSpy).toHaveBeenCalled();
         expect(mouseEventSpy).toHaveBeenCalledWith(event);
     });
 
@@ -76,7 +81,6 @@ describe('DrawingComponent', () => {
         const event = {} as KeyboardEvent;
         const mouseEventSpy = spyOn(toolsServiceSpy.currentDrawingTool, 'onKeyDown').and.callThrough();
         component.onKeyDown(event);
-        expect(mouseEventSpy).toHaveBeenCalled();
         expect(mouseEventSpy).toHaveBeenCalledWith(event);
     });
 
@@ -84,7 +88,6 @@ describe('DrawingComponent', () => {
         const event = {} as KeyboardEvent;
         const mouseEventSpy = spyOn(toolsServiceSpy.currentDrawingTool, 'onKeyUp').and.callThrough();
         component.onKeyUp(event);
-        expect(mouseEventSpy).toHaveBeenCalled();
         expect(mouseEventSpy).toHaveBeenCalledWith(event);
     });
 });

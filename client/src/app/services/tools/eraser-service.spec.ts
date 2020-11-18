@@ -6,12 +6,10 @@ import { ColorSelectionService } from '@app/services/color/color-selection-servi
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { Options } from '@app/shared/enum';
 import { EraserService } from './eraser-service';
-import { UndoRedoService } from './undo-redo-service';
 
 // tslint:disable:no-any
 describe('EraserService', () => {
     let service: EraserService;
-    let undoRedoServiceSpy: jasmine.SpyObj<UndoRedoService>;
     let colorServiceSpy: jasmine.SpyObj<ColorSelectionService>;
     let mouseEventLClick: MouseEvent;
     let mouseEventRClick: MouseEvent;
@@ -20,9 +18,9 @@ describe('EraserService', () => {
     let baseCtxStub: CanvasRenderingContext2D;
     let previewCtxStub: CanvasRenderingContext2D;
     let drawSpy: jasmine.Spy<any>;
+    let saveActionSpy: jasmine.Spy<any>;
 
     beforeEach(() => {
-        undoRedoServiceSpy = jasmine.createSpyObj('UndoRedoService', ['saveAction']);
         const defaultColor = new Color(0, 0, 0);
         colorServiceSpy = jasmine.createSpyObj('colorServiceSpy', ['']);
         colorServiceSpy.primaryColor = defaultColor;
@@ -34,12 +32,12 @@ describe('EraserService', () => {
         TestBed.configureTestingModule({
             providers: [
                 { provide: DrawingService, useValue: drawServiceSpy },
-                { provide: UndoRedoService, useValue: undoRedoServiceSpy },
                 { provide: ColorSelectionService, useValue: colorServiceSpy },
             ],
         });
         service = TestBed.inject(EraserService);
         drawSpy = spyOn<any>(service, 'draw').and.callThrough();
+        saveActionSpy = spyOn<any>(service.action, 'next');
 
         // Service spy configuration
         // tslint:disable:no-string-literal
@@ -88,7 +86,7 @@ describe('EraserService', () => {
         service.onMouseUp(mouseEventLClick);
         expect(drawSpy).toHaveBeenCalled();
         expect(pushSpy).toHaveBeenCalled();
-        expect(undoRedoServiceSpy.saveAction).toHaveBeenCalled();
+        expect(saveActionSpy).toHaveBeenCalled();
     });
 
     it('onMouseUp should not call draw if mouse was not already down', () => {
@@ -98,7 +96,7 @@ describe('EraserService', () => {
         service.onMouseUp(mouseEventLClick);
         expect(drawSpy).not.toHaveBeenCalled();
         expect(pushSpy).not.toHaveBeenCalled();
-        expect(undoRedoServiceSpy.saveAction).not.toHaveBeenCalled();
+        expect(saveActionSpy).not.toHaveBeenCalled();
     });
 
     it('onMouseMove should draw border and call draw if mouse was already down', () => {

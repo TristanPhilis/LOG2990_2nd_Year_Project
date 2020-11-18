@@ -1,4 +1,4 @@
-import { Texture, TraceTypes, Stamp } from './enum';
+import { SelectionType, Stamp, Texture, TraceTypes } from './enum';
 export const MIN_CANVAS_SIZE = 250;
 export const SHIFT_KEY = 'Shift';
 export const BACKSPACE_KEY = 'Backspace';
@@ -40,6 +40,7 @@ export const DEFAULT_OPTIONS = {
     stamp: Stamp.one,
     traceType: TraceTypes.fill,
     tolerance: MIN_TOLERANCE,
+    selectionType: SelectionType.rectangle,
 };
 
 export const TEXTURES = [

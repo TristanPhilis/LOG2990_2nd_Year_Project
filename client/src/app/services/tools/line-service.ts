@@ -5,7 +5,6 @@ import { ToolOption } from '@app/classes/tool-option';
 import { Vec2 } from '@app/classes/vec2';
 import { ColorSelectionService } from '@app/services/color/color-selection-service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
-import { UndoRedoService } from '@app/services/tools/undo-redo-service';
 import { BACKSPACE_KEY, BASE_SNAP_ANGLE, DEFAULT_OPTIONS, ESCAPE_KEY, MIDDLE_SNAP_ANGLE, SHIFT_KEY } from '@app/shared/constant';
 import { DrawingToolId, Options } from '@app/shared/enum';
 
@@ -17,8 +16,8 @@ export class LineService extends Tool {
     private lineStarted: boolean;
     currentCoord: Vec2;
 
-    constructor(drawingService: DrawingService, undoRedoService: UndoRedoService, colorService: ColorSelectionService) {
-        super(drawingService, undoRedoService, colorService);
+    constructor(drawingService: DrawingService, colorService: ColorSelectionService) {
+        super(drawingService, colorService);
         this.clearPath();
         this.setDefaultOptions();
         this.lineStarted = false;
@@ -60,7 +59,7 @@ export class LineService extends Tool {
         if (this.lineStarted) {
             this.endLine();
             const drawingAction = this.getDrawingAction();
-            this.undoRedoService.saveAction(drawingAction);
+            this.action.next(drawingAction);
             this.draw(this.drawingService.baseCtx, drawingAction);
             this.lineStarted = false;
             this.clearPath();

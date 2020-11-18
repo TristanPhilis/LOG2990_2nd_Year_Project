@@ -9,6 +9,7 @@ export class BoundingBox extends Box {
     right: number;
     squareSize: number;
     oldSelectedBox: BoundingBox;
+    mouseCoord: Vec2;
 
     constructor() {
         super();

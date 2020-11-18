@@ -1,20 +1,73 @@
 canvas {
-    cursor: crosshair;
-    border: 2px solid #000000;
     position: absolute;
     left: 0;
     top: 0;
-    box-sizing: border-box; 
+    border: 2px solid #000000;
+    box-sizing: border-box;
 }
 
-#canvas {
+#mainCanvas {
+    border: 2px solid #000000;
     z-index: 0;
 }
 
-#drawCanvas {
+#previewCanvas {
     z-index: 1;
+}
+
+#selectionLayer {
+    z-index: 2;
+    border: none;
+}
+
+#gridLayer {
+    cursor: crosshair;
+    z-index: 3;
 }
 
 #canvas-container {
     position: relative;
+}
+
+.preview-container {
+    z-index: 4;
+    position: absolute;
+    left: 0;
+    top: 0;
+}
+
+.resize-preview {
+    border: 2px dotted black;
+    position: absolute;
+    top: 0px;
+    left: 0px;
+}
+
+.anchor {
+    position: absolute;
+    background-color: black;
+}
+
+#bottomAnchor {
+    width: 10px;
+    height: 5px;
+    &:hover {
+        cursor: n-resize;
+    }
+}
+
+#rightAnchor {
+    width: 5px;
+    height: 10px;
+    &:hover {
+        cursor: ew-resize;
+    }
+}
+
+#cornerAnchor {
+    width: 7px;
+    height: 7px;
+    &:hover {
+        cursor: nwse-resize;
+    }
 }

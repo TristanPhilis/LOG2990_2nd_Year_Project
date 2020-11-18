@@ -16,6 +16,7 @@ export enum SidebarToolID {
     openGuide,
     undo,
     redo,
+    grid,
 }
 
 export enum DrawingToolId {
@@ -25,8 +26,7 @@ export enum DrawingToolId {
     eraserService,
     lineService,
     brushService,
-    rectangleSelectionService,
-    ellipseSelectionService,
+    selectionService,
     polygonService,
     bucketService,
     pipetteService,
@@ -72,6 +72,7 @@ export enum JointSelection {
 export enum SelectionType {
     rectangle,
     ellipse,
+    magic,
 }
 
 export enum Options {
@@ -87,4 +88,23 @@ export enum Options {
     lineLength,
     emissionPerSecond,
     imageChoice,
+    selectionType,
+}
+
+export enum CanvasAnchorsId {
+    bottom,
+    right,
+    corner,
+}
+
+export enum AnchorsPosition {
+    topLeft,
+    middleTop,
+    topRight,
+    middleRight,
+    bottomRight,
+    middleBottom,
+    bottomLeft,
+    middleLeft,
+    center,
 }

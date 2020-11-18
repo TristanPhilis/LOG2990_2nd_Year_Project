@@ -6,9 +6,18 @@ import { Vec2 } from '@app/classes/vec2';
     providedIn: 'root',
 })
 export class DrawingService {
-    baseCtx: CanvasRenderingContext2D;
-    previewCtx: CanvasRenderingContext2D;
     canvas: HTMLCanvasElement;
+    baseCtx: CanvasRenderingContext2D;
+
+    previewCanvas: HTMLCanvasElement;
+    previewCtx: CanvasRenderingContext2D;
+
+    gridCanvas: HTMLCanvasElement;
+    gridCtx: CanvasRenderingContext2D;
+
+    selectionCanvas: HTMLCanvasElement;
+    selectionCtx: CanvasRenderingContext2D;
+
     drawingToLoad: string;
     mouseIsOverCanvas: boolean = false;
 
@@ -35,7 +44,8 @@ export class DrawingService {
     }
 
     clearCanvas(context: CanvasRenderingContext2D): void {
-        context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        const canvas = context === this.selectionCtx ? this.selectionCanvas : this.canvas;
+        context.clearRect(0, 0, canvas.width, canvas.height);
     }
 
     isCoordInCanvas(coord: Vec2): boolean {

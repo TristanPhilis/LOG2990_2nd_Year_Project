@@ -9,21 +9,19 @@ import { DrawingService } from '@app/services/drawing/drawing.service';
 import { MAX_TOLERANCE, MIN_TOLERANCE, PIXEL_INTERVAL } from '@app/shared/constant';
 import { Options } from '@app/shared/enum';
 import { BucketService } from './bucket-service';
-import { UndoRedoService } from './undo-redo-service';
 
 // tslint:disable:no-any
 describe('BucketServiceService', () => {
     let service: BucketService;
     let drawServiceSpy: jasmine.SpyObj<DrawingService>;
-    let undoRedoServiceSpy: jasmine.SpyObj<UndoRedoService>;
     let colorServiceSpy: jasmine.SpyObj<ColorSelectionService>;
     let mouseRightClick: MouseEvent;
     let mouseLeftClick: MouseEvent;
     let ctxSpy: jasmine.SpyObj<CanvasRenderingContext2D>;
+    let saveActionSpy: jasmine.Spy<any>;
 
     beforeEach(() => {
         drawServiceSpy = jasmine.createSpyObj('DrawingService', ['fillCanvas', 'getImageData', 'isCoordInCanvas']);
-        undoRedoServiceSpy = jasmine.createSpyObj('UndoRedoService', ['saveAction']);
         const defaultColor = new Color(0, 0, 0);
         colorServiceSpy = jasmine.createSpyObj('colorServiceSpy', ['']);
         colorServiceSpy.primaryColor = defaultColor;
@@ -38,11 +36,11 @@ describe('BucketServiceService', () => {
         TestBed.configureTestingModule({
             providers: [
                 { provide: DrawingService, useValue: drawServiceSpy },
-                { provide: UndoRedoService, useValue: undoRedoServiceSpy },
                 { provide: ColorSelectionService, useValue: colorServiceSpy },
             ],
         });
         service = TestBed.inject(BucketService);
+        saveActionSpy = spyOn<any>(service.action, 'next');
         service.canvasSize = { x: canvasSize, y: canvasSize };
         const pixelNumber = canvasSize * canvasSize * PIXEL_INTERVAL;
         service.pixelsData = new Uint8ClampedArray(pixelNumber).fill(0);
@@ -89,7 +87,7 @@ describe('BucketServiceService', () => {
         service.options.toolOptions.set(Options.tolerance, { value: MAX_TOLERANCE, displayName: '' });
         service.onMouseDown(mouseRightClick);
         expect(drawServiceSpy.fillCanvas).toHaveBeenCalled();
-        expect(undoRedoServiceSpy.saveAction).toHaveBeenCalled();
+        expect(saveActionSpy).toHaveBeenCalled();
         expect(getActionSpy).toHaveBeenCalled();
     });
 

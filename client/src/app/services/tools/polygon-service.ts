@@ -8,7 +8,6 @@ import { ToolOption } from '@app/classes/tool-option';
 import { Vec2 } from '@app/classes/vec2';
 import { ColorSelectionService } from '@app/services/color/color-selection-service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
-import { UndoRedoService } from '@app/services/tools/undo-redo-service';
 import { DASHLINE_EMPTY, DASHLINE_FULL, DEFAULT_OPTIONS } from '@app/shared/constant';
 import { DrawingToolId, MouseButton, Options } from '@app/shared/enum';
 
@@ -21,8 +20,8 @@ export const MIN_SIDES = 3;
 export class PolygonService extends Tool {
     selectionBox: SelectionBox;
 
-    constructor(drawingService: DrawingService, undoRedoService: UndoRedoService, colorService: ColorSelectionService) {
-        super(drawingService, undoRedoService, colorService);
+    constructor(drawingService: DrawingService, colorService: ColorSelectionService) {
+        super(drawingService, colorService);
         this.setDefaultOptions();
         this.selectionBox = new SelectionBox();
     }
@@ -52,7 +51,7 @@ export class PolygonService extends Tool {
         if (this.mouseDown) {
             this.selectionBox.updateOpposingCorner(this.getPositionFromMouse(event));
             const action = this.getDrawingAction();
-            this.undoRedoService.saveAction(action);
+            this.action.next(action);
             this.draw(this.drawingService.baseCtx, action);
         }
         this.mouseDown = false;
@@ -66,7 +65,7 @@ export class PolygonService extends Tool {
         }
         if (this.mouseDown && !(event.buttons === MouseButton.Left)) {
             const action = this.getDrawingAction();
-            this.undoRedoService.saveAction(action);
+            this.action.next(action);
             this.draw(this.drawingService.baseCtx, action);
             this.mouseDown = false;
         }
