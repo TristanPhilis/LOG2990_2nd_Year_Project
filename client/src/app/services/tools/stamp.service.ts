@@ -5,7 +5,6 @@ import { ToolOption } from '@app/classes/tool-option';
 import { Vec2 } from '@app/classes/vec2';
 import { ColorSelectionService } from '@app/services/color/color-selection-service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
-import { UndoRedoService } from '@app/services/tools/undo-redo-service';
 import { ANGLE_ROTATION, DEFAULT_OPTIONS, ROTATION_COMPLETE, ROTATION_DEMI, STAMPS } from '@app/shared/constant';
 import { DrawingToolId, MouseButton, Options } from '@app/shared/enum';
 
@@ -18,8 +17,8 @@ export class StampService extends Tool {
     private availableStamps: string[];
     chosenStamp: HTMLImageElement;
     mousePosition: Vec2;
-    constructor(drawingService: DrawingService, undoRedoService: UndoRedoService, colorService: ColorSelectionService) {
-        super(drawingService, undoRedoService, colorService);
+    constructor(drawingService: DrawingService, colorService: ColorSelectionService) {
+        super(drawingService, colorService);
         this.setDefaultOptions();
         this.stampAngle = 0;
         this.availableStamps = STAMPS;
@@ -46,8 +45,8 @@ export class StampService extends Tool {
 
     onMouseUp(event: MouseEvent): void {
         if (this.mouseDown) {
-            const action = this.getDrawingAction();
-            this.undoRedoService.saveAction(action);
+            const drawingAction = this.getDrawingAction();
+            this.action.next(drawingAction);
         }
         this.mouseDown = false;
     }
@@ -67,7 +66,6 @@ export class StampService extends Tool {
         }
 
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
-        console.log(image.width);
         const imagePositionX = this.mousePosition.x / this.stampScaleModifier - image.width / 2;
         const imagePositionY = this.mousePosition.y / this.stampScaleModifier - image.height / 2;
         ctx.scale(this.stampScaleModifier, this.stampScaleModifier);
