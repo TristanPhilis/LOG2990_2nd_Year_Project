@@ -12,15 +12,12 @@ import { DrawingToolId, MouseButton, Options } from '@app/shared/enum';
     providedIn: 'root',
 })
 export class StampService extends Tool {
-    stampAngle: number;
-    stampScaleModifier: number;
     private availableStamps: string[];
     chosenStamp: HTMLImageElement;
     mousePosition: Vec2;
     constructor(drawingService: DrawingService, colorService: ColorSelectionService) {
         super(drawingService, colorService);
         this.setDefaultOptions();
-        this.stampAngle = 0;
         this.availableStamps = STAMPS;
     }
 
@@ -28,6 +25,7 @@ export class StampService extends Tool {
         const toolOptions = new Map<Options, ToolOption>([
             [Options.stampSize, { value: DEFAULT_OPTIONS.size, displayName: 'Grosseur' }],
             [Options.stamp, { value: DEFAULT_OPTIONS.stamp, displayName: 'Etampes' }],
+            [Options.angle, { value: DEFAULT_OPTIONS.angle, displayName: 'Angle' }],
         ]);
         this.options = {
             primaryColor: this.primaryColor,
@@ -59,33 +57,39 @@ export class StampService extends Tool {
     draw(ctx: CanvasRenderingContext2D, drawingAction: DrawingAction): void {
         const stampScaleModifier = drawingAction.options.toolOptions.get(Options.stampSize);
         const stamp = drawingAction.options.toolOptions.get(Options.stamp);
+        const angle = drawingAction.options.toolOptions.get(Options.angle);
+        const mousePosition = drawingAction.mousePosition;
         const image = new Image();
-        if (stamp && stampScaleModifier) {
-            this.stampScaleModifier = stampScaleModifier.value;
+        if (stamp && stampScaleModifier && angle && mousePosition) {
             image.src = this.availableStamps[stamp.value];
-        }
 
-        this.drawingService.clearCanvas(this.drawingService.previewCtx);
-        const imagePositionX = this.mousePosition.x / this.stampScaleModifier - image.width / 2;
-        const imagePositionY = this.mousePosition.y / this.stampScaleModifier - image.height / 2;
-        ctx.scale(this.stampScaleModifier, this.stampScaleModifier);
-        ctx.translate(this.mousePosition.x / this.stampScaleModifier, this.mousePosition.y / this.stampScaleModifier);
-        ctx.rotate((Math.PI * this.stampAngle) / ROTATION_DEMI);
-        ctx.translate(-this.mousePosition.x / this.stampScaleModifier, -this.mousePosition.y / this.stampScaleModifier);
-        ctx.drawImage(image, imagePositionX, imagePositionY);
-        ctx.setTransform(1, 0, 0, 1, 0, 0);
+            this.drawingService.clearCanvas(this.drawingService.previewCtx);
+            const imagePositionX = mousePosition.x / stampScaleModifier.value - image.width / 2;
+            const imagePositionY = mousePosition.y / stampScaleModifier.value - image.height / 2;
+            ctx.scale(stampScaleModifier.value, stampScaleModifier.value);
+            ctx.translate(mousePosition.x / stampScaleModifier.value, mousePosition.y / stampScaleModifier.value);
+            ctx.rotate((Math.PI * angle.value) / ROTATION_DEMI);
+            ctx.translate(-mousePosition.x / stampScaleModifier.value, -mousePosition.y / stampScaleModifier.value);
+            ctx.drawImage(image, imagePositionX, imagePositionY);
+            ctx.setTransform(1, 0, 0, 1, 0, 0);
+        }
     }
 
     onWheel(event: WheelEvent): void {
+        event.preventDefault();
         const changeAngle = event.altKey ? 1 : 1 * ANGLE_ROTATION;
-        let newAngle = this.stampAngle + Math.sign(event.deltaY) * changeAngle;
+        const angle = this.options.toolOptions.get(Options.angle);
+        if (!angle) {
+            return;
+        }
+        let newAngle = angle.value + Math.sign(event.deltaY) * changeAngle;
         if (newAngle < 0) {
             newAngle += ROTATION_COMPLETE;
         } else if (newAngle > ROTATION_COMPLETE) {
             newAngle -= ROTATION_COMPLETE;
         }
-
-        this.stampAngle = newAngle;
+        angle.value = newAngle;
+        this.options.toolOptions.set(Options.angle, angle);
     }
 
     getDrawingAction(): DrawingAction {
@@ -95,6 +99,7 @@ export class StampService extends Tool {
         };
         return {
             id: DrawingToolId.stampService,
+            mousePosition: this.mousePosition,
             options,
         };
     }

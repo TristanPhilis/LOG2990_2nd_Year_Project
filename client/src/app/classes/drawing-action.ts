@@ -7,6 +7,7 @@ export interface DrawingAction {
     path?: Vec2[];
     box?: Box;
     imageData?: ImageData;
+    mousePosition?: Vec2;
     id: DrawingToolId;
     options: DrawingOptions;
 }
