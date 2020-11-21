@@ -5,7 +5,7 @@ import { ToolOption } from '@app/classes/tool-option';
 import { Vec2 } from '@app/classes/vec2';
 import { ColorSelectionService } from '@app/services/color/color-selection-service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
-import { ANGLE_ROTATION, DEFAULT_OPTIONS, ROTATION_COMPLETE, ROTATION_DEMI, STAMPS } from '@app/shared/constant';
+import { ANGLE_ROTATION, DEFAULT_OPTIONS, DEG_TO_RAD_FACTOR, ROTATION_COMPLETE, STAMPS } from '@app/shared/constant';
 import { DrawingToolId, MouseButton, Options } from '@app/shared/enum';
 
 @Injectable({
@@ -13,7 +13,6 @@ import { DrawingToolId, MouseButton, Options } from '@app/shared/enum';
 })
 export class StampService extends Tool {
     private availableStamps: string[];
-    chosenStamp: HTMLImageElement;
     mousePosition: Vec2;
     constructor(drawingService: DrawingService, colorService: ColorSelectionService) {
         super(drawingService, colorService);
@@ -68,10 +67,10 @@ export class StampService extends Tool {
             const imagePositionY = mousePosition.y / stampScaleModifier.value - image.height / 2;
             ctx.scale(stampScaleModifier.value, stampScaleModifier.value);
             ctx.translate(mousePosition.x / stampScaleModifier.value, mousePosition.y / stampScaleModifier.value);
-            ctx.rotate((Math.PI * angle.value) / ROTATION_DEMI);
+            ctx.rotate(DEG_TO_RAD_FACTOR * angle.value);
             ctx.translate(-mousePosition.x / stampScaleModifier.value, -mousePosition.y / stampScaleModifier.value);
             ctx.drawImage(image, imagePositionX, imagePositionY);
-            ctx.setTransform(1, 0, 0, 1, 0, 0);
+            ctx.resetTransform();
         }
     }
 
