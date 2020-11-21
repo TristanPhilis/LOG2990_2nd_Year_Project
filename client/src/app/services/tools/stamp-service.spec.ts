@@ -136,9 +136,13 @@ describe('StampService', () => {
     it('Using the mouseWheel should change the angle by 15 degrees but if stampAngle becomes bigger then 360 then 360 should be substracted', () => {
         let startAngle = 0;
         let endAngle = 0;
+        // It's never gonna be null, need to do this to test
+        // tslint:disable-next-line: no-non-null-assertion
         let angle = service.options.toolOptions.get(Options.angle)!;
         angle.value = ROTATION_COMPLETE;
         service.options.toolOptions.set(Options.angle, angle);
+        // It's never gonna be null, need to do this to test
+        // tslint:disable-next-line: no-non-null-assertion
         angle = service.getDrawingAction().options.toolOptions.get(Options.angle)!;
         if (angle) {
             startAngle = angle.value;
@@ -149,6 +153,8 @@ describe('StampService', () => {
         } as WheelEvent;
 
         service.onWheel(wheelEvent);
+        // It's never gonna be null, need to do this to test
+        // tslint:disable-next-line: no-non-null-assertion
         angle = service.getDrawingAction().options.toolOptions.get(Options.angle)!;
         if (angle) {
             endAngle = angle.value;
