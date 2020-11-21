@@ -5,6 +5,7 @@ import { Vec2 } from '@app/classes/vec2';
 import { ColorSelectionService } from '@app/services/color/color-selection-service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ANGLE_ROTATION, ROTATION_COMPLETE } from '@app/shared/constant';
+import { Options } from '@app/shared/enum';
 import { StampService } from './stamp-service';
 
 // tslint:disable:no-any
@@ -95,48 +96,92 @@ describe('StampService', () => {
     });
 
     it('Using the mouseWheel should change the angle by 15 degrees', () => {
-        const startAngle = service.stampAngle;
+        let startAngle = 0;
+        let endAngle = 0;
+        let angle = service.getDrawingAction().options.toolOptions.get(Options.angle);
+        if (angle) {
+            startAngle = angle.value;
+        }
         const wheelEvent = {
             deltaY: 1,
             altKey: false,
         } as WheelEvent;
-
         service.onWheel(wheelEvent);
-        expect(service.stampAngle).toEqual(startAngle + Math.sign(wheelEvent.deltaY) * ANGLE_ROTATION);
+        angle = service.getDrawingAction().options.toolOptions.get(Options.angle);
+        if (angle) {
+            endAngle = angle.value;
+        }
+        expect(endAngle).toEqual(startAngle + Math.sign(wheelEvent.deltaY) * ANGLE_ROTATION);
     });
 
-    it('Using the mouseWheel should change the angle by 1 degrees if alt key was pressed', () => {
-        const startAngle = service.stampAngle;
+    it('Using the mouseWheel should change the angle by 1 degrees', () => {
+        let startAngle = 0;
+        let endAngle = 0;
+        let angle = service.getDrawingAction().options.toolOptions.get(Options.angle);
+        if (angle) {
+            startAngle = angle.value;
+        }
         const wheelEvent = {
             deltaY: 1,
             altKey: true,
         } as WheelEvent;
-
         service.onWheel(wheelEvent);
-        expect(service.stampAngle).toEqual(startAngle + 1);
+        angle = service.getDrawingAction().options.toolOptions.get(Options.angle);
+        if (angle) {
+            endAngle = angle.value;
+        }
+        expect(endAngle).toEqual(startAngle + Math.sign(wheelEvent.deltaY) * 1);
     });
 
     it('Using the mouseWheel should change the angle by 15 degrees but if stampAngle becomes bigger then 360 then 360 should be substracted', () => {
-        service.stampAngle = ROTATION_COMPLETE;
-        const startAngle = service.stampAngle;
+        let startAngle = 0;
+        let endAngle = 0;
+        let angle = service.options.toolOptions.get(Options.angle)!;
+        angle.value = ROTATION_COMPLETE;
+        service.options.toolOptions.set(Options.angle, angle);
+        angle = service.getDrawingAction().options.toolOptions.get(Options.angle)!;
+        if (angle) {
+            startAngle = angle.value;
+        }
         const wheelEvent = {
             deltaY: 1,
             altKey: false,
         } as WheelEvent;
 
         service.onWheel(wheelEvent);
-        expect(service.stampAngle).toEqual(startAngle - ROTATION_COMPLETE + Math.sign(wheelEvent.deltaY) * ANGLE_ROTATION);
+        angle = service.getDrawingAction().options.toolOptions.get(Options.angle)!;
+        if (angle) {
+            endAngle = angle.value;
+        }
+        expect(endAngle).toEqual(startAngle - ROTATION_COMPLETE + Math.sign(wheelEvent.deltaY) * ANGLE_ROTATION);
     });
 
     it('Using the mouseWheel should change the angle by 15 degrees but if stampAngle becomes smaller then 0 then 360 should be added', () => {
-        service.stampAngle = -ANGLE_ROTATION;
-        const startAngle = service.stampAngle;
+        let startAngle = 0;
+        let endAngle = 0;
+        // It's never gonna be null, need to do this to test
+        // tslint:disable-next-line: no-non-null-assertion
+        let angle = service.options.toolOptions.get(Options.angle)!;
+        angle.value = -ANGLE_ROTATION;
+        service.options.toolOptions.set(Options.angle, angle);
+        // It's never gonna be null, need to do this to test
+        // tslint:disable-next-line: no-non-null-assertion
+        angle = service.getDrawingAction().options.toolOptions.get(Options.angle)!;
+        if (angle) {
+            startAngle = angle.value;
+        }
         const wheelEvent = {
             deltaY: -1,
             altKey: false,
         } as WheelEvent;
 
         service.onWheel(wheelEvent);
-        expect(service.stampAngle).toEqual(startAngle + ROTATION_COMPLETE + Math.sign(wheelEvent.deltaY) * ANGLE_ROTATION);
+        // It's never gonna be null, need to do this to test
+        // tslint:disable-next-line: no-non-null-assertion
+        angle = service.getDrawingAction().options.toolOptions.get(Options.angle)!;
+        if (angle) {
+            endAngle = angle.value;
+        }
+        expect(endAngle).toEqual(startAngle + ROTATION_COMPLETE + Math.sign(wheelEvent.deltaY) * ANGLE_ROTATION);
     });
 });

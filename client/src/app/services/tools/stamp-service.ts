@@ -76,7 +76,6 @@ export class StampService extends Tool {
     }
 
     onWheel(event: WheelEvent): void {
-        event.preventDefault();
         const changeAngle = event.altKey ? 1 : 1 * ANGLE_ROTATION;
         const angle = this.options.toolOptions.get(Options.angle);
         if (!angle) {
