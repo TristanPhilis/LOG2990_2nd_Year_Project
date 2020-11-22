@@ -30,6 +30,7 @@ export enum DrawingToolId {
     polygonService,
     bucketService,
     pipetteService,
+    stampService,
 }
 
 export enum MouseButton {
@@ -42,6 +43,14 @@ export enum MouseButton {
 }
 
 export enum Texture {
+    one,
+    two,
+    three,
+    four,
+    five,
+}
+
+export enum Stamp {
     one,
     two,
     three,
@@ -69,11 +78,13 @@ export enum SelectionType {
 export enum Options {
     eraserSize,
     size,
+    stampSize,
     traceType,
     texture,
     tolerance,
     numberOfSides,
     angle,
+    stamp,
     lineLength,
     emissionPerSecond,
     imageChoice,

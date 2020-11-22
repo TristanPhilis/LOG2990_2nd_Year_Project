@@ -42,7 +42,7 @@ export class SidebarComponent {
             { id: SidebarToolID.line, name: 'Ligne', defaultDrawingToolid: DrawingToolId.lineService },
             { id: SidebarToolID.text, name: 'Texte' },
             { id: SidebarToolID.paintBucket, name: 'Sceau', defaultDrawingToolid: DrawingToolId.bucketService },
-            { id: SidebarToolID.stamp, name: 'Étampe' },
+            { id: SidebarToolID.stamp, name: 'Étampe', defaultDrawingToolid: DrawingToolId.stampService },
             { id: SidebarToolID.pipette, name: 'Pipette', defaultDrawingToolid: DrawingToolId.pipetteService },
             { id: SidebarToolID.eraser, name: 'Efface', defaultDrawingToolid: DrawingToolId.eraserService },
         ];

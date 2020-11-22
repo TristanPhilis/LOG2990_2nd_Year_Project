@@ -36,6 +36,8 @@ export abstract class Tool {
 
     onKeyUp(event: KeyboardEvent): void {}
 
+    onWheel(event: WheelEvent): void {}
+
     draw(ctx: CanvasRenderingContext2D, action: DrawingAction): void {}
 
     getPositionFromMouse(event: MouseEvent): Vec2 {
