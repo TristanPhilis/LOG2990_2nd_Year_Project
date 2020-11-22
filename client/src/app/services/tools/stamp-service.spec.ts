@@ -82,10 +82,16 @@ describe('StampService', () => {
         expect(drawSpy).not.toHaveBeenCalled();
     });
 
-    it(' onMouseUp should save action if mouse was already down', () => {
+    it(' onMouseDown should save action if mouse is down', () => {
+        service.mouseDown = true;
+        service.onMouseDown(mouseEventLClick);
+        expect(saveActionSpy).toHaveBeenCalled();
+    });
+
+    it(' onMouseUp should set mouseDown to false', () => {
         service.mouseDown = true;
         service.onMouseUp(mouseEventLClick);
-        expect(saveActionSpy).toHaveBeenCalled();
+        expect(service.mouseDown).toEqual(false);
     });
 
     it(' mouseMove should set mousePosition to correct position and draw the stamp if we move the mouse', () => {

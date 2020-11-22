@@ -36,15 +36,13 @@ export class StampService extends Tool {
         this.mouseDown = event.buttons === MouseButton.Left;
         if (this.mouseDown) {
             this.mousePosition = this.getPositionFromMouse(event);
-            this.draw(this.drawingService.baseCtx, this.getDrawingAction());
+            const drawingAction = this.getDrawingAction();
+            this.draw(this.drawingService.baseCtx, drawingAction);
+            this.action.next(drawingAction);
         }
     }
 
     onMouseUp(event: MouseEvent): void {
-        if (this.mouseDown) {
-            const drawingAction = this.getDrawingAction();
-            this.action.next(drawingAction);
-        }
         this.mouseDown = false;
     }
 
