@@ -36,7 +36,7 @@ describe('ColorSelectionServiceService', () => {
 
     it('default history should be size 10 and all white', () => {
         const defaultColor = new Color(0, 0, 0);
-        const history = service.getcolorsHistory();
+        const history = service.getColorsHistory();
         expect(history.length).toEqual(defaultSize);
         for (const color of history) {
             expect(color).toEqual(defaultColor);
@@ -44,15 +44,15 @@ describe('ColorSelectionServiceService', () => {
     });
 
     it('should update color history properly', () => {
-        for (let index = 0; index < service.getcolorsHistory().length; index++) {
+        for (let index = 0; index < service.getColorsHistory().length; index++) {
             service.updateHistory(colorHistory[index]);
         }
         // New color should be inserted at the end
-        expect(service.getcolorsHistory()).toEqual(colorHistory);
+        expect(service.getColorsHistory()).toEqual(colorHistory);
         service.updateHistory(colorHistory[1]);
         // Existing color should be inserted at the end, and the rest of the array should shift
-        expect(service.getcolorsHistory()[1]).toEqual(colorHistory[2]);
-        expect(service.getcolorsHistory()[defaultSize - 1]).toEqual(colorHistory[1]);
+        expect(service.getColorsHistory()[1]).toEqual(colorHistory[2]);
+        expect(service.getColorsHistory()[defaultSize - 1]).toEqual(colorHistory[1]);
     });
 
     it('Should swap primary and secondary', () => {

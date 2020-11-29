@@ -74,7 +74,7 @@ export class DrawingsDataService {
     }
 
     getAllDrawings(): void {
-        this.basicService
+        const subs = this.basicService
             .getAllDrawings()
             .pipe(
                 map((drawingInfo: DrawingInfo[]) => {
@@ -92,10 +92,11 @@ export class DrawingsDataService {
                     this.updateCurrentDrawings();
                 },
             );
+        subs.unsubscribe();
     }
 
     deleteDrawing(drawingId: number): void {
-        this.basicService.deleteDrawing(drawingId)?.subscribe(
+        const subs = this.basicService.deleteDrawing(drawingId)?.subscribe(
             (deletedDrawingId: number) => {
                 for (const drawingInfo of this.drawingsInfo.value) {
                     if (drawingInfo.id === deletedDrawingId) {
@@ -111,6 +112,7 @@ export class DrawingsDataService {
                 this.updateCurrentDrawings();
             },
         );
+        subs.unsubscribe();
     }
 
     getDrawingPosition(counter: number, currentArray: DrawingInfo[]): number {
@@ -122,11 +124,7 @@ export class DrawingsDataService {
     }
 
     goToPreviousDrawing(): void {
-        if (this.drawingCounter === 0) {
-            this.drawingCounter = this.drawingsInfo.value.length - 1;
-        } else {
-            this.drawingCounter--;
-        }
+        this.drawingCounter === 0 ? (this.drawingCounter = this.drawingsInfo.value.length - 1) : this.drawingCounter--;
         this.updateCurrentDrawings();
     }
 

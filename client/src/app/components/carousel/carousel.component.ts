@@ -1,6 +1,5 @@
 import { AfterViewChecked, Component, HostListener, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-// import { Router } from '@angular/router';
 import { CreateNewDrawingComponent } from '@app/components/create-new-drawing/create-new-drawing.component';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { DrawingsDataService } from '@app/services/index/drawings-data.service';
@@ -11,8 +10,7 @@ import { DrawingInfo } from '@common/communication/drawing-info';
     styleUrls: ['./carousel.component.scss'],
 })
 export class CarouselComponent implements OnInit, AfterViewChecked {
-    noDrawingFiltered: boolean;
-    noDrawings: boolean;
+    private noDrawings: boolean;
     displayedMessage: string;
     constructor(private drawingService: DrawingService, public drawingsDataService: DrawingsDataService, private dialog: MatDialog) {
         this.drawingsDataService.getAllDrawings();
@@ -24,7 +22,6 @@ export class CarouselComponent implements OnInit, AfterViewChecked {
 
     ngAfterViewChecked(): void {
         this.noDrawings = this.drawingsDataService.drawingsInfo?.value.length === 0;
-        this.noDrawingFiltered = this.drawingsDataService.filteredDrawings?.length === 0;
         if (this.noDrawings) this.displayedMessage = "Il n'y a présentement aucun dessin";
         else this.displayedMessage = 'Aucun dessin ne correspond a votre recherche';
     }
@@ -63,12 +60,13 @@ export class CarouselComponent implements OnInit, AfterViewChecked {
 
     loadDrawing(drawing: DrawingInfo): void {
         const newDrawingRef = this.dialog.open(CreateNewDrawingComponent);
-        newDrawingRef.afterClosed().subscribe((result) => {
+        const subs = newDrawingRef.afterClosed().subscribe((result) => {
             this.sendDrawingToEditor(result, drawing);
         });
+        subs.unsubscribe();
     }
     // tslint:disable-next-line: no-any Here result is of unknown type
-    sendDrawingToEditor(result: any, drawing: DrawingInfo): void {
+    private sendDrawingToEditor(result: any, drawing: DrawingInfo): void {
         if (result) {
             this.drawingService.clearCanvas(this.drawingService.baseCtx);
             this.drawingService.sendDrawing(drawing.metadata);
@@ -76,7 +74,8 @@ export class CarouselComponent implements OnInit, AfterViewChecked {
             this.drawingService.loadDrawing(this.drawingService.baseCtx);
         } else {
             const carouselRef = this.dialog.open(CarouselComponent);
-            carouselRef.afterClosed().subscribe();
+            const subs = carouselRef.afterClosed().subscribe();
+            subs.unsubscribe();
         }
     }
 }

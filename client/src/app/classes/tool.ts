@@ -12,14 +12,17 @@ import { Vec2 } from './vec2';
 // tslint:disable:no-empty
 export abstract class Tool {
     mouseDownCoord: Vec2;
-    mouseDown: boolean = false;
-    shiftDown: boolean = false;
-    dblClick: boolean = false;
+    mouseDown: boolean;
+    shiftDown: boolean;
+    dblClick: boolean;
     options: DrawingOptions;
     action: Subject<DrawingAction>;
 
     constructor(protected drawingService: DrawingService, protected colorService: ColorSelectionService) {
         this.action = new Subject<DrawingAction>();
+        this.mouseDown = false;
+        this.shiftDown = false;
+        this.dblClick = false;
     }
 
     onMouseDown(event: MouseEvent): void {}

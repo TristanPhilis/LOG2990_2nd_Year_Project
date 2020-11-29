@@ -31,11 +31,12 @@ export class ColorSliderComponent implements AfterViewInit {
         this.draw();
     }
 
-    setCanvas(): void {
+    private setCanvas(): void {
         this.sliderCanvas.nativeElement.width = this.sliderWidth;
         this.sliderCanvas.nativeElement.height = this.sliderHeight;
 
         const gradient = this.sliderCtx.createLinearGradient(0, 0, 0, this.sliderHeight);
+        // Used in order to simplify the code
         // tslint:disable-next-line:no-magic-numbers
         const colorStops = [0, 0.17, 0.34, 0.51, 0.68, 0.85, 1];
         const colors = ['red', 'yellow', 'lime', 'cyan', 'blue', 'magenta', 'red'];
@@ -54,19 +55,19 @@ export class ColorSliderComponent implements AfterViewInit {
         this.drawSliderNob();
     }
 
-    drawSliderNob(): void {
+    private drawSliderNob(): void {
         const sliderHeight = 4;
         if (this.selectedHeight) {
             this.sliderCtx.strokeRect(0, this.selectedHeight - 2, this.sliderWidth, sliderHeight);
         }
     }
 
-    emitColor(colorCoord: Vec2): void {
+    private emitColor(colorCoord: Vec2): void {
         const color = this.getColorAtPosition(colorCoord);
         this.colorChange.emit(color);
     }
 
-    getColorAtPosition(colorCoord: Vec2): Color {
+    private getColorAtPosition(colorCoord: Vec2): Color {
         const imageData = this.sliderCtx.getImageData(colorCoord.x, colorCoord.y, 1, 1).data;
         return new Color(imageData[0], imageData[1], imageData[2]);
     }

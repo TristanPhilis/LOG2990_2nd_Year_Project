@@ -28,7 +28,7 @@ export class ValidatorService {
      * @returns null if valid, object  if invalid
      */
     private isNumberFunction(control: FormControl): { [key: string]: boolean } | null {
-        if (control.value === undefined || isNaN(control.value)) {
+        if (!control.value || isNaN(control.value)) {
             return { input: control.value };
         }
         return null;

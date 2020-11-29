@@ -26,7 +26,7 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
     workzoneRect: DOMRect;
     private unsubscribe$: Subject<void> = new Subject<void>();
 
-    constructor(private cd: ChangeDetectorRef, public toolService: ToolsService, private drawingService: DrawingService) {}
+    constructor(private cd: ChangeDetectorRef, private toolService: ToolsService, private drawingService: DrawingService) {}
 
     ngAfterViewInit(): void {
         this.workzoneRect = this.workzone.nativeElement.getBoundingClientRect();

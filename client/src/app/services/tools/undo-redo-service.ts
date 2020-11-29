@@ -21,9 +21,10 @@ export class UndoRedoService implements OnDestroy {
         this.clearPile();
         this.undidAction = false;
         this.subscribeToToolsActions();
-        this.canvasResizeService.action.subscribe((action: Action) => {
+        const subs = this.canvasResizeService.action.subscribe((action: Action) => {
             this.saveAction(action);
         });
+        subs.unsubscribe();
     }
 
     ngOnDestroy(): void {
@@ -35,9 +36,10 @@ export class UndoRedoService implements OnDestroy {
 
     private subscribeToToolsActions(): void {
         this.toolsService.getTools().forEach((tool: Tool) => {
-            tool.action.subscribe((action: Action) => {
+            const subs = tool.action.subscribe((action: Action) => {
                 this.saveAction(action);
             });
+            subs.unsubscribe();
         });
     }
 

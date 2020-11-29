@@ -12,7 +12,6 @@ import { DrawingToolId, Options, SelectionType, SidebarToolID, Stamp, Texture, T
     styleUrls: ['./attribute-panel.component.scss'],
 })
 export class AttributePanelComponent {
-    showTools: boolean;
     selectorTypes: ToolOption[];
     tracingTools: ToolOption[];
     shapesTools: ToolOption[];

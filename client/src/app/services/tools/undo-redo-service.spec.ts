@@ -19,7 +19,6 @@ describe('Service: UndoRedo', () => {
 
     let toolsServiceSpy: jasmine.SpyObj<ToolsService>;
     let drawServiceSpy: jasmine.SpyObj<DrawingService>;
-    // Comment to be removed
 
     beforeEach(() => {
         drawServiceSpy = jasmine.createSpyObj('DrawingService', ['fillCanvas']);

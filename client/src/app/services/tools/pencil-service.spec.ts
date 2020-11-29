@@ -108,19 +108,4 @@ describe('PencilService', () => {
         expect(drawServiceSpy.clearCanvas).not.toHaveBeenCalled();
         expect(drawSpy).not.toHaveBeenCalled();
     });
-
-    it(' should change the pixel of the canvas ', () => {
-        mouseEvent = { offsetX: 0, offsetY: 0, buttons: 1 } as MouseEvent;
-        service.onMouseDown(mouseEvent);
-        mouseEvent = { offsetX: 1, offsetY: 0, buttons: 1 } as MouseEvent;
-        service.onMouseUp(mouseEvent);
-
-        // First pixel only
-        const imageData: ImageData = baseCtxStub.getImageData(0, 0, 1, 1);
-        expect(imageData.data[0]).toEqual(0); // R
-        expect(imageData.data[1]).toEqual(0); // G
-        expect(imageData.data[2]).toEqual(0); // B
-        // tslint:disable-next-line:no-magic-numbers
-        expect(imageData.data[3]).not.toEqual(0); // A
-    });
 });

@@ -12,19 +12,21 @@ import { ValidatorService } from '@app/services/validator-service';
 export class ColorPickerComponent implements OnInit {
     hue: Color;
     color: Color;
-    colorForm: FormGroup = this.fb.group({
-        r: ['', [Validators.required, Validators.min(0), Validators.max(MAX_RGBA_VALUE), this.validatorService.isNumber()]],
-        g: ['', [Validators.required, Validators.min(0), Validators.max(MAX_RGBA_VALUE), this.validatorService.isNumber()]],
-        b: ['', [Validators.required, Validators.min(0), Validators.max(MAX_RGBA_VALUE), this.validatorService.isNumber()]],
-        hex: ['', [this.validatorService.isValidHexColor()]],
-    });
+    colorForm: FormGroup;
 
     constructor(
         private fb: FormBuilder,
         private validatorService: ValidatorService,
         public dialogRef: MatDialogRef<ColorPickerComponent>,
         @Inject(MAT_DIALOG_DATA) public colorHistory: Color[],
-    ) {}
+    ) {
+        this.colorForm = this.fb.group({
+            r: ['', [Validators.required, Validators.min(0), Validators.max(MAX_RGBA_VALUE), this.validatorService.isNumber()]],
+            g: ['', [Validators.required, Validators.min(0), Validators.max(MAX_RGBA_VALUE), this.validatorService.isNumber()]],
+            b: ['', [Validators.required, Validators.min(0), Validators.max(MAX_RGBA_VALUE), this.validatorService.isNumber()]],
+            hex: ['', [this.validatorService.isValidHexColor()]],
+        });
+    }
 
     ngOnInit(): void {
         this.color = new Color(0, 0, 0);
@@ -32,28 +34,31 @@ export class ColorPickerComponent implements OnInit {
     }
 
     private addFormsValueChangesBehaviour(): void {
-        this.colorForm.get('r')?.valueChanges.subscribe((newValue) => {
+        let subs = this.colorForm.get('r')?.valueChanges.subscribe((newValue) => {
             if (this.colorForm.get('r')?.valid) {
                 const newColor = new Color(newValue, this.color.g, this.color.b);
                 this.updateColor(newColor);
             }
         });
+        subs?.unsubscribe();
 
-        this.colorForm.get('g')?.valueChanges.subscribe((newValue) => {
+        subs = this.colorForm.get('g')?.valueChanges.subscribe((newValue) => {
             if (this.colorForm.get('g')?.valid) {
                 const newColor = new Color(this.color.r, newValue, this.color.b);
                 this.updateColor(newColor);
             }
         });
+        subs?.unsubscribe();
 
-        this.colorForm.get('b')?.valueChanges.subscribe((newValue) => {
+        subs = this.colorForm.get('b')?.valueChanges.subscribe((newValue) => {
             if (this.colorForm.get('b')?.valid) {
                 const newColor = new Color(this.color.r, this.color.g, newValue);
                 this.updateColor(newColor);
             }
         });
+        subs?.unsubscribe();
 
-        this.colorForm.get('hex')?.valueChanges.subscribe((newValue) => {
+        subs = this.colorForm.get('hex')?.valueChanges.subscribe((newValue) => {
             if (this.colorForm.get('hex')?.valid) {
                 const newColor = new Color(0, 0, 0);
                 newColor.setHex(parseInt(newValue, 16));
@@ -61,6 +66,7 @@ export class ColorPickerComponent implements OnInit {
                 this.updateColorForm(true);
             }
         });
+        subs?.unsubscribe();
     }
 
     private updateColorForm(fromHexFormControlChange: boolean): void {

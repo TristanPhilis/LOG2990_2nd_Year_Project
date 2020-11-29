@@ -20,7 +20,7 @@ export class ColorSelectionService {
         }
     }
 
-    getcolorsHistory(): Color[] {
+    getColorsHistory(): Color[] {
         return this.colorsHistory;
     }
 

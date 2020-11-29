@@ -87,7 +87,9 @@ describe('CarouselComponent', () => {
     });
 
     it('should call drawingService methods', () => {
-        component.sendDrawingToEditor(true, drawingsDataServiceSpy.drawingsInfo.value[0]);
+        // Testing a private method (sendDrawingToEditor)
+        // tslint:disable-next-line: no-any
+        (component as any).sendDrawingToEditor(true, drawingsDataServiceSpy.drawingsInfo.value[0]);
         expect(drawingServiceSpy.clearCanvas).toHaveBeenCalled();
         expect(drawingServiceSpy.sendDrawing).toHaveBeenCalled();
     });
