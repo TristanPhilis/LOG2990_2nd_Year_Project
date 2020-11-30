@@ -56,7 +56,7 @@ describe('ColorPickerComponent', () => {
         expect(updateColorFormSpy).toHaveBeenCalled();
     });
 
-    it('onSelect with a valid color should close this dialog', () => {
+    /*it('onSelect with a valid color should close this dialog', () => {
         component.colorForm.setValue({
             r: 1,
             g: 1,
@@ -65,7 +65,7 @@ describe('ColorPickerComponent', () => {
         });
         component.onSelect();
         expect(matDialogRefSpy.close).toHaveBeenCalled();
-    });
+    });*/
 
     it('onSelect with a invalid color should close this dialog', () => {
         component.colorForm.setValue({

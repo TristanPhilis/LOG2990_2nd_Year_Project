@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
 import { DrawingService } from '@app/services/drawing/drawing.service';
-import { IndexService } from '@app/services/index/index.service';
+import { WebRequestService } from '@app/services/index/web-request-service';
 import { ValidatorService } from '@app/services/validator-service';
 import { DrawingInfo } from '@common/communication/drawing-info';
 
@@ -14,7 +14,7 @@ export class SavePopupComponent implements OnInit {
     nameInput: FormControl;
     tagInput: FormControl;
     tags: string[];
-    constructor(private drawingService: DrawingService, private validatorService: ValidatorService, private webRequestService: IndexService) {}
+    constructor(private drawingService: DrawingService, private validatorService: ValidatorService, private webRequestService: WebRequestService) {}
 
     ngOnInit(): void {
         this.nameInput = new FormControl('', [Validators.required]);

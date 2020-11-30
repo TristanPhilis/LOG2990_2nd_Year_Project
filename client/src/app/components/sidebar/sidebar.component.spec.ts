@@ -59,7 +59,7 @@ describe('SidebarComponent', () => {
     it('should create', () => {
         expect(component).toBeTruthy();
     });
-    
+
     it('should return the string for the ctrl+key that is pressed', () => {
         keyEvent = { ctrlKey: true, key: 'u' } as KeyboardEvent;
         expect(getComposedKeySpy(keyEvent)).toEqual('C-u');

@@ -5,10 +5,6 @@ import { FormControl, ValidatorFn } from '@angular/forms';
     providedIn: 'root',
 })
 export class ValidatorService {
-    constructor() {
-        //
-    }
-
     isNumber(): ValidatorFn {
         return this.isNumberFunction;
     }

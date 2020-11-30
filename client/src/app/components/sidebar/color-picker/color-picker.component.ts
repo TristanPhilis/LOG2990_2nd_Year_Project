@@ -34,31 +34,28 @@ export class ColorPickerComponent implements OnInit {
     }
 
     private addFormsValueChangesBehaviour(): void {
-        let subs = this.colorForm.get('r')?.valueChanges.subscribe((newValue) => {
+        this.colorForm.get('r')?.valueChanges.subscribe((newValue) => {
             if (this.colorForm.get('r')?.valid) {
                 const newColor = new Color(newValue, this.color.g, this.color.b);
                 this.updateColor(newColor);
             }
         });
-        subs?.unsubscribe();
 
-        subs = this.colorForm.get('g')?.valueChanges.subscribe((newValue) => {
+        this.colorForm.get('g')?.valueChanges.subscribe((newValue) => {
             if (this.colorForm.get('g')?.valid) {
                 const newColor = new Color(this.color.r, newValue, this.color.b);
                 this.updateColor(newColor);
             }
         });
-        subs?.unsubscribe();
 
-        subs = this.colorForm.get('b')?.valueChanges.subscribe((newValue) => {
+        this.colorForm.get('b')?.valueChanges.subscribe((newValue) => {
             if (this.colorForm.get('b')?.valid) {
                 const newColor = new Color(this.color.r, this.color.g, newValue);
                 this.updateColor(newColor);
             }
         });
-        subs?.unsubscribe();
 
-        subs = this.colorForm.get('hex')?.valueChanges.subscribe((newValue) => {
+        this.colorForm.get('hex')?.valueChanges.subscribe((newValue) => {
             if (this.colorForm.get('hex')?.valid) {
                 const newColor = new Color(0, 0, 0);
                 newColor.setHex(parseInt(newValue, 16));
@@ -66,7 +63,6 @@ export class ColorPickerComponent implements OnInit {
                 this.updateColorForm(true);
             }
         });
-        subs?.unsubscribe();
     }
 
     private updateColorForm(fromHexFormControlChange: boolean): void {
