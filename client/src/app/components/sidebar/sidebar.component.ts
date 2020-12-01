@@ -63,9 +63,11 @@ export class SidebarComponent {
     }
 
     openCloseSidenav(id: SidebarToolID): void {
-        this.toolsService.selectedSideBarToolID === id && this.toolsService.toolSidenavToggle.getValue()
-            ? this.toolsService.closeToolSidenav()
-            : this.toolsService.openToolSidenav();
+        if (this.toolsService.selectedSideBarToolID === id && this.toolsService.toolSidenavToggle.getValue() === true) {
+            this.toolsService.closeToolSidenav();
+        } else {
+            this.toolsService.openToolSidenav();
+        }
     }
 
     onButtonPressTop(object: SidebarTool | undefined): void {
@@ -84,65 +86,58 @@ export class SidebarComponent {
                 this.undoRedo.clearPile();
                 this.isDialogOpen = true;
                 const dialogRef = this.dialog.open(CreateNewDrawingComponent);
-                const subs = dialogRef.afterClosed().subscribe(() => {
+                dialogRef.afterClosed().subscribe(() => {
                     this.isDialogOpen = false;
                 });
-                subs.unsubscribe();
                 break;
             }
             case SidebarToolID.openGuide: {
                 this.isDialogOpen = true;
                 const dialogRef = this.dialog.open(GuideComponent);
-                const subs = dialogRef.afterClosed().subscribe(() => {
+                dialogRef.afterClosed().subscribe(() => {
                     this.isDialogOpen = false;
                 });
-                subs.unsubscribe();
                 break;
             }
             case SidebarToolID.openCarrousel: {
                 this.isDialogOpen = true;
                 const dialogRef = this.dialog.open(CarouselComponent);
-                const subs = dialogRef.afterClosed().subscribe(() => {
+                dialogRef.afterClosed().subscribe(() => {
                     this.isDialogOpen = false;
                 });
-                subs.unsubscribe();
                 break;
             }
             case SidebarToolID.saveCurrent: {
                 this.isDialogOpen = true;
                 const dialogRef = this.dialog.open(SavePopupComponent);
-                const subs = dialogRef.afterClosed().subscribe(() => {
+                dialogRef.afterClosed().subscribe(() => {
                     this.isDialogOpen = false;
                 });
-                subs.unsubscribe();
                 break;
             }
             case SidebarToolID.exportCurrent: {
                 this.isDialogOpen = true;
                 const dialogRef = this.dialog.open(ExportPopupComponent);
-                const subs = dialogRef.afterClosed().subscribe(() => {
+                dialogRef.afterClosed().subscribe(() => {
                     this.isDialogOpen = false;
                 });
-                subs.unsubscribe();
                 break;
             }
             case SidebarToolID.openCarrousel: {
                 this.isDialogOpen = true;
                 const dialogRef = this.dialog.open(CarouselComponent, { width: '90%', height: '70%' });
 
-                const subs = dialogRef.afterClosed().subscribe(() => {
+                dialogRef.afterClosed().subscribe(() => {
                     this.isDialogOpen = false;
                 });
-                subs.unsubscribe();
                 break;
             }
             case SidebarToolID.saveCurrent: {
                 const dialogRef = this.dialog.open(SavePopupComponent);
                 this.isDialogOpen = true;
-                const subs = dialogRef.afterClosed().subscribe(() => {
+                dialogRef.afterClosed().subscribe(() => {
                     this.isDialogOpen = false;
                 });
-                subs.unsubscribe();
                 break;
             }
         }

@@ -124,7 +124,10 @@ export class CarouselService {
     }
 
     goToPreviousDrawing(): void {
-        this.drawingCounter === 0 ? (this.drawingCounter = this.drawingsInfo.value.length - 1) : this.drawingCounter--;
+        this.drawingCounter--;
+        if (this.drawingCounter < 0) {
+            this.drawingCounter = this.drawingsInfo.value.length - 1;
+        }
         this.updateCurrentDrawings();
     }
 

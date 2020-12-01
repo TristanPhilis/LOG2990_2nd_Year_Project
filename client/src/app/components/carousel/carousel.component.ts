@@ -22,8 +22,7 @@ export class CarouselComponent implements OnInit, AfterViewChecked {
 
     ngAfterViewChecked(): void {
         this.noDrawings = this.carouselService.drawingsInfo?.value.length === 0;
-        if (this.noDrawings) this.displayedMessage = "Il n'y a présentement aucun dessin";
-        else this.displayedMessage = 'Aucun dessin ne correspond a votre recherche';
+        this.displayedMessage = this.noDrawings ? "Il n'y a presentement aucun dessin" : 'Aucun dessin ne correspond a votre recherche';
     }
 
     @HostListener('window: keyup', ['$event'])
@@ -72,9 +71,7 @@ export class CarouselComponent implements OnInit, AfterViewChecked {
 
             this.drawingService.loadDrawing(this.drawingService.baseCtx);
         } else {
-            const carouselRef = this.dialog.open(CarouselComponent);
-            const subs = carouselRef.afterClosed().subscribe();
-            subs.unsubscribe();
+            this.dialog.open(CarouselComponent);
         }
     }
 }
