@@ -39,14 +39,13 @@ export class SidebarColorOptionsComponent {
         this.isPrimaryColorOpened = isPrimaryColor;
         const colorPickerRef = this.dialog.open(ColorPickerComponent, { data: this.colorHistory });
 
-        const subs = colorPickerRef.afterClosed().subscribe((color?: Color) => {
+        colorPickerRef.afterClosed().subscribe((color?: Color) => {
             if (color) {
                 this.colorSelectionService.updateHistory(color);
                 this.colorSelectionService.selectNewColor(color, this.isPrimaryColorOpened);
             }
             this.isPrimaryColorOpened = false;
         });
-        subs.unsubscribe();
     }
 
     get colorHistory(): Color[] {

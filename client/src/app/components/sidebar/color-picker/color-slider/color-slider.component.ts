@@ -36,7 +36,7 @@ export class ColorSliderComponent implements AfterViewInit {
         this.sliderCanvas.nativeElement.height = this.sliderHeight;
 
         const gradient = this.sliderCtx.createLinearGradient(0, 0, 0, this.sliderHeight);
-        // Used in order to simplify the code
+        // Used in order to simplify the indication of the gradient stops
         // tslint:disable-next-line:no-magic-numbers
         const colorStops = [0, 0.17, 0.34, 0.51, 0.68, 0.85, 1];
         const colors = ['red', 'yellow', 'lime', 'cyan', 'blue', 'magenta', 'red'];

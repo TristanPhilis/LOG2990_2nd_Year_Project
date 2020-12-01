@@ -69,7 +69,7 @@ describe('CarouselComponent', () => {
         expect(component).toBeTruthy();
     });
 
-    it('should call drawings-data-service methods', () => {
+    it('should call carousel-service methods', () => {
         component.addTag();
         expect(carouselServiceSpy.addTag).toHaveBeenCalled();
         component.deleteTag('tag');
