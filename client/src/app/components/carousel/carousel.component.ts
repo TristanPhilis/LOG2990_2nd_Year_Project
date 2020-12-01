@@ -44,8 +44,9 @@ export class CarouselComponent implements OnInit, AfterViewChecked {
     }
 
     getDrawingPosition(counter: number): number {
-        if (this.carouselService.tags.length === 0) return this.carouselService.getDrawingPosition(counter, this.carouselService.drawingsInfo.value);
-        else return this.carouselService.getDrawingPosition(counter, this.carouselService.filteredDrawings);
+        return this.carouselService.tags.length === 0
+            ? this.carouselService.getDrawingPosition(counter, this.carouselService.drawingsInfo.value)
+            : this.carouselService.getDrawingPosition(counter, this.carouselService.filteredDrawings);
     }
 
     goToPreviousDrawing(): void {
@@ -58,10 +59,9 @@ export class CarouselComponent implements OnInit, AfterViewChecked {
 
     loadDrawing(drawing: DrawingInfo): void {
         const newDrawingRef = this.dialog.open(CreateNewDrawingComponent);
-        const subs = newDrawingRef.afterClosed().subscribe((result) => {
+        newDrawingRef.afterClosed().subscribe((result) => {
             this.sendDrawingToEditor(result, drawing);
         });
-        subs.unsubscribe();
     }
     // tslint:disable-next-line: no-any Here result is of unknown type
     private sendDrawingToEditor(result: any, drawing: DrawingInfo): void {
