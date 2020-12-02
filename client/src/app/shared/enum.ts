@@ -31,6 +31,7 @@ export enum DrawingToolId {
     bucketService,
     pipetteService,
     stampService,
+    featherService,
 }
 
 export enum MouseButton {

@@ -156,6 +156,11 @@ describe('SidebarComponent', () => {
         component.onKeyUp(pressW);
         expect(toolsService.currentDrawingToolID).toEqual(DrawingToolId.brushService);
     });
+    it('should return feather when p is pressed on keyboard', () => {
+        const pressP = new KeyboardEvent('keypress', { key: 'p' });
+        component.onKeyUp(pressP);
+        expect(toolsService.currentDrawingToolID).toEqual(DrawingToolId.featherService);
+    });
     it('should return paint bucket when b is pressed on keyboard', () => {
         const pressB = new KeyboardEvent('keypress', { key: 'b' });
         component.onKeyUp(pressB);

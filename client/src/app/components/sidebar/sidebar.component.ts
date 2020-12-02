@@ -207,6 +207,11 @@ export class SidebarComponent {
                 this.onButtonPressTop(this.sideBarToolsTopMap.get(SidebarToolID.tracing));
                 this.toolsService.setCurrentDrawingTool(DrawingToolId.brushService);
             },
+            p: () => {
+                this.onButtonPressTop(this.sideBarToolsTopMap.get(SidebarToolID.tracing));
+                this.toolsService.setCurrentDrawingTool(DrawingToolId.featherService);
+            },
+
             b: () => this.onButtonPressTop(this.sideBarToolsTopMap.get(SidebarToolID.paintBucket)),
             e: () => this.onButtonPressTop(this.sideBarToolsTopMap.get(SidebarToolID.eraser)),
             l: () => this.onButtonPressTop(this.sideBarToolsTopMap.get(SidebarToolID.line)),

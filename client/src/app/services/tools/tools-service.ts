@@ -5,6 +5,7 @@ import { BrushService } from '@app/services/tools/brush.service';
 import { BucketService } from '@app/services/tools/bucket-service';
 import { EllipseService } from '@app/services/tools/ellipse-service';
 import { EraserService } from '@app/services/tools/eraser-service';
+import { FeatherService } from '@app/services/tools/feather-service';
 import { LineService } from '@app/services/tools/line-service';
 import { PencilService } from '@app/services/tools/pencil-service';
 import { PipetteService } from '@app/services/tools/pipette-service';
@@ -38,6 +39,7 @@ export class ToolsService {
         bucketService: BucketService,
         pipetteService: PipetteService,
         stampService: StampService,
+        featherService: FeatherService,
     ) {
         this.currentDrawingTool = pencilService;
         this.tools = [
@@ -52,6 +54,7 @@ export class ToolsService {
             bucketService,
             pipetteService,
             stampService,
+            featherService,
         ];
     }
 
