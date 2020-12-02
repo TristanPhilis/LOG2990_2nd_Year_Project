@@ -21,8 +21,6 @@ describe('SidebarComponent', () => {
     let toolsService: ToolsService;
     let drawServiceSpy: jasmine.SpyObj<DrawingService>;
     let undoRedoServiceSpy: jasmine.SpyObj<UndoRedoService>;
-    // let toolStub: ToolStub;
-    // let toolsServiceSpy: jasmine.SpyObj<ToolsService>;
     let dialogSpy: jasmine.SpyObj<MatDialog>;
     let dialogRefSpyObj: jasmine.SpyObj<MatDialogRef<GuideComponent, any>>;
 
@@ -38,9 +36,6 @@ describe('SidebarComponent', () => {
             undoRedoServiceSpy.undoPile = [];
             undoRedoServiceSpy.redoPile = [];
 
-            // toolStub = new ToolStub({} as DrawingService, {} as UndoRedoService, {} as ColorSelectionService);
-            // toolsServiceSpy = jasmine.createSpyObj('ToolsService', ['closeToolSidenav', 'openToolSidenav']);
-            // toolsServiceSpy.currentDrawingTool = toolStub;
             TestBed.configureTestingModule({
                 imports: [MatDialogModule, BrowserModule, BrowserAnimationsModule],
                 declarations: [SidebarComponent],
@@ -48,7 +43,6 @@ describe('SidebarComponent', () => {
                     { provide: DrawingService, useValue: drawServiceSpy },
                     { provide: MatDialog, useValue: dialogSpy },
                     { provide: UndoRedoService, useValue: undoRedoServiceSpy },
-                    // { provide: ToolsService, useValue: toolsServiceSpy },
                 ],
             }).compileComponents();
             toolsService = TestBed.inject(ToolsService);
@@ -66,15 +60,6 @@ describe('SidebarComponent', () => {
         expect(component).toBeTruthy();
     });
 
-    // openCloseSidenav
-    it('should close tool sidenav if same sidenav tool is clicked', () => {
-        // toolsService.openToolSidenav();
-        // toolsService._selectedSideBarToolID = sidebarToolID.pipette;
-        // component.openCloseSidenav(sidebarToolID.pipette);
-        // expect(toolsServiceSpy.closeToolSidenav).toHaveBeenCalled();
-    });
-
-    // getComposedKey
     it('should return the string for the ctrl+key that is pressed', () => {
         keyEvent = { ctrlKey: true, key: 'u' } as KeyboardEvent;
         expect(getComposedKeySpy(keyEvent)).toEqual('C-u');

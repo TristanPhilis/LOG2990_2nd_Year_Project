@@ -22,10 +22,8 @@ export class SidebarComponent {
     sideBarToolsTop: SidebarTool[];
     sideBarToolsBottom: SidebarTool[];
     sideBarUndoRedoButtons: SidebarTool[];
-    sideBarToolsTopMap: Map<SidebarToolID, SidebarTool> = new Map<SidebarToolID, SidebarTool>();
-    sideBarToolsBottomMap: Map<SidebarToolID, SidebarTool> = new Map<SidebarToolID, SidebarTool>();
+    private sideBarToolsTopMap: Map<SidebarToolID, SidebarTool> = new Map<SidebarToolID, SidebarTool>();
 
-    showDrawingTools: boolean;
     isDialogOpen: boolean;
 
     constructor(
@@ -61,9 +59,6 @@ export class SidebarComponent {
         ];
         this.sideBarToolsTop.forEach((object) => {
             this.sideBarToolsTopMap.set(object.id, object);
-        });
-        this.sideBarToolsBottom.forEach((object) => {
-            this.sideBarToolsBottomMap.set(object.id, object);
         });
     }
 

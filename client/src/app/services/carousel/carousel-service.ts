@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { IndexService } from '@app/services/index/index.service';
+import { WebRequestService } from '@app/services/index/web-request-service';
 import { DrawingInfo } from '@common/communication/drawing-info';
 import { BehaviorSubject } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -10,7 +10,7 @@ const CURRENT_DRAWINGS_MAX_SIZE = 3;
 @Injectable({
     providedIn: 'root',
 })
-export class DrawingsDataService {
+export class CarouselService {
     drawingsInfo: BehaviorSubject<DrawingInfo[]>;
     currentDrawings: DrawingInfo[];
     filteredDrawings: DrawingInfo[];
@@ -18,7 +18,7 @@ export class DrawingsDataService {
     tagInput: FormControl;
     tags: string[];
 
-    constructor(private basicService: IndexService) {
+    constructor(private basicService: WebRequestService) {
         this.drawingCounter = 0;
         this.drawingsInfo = new BehaviorSubject<DrawingInfo[]>([]);
         this.filteredDrawings = [];
@@ -122,10 +122,9 @@ export class DrawingsDataService {
     }
 
     goToPreviousDrawing(): void {
-        if (this.drawingCounter === 0) {
+        this.drawingCounter--;
+        if (this.drawingCounter < 0) {
             this.drawingCounter = this.drawingsInfo.value.length - 1;
-        } else {
-            this.drawingCounter--;
         }
         this.updateCurrentDrawings();
     }

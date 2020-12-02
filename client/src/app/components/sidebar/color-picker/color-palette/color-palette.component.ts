@@ -42,7 +42,7 @@ export class ColorPaletteComponent implements AfterViewInit, OnChanges {
         this.paletteCtx.lineWidth = 2;
     }
 
-    ApplyGradient(): void {
+    applyGradient(): void {
         const whiteGradiant = this.paletteCtx.createLinearGradient(0, 0, this.paletteWidth, 0);
         whiteGradiant.addColorStop(0, 'rgba(255,255,255,1');
         whiteGradiant.addColorStop(1, 'rgba(255,255,255,0');
@@ -60,7 +60,7 @@ export class ColorPaletteComponent implements AfterViewInit, OnChanges {
         this.paletteCtx.clearRect(0, 0, this.paletteWidth, this.paletteHeight);
         this.paletteCtx.fillStyle = this.hue ? this.hue.getRgbString() : 'rgba(255,255,255,1)';
         this.paletteCtx.fillRect(0, 0, this.paletteWidth, this.paletteHeight);
-        this.ApplyGradient();
+        this.applyGradient();
         this.drawSelector();
     }
 

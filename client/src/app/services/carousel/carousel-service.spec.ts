@@ -4,15 +4,15 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterTestingModule } from '@angular/router/testing';
-import { DrawingsDataService } from '@app/services/index/drawings-data.service';
-import { IndexService } from '@app/services/index/index.service';
+import { CarouselService } from '@app/services/carousel/carousel-service';
+import { WebRequestService } from '@app/services/index/web-request-service';
 import { DrawingInfo } from '@common/communication/drawing-info';
 import { of } from 'rxjs';
 import SpyObj = jasmine.SpyObj;
 
-describe('DrawingsDataService', () => {
-    let service: DrawingsDataService;
-    let indexServiceSpy: SpyObj<IndexService>;
+describe('CarouselService', () => {
+    let service: CarouselService;
+    let webRequestServiceSpy: SpyObj<WebRequestService>;
     const testDrawings: DrawingInfo[] = [
         { id: 996, name: 'one', tags: ['firstTag'], metadata: '' },
         { id: 997, name: 'two', tags: [], metadata: '' },
@@ -21,18 +21,18 @@ describe('DrawingsDataService', () => {
 
     beforeEach(
         waitForAsync(() => {
-            indexServiceSpy = jasmine.createSpyObj('IndexService', ['getDrawing', 'getAllDrawings', 'postDrawing', 'deleteDrawing']);
-            indexServiceSpy.getAllDrawings.and.returnValue(of(testDrawings));
-            indexServiceSpy.getDrawing.and.returnValue(of(testDrawings[0]));
+            webRequestServiceSpy = jasmine.createSpyObj('WebRequestService', ['getDrawing', 'getAllDrawings', 'postDrawing', 'deleteDrawing']);
+            webRequestServiceSpy.getAllDrawings.and.returnValue(of(testDrawings));
+            webRequestServiceSpy.getDrawing.and.returnValue(of(testDrawings[0]));
             TestBed.configureTestingModule({
                 imports: [RouterTestingModule, HttpClientModule, MatDialogModule, BrowserModule, BrowserAnimationsModule],
-                providers: [{ provide: IndexService, useValue: indexServiceSpy }],
+                providers: [{ provide: WebRequestService, useValue: webRequestServiceSpy }],
             });
         }),
     );
 
     beforeEach(() => {
-        service = TestBed.inject(DrawingsDataService);
+        service = TestBed.inject(CarouselService);
         service.drawingsInfo.next(testDrawings);
         service.filteredDrawings = [];
         service.tags = [];
@@ -44,7 +44,7 @@ describe('DrawingsDataService', () => {
 
     it('should call index.getAllDrawings() and subscribe when calling getAllDrawings()', () => {
         service.getAllDrawings();
-        expect(indexServiceSpy.getAllDrawings).toHaveBeenCalled();
+        expect(webRequestServiceSpy.getAllDrawings).toHaveBeenCalled();
         expect(service.drawingsInfo.value).toEqual(testDrawings);
     });
 
@@ -130,6 +130,6 @@ describe('DrawingsDataService', () => {
         // tslint:disable-next-line: no-magic-numbers
         service.deleteDrawing(998);
         service.drawingsInfo.next(service.drawingsInfo.value);
-        expect(indexServiceSpy.deleteDrawing).toHaveBeenCalled();
+        expect(webRequestServiceSpy.deleteDrawing).toHaveBeenCalled();
     });
 });

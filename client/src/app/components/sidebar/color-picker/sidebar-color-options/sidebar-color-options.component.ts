@@ -49,7 +49,7 @@ export class SidebarColorOptionsComponent {
     }
 
     get colorHistory(): Color[] {
-        return this.colorSelectionService.getcolorsHistory();
+        return this.colorSelectionService.getColorsHistory();
     }
 
     get primaryColor(): Color {

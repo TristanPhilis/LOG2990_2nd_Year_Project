@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Tool } from '@app/classes/tool';
 import { ToolOption } from '@app/classes/tool-option';
-import { BrushService } from '@app/services/tools/brush.service';
+import { BrushService } from '@app/services/tools/brush-service';
 import { BucketService } from '@app/services/tools/bucket-service';
 import { EllipseService } from '@app/services/tools/ellipse-service';
 import { EraserService } from '@app/services/tools/eraser-service';
@@ -66,10 +66,6 @@ export class ToolsService {
     setCurrentDrawingTool(newToolID: DrawingToolId): void {
         this.currentDrawingTool = this.tools[newToolID];
         this.currentDrawingToolID = newToolID;
-    }
-
-    toggleToolSidenav(): void {
-        this.toolSidenavToggle.next(!this.toolSidenavToggle.getValue());
     }
 
     openToolSidenav(): void {

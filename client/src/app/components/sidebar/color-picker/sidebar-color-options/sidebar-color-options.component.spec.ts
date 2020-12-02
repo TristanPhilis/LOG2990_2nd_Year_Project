@@ -23,7 +23,7 @@ describe('SidebarColorOptionsComponent', () => {
 
             colorSelectionServiceSpy = jasmine.createSpyObj(
                 'ColorSelectionService',
-                ['updateHistory', 'selectNewColor', 'getcolorsHistory', 'swap'],
+                ['updateHistory', 'selectNewColor', 'getColorsHistory', 'swap'],
                 {
                     primaryColor: defaultColor,
                     secondaryColor: defaultColor,

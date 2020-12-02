@@ -1,18 +1,18 @@
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { DrawingInfo } from '@common/communication/drawing-info';
-import { IndexService } from './index.service';
+import { WebRequestService } from './web-request-service';
 
-describe('IndexService', () => {
+describe('WebRequestService', () => {
     let httpMock: HttpTestingController;
-    let service: IndexService;
+    let service: WebRequestService;
     let baseUrl: string;
 
     beforeEach(() => {
         TestBed.configureTestingModule({
             imports: [HttpClientTestingModule],
         });
-        service = TestBed.inject(IndexService);
+        service = TestBed.inject(WebRequestService);
         httpMock = TestBed.inject(HttpTestingController);
         // BASE_URL is private so we need to access it with its name as a key
         // Try to avoid this syntax which violates encapsulation

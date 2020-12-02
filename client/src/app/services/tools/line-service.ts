@@ -90,7 +90,7 @@ export class LineService extends Tool {
     onKeyDown(event: KeyboardEvent): void {
         switch (event.key) {
             case SHIFT_KEY:
-                if (this.shiftDown !== true) {
+                if (!this.shiftDown) {
                     this.shiftDown = true;
                     if (this.lineStarted) {
                         this.updateLastCoord();

@@ -7,8 +7,8 @@ import { MatInputModule } from '@angular/material/input';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterTestingModule } from '@angular/router/testing';
+import { CarouselService } from '@app/services/carousel/carousel-service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
-import { DrawingsDataService } from '@app/services/index/drawings-data.service';
 import { DrawingInfo } from '@common/communication/drawing-info';
 import { BehaviorSubject } from 'rxjs';
 import { CarouselComponent } from './carousel.component';
@@ -17,12 +17,12 @@ import SpyObj = jasmine.SpyObj;
 describe('CarouselComponent', () => {
     let component: CarouselComponent;
     let fixture: ComponentFixture<CarouselComponent>;
-    let drawingsDataServiceSpy: SpyObj<DrawingsDataService>;
+    let carouselServiceSpy: SpyObj<CarouselService>;
     let drawingServiceSpy: SpyObj<DrawingService>;
 
     beforeEach(
         waitForAsync(() => {
-            drawingsDataServiceSpy = jasmine.createSpyObj('DrawingsDataService', [
+            carouselServiceSpy = jasmine.createSpyObj('CarouselService', [
                 'getAllDrawings',
                 'updateCurrentDrawings',
                 'deleteDrawing',
@@ -32,7 +32,7 @@ describe('CarouselComponent', () => {
                 'addTag',
                 'deleteTag',
             ]);
-            drawingsDataServiceSpy.tagInput = new FormControl();
+            carouselServiceSpy.tagInput = new FormControl();
 
             drawingServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas', 'sendDrawing', 'loadDrawing']);
 
@@ -49,7 +49,7 @@ describe('CarouselComponent', () => {
                     FormsModule,
                 ],
                 providers: [
-                    { provide: DrawingsDataService, useValue: drawingsDataServiceSpy },
+                    { provide: CarouselService, useValue: carouselServiceSpy },
                     { provide: DrawingService, useValue: drawingServiceSpy },
                 ],
                 declarations: [CarouselComponent],
@@ -60,8 +60,8 @@ describe('CarouselComponent', () => {
     beforeEach(() => {
         fixture = TestBed.createComponent(CarouselComponent);
         component = fixture.componentInstance;
-        drawingsDataServiceSpy.drawingsInfo = new BehaviorSubject<DrawingInfo[]>([]);
-        drawingsDataServiceSpy.drawingsInfo.next([{ id: 0, name: '', tags: [], metadata: '' }]);
+        carouselServiceSpy.drawingsInfo = new BehaviorSubject<DrawingInfo[]>([]);
+        carouselServiceSpy.drawingsInfo.next([{ id: 0, name: '', tags: [], metadata: '' }]);
         fixture.detectChanges();
     });
 
@@ -69,25 +69,27 @@ describe('CarouselComponent', () => {
         expect(component).toBeTruthy();
     });
 
-    it('should call drawings-data-service methods', () => {
+    it('should call carousel-service methods', () => {
         component.addTag();
-        expect(drawingsDataServiceSpy.addTag).toHaveBeenCalled();
+        expect(carouselServiceSpy.addTag).toHaveBeenCalled();
         component.deleteTag('tag');
-        expect(drawingsDataServiceSpy.deleteTag).toHaveBeenCalledWith('tag');
+        expect(carouselServiceSpy.deleteTag).toHaveBeenCalledWith('tag');
         component.goToPreviousDrawing();
-        expect(drawingsDataServiceSpy.goToPreviousDrawing).toHaveBeenCalled();
+        expect(carouselServiceSpy.goToPreviousDrawing).toHaveBeenCalled();
         component.goToNextDrawing();
-        expect(drawingsDataServiceSpy.goToNextDrawing).toHaveBeenCalled();
+        expect(carouselServiceSpy.goToNextDrawing).toHaveBeenCalled();
         component.getDrawingPosition(0);
-        drawingsDataServiceSpy.tags = [''];
+        carouselServiceSpy.tags = [''];
         component.getDrawingPosition(0);
-        expect(drawingsDataServiceSpy.getDrawingPosition).toHaveBeenCalled();
+        expect(carouselServiceSpy.getDrawingPosition).toHaveBeenCalled();
         component.deleteDrawing(0);
-        expect(drawingsDataServiceSpy.deleteDrawing).toHaveBeenCalledWith(0);
+        expect(carouselServiceSpy.deleteDrawing).toHaveBeenCalledWith(0);
     });
 
     it('should call drawingService methods', () => {
-        component.sendDrawingToEditor(true, drawingsDataServiceSpy.drawingsInfo.value[0]);
+        // Testing a private method (sendDrawingToEditor)
+        // tslint:disable-next-line: no-any
+        (component as any).sendDrawingToEditor(true, carouselServiceSpy.drawingsInfo.value[0]);
         expect(drawingServiceSpy.clearCanvas).toHaveBeenCalled();
         expect(drawingServiceSpy.sendDrawing).toHaveBeenCalled();
     });

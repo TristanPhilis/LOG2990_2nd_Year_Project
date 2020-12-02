@@ -12,19 +12,21 @@ import { ValidatorService } from '@app/services/validator-service';
 export class ColorPickerComponent implements OnInit {
     hue: Color;
     color: Color;
-    colorForm: FormGroup = this.fb.group({
-        r: ['', [Validators.required, Validators.min(0), Validators.max(MAX_RGBA_VALUE), this.validatorService.isNumber()]],
-        g: ['', [Validators.required, Validators.min(0), Validators.max(MAX_RGBA_VALUE), this.validatorService.isNumber()]],
-        b: ['', [Validators.required, Validators.min(0), Validators.max(MAX_RGBA_VALUE), this.validatorService.isNumber()]],
-        hex: ['', [this.validatorService.isValidHexColor()]],
-    });
+    colorForm: FormGroup;
 
     constructor(
         private fb: FormBuilder,
         private validatorService: ValidatorService,
         public dialogRef: MatDialogRef<ColorPickerComponent>,
         @Inject(MAT_DIALOG_DATA) public colorHistory: Color[],
-    ) {}
+    ) {
+        this.colorForm = this.fb.group({
+            r: ['', [Validators.required, Validators.min(0), Validators.max(MAX_RGBA_VALUE), this.validatorService.isNumber()]],
+            g: ['', [Validators.required, Validators.min(0), Validators.max(MAX_RGBA_VALUE), this.validatorService.isNumber()]],
+            b: ['', [Validators.required, Validators.min(0), Validators.max(MAX_RGBA_VALUE), this.validatorService.isNumber()]],
+            hex: ['', [this.validatorService.isValidHexColor()]],
+        });
+    }
 
     ngOnInit(): void {
         this.color = new Color(0, 0, 0);

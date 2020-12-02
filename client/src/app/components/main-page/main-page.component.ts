@@ -14,18 +14,10 @@ export class MainPageComponent {
     constructor(public dialog: MatDialog) {}
 
     openGuide(): void {
-        const dialogRef = this.dialog.open(GuideComponent);
-
-        dialogRef.afterClosed().subscribe((result) => {
-            console.log(`Dialog result: ${result}`);
-        });
+        this.dialog.open(GuideComponent);
     }
 
     openCarousel(): void {
-        const dialogRef = this.dialog.open(CarouselComponent, { width: '90%', height: '70%' });
-
-        dialogRef.afterClosed().subscribe((result) => {
-            console.log(`Dialog result: ${result}`);
-        });
+        this.dialog.open(CarouselComponent, { width: '90%', height: '70%' });
     }
 }

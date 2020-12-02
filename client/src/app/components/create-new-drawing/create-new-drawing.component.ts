@@ -7,7 +7,7 @@ import { DrawingService } from '@app/services/drawing/drawing.service';
     styleUrls: ['./create-new-drawing.component.scss'],
 })
 export class CreateNewDrawingComponent {
-    constructor(public drawingService: DrawingService) {}
+    constructor(private drawingService: DrawingService) {}
     clearCanvas(): void {
         this.drawingService.clearCanvas(this.drawingService.baseCtx);
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
