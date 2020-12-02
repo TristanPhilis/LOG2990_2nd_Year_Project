@@ -74,7 +74,7 @@ export class CarouselService {
     }
 
     getAllDrawings(): void {
-        const subs = this.basicService
+        this.basicService
             .getAllDrawings()
             .pipe(
                 map((drawingInfo: DrawingInfo[]) => {
@@ -92,11 +92,10 @@ export class CarouselService {
                     this.updateCurrentDrawings();
                 },
             );
-        subs.unsubscribe();
     }
 
     deleteDrawing(drawingId: number): void {
-        const subs = this.basicService.deleteDrawing(drawingId)?.subscribe(
+        this.basicService.deleteDrawing(drawingId)?.subscribe(
             (deletedDrawingId: number) => {
                 for (const drawingInfo of this.drawingsInfo.value) {
                     if (drawingInfo.id === deletedDrawingId) {
@@ -112,7 +111,6 @@ export class CarouselService {
                 this.updateCurrentDrawings();
             },
         );
-        subs?.unsubscribe();
     }
 
     getDrawingPosition(counter: number, currentArray: DrawingInfo[]): number {
