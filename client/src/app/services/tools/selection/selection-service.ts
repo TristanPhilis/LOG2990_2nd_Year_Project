@@ -312,7 +312,7 @@ export class SelectionService extends Tool implements OnDestroy {
         ctx.resetTransform();
     }
 
-    private clearInitialSelectedZone(contours: Path2D[]): void {
+    clearInitialSelectedZone(contours: Path2D[]): void {
         const ctx = this.drawingService.baseCtx;
         ctx.fillStyle = 'white';
         for (const contour of contours) {
