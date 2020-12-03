@@ -6,7 +6,7 @@ import { GuideComponent } from '@app/components/guide/guide.component';
 import { ExportPopupComponent } from '@app/components/popup/export-popup/export-popup.component';
 import { SavePopupComponent } from '@app/components/popup/save-popup/save-popup.component';
 import { SidebarTool } from '@app/components/sidebar/sidebar-tool/sidebar-tool';
-import { DrawingService } from '@app/services/drawing/drawing.service';
+import { CanvasSizeService } from '@app/services/drawing/canvas-size-service';
 import { ToolsService } from '@app/services/tools/tools-service';
 import { UndoRedoService } from '@app/services/tools/undo-redo-service';
 import { DrawingToolId, Options, SelectionType, SidebarToolID } from '@app/shared/enum';
@@ -29,7 +29,7 @@ export class SidebarComponent {
     constructor(
         private toolsService: ToolsService,
         private dialog: MatDialog,
-        private drawingService: DrawingService,
+        private canvasSizeService: CanvasSizeService,
         public undoRedo: UndoRedoService,
     ) {
         this.sideBarToolsTop = [
@@ -83,12 +83,7 @@ export class SidebarComponent {
     onButtonPressBottom(id: SidebarToolID): void {
         switch (id) {
             case SidebarToolID.createNew: {
-                this.undoRedo.clearPile();
-                this.isDialogOpen = true;
-                const dialogRef = this.dialog.open(CreateNewDrawingComponent);
-                dialogRef.afterClosed().subscribe(() => {
-                    this.isDialogOpen = false;
-                });
+                this.createNewDrawing();
                 break;
             }
             case SidebarToolID.openGuide: {
@@ -164,8 +159,7 @@ export class SidebarComponent {
         const keys: string = this.getComposedKey(event);
         const kbd: { [id: string]: callback } = {
             'C-o': () => {
-                this.drawingService.clearCanvas(this.drawingService.baseCtx);
-                this.drawingService.clearCanvas(this.drawingService.previewCtx);
+                this.createNewDrawing();
             },
             'C-e': () => {
                 this.onButtonPressBottom(SidebarToolID.exportCurrent);
@@ -233,6 +227,16 @@ export class SidebarComponent {
             const func: callback = kbd[keys];
             func();
         }
+    }
+
+    private createNewDrawing(): void {
+        this.undoRedo.clearPile();
+        this.isDialogOpen = true;
+        const dialogRef = this.dialog.open(CreateNewDrawingComponent);
+        dialogRef.afterClosed().subscribe(() => {
+            this.canvasSizeService.restoreInitialSize();
+            this.isDialogOpen = false;
+        });
     }
 
     get showUndo(): boolean {

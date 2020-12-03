@@ -67,9 +67,20 @@ describe('DrawingService', () => {
         const result = service.isCoordInCanvas({ x: insideCoord, y: insideCoord });
         expect(result).toBeTrue();
     });
+
     it('isCoordInCanvas should return false for invalid coord', () => {
         const outsideCoord = 200;
         const result = service.isCoordInCanvas({ x: outsideCoord, y: outsideCoord });
         expect(result).toBeFalse();
+    });
+
+    it('should autosave the canvas', () => {
+        service.autoSave();
+        expect(localStorage.getItem(service.lastDrawingKey)).toEqual(service.getImageURL());
+    });
+
+    it('should send savedDrawing', () => {
+        service.sendDrawing('');
+        expect(service.drawingToLoad).toEqual('');
     });
 });

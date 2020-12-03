@@ -68,8 +68,8 @@ export class CarouselComponent implements OnInit, AfterViewChecked {
         if (result) {
             this.drawingService.clearCanvas(this.drawingService.baseCtx);
             this.drawingService.sendDrawing(drawing.metadata);
-
             this.drawingService.loadDrawing(this.drawingService.baseCtx);
+            this.drawingService.autoSave();
         } else {
             this.dialog.open(CarouselComponent);
         }

@@ -18,7 +18,7 @@ describe('PipetteService', () => {
     // tslint:disable: no-magic-numbers
     beforeEach(() => {
         colorSelServiceSpy = jasmine.createSpyObj('ColorSelectionService', ['selectNewColor']);
-        drawServiceSpy = jasmine.createSpyObj('DrawingService', ['fillCanvas']);
+        drawServiceSpy = jasmine.createSpyObj('DrawingService', ['fillCanvas', 'autoSave']);
         ctxSpy = jasmine.createSpyObj('CanvasRenderingContext2D', ['getImageData']);
         previewCtxSpy = jasmine.createSpyObj('CanvasRenderingContext2D', [
             'drawImage',

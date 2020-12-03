@@ -26,7 +26,7 @@ describe('PolygonService', () => {
         const contextMethod = ['stroke', 'fill', 'beginPath', 'moveTo', 'lineTo', 'closePath', 'setLineDash', 'arc'];
         baseCtxSpy = jasmine.createSpyObj('CanvasRenderingContext2D', contextMethod);
         previewCtxSpy = jasmine.createSpyObj('CanvasRenderingContext2D', contextMethod);
-        drawServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas']);
+        drawServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas', 'autoSave']);
         TestBed.configureTestingModule({
             providers: [
                 { provide: DrawingService, useValue: drawServiceSpy },

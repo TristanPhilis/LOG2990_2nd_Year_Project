@@ -96,6 +96,7 @@ export class RectangleService extends Tool {
             ctx.rect(box.position.x, box.position.y, box.width, box.height);
             this.fill(ctx, traceType.value, options.primaryColor, options.secondaryColor);
         }
+        this.drawingService.autoSave();
     }
 
     getDrawingAction(): DrawingAction {

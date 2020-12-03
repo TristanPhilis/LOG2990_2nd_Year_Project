@@ -75,6 +75,7 @@ export class PencilService extends Tool {
             }
             ctx.stroke();
         }
+        this.drawingService.autoSave();
     }
 
     getDrawingAction(): DrawingAction {
