@@ -87,6 +87,7 @@ export class BrushService extends Tool {
             ctx.stroke();
             ctx.globalCompositeOperation = 'source-over';
         }
+        this.drawingService.autoSave();
     }
 
     getDrawingAction(): DrawingAction {

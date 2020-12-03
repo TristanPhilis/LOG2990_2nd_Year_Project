@@ -102,6 +102,7 @@ export class EllipseService extends Tool {
 
             ctx.closePath();
         }
+        this.drawingService.autoSave();
     }
 
     getDrawingAction(): DrawingAction {

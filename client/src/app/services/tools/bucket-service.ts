@@ -193,6 +193,7 @@ export class BucketService extends Tool {
                 drawingAction.box.height + 1,
             );
         }
+        this.drawingService.autoSave();
     }
 
     getDrawingAction(): DrawingAction {

@@ -167,6 +167,7 @@ export class LineService extends Tool {
             ctx.stroke();
             ctx.closePath();
         }
+        this.drawingService.autoSave();
     }
 
     getDrawingAction(): DrawingAction {

@@ -21,7 +21,7 @@ describe('BucketServiceService', () => {
     let saveActionSpy: jasmine.Spy<any>;
 
     beforeEach(() => {
-        drawServiceSpy = jasmine.createSpyObj('DrawingService', ['fillCanvas', 'getImageData', 'isCoordInCanvas']);
+        drawServiceSpy = jasmine.createSpyObj('DrawingService', ['fillCanvas', 'getImageData', 'isCoordInCanvas', 'autoSave']);
         const defaultColor = new Color(0, 0, 0);
         colorServiceSpy = jasmine.createSpyObj('colorServiceSpy', ['']);
         colorServiceSpy.primaryColor = defaultColor;

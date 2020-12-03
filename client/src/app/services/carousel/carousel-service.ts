@@ -44,7 +44,7 @@ export class CarouselService {
     }
 
     updateFromCurrentArray(currentArray: DrawingInfo[]): void {
-        switch (currentArray.length) {
+        switch (currentArray?.length) {
             case 0:
                 this.currentDrawings = [];
                 break;

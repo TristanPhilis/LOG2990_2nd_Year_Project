@@ -34,7 +34,7 @@ describe('CarouselComponent', () => {
             ]);
             carouselServiceSpy.tagInput = new FormControl();
 
-            drawingServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas', 'sendDrawing', 'loadDrawing']);
+            drawingServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas', 'sendDrawing', 'loadDrawing', 'autoSave']);
 
             TestBed.configureTestingModule({
                 imports: [

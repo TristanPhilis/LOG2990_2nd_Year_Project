@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Box } from '@app/classes/box';
 import { Vec2 } from '@app/classes/vec2';
+import { Subject } from 'rxjs';
 
 @Injectable({
     providedIn: 'root',
@@ -20,6 +21,15 @@ export class DrawingService {
 
     drawingToLoad: string;
     mouseIsOverCanvas: boolean = false;
+
+    lastDrawingKey: string;
+
+    onLoadingImage: Subject<Vec2>;
+
+    constructor() {
+        localStorage.setItem(this.lastDrawingKey, '');
+        this.onLoadingImage = new Subject<Vec2>();
+    }
 
     getImageData(): ImageData {
         return this.baseCtx.getImageData(0, 0, this.canvas.width, this.canvas.height);
@@ -57,10 +67,22 @@ export class DrawingService {
     loadDrawing(context: CanvasRenderingContext2D): void {
         const image = new Image();
         image.src = this.drawingToLoad;
-        context.drawImage(image, 0, 0);
+        if (image.complete) {
+            this.onLoadingImage.next({ x: image.width, y: image.height });
+            context.drawImage(image, 0, 0);
+        } else {
+            image.onload = () => {
+                this.onLoadingImage.next({ x: image.width, y: image.height });
+                context.drawImage(image, 0, 0);
+            };
+        }
     }
 
     sendDrawing(drawing: string): void {
         this.drawingToLoad = drawing;
+    }
+
+    autoSave(): void {
+        localStorage.setItem(this.lastDrawingKey, this.getImageURL());
     }
 }

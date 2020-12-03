@@ -1,6 +1,5 @@
 import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, OnDestroy, ViewChild } from '@angular/core';
 import { MatSidenav } from '@angular/material/sidenav';
-import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ToolsService } from '@app/services/tools/tools-service';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -26,16 +25,11 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
     workzoneRect: DOMRect;
     private unsubscribe$: Subject<void> = new Subject<void>();
 
-    constructor(private cd: ChangeDetectorRef, private toolService: ToolsService, private drawingService: DrawingService) {}
+    constructor(private cd: ChangeDetectorRef, public toolService: ToolsService) {}
 
     ngAfterViewInit(): void {
         this.workzoneRect = this.workzone.nativeElement.getBoundingClientRect();
         this.cd.detectChanges();
-
-        if (this.drawingService.drawingToLoad !== (undefined && '')) {
-            this.drawingService.loadDrawing(this.drawingService.baseCtx);
-            this.drawingService.drawingToLoad = '';
-        }
 
         this.toolService.toolSidenavToggle.pipe(takeUntil(this.unsubscribe$)).subscribe((value) => {
             if (value === true) {

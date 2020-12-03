@@ -12,6 +12,7 @@ import { DrawingService } from './drawing.service';
     providedIn: 'root',
 })
 export class CanvasSizeService {
+    initialCanvasSize: Vec2;
     canvasSize: Vec2;
     previewSize: Vec2;
     bottomAnchor: HTMLDivElement;
@@ -24,14 +25,16 @@ export class CanvasSizeService {
 
     constructor(private drawingService: DrawingService, private gridService: GridService) {
         this.action = new Subject<Action>();
+        this.drawingService.onLoadingImage?.subscribe((size: Vec2) => {
+            this.resizeMainCanvas(size.x, size.y);
+        });
     }
 
     setInitialCanvasSize(workzoneWidth: number, workzoneHeight: number): void {
-        this.canvasSize = this.getValidCanvasSize(workzoneWidth / 2, workzoneHeight / 2);
+        this.initialCanvasSize = this.getValidCanvasSize(workzoneWidth / 2, workzoneHeight / 2);
+        this.canvasSize = this.initialCanvasSize;
         this.previewSize = this.canvasSize;
-        this.resizeCanvas(this.drawingService.canvas, this.canvasSize.x, this.canvasSize.y);
-        this.resizeCanvas(this.drawingService.previewCanvas, this.canvasSize.x, this.canvasSize.y);
-        this.resizeCanvas(this.drawingService.gridCanvas, this.canvasSize.x, this.canvasSize.y);
+        this.resizeMainCanvas(this.canvasSize.x, this.canvasSize.y);
         this.resizeCanvas(this.drawingService.selectionCanvas, workzoneWidth, workzoneHeight);
         this.drawingService.fillCanvas('white');
         this.updateAnchorsPosition(this.canvasSize);
@@ -56,22 +59,25 @@ export class CanvasSizeService {
     }
 
     completeResize(size: Vec2, imageData: ImageData): void {
-        this.canvasSize = size;
-        this.resizeCanvas(this.drawingService.canvas, size.x, size.y);
-        this.resizeCanvas(this.drawingService.previewCanvas, size.x, size.y);
-        this.resizeCanvas(this.drawingService.gridCanvas, size.x, size.y);
-        this.updateAnchorsPosition(size);
+        this.resizeMainCanvas(size.x, size.y);
         this.drawingService.fillCanvas('white');
         this.drawingService.setImageData(imageData);
         if (this.gridService.isShown) {
             this.gridService.drawGrid();
         }
+        this.drawingService.autoSave();
     }
 
     updatePreviewSize(event: MouseEvent): void {
         const width = this.resizeX ? event.offsetX : this.previewSize.x;
         const height = this.resizeY ? event.offsetY : this.previewSize.y;
         this.previewSize = this.getValidCanvasSize(width, height);
+    }
+
+    restoreInitialSize(): void {
+        this.resizeMainCanvas(this.initialCanvasSize.x, this.initialCanvasSize.y);
+        this.drawingService.fillCanvas('white');
+        this.drawingService.autoSave();
     }
 
     private updateAnchorsPosition(size: Vec2): void {
@@ -91,6 +97,14 @@ export class CanvasSizeService {
             x: width > MIN_CANVAS_SIZE ? width : MIN_CANVAS_SIZE,
             y: height > MIN_CANVAS_SIZE ? height : MIN_CANVAS_SIZE,
         };
+    }
+
+    private resizeMainCanvas(width: number, height: number): void {
+        this.canvasSize = { x: width, y: height };
+        this.resizeCanvas(this.drawingService.canvas, width, height);
+        this.resizeCanvas(this.drawingService.previewCanvas, width, height);
+        this.resizeCanvas(this.drawingService.gridCanvas, width, height);
+        this.updateAnchorsPosition(this.canvasSize);
     }
 
     private resizeCanvas(canvas: HTMLCanvasElement, width: number, height: number): void {
