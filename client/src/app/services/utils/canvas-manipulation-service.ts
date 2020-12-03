@@ -1,4 +1,6 @@
 import { Injectable, Renderer2, RendererFactory2 } from '@angular/core';
+import { Box } from '@app/classes/box';
+import { Vec2 } from '@app/classes/vec2';
 
 @Injectable({
     providedIn: 'root',
@@ -24,5 +26,20 @@ export class CanvasManipulationService {
         canvas.width = width;
         canvas.height = height;
         return canvas;
+    }
+
+    applyRotation(ctx: CanvasRenderingContext2D, angle: number, center: Vec2): void {
+        ctx.translate(center.x, center.y);
+        ctx.rotate(angle);
+        ctx.translate(-center.x, -center.y);
+    }
+
+    applyMirrorScaling(ctx: CanvasRenderingContext2D, box: Box): void {
+        const xMirrorScale = Math.sign(box.width);
+        const yMirrorScale = Math.sign(box.height);
+        const xTranslationAdjustment = xMirrorScale < 0 ? 2 * box.position.x + box.width : 0;
+        const yTranslationAdjustment = yMirrorScale < 0 ? 2 * box.position.y + box.height : 0;
+        ctx.translate(xTranslationAdjustment, yTranslationAdjustment);
+        ctx.scale(xMirrorScale, yMirrorScale);
     }
 }

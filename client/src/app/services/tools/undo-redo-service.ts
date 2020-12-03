@@ -1,12 +1,13 @@
 import { Injectable, OnDestroy } from '@angular/core';
 import { DrawingAction } from '@app/classes/drawing-action';
 import { ResizeAction } from '@app/classes/resize-action';
+import { SelectionAction } from '@app/classes/selection-action';
 import { Tool } from '@app/classes/tool';
 import { CanvasSizeService } from '@app/services/drawing/canvas-size-service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ToolsService } from '@app/services/tools/tools-service';
 
-export type Action = DrawingAction | ResizeAction;
+export type Action = DrawingAction | ResizeAction | SelectionAction;
 
 @Injectable({
     providedIn: 'root',
@@ -85,7 +86,7 @@ export class UndoRedoService implements OnDestroy {
                 this.resizeActionIndexes.push(this.undoPile.length - 1);
                 this.processResizeAction(lastIn, false);
             } else {
-                const action = lastIn as DrawingAction;
+                const action = this.isDrawingAction(lastIn) ? (lastIn as DrawingAction) : (lastIn as SelectionAction);
                 this.toolsService.getTool(action.id).draw(this.drawingService.baseCtx, action);
             }
         }
@@ -99,6 +100,10 @@ export class UndoRedoService implements OnDestroy {
 
     private isResizeAction(action: Action): boolean {
         return !('id' in action);
+    }
+
+    private isDrawingAction(action: Action): boolean {
+        return !('selectedBox' in action);
     }
 
     private processResizeAction(action: Action, useOldSize: boolean): void {

@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
-import { BoundingBox } from '@app/classes/bounding-box';
+import { SelectedBox } from '@app/classes/selected-box';
 import { SelectionBox } from '@app/classes/selection-box';
+import { SelectionImageData } from '@app/classes/selection-image-data';
 import { Selector } from '@app/classes/selector';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { SelectionType } from '@app/shared/enum';
@@ -13,13 +14,15 @@ export class MagicSelectorService extends Selector {
         super(drawingService);
         this.id = SelectionType.magic;
     }
-    clearBaseCanvasSelectedArea(box: BoundingBox): void {
-        return;
-    }
+
     drawSelectionBox(box: SelectionBox, shiftDown: boolean): void {
         return;
     }
-    copyArea(box: BoundingBox): ImageData {
-        return new ImageData(0, 0);
+
+    copyArea(box: SelectedBox): SelectionImageData {
+        return {
+            imageData: new ImageData(0, 0),
+            contours: [],
+        };
     }
 }

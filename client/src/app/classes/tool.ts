@@ -5,6 +5,7 @@ import { Subject } from 'rxjs';
 import { Color } from './color';
 import { DrawingAction } from './drawing-action';
 import { DrawingOptions } from './drawing-options';
+import { SelectionAction } from './selection-action';
 import { ToolOption } from './tool-option';
 import { Vec2 } from './vec2';
 
@@ -16,7 +17,7 @@ export abstract class Tool {
     shiftDown: boolean;
     dblClick: boolean;
     options: DrawingOptions;
-    action: Subject<DrawingAction>;
+    action: Subject<DrawingAction | SelectionAction>;
 
     constructor(protected drawingService: DrawingService, protected colorService: ColorSelectionService) {
         this.action = new Subject<DrawingAction>();
@@ -41,7 +42,7 @@ export abstract class Tool {
 
     onWheel(event: WheelEvent): void {}
 
-    draw(ctx: CanvasRenderingContext2D, action: DrawingAction): void {}
+    draw(ctx: CanvasRenderingContext2D, action: DrawingAction | SelectionAction): void {}
 
     getPositionFromMouse(event: MouseEvent): Vec2 {
         return { x: event.offsetX, y: event.offsetY };
