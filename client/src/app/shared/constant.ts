@@ -20,6 +20,8 @@ export const SELECTION_BOX_BORDER_SIZE = 5;
 export const SELECTION_BOX_COLOUR = '#111155';
 export const MIDDLE_SNAP_ANGLE = Math.PI / MIDDLE_ANGLE_SNAP_DIVIDER;
 export const BASE_SNAP_ANGLE = Math.PI / BASE_ANGLE_SNAP_DIVIDER;
+export const AEROSOL_DENSITY = 10;
+export const AEROSOL_CONVERTER_TIMER = 10;
 export const ANGLE_ROTATION = 15;
 export const ROTATION_HALF = 180;
 export const ROTATION_COMPLETE = 360;
@@ -51,6 +53,9 @@ export const DEFAULT_OPTIONS = {
     traceType: TraceTypes.fill,
     tolerance: MIN_TOLERANCE,
     selectionType: SelectionType.rectangle,
+    sprayDiameter: 1,
+    emissionPerSecond: 1,
+    spraySize: 20,
 };
 export const TEXTURES = [
     '/assets/textureOne.jpg',

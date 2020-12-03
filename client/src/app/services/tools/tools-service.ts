@@ -11,6 +11,7 @@ import { PipetteService } from '@app/services/tools/pipette-service';
 import { PolygonService } from '@app/services/tools/polygon-service';
 import { RectangleService } from '@app/services/tools/rectangle-service';
 import { SelectionService } from '@app/services/tools/selection/selection-service';
+import { SprayService } from '@app/services/tools/spray-service';
 import { DrawingToolId, Options, SidebarToolID } from '@app/shared/enum';
 import { BehaviorSubject } from 'rxjs';
 import { StampService } from './stamp-service';
@@ -37,6 +38,7 @@ export class ToolsService {
         polygonService: PolygonService,
         bucketService: BucketService,
         pipetteService: PipetteService,
+        sprayService: SprayService,
         stampService: StampService,
     ) {
         this.currentDrawingTool = pencilService;
@@ -51,6 +53,7 @@ export class ToolsService {
             polygonService,
             bucketService,
             pipetteService,
+            sprayService,
             stampService,
         ];
     }

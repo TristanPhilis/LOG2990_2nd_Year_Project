@@ -43,6 +43,7 @@ export class SidebarComponent {
             { id: SidebarToolID.stamp, name: 'Étampe', defaultDrawingToolid: DrawingToolId.stampService },
             { id: SidebarToolID.pipette, name: 'Pipette', defaultDrawingToolid: DrawingToolId.pipetteService },
             { id: SidebarToolID.eraser, name: 'Efface', defaultDrawingToolid: DrawingToolId.eraserService },
+            { id: SidebarToolID.aerosol, name: 'aerosol', defaultDrawingToolid: DrawingToolId.aerosolService },
         ];
 
         this.sideBarUndoRedoButtons = [
@@ -196,6 +197,7 @@ export class SidebarComponent {
                 this.onButtonPressTop(this.sideBarToolsTopMap.get(SidebarToolID.tracing));
                 this.toolsService.setCurrentDrawingTool(DrawingToolId.brushService);
             },
+            a: () => this.onButtonPressTop(this.sideBarToolsTopMap.get(SidebarToolID.aerosol)),
             b: () => this.onButtonPressTop(this.sideBarToolsTopMap.get(SidebarToolID.paintBucket)),
             e: () => this.onButtonPressTop(this.sideBarToolsTopMap.get(SidebarToolID.eraser)),
             l: () => this.onButtonPressTop(this.sideBarToolsTopMap.get(SidebarToolID.line)),
