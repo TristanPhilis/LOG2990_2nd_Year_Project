@@ -3,10 +3,15 @@ import { SelectionType, Stamp, Texture, TraceTypes } from './enum';
 export const MIN_CANVAS_SIZE = 250;
 
 // Keyboard keys
-export const ARROW_UP = 38;
-export const ARROW_DOWN = 40;
-export const ARROW_LEFT = 37;
-export const ARROW_RIGHT = 39;
+export const KEYS = {
+    SHIFT: 'Shift',
+    BACKSPACE: 'Backspace',
+    ESCAPE: 'Escape',
+    ARROW_UP: 'ArrowUp',
+    ARROW_DOWN: 'ArrowDown',
+    ARROW_RIGHT: 'ArrowRight',
+    ARROW_LEFT: 'ArrowLeft',
+};
 export const CONTROL = 17;
 export const A_KEY = 65;
 export const SHIFT_KEY = 'Shift';
@@ -16,8 +21,10 @@ export const ESCAPE_KEY = 'Escape';
 // Selection constants
 export const MIDDLE_ANGLE_SNAP_DIVIDER = 4;
 export const BASE_ANGLE_SNAP_DIVIDER = 8;
-export const SELECTION_BOX_BORDER_SIZE = 5;
-export const SELECTION_BOX_COLOUR = '#111155';
+export const SELECTION_CONTOUR_BORDER_SIZE = 1;
+export const SELECTION_CONTOUR_COLOUR = 'black';
+export const SELECTED_BOX_COLOUR = '#111155';
+export const SELECTED_ANCHOR_COLOR = '#aeaee0';
 export const MIDDLE_SNAP_ANGLE = Math.PI / MIDDLE_ANGLE_SNAP_DIVIDER;
 export const BASE_SNAP_ANGLE = Math.PI / BASE_ANGLE_SNAP_DIVIDER;
 export const AEROSOL_DENSITY = 10;
@@ -28,7 +35,7 @@ export const ROTATION_COMPLETE = 360;
 export const DEG_TO_RAD_FACTOR = Math.PI / ROTATION_HALF;
 export const DEPLACEMENT = 3;
 export const DASHLINE_EMPTY = 5;
-export const DASHLINE_FULL = 15;
+export const DASHLINE_FULL = 5;
 export const NEGATIVE_MULTIPLIER = -1;
 export const PERCENT_MULTIPLIER = 0.01;
 

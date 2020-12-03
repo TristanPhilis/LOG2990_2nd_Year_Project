@@ -4,7 +4,7 @@ import { Vec2 } from '@app/classes/vec2';
 import { CanvasSizeService } from '@app/services/drawing/canvas-size-service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ToolsService } from '@app/services/tools/tools-service';
-import { AnchorsPosition, MouseButton } from '@app/shared/enum';
+import { AnchorsPosition, DrawingToolId, MouseButton } from '@app/shared/enum';
 
 @Component({
     selector: 'app-drawing',
@@ -23,7 +23,7 @@ export class DrawingComponent implements AfterViewInit, OnChanges {
     isResizing: boolean;
 
     @Input()
-    private workzoneRect: DOMRect;
+    private workzoneSize: Vec2;
 
     constructor(public drawingService: DrawingService, private toolsService: ToolsService, private canvasSizeService: CanvasSizeService) {}
 
@@ -46,11 +46,11 @@ export class DrawingComponent implements AfterViewInit, OnChanges {
     }
 
     ngOnChanges(changes: SimpleChanges): void {
-        const workzoneRectKey = 'workzoneRect';
-        const workzoneChange = changes[workzoneRectKey];
+        const workzoneSizeKey = 'workzoneSize';
+        const workzoneChange = changes[workzoneSizeKey];
 
         if (workzoneChange && !workzoneChange.firstChange) {
-            this.canvasSizeService.setInitialCanvasSize(this.workzoneRect.width, this.workzoneRect.height);
+            this.canvasSizeService.setInitialCanvasSize(this.workzoneSize.x, this.workzoneSize.y);
         }
     }
 
@@ -78,7 +78,7 @@ export class DrawingComponent implements AfterViewInit, OnChanges {
 
     @HostListener('mousedown', ['$event'])
     onMouseDown(event: MouseEvent): void {
-        if (this.drawingService.mouseIsOverCanvas) {
+        if (this.drawingService.mouseIsOverCanvas || this.toolsService.currentDrawingToolID === DrawingToolId.selectionService) {
             this.currentTool.onMouseDown(event);
         }
     }

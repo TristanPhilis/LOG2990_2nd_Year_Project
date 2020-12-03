@@ -1,5 +1,5 @@
 import { Component, ElementRef, ViewChild } from '@angular/core';
-import { MagnetismService } from '@app/services/magnetism/magnetism-service';
+import { GridService } from '@app/services/grid/grid-service';
 import { AnchorsPosition } from '@app/shared/enum';
 
 const ACTIVATE = 'Activer';
@@ -13,16 +13,17 @@ const DEACTIVATE = 'Désactiver';
 export class MagnetOptionComponent {
     @ViewChild('anchorsContainer', { static: false }) anchorsContainer: ElementRef<HTMLDivElement>;
     currentSelectedAnchor: HTMLDivElement;
-    constructor(private magnetismService: MagnetismService) {}
+    constructor(private gridService: GridService) {}
 
     toggleMagnetism(): void {
-        this.magnetismService.toggleMagnetism();
+        this.gridService.toggleMagnetism();
     }
 
     onAnchorClick(anchorElement: HTMLDivElement, anchorPosition: AnchorsPosition): void {
         this.removeSelectedStyle();
         anchorElement.classList.add('selected');
-        this.magnetismService.currentAnchor = anchorPosition;
+        this.gridService.setAnchor(anchorPosition);
+        this.currentSelectedAnchor = anchorElement;
     }
 
     removeSelectedStyle(): void {
@@ -34,7 +35,7 @@ export class MagnetOptionComponent {
     }
 
     get isMagnetismActivated(): boolean {
-        return this.magnetismService.isActive;
+        return this.gridService.shouldSnapToGrid;
     }
 
     get buttonText(): string {

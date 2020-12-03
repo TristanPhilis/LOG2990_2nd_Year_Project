@@ -1,20 +1,20 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
-import { MagnetismService } from '@app/services/magnetism/magnetism-service';
+import { GridService } from '@app/services/grid/grid-service';
 import { AnchorsPosition } from '@app/shared/enum';
 import { MagnetOptionComponent } from './magnet-option.component';
 
 describe('MagnetOptionComponent', () => {
     let component: MagnetOptionComponent;
     let fixture: ComponentFixture<MagnetOptionComponent>;
-    let magnetismServiceSpy: jasmine.SpyObj<MagnetismService>;
+    let gridServiceSpy: jasmine.SpyObj<GridService>;
 
     beforeEach(async () => {
-        magnetismServiceSpy = jasmine.createSpyObj('MagnetismService', ['toggleMagnetism']);
-        magnetismServiceSpy.isActive = true;
+        gridServiceSpy = jasmine.createSpyObj('GridService', ['toggleMagnetism', 'setAnchor']);
+        gridServiceSpy.shouldSnapToGrid = true;
         await TestBed.configureTestingModule({
             declarations: [MagnetOptionComponent],
-            providers: [{ provide: MagnetismService, useValue: magnetismServiceSpy }],
+            providers: [{ provide: GridService, useValue: gridServiceSpy }],
         }).compileComponents();
     });
 
@@ -28,16 +28,16 @@ describe('MagnetOptionComponent', () => {
         expect(component).toBeTruthy();
     });
 
-    it('toggleMagnetism should calls magnetismService toggleMagnetism', () => {
+    it('toggleMagnetism should calls gridService toggleMagnetism', () => {
         component.toggleMagnetism();
-        expect(magnetismServiceSpy.toggleMagnetism).toHaveBeenCalled();
+        expect(gridServiceSpy.toggleMagnetism).toHaveBeenCalled();
     });
 
-    it('onAnchorClick should change the magnetismService currentAnchor and add selected class to clicked div', () => {
+    it('onAnchorClick should call gridService setAnchor function and add selected class to clicked div', () => {
         const div = fixture.debugElement.query(By.css('#center')).nativeElement;
         const anchor = AnchorsPosition.center;
         component.onAnchorClick(div, anchor);
-        expect(magnetismServiceSpy.currentAnchor).toEqual(anchor);
+        expect(gridServiceSpy.setAnchor).toHaveBeenCalledWith(anchor);
         expect(div.classList.contains('selected')).toBeTrue();
     });
 
@@ -59,7 +59,7 @@ describe('MagnetOptionComponent', () => {
     });
 
     it('button text should display "Activer" when grid is not active', () => {
-        magnetismServiceSpy.isActive = false;
+        gridServiceSpy.shouldSnapToGrid = false;
         const expectedResult = 'Activer';
         const result = component.buttonText;
         expect(result).toEqual(expectedResult);

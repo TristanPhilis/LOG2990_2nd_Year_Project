@@ -20,7 +20,7 @@ export class DrawingService {
     selectionCtx: CanvasRenderingContext2D;
 
     drawingToLoad: string;
-    mouseIsOverCanvas: boolean = false;
+    mouseIsOverCanvas: boolean;
 
     lastDrawingKey: string;
 
@@ -29,6 +29,7 @@ export class DrawingService {
     constructor() {
         localStorage.setItem(this.lastDrawingKey, '');
         this.onLoadingImage = new Subject<Vec2>();
+        this.mouseIsOverCanvas = false;
     }
 
     getImageData(): ImageData {
