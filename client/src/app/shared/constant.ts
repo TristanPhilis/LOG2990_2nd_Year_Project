@@ -14,9 +14,6 @@ export const KEYS = {
 };
 export const CONTROL = 17;
 export const A_KEY = 65;
-export const SHIFT_KEY = 'Shift';
-export const BACKSPACE_KEY = 'Backspace';
-export const ESCAPE_KEY = 'Escape';
 
 // Selection constants
 export const MIDDLE_ANGLE_SNAP_DIVIDER = 4;

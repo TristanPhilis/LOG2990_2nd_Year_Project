@@ -1,5 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { BoundingBox } from '@app/classes/bounding-box';
+import { canvasTestHelper } from '@app/classes/canvas-test-helper';
 import { SelectedBox } from '@app/classes/selected-box';
 import { GridService } from '@app/services/grid/grid-service';
 import { DEPLACEMENT, KEYS } from '@app/shared/constant';
@@ -14,7 +15,6 @@ describe('SelectionMouvementService', () => {
 
     beforeEach(() => {
         gridServiceSpy = jasmine.createSpyObj('GridService', [''], ['canvasWidth', 'canvasHeight']);
-
         TestBed.configureTestingModule({
             providers: [{ provide: GridService, useValue: gridServiceSpy }],
         });
@@ -102,23 +102,13 @@ describe('SelectionMouvementService', () => {
         expect(clearIntervalSpy).toHaveBeenCalled();
     });
 
-    xit('processKeyDown should return early if the key is already in the pressed set', () => {
-        // service['isMoving'] = true;
+    it('processKeyDown should return early if the key is already in the pressed set', () => {
         service['pressedKeys'] = new Set([KEYS.ARROW_DOWN, KEYS.ARROW_LEFT]);
         service.processKeyDown(selectedBox, KEYS.ARROW_DOWN);
         expect(service['pendingKeys'].size).toEqual(0);
     });
 
-    xit('processKeyDown should add the key to the pending set', () => {
-        // tslint:disable-next-line:no-any private method
-        const startMouvementSpy = spyOn<any>(service, 'startMouvement');
-        // service['isMoving'] = true;
-        service.processKeyDown(selectedBox, KEYS.ARROW_LEFT);
-        expect(service['pendingKeys'].has(KEYS.ARROW_LEFT)).toBeTrue();
-        expect(startMouvementSpy).toHaveBeenCalled();
-    });
-
-    xdescribe('selection mouvement test with timers', () => {
+    describe('selection mouvement test with timers', () => {
         beforeEach(() => {
             jasmine.clock().install();
         });
@@ -127,11 +117,26 @@ describe('SelectionMouvementService', () => {
             jasmine.clock().uninstall();
         });
 
+        it('processKeyDown should add the key to the pending set', () => {
+            service.processKeyDown(selectedBox, KEYS.ARROW_LEFT);
+            expect(service['pendingKeys'].has(KEYS.ARROW_LEFT)).toBeTrue();
+        });
+
         it('processKeyDown should add the pending key in the pressedKeys after the timeout', () => {
             service.processKeyDown(selectedBox, KEYS.ARROW_LEFT);
             const tickTime = 501;
             jasmine.clock().tick(tickTime);
             expect(service['pressedKeys'].has(KEYS.ARROW_LEFT)).toBeTrue();
+        });
+
+        it('if the key is released before the pending timeout, it should not be added to the pressed keys', () => {
+            const tickTime = 300;
+            service.processKeyDown(selectedBox, KEYS.ARROW_LEFT);
+            jasmine.clock().tick(tickTime);
+            expect(service['pendingKeys'].has(KEYS.ARROW_LEFT)).toBeTrue();
+            service.processKeyUp(selectedBox, KEYS.ARROW_LEFT);
+            jasmine.clock().tick(tickTime);
+            expect(service['pressedKeys'].has(KEYS.ARROW_LEFT)).toBeFalse();
         });
 
         it('after pending timeout, if not moving and key is still pending, should start mouvement', () => {
@@ -160,15 +165,12 @@ describe('SelectionMouvementService', () => {
             // tslint:disable-next-line:no-any private method
             const moveFromKeysSpy = spyOn<any>(service, 'moveFromKeys');
             // tslint:disable-next-line:no-any private method
-            const adjustSpy = spyOn<any>(service, 'adjustBoxIfMovingOutsideCanvas');
-            // tslint:disable-next-line:no-any private method
             (service as any).startMouvement(selectedBox);
 
-            const tickTime = 101;
+            const tickTime = 501;
             jasmine.clock().tick(tickTime);
             const expectedNumberOfCalls = 5;
             expect(moveFromKeysSpy).toHaveBeenCalledTimes(expectedNumberOfCalls);
-            expect(adjustSpy).toHaveBeenCalledTimes(expectedNumberOfCalls);
         });
     }); // end of test with timers
 
@@ -224,13 +226,12 @@ describe('SelectionMouvementService', () => {
     });
 
     // Problem with getter of gridService for canvas height
-    xit('adjustBoxIfMovingOutsideCanvas should bring back the box in canvas when about to leave right or bottom', () => {
+    it('adjustBoxIfMovingOutsideCanvas should bring back the box in canvas when about to leave right or bottom', () => {
         const width = 100;
         const height = 100;
         const outsideDistance = 5;
-
-        // spyOnProperty(gridServiceSpy, 'canvasHeight', 'get').and.returnValue(height);
-        // spyOnProperty(gridServiceSpy, 'canvasWidth', 'get').and.returnValue(width);
+        canvasTestHelper.getSpyObjectProperty(gridServiceSpy, 'canvasHeight').and.returnValue(height); // tslint:disable-next-line:no-null-assertion
+        canvasTestHelper.getSpyObjectProperty(gridServiceSpy, 'canvasWidth').and.returnValue(width);
         const refreshBoundingBoxSpy = spyOn(selectedBox, 'refreshBoundingBox');
         const translateXSpy = spyOn(selectedBox, 'translateX');
         const translateYSpy = spyOn(selectedBox, 'translateY');

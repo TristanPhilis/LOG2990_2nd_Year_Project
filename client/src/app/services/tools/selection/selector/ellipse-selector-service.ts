@@ -5,9 +5,9 @@ import { SelectionBox } from '@app/classes/selection-box';
 import { SelectionImageData } from '@app/classes/selection-image-data';
 import { Selector } from '@app/classes/selector';
 import { DrawingService } from '@app/services/drawing/drawing.service';
-import { CanvasManipulationService } from '@app/services/utils/canvas-manipulation-service';
 import { DASHLINE_EMPTY, DASHLINE_FULL, SELECTION_CONTOUR_BORDER_SIZE, SELECTION_CONTOUR_COLOUR } from '@app/shared/constant';
 import { SelectionType } from '@app/shared/enum';
+import { CanvasManipulationService } from '@app/utils/canvas-manipulation-service';
 
 @Injectable({
     providedIn: 'root',
@@ -43,11 +43,18 @@ export class EllipseSelectorService extends Selector {
         const selectedImageData = this.drawingService.baseCtx.getImageData(box.position.x, box.position.y, box.width, box.height);
         const clippedImageData = this.getClippedImageData(selectedImageData, selfCenteredContour);
         const selectionImageData = {
-            contours: [realPositionedContour],
+            contour: realPositionedContour,
             imageData: clippedImageData,
             contourImage: this.getContourImage(selfCenteredContour, box.width, box.height),
         };
         return selectionImageData;
+    }
+
+    clearInitialSelectedZone(selectionImageData: SelectionImageData): void {
+        const ctx = this.drawingService.baseCtx;
+        ctx.fillStyle = 'white';
+        const contour = selectionImageData.contour as Path2D;
+        ctx.fill(contour);
     }
 
     private getClippedImageData(imageData: ImageData, contour: Path2D): ImageData {

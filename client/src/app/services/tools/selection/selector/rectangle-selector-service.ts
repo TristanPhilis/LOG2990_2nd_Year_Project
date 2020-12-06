@@ -44,10 +44,13 @@ export class RectangleSelectorService extends Selector {
             selectedBox.width,
             selectedBox.height,
         );
-        const selectionImageData = {
-            contours: [contour],
-            imageData,
-        };
-        return selectionImageData;
+        return { contour, imageData };
+    }
+
+    clearInitialSelectedZone(selectionImageData: SelectionImageData): void {
+        const ctx = this.drawingService.baseCtx;
+        ctx.fillStyle = 'white';
+        const contour = selectionImageData.contour as Path2D;
+        ctx.fill(contour);
     }
 }

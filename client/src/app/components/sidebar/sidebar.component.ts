@@ -214,12 +214,15 @@ export class SidebarComponent {
             l: () => this.onButtonPressTop(this.sideBarToolsTopMap.get(SidebarToolID.line)),
             r: () => {
                 this.onButtonPressTop(this.sideBarToolsTopMap.get(SidebarToolID.selection));
-                this.toolsService.updateOptionValue(Options.selectionType, SelectionType.ellipse);
+                this.toolsService.updateOptionValue(Options.selectionType, SelectionType.rectangle);
             },
-
             s: () => {
                 this.onButtonPressTop(this.sideBarToolsTopMap.get(SidebarToolID.selection));
                 this.toolsService.updateOptionValue(Options.selectionType, SelectionType.ellipse);
+            },
+            v: () => {
+                this.onButtonPressTop(this.sideBarToolsTopMap.get(SidebarToolID.selection));
+                this.toolsService.updateOptionValue(Options.selectionType, SelectionType.magic);
             },
             i: () => this.onButtonPressTop(this.sideBarToolsTopMap.get(SidebarToolID.pipette)),
 
