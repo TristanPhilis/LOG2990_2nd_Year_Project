@@ -53,7 +53,11 @@ export class MagicSelectorService extends Selector {
     }
 
     clearInitialSelectedZone(selectionImageData: SelectionImageData): void {
-        const pixelsToClear = selectionImageData.initialSelectedPixels as number[];
+        const pixelsToClear = selectionImageData.initialSelectedPixels;
+        if (!pixelsToClear) {
+            return;
+        }
+
         const imageData = this.drawingService.getImageData();
         const white = new Color(MAX_RGBA_VALUE, MAX_RGBA_VALUE, MAX_RGBA_VALUE);
         for (const pixelIndex of pixelsToClear) {

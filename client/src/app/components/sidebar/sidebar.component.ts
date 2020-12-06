@@ -187,6 +187,10 @@ export class SidebarComponent {
             },
             'C-v': () => {
                 this.clipBoard.paste();
+                if (this.toolsService.selectedSideBarToolID !== SidebarToolID.selection) {
+                    this.onButtonPressTop(this.sideBarToolsTopMap.get(SidebarToolID.selection));
+                    this.toolsService.updateOptionValue(Options.selectionType, SelectionType.rectangle);
+                }
             },
             'C-l': () => {
                 this.clipBoard.delete();

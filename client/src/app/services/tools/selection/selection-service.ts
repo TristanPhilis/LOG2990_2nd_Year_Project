@@ -325,7 +325,11 @@ export class SelectionService extends Tool implements OnDestroy {
         const selectedBox = selectionAction.selectedBox;
         const selectionImageData = selectionAction.selectionImageData;
         this.selectorOptions[selectionAction.selectorId].clearInitialSelectedZone(selectionImageData);
-        const image = this.canvasUtil.getImageFromImageData(selectionImageData.imageData);
+        const imageData = selectionImageData.imageData;
+        if (!imageData) {
+            return;
+        }
+        const image = this.canvasUtil.getImageFromImageData(imageData);
         this.canvasUtil.applyRotation(ctx, selectedBox.radAngle, selectedBox.rotationCenter);
         this.canvasUtil.applyMirrorScaling(ctx, selectedBox);
         ctx.drawImage(image, selectedBox.position.x, selectedBox.position.y, selectedBox.width, selectedBox.height);
