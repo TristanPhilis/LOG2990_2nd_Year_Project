@@ -188,6 +188,9 @@ export class SidebarComponent {
             'C-v': () => {
                 this.clipBoard.paste();
             },
+            'C-l': () => {
+                this.clipBoard.delete();
+            },
         };
         const func: callback | undefined = kbd[keys];
         if (func) {
@@ -236,9 +239,6 @@ export class SidebarComponent {
             3: () => {
                 this.onButtonPressTop(this.sideBarToolsTopMap.get(SidebarToolID.shapes));
                 this.toolsService.setCurrentDrawingTool(DrawingToolId.polygonService);
-            },
-            4: () => {
-                this.clipBoard.delete();
             },
         };
         const keys: string = this.getComposedKey(event);

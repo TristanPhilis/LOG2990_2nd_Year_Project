@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { SelectionImageData } from '@app/classes/selection-image-data';
+import { DrawingService } from '@app/services/drawing/drawing.service';
 import { SelectionService } from '@app/services/tools/selection/selection-service.ts';
 @Injectable({
     providedIn: 'root',
@@ -7,7 +8,7 @@ import { SelectionService } from '@app/services/tools/selection/selection-servic
 export class ClipboardService {
     copiedSelectionImageData: SelectionImageData;
     isItemCopied: boolean;
-    constructor(private selector: SelectionService) {
+    constructor(private selector: SelectionService, private drawingService: DrawingService) {
         this.isItemCopied = false;
     }
 
@@ -20,15 +21,21 @@ export class ClipboardService {
 
     cut(): void {
         if (this.selector.isAreaSelected) {
+            const ctx = this.drawingService.baseCtx;
             this.copiedSelectionImageData = this.selector.selectionImageData;
-            this.selector.isAreaSelected = false;
+            const emptyImage = ctx.createImageData(this.selector.selectionImageData.imageData);
+            this.selector.selectionImageData.imageData = emptyImage;
+            this.selector.updateSelectedAreaPreview();
             this.isItemCopied = true;
         }
     }
 
     delete(): void {
         if (this.selector.isAreaSelected) {
-            this.selector.isAreaSelected = false;
+            const ctx = this.drawingService.baseCtx;
+            const emptyImage = ctx.createImageData(this.selector.selectionImageData.imageData);
+            this.selector.selectionImageData.imageData = emptyImage;
+            this.selector.updateSelectedAreaPreview();
         }
     }
 
