@@ -45,7 +45,7 @@ describe('RectangleSelectorService', () => {
 
     it('copyArea should return a valid SelectionImageData object and call appropriate functions', () => {
         const result = service.copyArea(selectedBox);
-        expect(result.contours.length).toEqual(1);
+        expect(result.contour).toBeTruthy();
         expect(result.imageData).toBeTruthy();
         expect(result.contourImage).toBeFalsy();
     });

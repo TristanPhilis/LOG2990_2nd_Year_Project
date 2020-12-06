@@ -47,6 +47,17 @@ export class SelectedBox extends Box {
         this.boundingBox.updateFromSelectionBox(selectionBox, isSquare);
     }
 
+    updateFromBoundingBox(boundingBox: BoundingBox): void {
+        this.top = boundingBox.top;
+        this.left = boundingBox.left;
+        this.right = boundingBox.right;
+        this.bottom = boundingBox.bottom;
+        this.rotationCenter = this.center;
+        this.angle = 0;
+        this.initializeAnchors();
+        this.boundingBox = boundingBox.copy();
+    }
+
     refreshBoundingBox(): void {
         this.boundingBox.setStartingCoord(this.center);
         this.anchors.forEach((anchor: Anchor) => {

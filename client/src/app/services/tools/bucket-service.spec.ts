@@ -8,6 +8,7 @@ import { ColorSelectionService } from '@app/services/color/color-selection-servi
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { MAX_TOLERANCE, MIN_TOLERANCE, PIXEL_INTERVAL } from '@app/shared/constant';
 import { Options } from '@app/shared/enum';
+import { SearchHelper } from '@app/utils/search-helper';
 import { BucketService } from './bucket-service';
 
 // tslint:disable:no-any
@@ -65,8 +66,14 @@ describe('BucketServiceService', () => {
         expect(service).toBeTruthy();
     });
 
+    it('if the tolerance option in the option map is not valid, it should return the default tolerance', () => {
+        service.options.toolOptions = new Map();
+        const result = service.tolerance;
+        expect(result).toEqual(0);
+    });
+
     it('initSearchParams should set initial values', () => {
-        const getColorSpy = spyOn<any>(service, 'getColorFromCoord');
+        const getColorSpy = spyOn(SearchHelper, 'getColorFromCoord');
         const coord: Vec2 = { x: 0, y: 0 };
         (service as any).initSearchParams(coord);
         expect(service.boundingBox).toBeTruthy();
@@ -107,7 +114,7 @@ describe('BucketServiceService', () => {
         const color = new Color(0, 0, 0);
         service.endColor = color;
         service.initialColor = color;
-        const getColorSpy = spyOn<any>(service, 'getColorFromIndex');
+        const getColorSpy = spyOn(SearchHelper, 'getColorFromIndex');
         getColorSpy.and.callThrough();
         const drawSpy = spyOn<any>(service, 'draw');
         const canvasSize = 5;
@@ -140,7 +147,7 @@ describe('BucketServiceService', () => {
         (service as any).fillPixel(44);
         // tslint:enable:no-magic-numbers
         const fillSpy = spyOn<any>(service, 'fillPixel');
-        const expectedCalls = 3;
+        const expectedCalls = 4;
         (service as any).beginBFS(startingCoord);
         expect(fillSpy).toHaveBeenCalledTimes(expectedCalls);
     });
@@ -155,20 +162,20 @@ describe('BucketServiceService', () => {
     it('if adjacent coord are valid, should addAdjacentPixel should update visitedPixels and pixels to visit array', () => {
         const shouldAddCoordSpy = spyOn<any>(service, 'shouldAddCoord');
         shouldAddCoordSpy.and.returnValue(true);
-        const getIndexFromCoordSpy = spyOn<any>(service, 'getIndexFromCoord');
+        const getIndexFromCoordSpy = spyOn(SearchHelper, 'getIndexFromCoord');
         getIndexFromCoordSpy.and.returnValue(0);
         service.visitedPixel = [false];
         const startingCoord = { x: 1, y: 1 };
         (service as any).addAdjacentPixel(startingCoord);
         expect(service.visitedPixel[0]).toBeTrue();
-        const expectedLength = 4;
+        const expectedLength = 8;
         expect(service.pixelToVisit.length).toEqual(expectedLength);
     });
 
     it('if adjacent coord are invalid, should addAdjacentPixel should not update visitedPixels and pixels to visit array', () => {
         const shouldAddCoordSpy = spyOn<any>(service, 'shouldAddCoord');
         shouldAddCoordSpy.and.returnValue(false);
-        const getIndexFromCoordSpy = spyOn<any>(service, 'getIndexFromCoord');
+        const getIndexFromCoordSpy = spyOn(SearchHelper, 'getIndexFromCoord');
         getIndexFromCoordSpy.and.returnValue(0);
 
         service.visitedPixel = [false];
@@ -183,7 +190,7 @@ describe('BucketServiceService', () => {
         const isValidCoordSpy = spyOn<any>(service, 'isValidCoord');
         isValidCoordSpy.and.returnValue(false);
 
-        const wasVisitedSpy = spyOn<any>(service, 'wasCoordVisited');
+        const wasVisitedSpy = spyOn(SearchHelper, 'wasCoordVisited');
         wasVisitedSpy.and.returnValue(false);
 
         const isColorSimilarSpy = spyOn<any>(service, 'isColorSimilar');
@@ -194,7 +201,7 @@ describe('BucketServiceService', () => {
     });
 
     it('shouldAddCoord should return fasle if coord was visited', () => {
-        const wasVisitedSpy = spyOn<any>(service, 'wasCoordVisited');
+        const wasVisitedSpy = spyOn(SearchHelper, 'wasCoordVisited');
         wasVisitedSpy.and.returnValue(true);
         const isValidCoordSpy = spyOn<any>(service, 'isValidCoord');
         isValidCoordSpy.and.returnValue(true);
@@ -206,7 +213,7 @@ describe('BucketServiceService', () => {
     });
 
     it('shouldAddCoord should return isColorSimilar value if coord valid and not visited', () => {
-        const wasVisitedSpy = spyOn<any>(service, 'wasCoordVisited');
+        const wasVisitedSpy = spyOn(SearchHelper, 'wasCoordVisited');
         wasVisitedSpy.and.returnValue(false);
         const isValidCoordSpy = spyOn<any>(service, 'isValidCoord');
         isValidCoordSpy.and.returnValue(true);
@@ -228,56 +235,10 @@ describe('BucketServiceService', () => {
         }
     });
 
-    it('getColorFromIndex should return the right color', () => {
-        // tslint:disable-next-line:no-magic-numbers
-        const expectedValues = [25, 120, 60, 255];
-        // tslint:disable-next-line:no-magic-numbers
-        const color = new Color(25, 120, 60);
-        for (let i = 0; i < PIXEL_INTERVAL; i++) {
-            service.pixelsData[i] = expectedValues[i];
-        }
-        const result: Color = (service as any).getColorFromIndex(0);
-        expect(result).toEqual(color);
-    });
-
-    it('getColorFromCoord should return the right color', () => {
-        // tslint:disable-next-line:no-magic-numbers
-        const expectedValues = [25, 120, 60, 255];
-        // tslint:disable-next-line:no-magic-numbers
-        const color = new Color(25, 120, 60);
-        for (let i = 0; i < PIXEL_INTERVAL; i++) {
-            service.pixelsData[i] = expectedValues[i];
-        }
-        const result: Color = (service as any).getColorFromCoord({ x: 0, y: 0 });
-        expect(result).toEqual(color);
-    });
-
-    it('getIndexFromCoord should do the right conversion', () => {
-        const coord: Vec2 = { x: 1, y: 2 };
-        const expectedIndex = 44;
-        const result = (service as any).getIndexFromCoord(coord);
-        expect(result).toEqual(expectedIndex);
-    });
-
-    it('getCoordFromIndex should do the right conversion', () => {
-        const expectedCoord: Vec2 = { x: 1, y: 2 };
-        const index = 44;
-        const result = (service as any).getCoordFromIndex(index);
-        expect(result).toEqual(expectedCoord);
-    });
-
     it('isValidCoord should use drawingService isCoordValidMethod', () => {
         const coord = { x: 0, y: 0 };
         (service as any).isValidCoord(coord);
         expect(drawServiceSpy.isCoordInCanvas).toHaveBeenCalled();
-    });
-
-    it('wasCoordVisited should return the right value', () => {
-        const coord: Vec2 = { x: 1, y: 2 };
-        const index = 44;
-        service.visitedPixel[index] = true;
-        const result = (service as any).wasCoordVisited(coord);
-        expect(result).toBeTrue();
     });
 
     // Following test are helped by a CIE94 deltaE (the color difference formula i used) calculator:

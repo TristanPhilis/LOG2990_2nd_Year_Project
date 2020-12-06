@@ -1,6 +1,5 @@
 import { Injectable, OnDestroy } from '@angular/core';
 import { Anchor } from '@app/classes/anchor';
-import { BoundingBox } from '@app/classes/bounding-box';
 import { SelectedBox } from '@app/classes/selected-box';
 import { SelectionAction } from '@app/classes/selection-action';
 import { SelectionBox } from '@app/classes/selection-box';
@@ -18,9 +17,9 @@ import { SelectionMouvementService } from '@app/services/tools/selection/mouveme
 import { EllipseSelectorService } from '@app/services/tools/selection/selector/ellipse-selector-service';
 import { MagicSelectorService } from '@app/services/tools/selection/selector/magic-selector-service';
 import { RectangleSelectorService } from '@app/services/tools/selection/selector/rectangle-selector-service';
-import { CanvasManipulationService } from '@app/services/utils/canvas-manipulation-service';
-import { ANGLE_ROTATION, DEFAULT_OPTIONS, ESCAPE_KEY, SELECTED_ANCHOR_COLOR, SELECTED_BOX_COLOUR, SHIFT_KEY } from '@app/shared/constant';
+import { ANGLE_ROTATION, DEFAULT_OPTIONS, KEYS, SELECTED_ANCHOR_COLOR, SELECTED_BOX_COLOUR } from '@app/shared/constant';
 import { AnchorsPosition, DrawingToolId, MouseButton, Options, SelectionType } from '@app/shared/enum';
+import { CanvasManipulationService } from '@app/utils/canvas-manipulation-service';
 import { Subscription } from 'rxjs';
 
 @Injectable({
@@ -34,7 +33,6 @@ export class SelectionService extends Tool implements OnDestroy {
     selectionImageData: SelectionImageData;
     selectedBox: SelectedBox;
     selectionBox: SelectionBox;
-    initialSelectionZone: BoundingBox;
     private subsciptions: Subscription;
 
     constructor(
@@ -56,7 +54,6 @@ export class SelectionService extends Tool implements OnDestroy {
         this.currentSelector = this.rectangleSelector;
         this.selectedBox = new SelectedBox();
         this.selectionBox = new SelectionBox();
-        this.initialSelectionZone = new BoundingBox();
         this.isAreaSelected = false;
         this.subsciptions = new Subscription();
         this.subscribeToEvents();
@@ -114,13 +111,15 @@ export class SelectionService extends Tool implements OnDestroy {
     }
 
     onMouseDown(event: MouseEvent): void {
-        this.mouseDown = event.buttons === MouseButton.Left;
+        const isRightClick = event.buttons === MouseButton.Right;
+        const isLeftClick = event.buttons === MouseButton.Left;
+        this.mouseDown = isLeftClick || isRightClick;
         if (!this.mouseDown) {
             return;
         }
 
         const currentCoord = this.getPositionFromMouse(event);
-        if (this.isAreaSelected) {
+        if (this.isAreaSelected && isLeftClick) {
             const isHit = this.hitDetectionService.processMouseDown(this.selectedBox, currentCoord);
             if (!isHit) {
                 this.placeImage();
@@ -130,21 +129,30 @@ export class SelectionService extends Tool implements OnDestroy {
                     this.initializeSelectionBox(currentCoord);
                 }
             }
+        } else if (!this.isAreaSelected) {
+            if (this.currentSelector.id === SelectionType.magic) {
+                this.selectedBox = this.magicSelector.executeMagicSelection(currentCoord, isLeftClick);
+                this.mouseDown = false;
+                this.initializeSelectedArea();
+            } else if (isLeftClick) {
+                this.initializeSelectionBox(currentCoord);
+            }
         } else {
             this.initializeSelectionBox(currentCoord);
         }
     }
 
     onMouseUp(event: MouseEvent): void {
-        if (this.mouseDown) {
-            if (!this.isAreaSelected) {
-                this.initializeSelectedBox();
-            } else if (this.isAnchorClicked) {
-                this.isAnchorClicked = false;
-                this.manipulationService.adjustPositionToNewCenter(this.selectedBox);
-            }
-            this.mouseDown = false;
+        if (!this.mouseDown) {
+            return;
         }
+        if (!this.isAreaSelected) {
+            this.initializeSelectedArea();
+        } else if (this.isAnchorClicked) {
+            this.isAnchorClicked = false;
+            this.manipulationService.adjustPositionToNewCenter(this.selectedBox);
+        }
+        this.mouseDown = false;
     }
 
     onMouseMove(event: MouseEvent): void {
@@ -164,7 +172,7 @@ export class SelectionService extends Tool implements OnDestroy {
                 this.selectionBox.updateOpposingCorner(this.mouseDownCoord);
                 this.currentSelector.drawSelectionBox(this.selectionBox, this.shiftDown);
             } else {
-                this.initializeSelectedBox();
+                this.initializeSelectedArea();
                 this.mouseDown = false;
             }
         }
@@ -180,13 +188,13 @@ export class SelectionService extends Tool implements OnDestroy {
     }
 
     onKeyUp(event: KeyboardEvent): void {
-        if (event.key === ESCAPE_KEY) {
+        if (event.key === KEYS.ESCAPE) {
             this.placeImage();
         }
         if (this.isAreaSelected && this.mouvementService.canProcessKey(event.key)) {
             this.mouvementService.processKeyUp(this.selectedBox, event.key);
         }
-        if (event.key === SHIFT_KEY) {
+        if (event.key === KEYS.SHIFT) {
             this.shiftDown = false;
             this.onShiftKeyEvent();
         }
@@ -197,7 +205,7 @@ export class SelectionService extends Tool implements OnDestroy {
             event.preventDefault();
             this.mouvementService.processKeyDown(this.selectedBox, event.key);
         }
-        if (event.key === SHIFT_KEY) {
+        if (event.key === KEYS.SHIFT) {
             this.shiftDown = true;
             this.onShiftKeyEvent();
         }
@@ -229,13 +237,14 @@ export class SelectionService extends Tool implements OnDestroy {
         this.selectionBox.updateOpposingCorner(coord);
     }
 
-    initializeSelectedBox(): void {
-        this.isAreaSelected = this.selectionBox.width > 0 && this.selectionBox.height > 0;
+    initializeSelectedArea(): void {
+        this.isAreaSelected = (this.selectionBox.width > 0 && this.selectionBox.height > 0) || this.currentSelector.id === SelectionType.magic;
         if (this.isAreaSelected) {
-            this.selectedBox.updateFromSelectionBox(this.selectionBox, this.shiftDown);
-            this.initialSelectionZone.updateFromSelectionBox(this.selectionBox, this.shiftDown);
+            if (this.currentSelector.id !== SelectionType.magic) {
+                this.selectedBox.updateFromSelectionBox(this.selectionBox, this.shiftDown);
+            }
             this.selectionImageData = this.currentSelector.copyArea(this.selectedBox);
-            this.clearInitialSelectedZone(this.selectionImageData.contours);
+            this.currentSelector.clearInitialSelectedZone(this.selectionImageData);
             this.updateSelectedAreaPreview();
         }
     }
@@ -261,7 +270,7 @@ export class SelectionService extends Tool implements OnDestroy {
     selectAllCanvas(): void {
         this.selectionBox.setAnchor({ x: 0, y: 0 });
         this.selectionBox.updateOpposingCorner({ x: this.drawingService.canvas.width, y: this.drawingService.canvas.height });
-        this.initializeSelectedBox();
+        this.initializeSelectedArea();
         this.mouseDown = false;
     }
 
@@ -312,18 +321,10 @@ export class SelectionService extends Tool implements OnDestroy {
         ctx.resetTransform();
     }
 
-    private clearInitialSelectedZone(contours: Path2D[]): void {
-        const ctx = this.drawingService.baseCtx;
-        ctx.fillStyle = 'white';
-        for (const contour of contours) {
-            ctx.fill(contour);
-        }
-    }
-
     draw(ctx: CanvasRenderingContext2D, selectionAction: SelectionAction): void {
         const selectedBox = selectionAction.selectedBox;
         const selectionImageData = selectionAction.selectionImageData;
-        this.clearInitialSelectedZone(selectionImageData.contours);
+        this.selectorOptions[selectionAction.selectorId].clearInitialSelectedZone(selectionImageData);
         const image = this.canvasUtil.getImageFromImageData(selectionImageData.imageData);
         this.canvasUtil.applyRotation(ctx, selectedBox.radAngle, selectedBox.rotationCenter);
         this.canvasUtil.applyMirrorScaling(ctx, selectedBox);
@@ -334,6 +335,7 @@ export class SelectionService extends Tool implements OnDestroy {
     getDrawingAction(): SelectionAction {
         return {
             id: DrawingToolId.selectionService,
+            selectorId: this.currentSelector.id,
             selectedBox: this.selectedBox.copy(),
             selectionImageData: this.selectionImageData,
         };
