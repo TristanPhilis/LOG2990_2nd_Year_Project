@@ -234,7 +234,7 @@ export class SidebarComponent {
                 this.onButtonPressTop(this.sideBarToolsTopMap.get(SidebarToolID.shapes));
                 this.toolsService.setCurrentDrawingTool(DrawingToolId.polygonService);
             },
-            delete: () => {
+            4: () => {
                 this.clipBoard.delete();
             },
         };

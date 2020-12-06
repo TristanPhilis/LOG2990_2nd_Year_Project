@@ -240,7 +240,7 @@ export class SelectionService extends Tool implements OnDestroy {
         }
     }
 
-    private updateSelectedAreaPreview(): void {
+    updateSelectedAreaPreview(): void {
         const ctx = this.drawingService.previewCtx;
         this.drawingService.clearCanvas(ctx);
         this.drawSelectedBox();
