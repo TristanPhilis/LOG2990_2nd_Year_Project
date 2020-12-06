@@ -9,4 +9,5 @@ export abstract class Selector {
     constructor(protected drawingService: DrawingService) {}
     abstract drawSelectionBox(box: SelectionBox, shiftDown: boolean): void;
     abstract copyArea(box: SelectedBox): SelectionImageData;
+    abstract clearInitialSelectedZone(selectionImageData: SelectionImageData): void;
 }

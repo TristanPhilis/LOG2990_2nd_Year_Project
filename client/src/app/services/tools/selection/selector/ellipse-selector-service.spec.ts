@@ -51,7 +51,7 @@ describe('EllipseSelectorService', () => {
         const result = service.copyArea(selectedBox);
         expect(getClippedImageSpy).toHaveBeenCalled();
         expect(getContourImageSpy).toHaveBeenCalled();
-        expect(result.contours.length).toEqual(1);
+        expect(result.contour).toBeTruthy();
         expect(result.imageData).toBeTruthy();
         expect(result.contourImage).toBeTruthy();
     });
