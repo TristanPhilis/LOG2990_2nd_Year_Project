@@ -1,6 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { canvasTestHelper } from '@app/classes/canvas-test-helper';
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { SelectionService } from '@app/services/tools/selection/selection-service';
 import { UndoRedoService } from '@app/services/tools/undo-redo-service';
 import { ClipboardService } from './clipboard-service';
 
@@ -10,6 +11,7 @@ describe('ClipBoardService', () => {
     let mouseEventLClick: MouseEvent;
     let drawServiceSpy: jasmine.SpyObj<DrawingService>;
     let undoRedoServiceSpy: jasmine.SpyObj<UndoRedoService>;
+    let selectionServiceSpy: jasmine.SpyObj<SelectionService>;
 
     let baseCtxStub: CanvasRenderingContext2D;
     let selectionCtxStub: CanvasRenderingContext2D;
@@ -20,11 +22,13 @@ describe('ClipBoardService', () => {
     beforeEach(() => {
         drawServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas', 'fillCanvasAtLocation']);
         undoRedoServiceSpy = jasmine.createSpyObj('UndoRedoService', ['saveAction']);
+        selectionServiceSpy = jasmine.createSpyObj('SelectionService', ['']);
         TestBed.configureTestingModule({});
         TestBed.configureTestingModule({
             providers: [
                 { provide: DrawingService, useValue: drawServiceSpy },
                 { provide: UndoRedoService, useValue: undoRedoServiceSpy },
+                { provide: SelectionService, useValue: selectionServiceSpy },
             ],
         });
         service = TestBed.inject(ClipboardService);
