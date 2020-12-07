@@ -10,7 +10,7 @@ export class ClipboardService {
     private copiedSelectionImageData: SelectionImageData;
     private selectedBox: SelectedBox;
     private isItemCopied: boolean;
-    constructor(private selector: SelectionService, private drawingService: DrawingService) {
+    constructor(private selector: SelectionService, public drawingService: DrawingService) {
         this.isItemCopied = false;
     }
 
@@ -24,7 +24,7 @@ export class ClipboardService {
             contour: this.selector.selectionImageData.contour,
             contourImage: this.selector.selectionImageData.contourImage,
             initialSelectedPixels: this.selector.selectionImageData.initialSelectedPixels,
-        }
+        };
         this.selectedBox = this.translateToOrigin(this.selector.selectedBox.copy());
         this.selectedBox.angle = 0;
         this.isItemCopied = true;
