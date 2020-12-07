@@ -51,9 +51,13 @@ export class EllipseSelectorService extends Selector {
     }
 
     clearInitialSelectedZone(selectionImageData: SelectionImageData): void {
+        const contour = selectionImageData.contour;
+        if (!contour) {
+            return;
+        }
+
         const ctx = this.drawingService.baseCtx;
         ctx.fillStyle = 'white';
-        const contour = selectionImageData.contour as Path2D;
         ctx.fill(contour);
     }
 

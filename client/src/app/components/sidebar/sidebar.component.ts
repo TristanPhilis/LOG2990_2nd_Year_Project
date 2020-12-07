@@ -6,6 +6,7 @@ import { GuideComponent } from '@app/components/guide/guide.component';
 import { ExportPopupComponent } from '@app/components/popup/export-popup/export-popup.component';
 import { SavePopupComponent } from '@app/components/popup/save-popup/save-popup.component';
 import { SidebarTool } from '@app/components/sidebar/sidebar-tool/sidebar-tool';
+import { ClipboardService } from '@app/services/clipboard/clipboard-service';
 import { CanvasSizeService } from '@app/services/drawing/canvas-size-service';
 import { ToolsService } from '@app/services/tools/tools-service';
 import { UndoRedoService } from '@app/services/tools/undo-redo-service';
@@ -31,6 +32,7 @@ export class SidebarComponent {
         private dialog: MatDialog,
         private canvasSizeService: CanvasSizeService,
         public undoRedo: UndoRedoService,
+        private clipBoard: ClipboardService,
     ) {
         this.sideBarToolsTop = [
             { id: SidebarToolID.selection, name: 'Selection', defaultDrawingToolid: DrawingToolId.selectionService },
@@ -177,6 +179,19 @@ export class SidebarComponent {
             'C-S-z': () => {
                 this.undoRedo.redo();
             },
+            'C-c': () => {
+                this.clipBoard.copy();
+            },
+            'C-x': () => {
+                this.clipBoard.cut();
+            },
+            'C-v': () => {
+                this.clipBoard.paste();
+                if (this.toolsService.selectedSideBarToolID !== SidebarToolID.selection) {
+                    this.onButtonPressTop(this.sideBarToolsTopMap.get(SidebarToolID.selection));
+                    this.toolsService.updateOptionValue(Options.selectionType, SelectionType.rectangle);
+                }
+            },
         };
         const func: callback | undefined = kbd[keys];
         if (func) {
@@ -225,6 +240,9 @@ export class SidebarComponent {
             3: () => {
                 this.onButtonPressTop(this.sideBarToolsTopMap.get(SidebarToolID.shapes));
                 this.toolsService.setCurrentDrawingTool(DrawingToolId.polygonService);
+            },
+            delete: () => {
+                this.clipBoard.delete();
             },
         };
         const keys: string = this.getComposedKey(event);
