@@ -1,17 +1,18 @@
 import { TestBed } from '@angular/core/testing';
 import { canvasTestHelper } from '@app/classes/canvas-test-helper';
+import { SelectedBox } from '@app/classes/selected-box';
+import { SelectionAction } from '@app/classes/selection-action';
+import { SelectionImageData } from '@app/classes/selection-image-data';
 import { DrawingService } from '@app/services/drawing/drawing.service';
-import { SelectionService } from '@app/services/tools/selection/selection-service';
 import { UndoRedoService } from '@app/services/tools/undo-redo-service';
+import { DrawingToolId, SelectionType } from '@app/shared/enum';
 import { ClipboardService } from './clipboard-service';
 
 // tslint:disable:no-any
 describe('ClipBoardService', () => {
     let service: ClipboardService;
-    let mouseEventLClick: MouseEvent;
     let drawServiceSpy: jasmine.SpyObj<DrawingService>;
     let undoRedoServiceSpy: jasmine.SpyObj<UndoRedoService>;
-    let selectionServiceSpy: jasmine.SpyObj<SelectionService>;
 
     let baseCtxStub: CanvasRenderingContext2D;
     let selectionCtxStub: CanvasRenderingContext2D;
@@ -22,16 +23,17 @@ describe('ClipBoardService', () => {
     beforeEach(() => {
         drawServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas', 'fillCanvasAtLocation']);
         undoRedoServiceSpy = jasmine.createSpyObj('UndoRedoService', ['saveAction']);
-        selectionServiceSpy = jasmine.createSpyObj('SelectionService', ['']);
         TestBed.configureTestingModule({});
         TestBed.configureTestingModule({
             providers: [
                 { provide: DrawingService, useValue: drawServiceSpy },
                 { provide: UndoRedoService, useValue: undoRedoServiceSpy },
-                { provide: SelectionService, useValue: selectionServiceSpy },
             ],
         });
         service = TestBed.inject(ClipboardService);
+        spyOn((service as any).selector, 'onMouseDown');
+        spyOn((service as any).selector, 'onMouseMove');
+        spyOn((service as any).selector, 'onMouseUp');
         baseCtxStub = canvasTestHelper.canvas.getContext('2d') as CanvasRenderingContext2D;
         selectionCtxStub = canvasTestHelper.canvas.getContext('2d') as CanvasRenderingContext2D;
         previewCtxStub = canvasTestHelper.drawCanvas.getContext('2d') as CanvasRenderingContext2D;
@@ -42,12 +44,6 @@ describe('ClipBoardService', () => {
         service['drawingService'].baseCtx = baseCtxStub; // Jasmine doesnt copy properties with underlying data
         service['drawingService'].selectionCtx = selectionCtxStub;
         service['drawingService'].previewCtx = previewCtxStub;
-
-        mouseEventLClick = {
-            offsetX: 25,
-            offsetY: 25,
-            buttons: 1,
-        } as MouseEvent;
     });
 
     it('should be created', () => {
@@ -63,14 +59,7 @@ describe('ClipBoardService', () => {
     });
 
     it('should copy the imageData when copy is called when an area has been selected', () => {
-        const mouseEvent = {
-            offsetX: 50,
-            offsetY: 50,
-            buttons: 1,
-        } as MouseEvent;
-        (service as any).selector.onMouseDown(mouseEventLClick);
-        (service as any).selector.onMouseMove(mouseEvent);
-        (service as any).selector.onMouseUp(mouseEvent);
+        (service as any).isItemCopied = true;
         service.copy();
 
         expect((service as any).isItemCopied).toEqual(true);
@@ -84,29 +73,22 @@ describe('ClipBoardService', () => {
         expect((service as any).selector.isAreaSelected).toEqual(false);
     });
 
-    it('should delete the imageData when copy is called when an area has been selected', () => {
-        const mouseEvent = {
-            offsetX: 50,
-            offsetY: 50,
-            buttons: 1,
-        } as MouseEvent;
-        (service as any).selector.onMouseDown(mouseEventLClick);
-        (service as any).selector.onMouseMove(mouseEvent);
-        (service as any).selector.onMouseUp(mouseEvent);
+    it('should delete the imageData when delete is called when an area has been selected', () => {
+        const tempSelectionImageData: SelectionImageData = {};
+        const tempSelectionAction: SelectionAction = {
+            selectorId: SelectionType.ellipse,
+            selectedBox: new SelectedBox(),
+            selectionImageData: tempSelectionImageData,
+            id: DrawingToolId.selectionService,
+        };
+        spyOn((service as any).selector, 'getDrawingAction').and.returnValue(tempSelectionAction);
+        (service as any).selector.isAreaSelected = true;
         service.delete();
 
         expect((service as any).drawingService.clearCanvas).toHaveBeenCalled();
     });
 
     it('should call copy and delete when cut is called when an area has been selected', () => {
-        const mouseEvent = {
-            offsetX: 50,
-            offsetY: 50,
-            buttons: 1,
-        } as MouseEvent;
-        (service as any).selector.onMouseDown(mouseEventLClick);
-        (service as any).selector.onMouseMove(mouseEvent);
-        (service as any).selector.onMouseUp(mouseEvent);
         service.cut();
         expect(copySpy).toHaveBeenCalled();
         expect(deleteSpy).toHaveBeenCalled();
@@ -119,15 +101,9 @@ describe('ClipBoardService', () => {
     });
 
     it('should paste the copied image on the canvas when paste is called when something has been copied', () => {
-        const mouseEvent = {
-            offsetX: 50,
-            offsetY: 50,
-            buttons: 1,
-        } as MouseEvent;
-        (service as any).selector.onMouseDown(mouseEventLClick);
-        (service as any).selector.onMouseMove(mouseEvent);
-        (service as any).selector.onMouseUp(mouseEvent);
-        service.copy();
+        (service as any).selectedBox = new SelectedBox();
+        (service as any).copiedSelectionImageData = {};
+        (service as any).isItemCopied = true;
         service.paste();
 
         expect((service as any).selector.isAreaSelected).toEqual(true);

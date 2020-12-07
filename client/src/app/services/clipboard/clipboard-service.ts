@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { SelectedBox } from '@app/classes/selected-box';
+import { SelectionAction } from '@app/classes/selection-action';
 import { SelectionImageData } from '@app/classes/selection-image-data';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { SelectionService } from '@app/services/tools/selection/selection-service.ts';
@@ -10,6 +11,7 @@ export class ClipboardService {
     private copiedSelectionImageData: SelectionImageData;
     private selectedBox: SelectedBox;
     private isItemCopied: boolean;
+    private action: SelectionAction;
     constructor(private selector: SelectionService, public drawingService: DrawingService) {
         this.isItemCopied = false;
     }
@@ -42,9 +44,9 @@ export class ClipboardService {
         this.drawingService.clearCanvas(this.drawingService.selectionCtx);
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
         this.selector.isAreaSelected = false;
-        const action = this.selector.getDrawingAction();
-        action.selectionImageData.imageData = undefined;
-        this.selector.action.next(action);
+        this.action = this.selector.getDrawingAction();
+        this.action.selectionImageData.imageData = undefined;
+        this.selector.action.next(this.action);
     }
 
     paste(): void {
