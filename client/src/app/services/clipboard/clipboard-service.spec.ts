@@ -74,7 +74,8 @@ describe('ClipBoardService', () => {
 
         service.delete();
 
-        expect((service as any).selector.isAreaSelected).toEqual(false);
+        expect(drawServiceSpy.clearCanvas).not.toHaveBeenCalled();
+        expect(actionSpyObj.next).not.toHaveBeenCalled();
     });
 
     it('should delete the imageData when delete is called when an area has been selected', () => {
