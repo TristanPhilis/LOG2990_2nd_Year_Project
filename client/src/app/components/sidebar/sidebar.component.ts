@@ -192,9 +192,6 @@ export class SidebarComponent {
                     this.toolsService.updateOptionValue(Options.selectionType, SelectionType.rectangle);
                 }
             },
-            'C-l': () => {
-                this.clipBoard.delete();
-            },
         };
         const func: callback | undefined = kbd[keys];
         if (func) {
@@ -243,6 +240,9 @@ export class SidebarComponent {
             3: () => {
                 this.onButtonPressTop(this.sideBarToolsTopMap.get(SidebarToolID.shapes));
                 this.toolsService.setCurrentDrawingTool(DrawingToolId.polygonService);
+            },
+            delete: () => {
+                this.clipBoard.delete();
             },
         };
         const keys: string = this.getComposedKey(event);

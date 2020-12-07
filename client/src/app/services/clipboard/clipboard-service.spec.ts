@@ -72,10 +72,26 @@ describe('ClipBoardService', () => {
         expect((service as any).isItemCopied).toEqual(true);
     });
 
-    it('should not call copy and delete when cut is called when an area has been selected', () => {
-        service.cut();
+    it('should do nothing when delete is called when no area has been selected', () => {
+        (service as any).selector.isAreaSelected = false;
 
-        expect((service as any).isItemCopied).toEqual(false);
+        service.delete();
+
+        expect((service as any).selector.isAreaSelected).toEqual(false);
+    });
+
+    it('should delete the imageData when copy is called when an area has been selected', () => {
+        const mouseEvent = {
+            offsetX: 50,
+            offsetY: 50,
+            buttons: 1,
+        } as MouseEvent;
+        (service as any).selector.onMouseDown(mouseEventLClick);
+        (service as any).selector.onMouseMove(mouseEvent);
+        (service as any).selector.onMouseUp(mouseEvent);
+        service.delete();
+
+        expect((service as any).drawingService.clearCanvas).toHaveBeenCalled();
     });
 
     it('should call copy and delete when cut is called when an area has been selected', () => {
