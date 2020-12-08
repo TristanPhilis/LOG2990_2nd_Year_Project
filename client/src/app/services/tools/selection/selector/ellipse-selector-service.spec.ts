@@ -1,6 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { SelectedBox } from '@app/classes/selected-box';
 import { SelectionBox } from '@app/classes/selection-box';
+import { SelectionImageData } from '@app/classes/selection-image-data';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { EllipseSelectorService } from './ellipse-selector-service';
 
@@ -54,5 +55,16 @@ describe('EllipseSelectorService', () => {
         expect(result.contour).toBeTruthy();
         expect(result.imageData).toBeTruthy();
         expect(result.contourImage).toBeTruthy();
+    });
+
+    it('if no contour, should not clear anything', () => {
+        service.clearInitialSelectedZone({} as SelectionImageData);
+        expect(baseCtxSpy.fill).not.toHaveBeenCalled();
+    });
+
+    it('if there is a contour, should clear the area', () => {
+        const contour = new Path2D();
+        service.clearInitialSelectedZone({ contour } as SelectionImageData);
+        expect(baseCtxSpy.fill).toHaveBeenCalled();
     });
 });

@@ -1,7 +1,6 @@
 import { Injectable, Renderer2, RendererFactory2 } from '@angular/core';
 import { Box } from '@app/classes/box';
 import { Vec2 } from '@app/classes/vec2';
-import { DASHLINE_EMPTY, DASHLINE_FULL, SELECTION_CONTOUR_COLOUR } from '@app/shared/constant';
 
 @Injectable({
     providedIn: 'root',
@@ -42,14 +41,5 @@ export class CanvasManipulationService {
         const yTranslationAdjustment = yMirrorScale < 0 ? 2 * box.position.y + box.height : 0;
         ctx.translate(xTranslationAdjustment, yTranslationAdjustment);
         ctx.scale(xMirrorScale, yMirrorScale);
-    }
-
-    drawSelectionContour(ctx: CanvasRenderingContext2D, contour: Path2D): void {
-        ctx.strokeStyle = 'white';
-        ctx.stroke(contour);
-        ctx.setLineDash([DASHLINE_EMPTY, DASHLINE_FULL]);
-        ctx.strokeStyle = SELECTION_CONTOUR_COLOUR;
-        ctx.stroke(contour);
-        ctx.setLineDash([]);
     }
 }
