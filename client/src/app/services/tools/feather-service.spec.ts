@@ -64,7 +64,7 @@ describe('Service: Feather', () => {
         expect(saveActionSpy).toHaveBeenCalled();
     });
 
-    it('mouseMove should do nothing if he is triggerred with an other button then left click', () => {
+    it('mouseMove should do nothing if he is triggerred with an other button than left click', () => {
         const wrongEvent = { buttons: 0 } as MouseEvent;
         service.onMouseMove(wrongEvent);
         expect(drawSpy).not.toHaveBeenCalled();
@@ -72,24 +72,11 @@ describe('Service: Feather', () => {
 
     it(' mouseMove should  call draw if mouse is  down and pathData greater than 2', () => {
         service.mouseDown = true;
-        // const addPointToPathSpy = spyOn<any>(service, 'addPointToPath').and.callThrough();
         service['pathData'].push({ x: 0, y: 0 });
         service['pathData'].push({ x: 1, y: 1 });
         service['pathData'].push({ x: 2, y: 2 });
         service.onMouseMove(mouseEvent);
         expect(drawSpy).toHaveBeenCalled();
-        // expect(addPointToPathSpy).toHaveBeenCalled();
-    });
-
-    it(' mouseMove should  call draw if mouse is  down and pathData greater than 2', () => {
-        service.mouseDown = true;
-        // const addPointToPathSpy = spyOn<any>(service, 'addPointToPath').and.callThrough();
-        service['pathData'].push({ x: 0, y: 0 });
-        service['pathData'].push({ x: 1, y: 1 });
-        service['pathData'].push({ x: 2, y: 2 });
-        service.onMouseMove(mouseEvent);
-        expect(drawSpy).toHaveBeenCalled();
-        // expect(addPointToPathSpy).toHaveBeenCalled();
     });
 
     it('mouseWheel should change the angle by 15 degrees if is betwen 0 and 360', () => {
@@ -135,11 +122,8 @@ describe('Service: Feather', () => {
         let endAngle = 0;
         // It's never gonna be null, need to do this to test
         // tslint:disable-next-line: no-non-null-assertion
-        let angle = service.options.toolOptions.get(Options.angle)!;
+        const angle = service.options.toolOptions.get(Options.angle)!;
         angle.value = ROTATION_COMPLETE;
-        // It's never gonna be null, need to do this to test
-        // tslint:disable-next-line: no-non-null-assertion
-        angle = service.getDrawingAction().options.toolOptions.get(Options.angle)!;
         if (angle) {
             startAngle = angle.value;
         }
@@ -149,9 +133,6 @@ describe('Service: Feather', () => {
         } as WheelEvent;
 
         service.onWheel(wheelEvent);
-        // It's never gonna be null, need to do this to test
-        // tslint:disable-next-line: no-non-null-assertion
-        angle = service.getDrawingAction().options.toolOptions.get(Options.angle)!;
         if (angle) {
             endAngle = angle.value;
         }
@@ -163,11 +144,8 @@ describe('Service: Feather', () => {
         let endAngle = 0;
         // It's never gonna be null, need to do this to test
         // tslint:disable-next-line: no-non-null-assertion
-        let angle = service.options.toolOptions.get(Options.angle)!;
+        const angle = service.options.toolOptions.get(Options.angle)!;
         angle.value = -ANGLE_ROTATION;
-        // It's never gonna be null, need to do this to test
-        // tslint:disable-next-line: no-non-null-assertion
-        angle = service.getDrawingAction().options.toolOptions.get(Options.angle)!;
         if (angle) {
             startAngle = angle.value;
         }
@@ -177,16 +155,13 @@ describe('Service: Feather', () => {
         } as WheelEvent;
 
         service.onWheel(wheelEvent);
-        // It's never gonna be null, need to do this to test
-        // tslint:disable-next-line: no-non-null-assertion
-        angle = service.getDrawingAction().options.toolOptions.get(Options.angle)!;
         if (angle) {
             endAngle = angle.value;
         }
         expect(endAngle).toEqual(startAngle + ROTATION_COMPLETE + Math.sign(wheelEvent.deltaY) * ANGLE_ROTATION);
     });
 
-    it('getCoordsToAdd should be call', () => {
+    it('onWheel should call fillFromRotation if left click is triggered', () => {
         service.mouseDown = true;
         service['pathData'].push({ x: 0, y: 0 });
         service['pathData'].push({ x: 1, y: 1 });
