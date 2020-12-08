@@ -34,6 +34,10 @@ export const MAX_TOLERANCE = 100;
 export const MIN_TOLERANCE = 0;
 export const PIXEL_INTERVAL = 4;
 
+export const DIVIDER_ANGLE = 12;
+export const ANGLE_ROTATION_BASE = Math.PI / DIVIDER_ANGLE;
+export const ANGLE_ROTATION_ONE = Math.PI / ROTATION_HALF;
+
 export const DEFAULT_OPTIONS = {
     size: 1,
     angle: 0,
