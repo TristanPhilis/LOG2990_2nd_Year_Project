@@ -69,10 +69,12 @@ describe('PipetteService', () => {
 
     it('should return the right color of the pixel with detectColor()', () => {
         // tslint:disable-next-line:no-magic-numbers
-        const blackColor = new Color(255, 255, 255, 0);
+        const blackColor = new Color(255, 255, 255);
 
         const result: Color = (service as any).detectColor({ x: 0, y: 0 } as Vec2);
-        expect(result).toEqual(blackColor);
+        expect(result.r).toEqual(blackColor.r);
+        expect(result.g).toEqual(blackColor.g);
+        expect(result.b).toEqual(blackColor.b);
     });
 
     it('should have called getPositionFromMouse()', () => {

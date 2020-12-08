@@ -2,7 +2,11 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Color, MAX_RGBA_VALUE } from '@app/classes/color';
+import { ColorPickerData } from '@app/classes/color-picker-data';
 import { ValidatorService } from '@app/services/validator-service';
+
+const PRIMARY_TITLE = 'primaire';
+const SECONDARY_TITLE = 'secondaire';
 
 @Component({
     selector: 'app-color-picker',
@@ -18,7 +22,7 @@ export class ColorPickerComponent implements OnInit {
         private fb: FormBuilder,
         private validatorService: ValidatorService,
         public dialogRef: MatDialogRef<ColorPickerComponent>,
-        @Inject(MAT_DIALOG_DATA) public colorHistory: Color[],
+        @Inject(MAT_DIALOG_DATA) public colorPickerData: ColorPickerData,
     ) {
         this.colorForm = this.fb.group({
             r: ['', [Validators.required, Validators.min(0), Validators.max(MAX_RGBA_VALUE), this.validatorService.isNumber()]],
@@ -84,11 +88,7 @@ export class ColorPickerComponent implements OnInit {
         this.updateColorForm(false);
     }
 
-    onSelect(): void {
-        if (this.colorForm.valid) {
-            this.dialogRef.close(this.color);
-        } else {
-            alert('Select a valid color');
-        }
+    get colorTitleText(): string {
+        return this.colorPickerData.isPrimaryColor ? PRIMARY_TITLE : SECONDARY_TITLE;
     }
 }

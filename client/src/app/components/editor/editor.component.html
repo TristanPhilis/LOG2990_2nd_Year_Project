@@ -1,11 +1,11 @@
 <div class="container">
-    <mat-sidenav-container class="example-container">
+    <mat-sidenav-container>
         <mat-sidenav mode="side" opened [disableClose]="true">
             <app-sidebar></app-sidebar>
         </mat-sidenav>
     </mat-sidenav-container>
     <mat-sidenav-container>
-        <mat-sidenav #toolAttributeSidenav mode="side" closed>
+        <mat-sidenav class="attribute-container" #toolAttributeSidenav mode="side" closed>
             <app-attribute-panel></app-attribute-panel>
         </mat-sidenav>
     </mat-sidenav-container>
