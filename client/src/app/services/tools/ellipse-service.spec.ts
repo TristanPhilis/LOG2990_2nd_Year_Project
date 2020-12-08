@@ -4,7 +4,7 @@ import { Color } from '@app/classes/color';
 import { Vec2 } from '@app/classes/vec2';
 import { ColorSelectionService } from '@app/services/color/color-selection-service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
-import { SHIFT_KEY } from '@app/shared/constant';
+import { KEYS } from '@app/shared/constant';
 import { EllipseService } from './ellipse-service';
 
 // tslint:disable:no-any
@@ -30,7 +30,7 @@ describe('EllipseServiceService', () => {
         colorServiceSpy.secondaryColor = defaultColor;
         baseCtxStub = canvasTestHelper.canvas.getContext('2d') as CanvasRenderingContext2D;
         previewCtxStub = canvasTestHelper.drawCanvas.getContext('2d') as CanvasRenderingContext2D;
-        drawServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas']);
+        drawServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas', 'autoSave']);
 
         TestBed.configureTestingModule({
             providers: [
@@ -125,7 +125,7 @@ describe('EllipseServiceService', () => {
     it('onKeyDown Should call drawEllipse with shiftDown to true when shift is pressed and mouse is down', () => {
         service.onMouseDown(mouseEventLClick);
         const keyEvent = {
-            key: SHIFT_KEY,
+            key: KEYS.SHIFT,
         } as KeyboardEvent;
 
         service.onKeyDown(keyEvent);
@@ -136,7 +136,7 @@ describe('EllipseServiceService', () => {
     it('onKeyUp Should call drawEllipse with shiftDown to false when shift is released and mouse is down', () => {
         service.onMouseDown(mouseEventLClick);
         const keyEvent = {
-            key: SHIFT_KEY,
+            key: KEYS.SHIFT,
         } as KeyboardEvent;
 
         service.onKeyUp(keyEvent);
@@ -147,7 +147,7 @@ describe('EllipseServiceService', () => {
     it('key event Should not call drawEllipse when mouse is not down', () => {
         service.mouseDown = false;
         const keyEvent = {
-            key: SHIFT_KEY,
+            key: KEYS.SHIFT,
         } as KeyboardEvent;
 
         service.onKeyDown(keyEvent);

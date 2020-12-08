@@ -1,7 +1,9 @@
 import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { CarouselComponent } from '@app/components/carousel/carousel.component';
+import { CreateNewDrawingComponent } from '@app/components/create-new-drawing/create-new-drawing.component';
 import { GuideComponent } from '@app/components/guide/guide.component';
+import { DrawingService } from '@app/services/drawing/drawing.service';
 
 @Component({
     selector: 'app-main-page',
@@ -10,22 +12,39 @@ import { GuideComponent } from '@app/components/guide/guide.component';
 })
 export class MainPageComponent {
     readonly title: string = 'LOG2990';
+    canContinueDrawing: boolean;
+    constructor(public dialog: MatDialog, private drawingService: DrawingService) {
+        this.canContinueDrawing = localStorage.getItem(this.drawingService.lastDrawingKey) !== '';
+    }
 
-    constructor(public dialog: MatDialog) {}
+    createNew(): void {
+        this.drawingService.fillCanvas('white');
+        this.drawingService.autoSave();
+    }
 
     openGuide(): void {
-        const dialogRef = this.dialog.open(GuideComponent);
-
-        dialogRef.afterClosed().subscribe((result) => {
-            console.log(`Dialog result: ${result}`);
-        });
+        this.dialog.open(GuideComponent);
     }
 
     openCarousel(): void {
-        const dialogRef = this.dialog.open(CarouselComponent, { width: '90%', height: '70%' });
+        this.dialog.open(CarouselComponent, { width: '90%', height: '70%' });
+    }
 
-        dialogRef.afterClosed().subscribe((result) => {
-            console.log(`Dialog result: ${result}`);
+    continueDrawing(): void {
+        const newDrawingRef = this.dialog.open(CreateNewDrawingComponent);
+        newDrawingRef.afterClosed().subscribe((result) => {
+            this.sendDrawingToEditor(result);
         });
+    }
+
+    // tslint:disable-next-line: no-any Result is of any type
+    sendDrawingToEditor(result: any): void {
+        if (result) {
+            this.drawingService.clearCanvas(this.drawingService.baseCtx);
+            this.drawingService.fillCanvas('white');
+            this.drawingService.sendDrawing(localStorage.getItem(this.drawingService.lastDrawingKey) || '{}');
+
+            this.drawingService.loadDrawing(this.drawingService.baseCtx);
+        }
     }
 }

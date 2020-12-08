@@ -16,6 +16,7 @@ export enum SidebarToolID {
     openGuide,
     undo,
     redo,
+    aerosol,
     grid,
 }
 
@@ -30,6 +31,7 @@ export enum DrawingToolId {
     polygonService,
     bucketService,
     pipetteService,
+    aerosolService,
     stampService,
     featherService,
 }
@@ -90,6 +92,8 @@ export enum Options {
     emissionPerSecond,
     imageChoice,
     selectionType,
+    spraySize,
+    sprayDiameter,
 }
 
 export enum CanvasAnchorsId {

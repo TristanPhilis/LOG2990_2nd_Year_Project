@@ -1,8 +1,8 @@
 <div class ="dialog">
-      <ng-container *ngIf="drawingsDataService.drawingsInfo?.value.length === 0
-        || (drawingsDataService.filteredDrawings?.length === 0 && drawingsDataService.tags?.length > 0); else elseBlock">{{displayedMessage}}</ng-container>
+      <ng-container *ngIf="carouselService.drawingsInfo?.value.length === 0
+        || (carouselService.filteredDrawings?.length === 0 && carouselService.tags?.length > 0); else elseBlock">{{displayedMessage}}</ng-container>
         <ng-template #elseBlock>
-        <li *ngFor="let currentDrawing of drawingsDataService.currentDrawings; let i = index">
+        <li *ngFor="let currentDrawing of carouselService.currentDrawings; let i = index">
         <button class="load" mat-raised-button mat-dialog-close routerLink="/editor" routerLinkActive="active" (click)="loadDrawing(currentDrawing)">
           <mat-card class="example-card">
           <mat-card-header>
@@ -17,8 +17,8 @@
           </mat-card>
         </button>
           <button mat-raised-button
-          (click)="deleteDrawing(drawingsDataService.drawingsInfo?.
-          value[getDrawingPosition(drawingsDataService.drawingCounter + i - 1)].id)">
+          (click)="deleteDrawing(carouselService.drawingsInfo?.
+          value[getDrawingPosition(carouselService.drawingCounter + i - 1)].id)">
           <mat-icon>
           delete
           </mat-icon></button>
@@ -30,12 +30,12 @@
       </ng-template>
         <mat-form-field>
         <mat-label>Tag</mat-label>
-        <input matInput [formControl]="drawingsDataService.tagInput">
-        <mat-error *ngIf="drawingsDataService.tagInput?.invalid">Ce tag ne respecte pas les conditions mentionnées plus haut</mat-error>
+        <input matInput [formControl]="carouselService.tagInput">
+        <mat-error *ngIf="carouselService.tagInput?.invalid">Ce tag ne respecte pas les conditions mentionnées plus haut</mat-error>
     </mat-form-field>
-    <button mat-icon-button (click)="addTag()" [disabled]="drawingsDataService.tagInput?.invalid"><mat-icon>add</mat-icon></button>
+    <button mat-icon-button (click)="addTag()" [disabled]="carouselService.tagInput?.invalid"><mat-icon>add</mat-icon></button>
     <div class="tags-container">
-        <div class="tag" *ngFor="let tag of drawingsDataService.tags">
+        <div class="tag" *ngFor="let tag of carouselService.tags">
             <span>{{tag}}</span>
             <button mat-icon-button (click)="deleteTag(tag)"><mat-icon>delete</mat-icon></button>
         </div>

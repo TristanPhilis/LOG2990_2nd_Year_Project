@@ -8,14 +8,12 @@ import { AttributePanelComponent } from './attribute-panel.component';
 describe('AttributePanelComponent', () => {
     let component: AttributePanelComponent;
     let fixture: ComponentFixture<AttributePanelComponent>;
-    // let toolsService: ToolsService;
 
     beforeEach(
         waitForAsync(() => {
             TestBed.configureTestingModule({
                 declarations: [AttributePanelComponent, MockComponent(SidebarColorOptionsComponent)],
             }).compileComponents();
-            // toolsService = TestBed.inject(ToolsService);
         }),
     );
 
@@ -37,6 +35,5 @@ describe('AttributePanelComponent', () => {
 
     it('should update ToolOption to the correct value', () => {
         component.updateToolOptionValue(Options.texture, Texture.one);
-        // expect(toolsService.currentDrawingToolOptions?.get(Options.texture)?.value).toEqual(Texture.one); // Not finished
     });
 });

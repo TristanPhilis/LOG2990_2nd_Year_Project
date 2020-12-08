@@ -20,18 +20,18 @@ export class ColorSelectionService {
         }
     }
 
-    getcolorsHistory(): Color[] {
+    getColorsHistory(): Color[] {
         return this.colorsHistory;
     }
 
     updateHistory(color: Color): void {
         const colorIndex = this.findColorInHistory(color);
         if (colorIndex < 0) {
-            this.colorsHistory.shift();
+            this.colorsHistory.pop();
         } else {
             this.colorsHistory.splice(colorIndex, 1);
         }
-        this.colorsHistory.push(color);
+        this.colorsHistory.unshift(color);
     }
 
     private findColorInHistory(color: Color): number {

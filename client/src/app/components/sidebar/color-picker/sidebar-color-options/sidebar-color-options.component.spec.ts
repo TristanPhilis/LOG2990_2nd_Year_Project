@@ -23,7 +23,7 @@ describe('SidebarColorOptionsComponent', () => {
 
             colorSelectionServiceSpy = jasmine.createSpyObj(
                 'ColorSelectionService',
-                ['updateHistory', 'selectNewColor', 'getcolorsHistory', 'swap'],
+                ['updateHistory', 'selectNewColor', 'getColorsHistory', 'swap'],
                 {
                     primaryColor: defaultColor,
                     secondaryColor: defaultColor,
@@ -88,23 +88,15 @@ describe('SidebarColorOptionsComponent', () => {
 
     it('Changing the alpha value should change the color service primary color', () => {
         const expectedColor = new Color(0, 0, 0, 0);
-        const event = {
-            target: {
-                ValueAsNumber: 0,
-            },
-        };
-        component.onAlphaChange(event, true);
+        const value = 0;
+        component.onAlphaChange(value, true);
         expect(colorSelectionServiceSpy.selectNewColor).toHaveBeenCalledWith(expectedColor, true);
     });
 
     it('Changing the alpha value should change the color service secondary color', () => {
         const expectedColor = new Color(0, 0, 0, 0);
-        const event = {
-            target: {
-                ValueAsNumber: 0,
-            },
-        };
-        component.onAlphaChange(event, false);
+        const value = 0;
+        component.onAlphaChange(value, false);
         expect(colorSelectionServiceSpy.selectNewColor).toHaveBeenCalledWith(expectedColor, false);
     });
 
@@ -124,5 +116,11 @@ describe('SidebarColorOptionsComponent', () => {
         component.onHistoryColorSelected(rightClick, defaultColor);
         expect(colorSelectionServiceSpy.updateHistory).toHaveBeenCalledWith(defaultColor);
         expect(colorSelectionServiceSpy.selectNewColor).toHaveBeenCalledWith(defaultColor, false);
+    });
+
+    it('disableContextMenu should call preventDefault on contextMenu events', () => {
+        const eventSpyObj = jasmine.createSpyObj('MouseEvent', ['preventDefault']);
+        component.disableContextMenu(eventSpyObj);
+        expect(eventSpyObj.preventDefault).toHaveBeenCalled();
     });
 });

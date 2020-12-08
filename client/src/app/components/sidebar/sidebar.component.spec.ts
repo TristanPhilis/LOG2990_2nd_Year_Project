@@ -3,7 +3,7 @@ import { MatDialog, MatDialogModule, MatDialogRef } from '@angular/material/dial
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { GuideComponent } from '@app/components/guide/guide.component';
-import { DrawingService } from '@app/services/drawing/drawing.service';
+import { CanvasSizeService } from '@app/services/drawing/canvas-size-service';
 import { ToolsService } from '@app/services/tools/tools-service';
 import { UndoRedoService } from '@app/services/tools/undo-redo-service';
 import { DrawingToolId, SidebarToolID } from '@app/shared/enum';
@@ -19,10 +19,8 @@ describe('SidebarComponent', () => {
     let getComposedKeySpy: jasmine.Spy<any>;
     let keyEvent: KeyboardEvent;
     let toolsService: ToolsService;
-    let drawServiceSpy: jasmine.SpyObj<DrawingService>;
+    let canvasSizeServiceSpy: jasmine.SpyObj<CanvasSizeService>;
     let undoRedoServiceSpy: jasmine.SpyObj<UndoRedoService>;
-    // let toolStub: ToolStub;
-    // let toolsServiceSpy: jasmine.SpyObj<ToolsService>;
     let dialogSpy: jasmine.SpyObj<MatDialog>;
     let dialogRefSpyObj: jasmine.SpyObj<MatDialogRef<GuideComponent, any>>;
 
@@ -32,23 +30,19 @@ describe('SidebarComponent', () => {
             dialogRefSpyObj = jasmine.createSpyObj({ afterClosed: of({}), close: null });
             dialogSpy.open.and.returnValue(dialogRefSpyObj);
 
-            drawServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas']);
+            canvasSizeServiceSpy = jasmine.createSpyObj('CanvasSizeService', ['restoreInitialSize']);
 
             undoRedoServiceSpy = jasmine.createSpyObj('UndoRedoService', ['undo', 'redo', 'clearPile']);
             undoRedoServiceSpy.undoPile = [];
             undoRedoServiceSpy.redoPile = [];
 
-            // toolStub = new ToolStub({} as DrawingService, {} as UndoRedoService, {} as ColorSelectionService);
-            // toolsServiceSpy = jasmine.createSpyObj('ToolsService', ['closeToolSidenav', 'openToolSidenav']);
-            // toolsServiceSpy.currentDrawingTool = toolStub;
             TestBed.configureTestingModule({
                 imports: [MatDialogModule, BrowserModule, BrowserAnimationsModule],
                 declarations: [SidebarComponent],
                 providers: [
-                    { provide: DrawingService, useValue: drawServiceSpy },
+                    { provide: CanvasSizeService, useValue: canvasSizeServiceSpy },
                     { provide: MatDialog, useValue: dialogSpy },
                     { provide: UndoRedoService, useValue: undoRedoServiceSpy },
-                    // { provide: ToolsService, useValue: toolsServiceSpy },
                 ],
             }).compileComponents();
             toolsService = TestBed.inject(ToolsService);
@@ -66,15 +60,6 @@ describe('SidebarComponent', () => {
         expect(component).toBeTruthy();
     });
 
-    // openCloseSidenav
-    it('should close tool sidenav if same sidenav tool is clicked', () => {
-        // toolsService.openToolSidenav();
-        // toolsService._selectedSideBarToolID = sidebarToolID.pipette;
-        // component.openCloseSidenav(sidebarToolID.pipette);
-        // expect(toolsServiceSpy.closeToolSidenav).toHaveBeenCalled();
-    });
-
-    // getComposedKey
     it('should return the string for the ctrl+key that is pressed', () => {
         keyEvent = { ctrlKey: true, key: 'u' } as KeyboardEvent;
         expect(getComposedKeySpy(keyEvent)).toEqual('C-u');
@@ -97,7 +82,7 @@ describe('SidebarComponent', () => {
     it('should clear Canvas with onKeyDown', () => {
         keyEvent = { ctrlKey: true, key: 'o' } as KeyboardEvent;
         component.onKeyDown(keyEvent);
-        expect(drawServiceSpy.clearCanvas).toHaveBeenCalled();
+        expect(canvasSizeServiceSpy.restoreInitialSize).toHaveBeenCalled();
     });
     it('should trigger export with onKeyDown', () => {
         const onButtonPressBottomSpy = spyOn<any>(component, 'onButtonPressBottom');

@@ -7,7 +7,7 @@ import { catchError } from 'rxjs/operators';
 @Injectable({
     providedIn: 'root',
 })
-export class IndexService {
+export class WebRequestService {
     private readonly BASE_URL: string = 'http://localhost:3000/api/index';
     nextDrawingId: number;
 

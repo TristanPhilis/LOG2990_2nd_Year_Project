@@ -82,6 +82,7 @@ export class EraserService extends Tool {
                 ctx.fillRect(box.position.x, box.position.y, box.width, box.height);
             }
         }
+        this.drawingService.autoSave();
     }
 
     getDrawingAction(): DrawingAction {

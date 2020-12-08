@@ -107,6 +107,7 @@ export class PolygonService extends Tool {
                 ctx.closePath();
             }
         }
+        this.drawingService.autoSave();
     }
 
     // equations found here: https://stackoverflow.com/questions/3436453/calculate-coordinates-of-a-regular-polygons-vertices

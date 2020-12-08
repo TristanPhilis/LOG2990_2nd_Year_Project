@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Tool } from '@app/classes/tool';
 import { ToolOption } from '@app/classes/tool-option';
-import { BrushService } from '@app/services/tools/brush.service';
+import { BrushService } from '@app/services/tools/brush-service';
 import { BucketService } from '@app/services/tools/bucket-service';
 import { EllipseService } from '@app/services/tools/ellipse-service';
 import { EraserService } from '@app/services/tools/eraser-service';
@@ -12,6 +12,7 @@ import { PipetteService } from '@app/services/tools/pipette-service';
 import { PolygonService } from '@app/services/tools/polygon-service';
 import { RectangleService } from '@app/services/tools/rectangle-service';
 import { SelectionService } from '@app/services/tools/selection/selection-service';
+import { SprayService } from '@app/services/tools/spray-service';
 import { DrawingToolId, Options, SidebarToolID } from '@app/shared/enum';
 import { BehaviorSubject } from 'rxjs';
 import { StampService } from './stamp-service';
@@ -38,6 +39,7 @@ export class ToolsService {
         polygonService: PolygonService,
         bucketService: BucketService,
         pipetteService: PipetteService,
+        sprayService: SprayService,
         stampService: StampService,
         featherService: FeatherService,
     ) {
@@ -53,6 +55,7 @@ export class ToolsService {
             polygonService,
             bucketService,
             pipetteService,
+            sprayService,
             stampService,
             featherService,
         ];
@@ -69,10 +72,6 @@ export class ToolsService {
     setCurrentDrawingTool(newToolID: DrawingToolId): void {
         this.currentDrawingTool = this.tools[newToolID];
         this.currentDrawingToolID = newToolID;
-    }
-
-    toggleToolSidenav(): void {
-        this.toolSidenavToggle.next(!this.toolSidenavToggle.getValue());
     }
 
     openToolSidenav(): void {

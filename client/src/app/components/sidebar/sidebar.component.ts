@@ -6,7 +6,8 @@ import { GuideComponent } from '@app/components/guide/guide.component';
 import { ExportPopupComponent } from '@app/components/popup/export-popup/export-popup.component';
 import { SavePopupComponent } from '@app/components/popup/save-popup/save-popup.component';
 import { SidebarTool } from '@app/components/sidebar/sidebar-tool/sidebar-tool';
-import { DrawingService } from '@app/services/drawing/drawing.service';
+import { ClipboardService } from '@app/services/clipboard/clipboard-service';
+import { CanvasSizeService } from '@app/services/drawing/canvas-size-service';
 import { ToolsService } from '@app/services/tools/tools-service';
 import { UndoRedoService } from '@app/services/tools/undo-redo-service';
 import { DrawingToolId, Options, SelectionType, SidebarToolID } from '@app/shared/enum';
@@ -22,17 +23,16 @@ export class SidebarComponent {
     sideBarToolsTop: SidebarTool[];
     sideBarToolsBottom: SidebarTool[];
     sideBarUndoRedoButtons: SidebarTool[];
-    sideBarToolsTopMap: Map<SidebarToolID, SidebarTool> = new Map<SidebarToolID, SidebarTool>();
-    sideBarToolsBottomMap: Map<SidebarToolID, SidebarTool> = new Map<SidebarToolID, SidebarTool>();
+    private sideBarToolsTopMap: Map<SidebarToolID, SidebarTool> = new Map<SidebarToolID, SidebarTool>();
 
-    showDrawingTools: boolean;
     isDialogOpen: boolean;
 
     constructor(
         private toolsService: ToolsService,
         private dialog: MatDialog,
-        private drawingService: DrawingService,
+        private canvasSizeService: CanvasSizeService,
         public undoRedo: UndoRedoService,
+        private clipBoard: ClipboardService,
     ) {
         this.sideBarToolsTop = [
             { id: SidebarToolID.selection, name: 'Selection', defaultDrawingToolid: DrawingToolId.selectionService },
@@ -45,6 +45,7 @@ export class SidebarComponent {
             { id: SidebarToolID.stamp, name: 'Étampe', defaultDrawingToolid: DrawingToolId.stampService },
             { id: SidebarToolID.pipette, name: 'Pipette', defaultDrawingToolid: DrawingToolId.pipetteService },
             { id: SidebarToolID.eraser, name: 'Efface', defaultDrawingToolid: DrawingToolId.eraserService },
+            { id: SidebarToolID.aerosol, name: 'aerosol', defaultDrawingToolid: DrawingToolId.aerosolService },
         ];
 
         this.sideBarUndoRedoButtons = [
@@ -61,9 +62,6 @@ export class SidebarComponent {
         ];
         this.sideBarToolsTop.forEach((object) => {
             this.sideBarToolsTopMap.set(object.id, object);
-        });
-        this.sideBarToolsBottom.forEach((object) => {
-            this.sideBarToolsBottomMap.set(object.id, object);
         });
     }
 
@@ -88,12 +86,7 @@ export class SidebarComponent {
     onButtonPressBottom(id: SidebarToolID): void {
         switch (id) {
             case SidebarToolID.createNew: {
-                this.undoRedo.clearPile();
-                this.isDialogOpen = true;
-                const dialogRef = this.dialog.open(CreateNewDrawingComponent);
-                dialogRef.afterClosed().subscribe(() => {
-                    this.isDialogOpen = false;
-                });
+                this.createNewDrawing();
                 break;
             }
             case SidebarToolID.openGuide: {
@@ -169,8 +162,7 @@ export class SidebarComponent {
         const keys: string = this.getComposedKey(event);
         const kbd: { [id: string]: callback } = {
             'C-o': () => {
-                this.drawingService.clearCanvas(this.drawingService.baseCtx);
-                this.drawingService.clearCanvas(this.drawingService.previewCtx);
+                this.createNewDrawing();
             },
             'C-e': () => {
                 this.onButtonPressBottom(SidebarToolID.exportCurrent);
@@ -186,6 +178,19 @@ export class SidebarComponent {
             },
             'C-S-z': () => {
                 this.undoRedo.redo();
+            },
+            'C-c': () => {
+                this.clipBoard.copy();
+            },
+            'C-x': () => {
+                this.clipBoard.cut();
+            },
+            'C-v': () => {
+                this.clipBoard.paste();
+                if (this.toolsService.selectedSideBarToolID !== SidebarToolID.selection) {
+                    this.onButtonPressTop(this.sideBarToolsTopMap.get(SidebarToolID.selection));
+                    this.toolsService.updateOptionValue(Options.selectionType, SelectionType.rectangle);
+                }
             },
         };
         const func: callback | undefined = kbd[keys];
@@ -212,17 +217,21 @@ export class SidebarComponent {
                 this.toolsService.setCurrentDrawingTool(DrawingToolId.featherService);
             },
 
+            a: () => this.onButtonPressTop(this.sideBarToolsTopMap.get(SidebarToolID.aerosol)),
             b: () => this.onButtonPressTop(this.sideBarToolsTopMap.get(SidebarToolID.paintBucket)),
             e: () => this.onButtonPressTop(this.sideBarToolsTopMap.get(SidebarToolID.eraser)),
             l: () => this.onButtonPressTop(this.sideBarToolsTopMap.get(SidebarToolID.line)),
             r: () => {
                 this.onButtonPressTop(this.sideBarToolsTopMap.get(SidebarToolID.selection));
-                this.toolsService.updateOptionValue(Options.selectionType, SelectionType.ellipse);
+                this.toolsService.updateOptionValue(Options.selectionType, SelectionType.rectangle);
             },
-
             s: () => {
                 this.onButtonPressTop(this.sideBarToolsTopMap.get(SidebarToolID.selection));
                 this.toolsService.updateOptionValue(Options.selectionType, SelectionType.ellipse);
+            },
+            v: () => {
+                this.onButtonPressTop(this.sideBarToolsTopMap.get(SidebarToolID.selection));
+                this.toolsService.updateOptionValue(Options.selectionType, SelectionType.magic);
             },
             i: () => this.onButtonPressTop(this.sideBarToolsTopMap.get(SidebarToolID.pipette)),
 
@@ -237,12 +246,25 @@ export class SidebarComponent {
                 this.onButtonPressTop(this.sideBarToolsTopMap.get(SidebarToolID.shapes));
                 this.toolsService.setCurrentDrawingTool(DrawingToolId.polygonService);
             },
+            delete: () => {
+                this.clipBoard.delete();
+            },
         };
         const keys: string = this.getComposedKey(event);
         if (kbd[keys]) {
             const func: callback = kbd[keys];
             func();
         }
+    }
+
+    private createNewDrawing(): void {
+        this.undoRedo.clearPile();
+        this.isDialogOpen = true;
+        const dialogRef = this.dialog.open(CreateNewDrawingComponent);
+        dialogRef.afterClosed().subscribe(() => {
+            this.canvasSizeService.restoreInitialSize();
+            this.isDialogOpen = false;
+        });
     }
 
     get showUndo(): boolean {
