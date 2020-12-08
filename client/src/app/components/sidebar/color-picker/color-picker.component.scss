@@ -1,25 +1,32 @@
-.color-picker-wrapper {
-    width: 350px;
-    height: 300px;
-    background-color: #555555;
-
+.container {
+    width: 400px;
+    height: 250px;
+    display: flex;
+    flex-direction: column;
 }
 
-.palette-wrapper {
+.top-section-container {
+    display: flex;
+}
+
+.palette-container {
     width: 60%;
-    height: 70%;
-    padding: 10px 10px;
+    margin: 10px;
+    border-radius: 5px;
+    border: 2px solid black;
 }
 
-.slider-wrapper {
+.slider-container {
     width: 5%;
-    height: 70%;
-    padding: 10px 0px 10px 0px;
+    margin: 10px;
+    border-radius: 5px;
+    border: 2px solid black;
 }
 
-.prewiew-wrapper {
-    width:35%;
-    height: 70%;
+.prewiew-container {
+    width: 35%;
+    display: flex;
+    flex-direction: column;
     padding: 10px 10px;
     text-align: center;
 }
@@ -28,32 +35,36 @@
     width: 60px;
     height: 50px;
     border-radius: 5px;
-    border: 2px solid white;
-    margin: 5px auto 10px auto ;
-    
+    border: 2px solid black;
+    margin: 5px auto 10px auto;
 }
 
-.color-history-wrapper {
-    width: 100%;
+.color-history-container {
+    display: flex;
 }
 
 .color-choice {
     width: 20px;
     height: 20px;
-    margin: 7.5px;
-    border: 2px solid white;
+    margin: 6px;
+    border: 2px solid black;
     border-radius: 50%;
     &:hover {
         cursor: pointer;
     }
 }
 
+.input-container {
+    display: flex;
+    flex-flow: row wrap;
+}
+
 span {
-    color: white;
+    color: black;
 }
 
 label {
-    color: white;
+    color: black;
     width: 25%;
     margin-top: 5px;
 }
@@ -63,26 +74,7 @@ input {
     margin-top: 5px;
 }
 
-.buttons-wrapper {
-    width: 100%;
-    height: 18%;
-}
-
 button {
-    color: #999999;
-    height: 55%;
-    width: 35%;
     margin: auto;
-    border: 2px solid #777777;
-    border-radius: 10px;
-    background-color: transparent;
-    &:hover {
-        border-color:  #999999;
-        color: white;
-        cursor: pointer;
-    }
-    &:focus {
-        outline: none;
-        box-shadow: none;
-    }
+    width: 40%;
 }

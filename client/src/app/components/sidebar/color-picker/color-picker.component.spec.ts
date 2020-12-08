@@ -56,28 +56,6 @@ describe('ColorPickerComponent', () => {
         expect(updateColorFormSpy).toHaveBeenCalled();
     });
 
-    /*it('onSelect with a valid color should close this dialog', () => {
-        component.colorForm.setValue({
-            r: 1,
-            g: 1,
-            b: 1,
-            hex: 1,
-        });
-        component.onSelect();
-        expect(matDialogRefSpy.close).toHaveBeenCalled();
-    });*/
-
-    it('onSelect with a invalid color should close this dialog', () => {
-        component.colorForm.setValue({
-            r: 1,
-            g: 1,
-            b: 1,
-            hex: 'w',
-        });
-        component.onSelect();
-        expect(matDialogRefSpy.close).not.toHaveBeenCalled();
-    });
-
     it('Changing red form value should not change the color if invalid', () => {
         const updateColorSpy = spyOn<any>(component, 'updateColor');
         component.colorForm.patchValue({
