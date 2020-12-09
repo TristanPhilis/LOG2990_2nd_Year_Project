@@ -25,7 +25,9 @@ export class DrawingComponent implements AfterViewInit, OnChanges {
     @Input()
     private workzoneSize: Vec2;
 
-    constructor(public drawingService: DrawingService, private toolsService: ToolsService, private canvasSizeService: CanvasSizeService) {}
+    constructor(public drawingService: DrawingService, private toolsService: ToolsService, private canvasSizeService: CanvasSizeService) {
+        this.isResizing = false;
+    }
 
     ngAfterViewInit(): void {
         this.drawingService.canvas = this.baseCanvas.nativeElement;
@@ -107,12 +109,12 @@ export class DrawingComponent implements AfterViewInit, OnChanges {
         }
     }
 
-    @HostListener('keydown', ['$event'])
+    @HostListener('window:keydown', ['$event'])
     onKeyDown(event: KeyboardEvent): void {
         this.currentTool.onKeyDown(event);
     }
 
-    @HostListener('keyup', ['$event'])
+    @HostListener('window:keyup', ['$event'])
     onKeyUp(event: KeyboardEvent): void {
         this.currentTool.onKeyUp(event);
     }

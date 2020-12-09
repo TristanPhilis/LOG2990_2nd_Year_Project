@@ -26,14 +26,14 @@ import { Subscription } from 'rxjs';
     providedIn: 'root',
 })
 export class SelectionService extends Tool implements OnDestroy {
-    currentSelector: Selector;
-    selectorOptions: Selector[];
     isAreaSelected: boolean;
     isAnchorClicked: boolean;
     selectionImageData: SelectionImageData;
     selectedBox: SelectedBox;
-    selectionBox: SelectionBox;
-    private subsciptions: Subscription;
+    private currentSelector: Selector;
+    private selectorOptions: Selector[];
+    private selectionBox: SelectionBox;
+    private subscriptions: Subscription;
 
     constructor(
         drawingService: DrawingService,
@@ -55,34 +55,34 @@ export class SelectionService extends Tool implements OnDestroy {
         this.selectedBox = new SelectedBox();
         this.selectionBox = new SelectionBox();
         this.isAreaSelected = false;
-        this.subsciptions = new Subscription();
+        this.subscriptions = new Subscription();
         this.subscribeToEvents();
     }
 
     private subscribeToEvents(): void {
-        this.subsciptions.add(
+        this.subscriptions.add(
             this.hitDetectionService.onAnchorClicked.subscribe((anchor: AnchorsPosition) => {
                 this.onAnchorClicked(anchor);
             }),
         );
-        this.subsciptions.add(
+        this.subscriptions.add(
             this.hitDetectionService.onSelectedBoxClicked.subscribe((coord: Vec2) => {
                 this.onSelectedBoxClicked(coord);
             }),
         );
-        this.subsciptions.add(
+        this.subscriptions.add(
             this.gridService.onMagnetismStateChange.subscribe(() => {
                 if (this.isAreaSelected) {
                     this.drawAnchors();
                 }
             }),
         );
-        this.subsciptions.add(
+        this.subscriptions.add(
             this.mouvementService.onSelectedBoxMove.subscribe(() => {
                 this.updateSelectedAreaPreview();
             }),
         );
-        this.subsciptions.add(
+        this.subscriptions.add(
             this.manipulationService.onSelectedBoxChange.subscribe(() => {
                 this.updateSelectedAreaPreview();
             }),
@@ -90,7 +90,7 @@ export class SelectionService extends Tool implements OnDestroy {
     }
 
     ngOnDestroy(): void {
-        this.subsciptions.unsubscribe();
+        this.subscriptions.unsubscribe();
     }
 
     setDefaultOptions(): void {
@@ -104,10 +104,8 @@ export class SelectionService extends Tool implements OnDestroy {
     }
 
     onOptionValueChange(): void {
-        const selectionType = this.options.toolOptions.get(Options.selectionType);
-        if (selectionType) {
-            this.currentSelector = this.selectorOptions[selectionType.value];
-        }
+        const selectorIndex = (this.options.toolOptions.get(Options.selectionType) as ToolOption).value;
+        this.currentSelector = this.selectorOptions[selectorIndex];
     }
 
     onMouseDown(event: MouseEvent): void {
@@ -137,8 +135,6 @@ export class SelectionService extends Tool implements OnDestroy {
             } else if (isLeftClick) {
                 this.initializeSelectionBox(currentCoord);
             }
-        } else {
-            this.initializeSelectionBox(currentCoord);
         }
     }
 
@@ -178,13 +174,24 @@ export class SelectionService extends Tool implements OnDestroy {
         }
     }
 
-    onAnchorClicked(anchor: AnchorsPosition): void {
+    private onAnchorClicked(anchor: AnchorsPosition): void {
         this.isAnchorClicked = true;
         this.manipulationService.initializeAnchorMouvement(this.selectedBox, anchor);
     }
 
-    onSelectedBoxClicked(coord: Vec2): void {
+    private onSelectedBoxClicked(coord: Vec2): void {
         this.selectedBox.mouseCoord = coord;
+    }
+
+    onKeyDown(event: KeyboardEvent): void {
+        if (this.isAreaSelected && this.mouvementService.canProcessKey(event.key)) {
+            event.preventDefault();
+            this.mouvementService.processKeyDown(this.selectedBox, event.key);
+        }
+        if (event.key === KEYS.SHIFT) {
+            this.shiftDown = true;
+            this.onShiftKeyEvent();
+        }
     }
 
     onKeyUp(event: KeyboardEvent): void {
@@ -196,17 +203,6 @@ export class SelectionService extends Tool implements OnDestroy {
         }
         if (event.key === KEYS.SHIFT) {
             this.shiftDown = false;
-            this.onShiftKeyEvent();
-        }
-    }
-
-    onKeyDown(event: KeyboardEvent): void {
-        if (this.isAreaSelected && this.mouvementService.canProcessKey(event.key)) {
-            event.preventDefault();
-            this.mouvementService.processKeyDown(this.selectedBox, event.key);
-        }
-        if (event.key === KEYS.SHIFT) {
-            this.shiftDown = true;
             this.onShiftKeyEvent();
         }
     }
@@ -232,12 +228,12 @@ export class SelectionService extends Tool implements OnDestroy {
         this.manipulationService.processWheelMouvement(this.selectedBox, angleChange);
     }
 
-    initializeSelectionBox(coord: Vec2): void {
+    private initializeSelectionBox(coord: Vec2): void {
         this.selectionBox.setAnchor(coord);
         this.selectionBox.updateOpposingCorner(coord);
     }
 
-    initializeSelectedArea(): void {
+    private initializeSelectedArea(): void {
         this.isAreaSelected = (this.selectionBox.width > 0 && this.selectionBox.height > 0) || this.currentSelector.id === SelectionType.magic;
         if (this.isAreaSelected) {
             if (this.currentSelector.id !== SelectionType.magic) {
@@ -256,7 +252,7 @@ export class SelectionService extends Tool implements OnDestroy {
         this.draw(ctx, this.getDrawingAction());
     }
 
-    placeImage(): void {
+    private placeImage(): void {
         this.drawingService.clearCanvas(this.drawingService.selectionCtx);
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
         if (this.isAreaSelected) {

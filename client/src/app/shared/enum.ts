@@ -18,6 +18,7 @@ export enum SidebarToolID {
     redo,
     aerosol,
     grid,
+    none,
 }
 
 export enum DrawingToolId {
@@ -33,6 +34,7 @@ export enum DrawingToolId {
     pipetteService,
     aerosolService,
     stampService,
+    featherService,
 }
 
 export enum MouseButton {
