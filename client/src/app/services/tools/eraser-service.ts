@@ -6,8 +6,7 @@ import { ToolOption } from '@app/classes/tool-option';
 import { Vec2 } from '@app/classes/vec2';
 import { ColorSelectionService } from '@app/services/color/color-selection-service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
-import { UndoRedoService } from '@app/services/tools/undo-redo-service';
-import { drawingToolId, MouseButton, Options } from '@app/shared/enum';
+import { DrawingToolId, MouseButton, Options } from '@app/shared/enum';
 
 export const MINIMUM_ERASER_SIZE = 5;
 
@@ -18,8 +17,8 @@ export class EraserService extends Tool {
     private pathData: Vec2[];
     private boundingBox: BoundingBox;
 
-    constructor(drawingService: DrawingService, undoRedoService: UndoRedoService, colorService: ColorSelectionService) {
-        super(drawingService, undoRedoService, colorService);
+    constructor(drawingService: DrawingService, colorService: ColorSelectionService) {
+        super(drawingService, colorService);
         this.clearPath();
         this.boundingBox = new BoundingBox();
         this.setDefaultOptions();
@@ -47,14 +46,14 @@ export class EraserService extends Tool {
             const mousePosition = this.getPositionFromMouse(event);
             this.pathData.push(mousePosition);
             this.draw(this.drawingService.baseCtx, this.getDrawingAction());
-            this.undoRedoService.saveAction(this.getDrawingAction());
+            this.action.next(this.getDrawingAction());
         }
         this.mouseDown = false;
         this.clearPath();
     }
 
     onMouseMove(event: MouseEvent): void {
-        const size = this.options.toolOptions.get(Options.size);
+        const size = this.options.toolOptions.get(Options.eraserSize);
         this.boundingBox.squareSize = size ? size.value : MINIMUM_ERASER_SIZE;
         const currentCoord = this.getPositionFromMouse(event);
         this.boundingBox.squareCenter = currentCoord;
@@ -83,6 +82,7 @@ export class EraserService extends Tool {
                 ctx.fillRect(box.position.x, box.position.y, box.width, box.height);
             }
         }
+        this.drawingService.autoSave();
     }
 
     getDrawingAction(): DrawingAction {
@@ -91,7 +91,7 @@ export class EraserService extends Tool {
             toolOptions: this.copyToolOptionMap(this.options.toolOptions),
         };
         return {
-            id: drawingToolId.eraserService,
+            id: DrawingToolId.eraserService,
             path: this.pathData,
             box: this.boundingBox.copy(),
             options,

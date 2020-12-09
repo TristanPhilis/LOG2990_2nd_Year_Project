@@ -1,4 +1,4 @@
-<div class="color-option-container box">
+<div class="color-option-container">
     <div class="preview-container box-elem">
         <span>Primaire</span>
         <div
@@ -7,10 +7,11 @@
             (click)="openColorPicker(true)"
         ></div>
     </div>
-    <div class="slide-container">
-        <input type="range" min="1" max="100" value="100" (input)="onAlphaChange($event, true)" />
+    <div class="slider-container box-elem">
+        <input class="slider" type="range" min="0" max="100" [value]="primaryColor.a * 100" (input)="onAlphaChange($event.target.value, true)" />
+        <span class="alpha-number">{{ primaryColor.a | percent }}</span>
     </div>
-    <div class="preview-container box-elem">
+    <div class="preview-container">
         <span>Secondaire</span>
         <div
             class="color-preview"
@@ -18,8 +19,9 @@
             (click)="openColorPicker(false)"
         ></div>
     </div>
-    <div class="slide-container">
-        <input type="range" min="1" max="100" value="100" (input)="onAlphaChange($event, false)" />
+    <div class="slider-container">
+        <input class="slider" type="range" min="0" max="100" [value]="secondaryColor.a * 100" (input)="onAlphaChange($event.target.value, false)" />
+        <span class="alpha-number">{{ secondaryColor.a | percent }}</span>
     </div>
     <button (click)="swap()">Intervertir</button>
     <div class="color-history-wrapper box">

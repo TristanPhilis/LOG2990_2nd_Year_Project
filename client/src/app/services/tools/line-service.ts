@@ -5,9 +5,8 @@ import { ToolOption } from '@app/classes/tool-option';
 import { Vec2 } from '@app/classes/vec2';
 import { ColorSelectionService } from '@app/services/color/color-selection-service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
-import { UndoRedoService } from '@app/services/tools/undo-redo-service';
-import { BACKSPACE_KEY, BASE_SNAP_ANGLE, DEFAULT_OPTIONS, ESCAPE_KEY, MIDDLE_SNAP_ANGLE, SHIFT_KEY } from '@app/shared/constant';
-import { drawingToolId, Options } from '@app/shared/enum';
+import { BASE_SNAP_ANGLE, DEFAULT_OPTIONS, KEYS, MIDDLE_SNAP_ANGLE } from '@app/shared/constant';
+import { DrawingToolId, Options } from '@app/shared/enum';
 
 @Injectable({
     providedIn: 'root',
@@ -17,8 +16,8 @@ export class LineService extends Tool {
     private lineStarted: boolean;
     currentCoord: Vec2;
 
-    constructor(drawingService: DrawingService, undoRedoService: UndoRedoService, colorService: ColorSelectionService) {
-        super(drawingService, undoRedoService, colorService);
+    constructor(drawingService: DrawingService, colorService: ColorSelectionService) {
+        super(drawingService, colorService);
         this.clearPath();
         this.setDefaultOptions();
         this.lineStarted = false;
@@ -60,7 +59,7 @@ export class LineService extends Tool {
         if (this.lineStarted) {
             this.endLine();
             const drawingAction = this.getDrawingAction();
-            this.undoRedoService.saveAction(drawingAction);
+            this.action.next(drawingAction);
             this.draw(this.drawingService.baseCtx, drawingAction);
             this.lineStarted = false;
             this.clearPath();
@@ -79,7 +78,7 @@ export class LineService extends Tool {
     }
 
     onKeyUp(event: KeyboardEvent): void {
-        if (event.key === SHIFT_KEY) {
+        if (event.key === KEYS.SHIFT) {
             this.shiftDown = false;
             if (this.lineStarted) {
                 this.updateLastCoord();
@@ -90,8 +89,8 @@ export class LineService extends Tool {
 
     onKeyDown(event: KeyboardEvent): void {
         switch (event.key) {
-            case SHIFT_KEY:
-                if (this.shiftDown !== true) {
+            case KEYS.SHIFT:
+                if (!this.shiftDown) {
                     this.shiftDown = true;
                     if (this.lineStarted) {
                         this.updateLastCoord();
@@ -99,13 +98,13 @@ export class LineService extends Tool {
                     }
                 }
                 break;
-            case BACKSPACE_KEY:
+            case KEYS.BACKSPACE:
                 if (this.lineStarted) {
                     this.pathData.splice(this.pathData.length - 2, 1);
                     this.draw(this.drawingService.previewCtx, this.getDrawingAction());
                 }
                 break;
-            case ESCAPE_KEY:
+            case KEYS.ESCAPE:
                 this.lineStarted = false;
                 this.clearPath();
                 this.drawingService.clearCanvas(this.drawingService.previewCtx);
@@ -168,6 +167,7 @@ export class LineService extends Tool {
             ctx.stroke();
             ctx.closePath();
         }
+        this.drawingService.autoSave();
     }
 
     getDrawingAction(): DrawingAction {
@@ -176,7 +176,7 @@ export class LineService extends Tool {
             toolOptions: this.copyToolOptionMap(this.options.toolOptions),
         };
         return {
-            id: drawingToolId.lineService,
+            id: DrawingToolId.lineService,
             path: this.pathData,
             options,
         };

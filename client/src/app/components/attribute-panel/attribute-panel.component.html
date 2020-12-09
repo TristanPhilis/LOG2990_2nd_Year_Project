@@ -1,106 +1,198 @@
 <app-sidebar-color-options></app-sidebar-color-options>
 
-<!-- Selection Tools -->
-<div *ngIf="this.toolsService._selectedSideBarToolID === sidebarToolID.selection" class="attribute-container">
-    <label for="selection">Selection</label>
-    <select (change)="handleToolChange($event.target.value)" id="selection">
-        <option *ngFor="let tool of selectionTools" value="{{ tool.value }}">{{ tool.displayName }}</option>
-    </select>
-    <button (click)="rectangleSelectionService.selectAllCanvas()">Tout Sélectionner</button>
-</div>
+<h2 class="sidebar-tool-name">{{ toolsService.selectedSideBarTool.name }}</h2>
 
 <!-- Tracing Tools -->
-<div *ngIf="this.toolsService._selectedSideBarToolID === sidebarToolID.tracing" class="attribute-container">
+<div *ngIf="this.toolsService.selectedSideBarTool.id === SidebarToolID.tracing">
     <label for="tracing">Outil de traçage</label>
-    <select (change)="handleToolChange($event.target.value)" id="tracing">
-        <option *ngFor="let tool of tracingTools" value="{{ tool.value }}">{{ tool.displayName }}</option>
+    <select (change)="handleToolChange($event.target.value)" id="tracing" class="selection-container">
+        <option *ngFor="let tool of tracingTools" value="{{ tool.value }}" [selected]="tool.value === toolsService.currentDrawingToolID">
+            {{ tool.displayName }}
+        </option>
     </select>
 </div>
 
 <!-- Shapes Tools -->
-<div *ngIf="this.toolsService._selectedSideBarToolID === sidebarToolID.shapes" class="attribute-container">
+<div *ngIf="this.toolsService.selectedSideBarTool.id === SidebarToolID.shapes">
     <label for="shapes">Formes</label>
-    <select (change)="handleToolChange($event.target.value)" id="shapes">
-        <option *ngFor="let tool of shapesTools" value="{{ tool.value }}">{{ tool.displayName }}</option>
+    <select (change)="handleToolChange($event.target.value)" id="shapes" class="selection-container">
+        <option *ngFor="let tool of shapesTools" value="{{ tool.value }}" [selected]="tool.value === toolsService.currentDrawingToolID">
+            {{ tool.displayName }}
+        </option>
     </select>
 </div>
 
 <!-- Pipette Tool -->
-<div *ngIf="this.toolsService._selectedSideBarToolID === sidebarToolID.pipette && drawingService.mouseIsOverCanvas" class="attribute-container">
+<div *ngIf="toolsService.selectedSideBarTool.id === SidebarToolID.pipette && drawingService.mouseIsOverCanvas" class="attribute-container">
     <app-pipette-preview></app-pipette-preview>
 </div>
 
-<div *ngIf="this.toolOptions" class="attribute-container">
-    <ng-container *ngFor="let option of this.toolOptions | keyvalue">
-        <!-- Trace type list -->
-        <ng-container *ngIf="option.key === Options.traceType">
-            <label for="traceType">{{ option.value.displayName }}</label>
-            <select (change)="this.updateToolOptionValue(option.key, $event.target.value)" id="traceType">
-                <option *ngFor="let type of this.tracingTypes" value="{{ type.value }}">{{ type.displayName }}</option>
-            </select>
-        </ng-container>
-        <!-- Brush textures -->
-        <ng-container *ngIf="option.key === Options.texture">
-            <label for="textureType">{{ option.value.displayName }}</label>
-            <select (change)="this.updateToolOptionValue(option.key, $event.target.value)" id="textureType">
-                <option *ngFor="let texture of textures" value="{{ texture.value }}">{{ texture.displayName }}</option>
-            </select>
-        </ng-container>
-        <!-- Size -->
-        <ng-container *ngIf="option.key === Options.size">
-            <label for="tracingThickness">{{ option.value.displayName }}</label>
-            <div class="slide-container">
-                <input
-                    type="range"
-                    min="1"
-                    max="100"
-                    value="1"
-                    id="tracingThickness"
-                    (input)="this.updateToolOptionValue(option.key, $event.target.value)"
-                />
-            </div>
-        </ng-container>
-        <!-- Eraser size -->
-        <ng-container *ngIf="option.key === Options.eraserSize">
-            <label for="eraserSize">{{ option.value.displayName }}</label>
-            <div class="slide-container">
-                <input
-                    type="range"
-                    min="5"
-                    max="100"
-                    value="1"
-                    id="eraserSize"
-                    (input)="this.updateToolOptionValue(option.key, $event.target.value)"
-                />
-            </div>
-        </ng-container>
-        <!-- Bucket tolerance -->
-        <ng-container *ngIf="option.key === Options.tolerance">
-            <label for="tolerance">{{ option.value.displayName }}</label>
-            <div class="slide-container">
-                <input
-                    type="range"
-                    min="0"
-                    max="100"
-                    value="1"
-                    id="tolerance"
-                    (input)="this.updateToolOptionValue(option.key, $event.target.value)"
-                />
-            </div>
-        </ng-container>
-        <!-- Polygon number of sides -->
-        <ng-container *ngIf="option.key === Options.numberOfSides">
-            <label for="numberOfSides">{{ option.value.displayName }}</label>
-            <div class="slide-container">
-                <input
-                    type="range"
-                    min="3"
-                    max="12"
-                    value="1"
-                    id="numberOfSides"
-                    (input)="this.updateToolOptionValue(option.key, $event.target.value)"
-                />
-            </div>
-        </ng-container>
-    </ng-container>
+<!-- Grid Tool -->
+<div *ngIf="toolsService.selectedSideBarTool.id === SidebarToolID.grid; else elseBlock" class="attribute-container">
+    <app-grid-options></app-grid-options>
 </div>
+<ng-template #elseBlock>
+    <div *ngIf="toolOptions" class="attribute-container">
+        <ng-container *ngFor="let option of toolOptions | keyvalue">
+            <!-- Trace type list -->
+            <ng-container *ngIf="option.key === Options.traceType">
+                <label for="traceType">{{ option.value.displayName }}</label>
+                <select (change)="updateToolOptionValue(option.key, $event.target.value)" id="traceType" class="selection-container">
+                    <option *ngFor="let type of tracingTypes" value="{{ type.value }}" [selected]="option.value.value === type.value">
+                        {{ type.displayName }}
+                    </option>
+                </select>
+            </ng-container>
+            <!-- Brush textures -->
+            <ng-container *ngIf="option.key === Options.texture">
+                <label for="textureType">{{ option.value.displayName }}</label>
+                <select (change)="updateToolOptionValue(option.key, $event.target.value)" id="textureType" class="selection-container">
+                    <option *ngFor="let texture of textures" value="{{ texture.value }}" [selected]="option.value.value === texture.value">
+                        {{ texture.displayName }}
+                    </option>
+                </select>
+            </ng-container>
+            <!-- Stamp Images -->
+            <ng-container *ngIf="option.key === Options.stamp">
+                <label for="stampType">{{ option.value.displayName }}</label>
+                <select (change)="updateToolOptionValue(option.key, $event.target.value)" id="stampType" class="selection-container">
+                    <option *ngFor="let stamp of stamps" value="{{ stamp.value }}" [selected]="option.value.value === stamp.value">
+                        {{ stamp.displayName }}
+                    </option>
+                </select>
+            </ng-container>
+            <!-- Size -->
+            <ng-container *ngIf="option.key === Options.size">
+                <label for="tracingThickness">{{ option.value.displayName }}</label>
+                <div class="slider-container">
+                    <input
+                        type="range"
+                        min="1"
+                        max="100"
+                        [value]="option.value.value"
+                        id="tracingThickness"
+                        (input)="updateToolOptionValue(option.key, $event.target.value)"
+                    />
+                    <span>{{ option.value.value }}</span>
+                </div>
+            </ng-container>
+            <!-- Stamp Size-->
+            <ng-container *ngIf="option.key === Options.stampSize">
+                <label for="tracingThickness">{{ option.value.displayName }}</label>
+                <div class="slider-container">
+                    <input
+                        type="range"
+                        min="0.2"
+                        max="5"
+                        step="0.2"
+                        [value]="option.value.value"
+                        id="stampThicknessThickness"
+                        (input)="updateToolOptionValue(option.key, $event.target.value)"
+                    />
+                    <span>{{ option.value.value | percent }}</span>
+                </div>
+            </ng-container>
+            <!-- Eraser size -->
+            <ng-container *ngIf="option.key === Options.eraserSize">
+                <label for="eraserSize">{{ option.value.displayName }}</label>
+                <div class="slider-container">
+                    <input
+                        type="range"
+                        min="5"
+                        max="100"
+                        [value]="option.value.value"
+                        id="eraserSize"
+                        (input)="updateToolOptionValue(option.key, $event.target.value)"
+                    />
+                    <span>{{ option.value.value }}</span>
+                </div>
+            </ng-container>
+            <!-- Bucket tolerance -->
+            <ng-container *ngIf="option.key === Options.tolerance">
+                <label for="tolerance">{{ option.value.displayName }}</label>
+                <div class="slider-container">
+                    <input
+                        type="range"
+                        min="0"
+                        max="100"
+                        [value]="option.value.value"
+                        id="tolerance"
+                        (input)="updateToolOptionValue(option.key, $event.target.value)"
+                    />
+                    <span>{{ option.value.value }}%</span>
+                </div>
+            </ng-container>
+            <!-- Polygon number of sides -->
+            <ng-container *ngIf="option.key === Options.numberOfSides">
+                <label for="numberOfSides">{{ option.value.displayName }}</label>
+                <div class="slider-container">
+                    <input
+                        type="range"
+                        min="3"
+                        max="12"
+                        [value]="option.value.value"
+                        id="numberOfSides"
+                        (input)="updateToolOptionValue(option.key, $event.target.value)"
+                    />
+                    <span>{{ option.value.value }}</span>
+                </div>
+            </ng-container>
+            <!-- Selection types -->
+            <ng-container *ngIf="option.key === Options.selectionType">
+                <app-magnet-option></app-magnet-option>
+                <label for="selection">Type de selection</label>
+                <select (change)="updateToolOptionValue(option.key, $event.target.value)" id="selection" class="selection-container">
+                    <option *ngFor="let type of selectorTypes" value="{{ type.value }}" [selected]="option.value.value === type.value">
+                        {{ type.displayName }}
+                    </option>
+                </select>
+                <button (click)="selectionService.selectAllCanvas()">Tout Sélectionner</button>
+            </ng-container>
+            <!-- spray emission -->
+            <ng-container *ngIf="option.key === Options.emissionPerSecond">
+                <label for="emissionPerSecond">{{ option.value.displayName }}</label>
+                <div class="slider-container">
+                    <input
+                        type="range"
+                        min="1"
+                        max="20"
+                        [value]="option.value.value"
+                        id="emissionPerSecond"
+                        (input)="updateToolOptionValue(option.key, $event.target.value)"
+                    />
+                    <span>{{ option.value.value }}</span>
+                </div>
+            </ng-container>
+            <!-- spray size -->
+            <ng-container *ngIf="option.key === Options.spraySize">
+                <label for="spraySize">{{ option.value.displayName }}</label>
+                <div class="slider-container">
+                    <input
+                        type="range"
+                        min="1"
+                        max="100"
+                        [value]="option.value.value"
+                        id="spraySize"
+                        (input)="updateToolOptionValue(option.key, $event.target.value)"
+                    />
+                    <span>{{ option.value.value }}</span>
+                </div>
+            </ng-container>
+            <!-- spray diameter -->
+            <ng-container *ngIf="option.key === Options.sprayDiameter">
+                <label for="sprayDiameter">{{ option.value.displayName }}</label>
+                <div class="slider-container">
+                    <input
+                        type="range"
+                        min="1"
+                        max="20"
+                        [value]="option.value.value"
+                        id="sprayDiameter"
+                        (input)="updateToolOptionValue(option.key, $event.target.value)"
+                    />
+                    <span>{{ option.value.value }}</span>
+                </div>
+            </ng-container>
+        </ng-container>
+    </div>
+</ng-template>

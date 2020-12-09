@@ -2,10 +2,16 @@
     <div>
         <li class="sidebar-container-top">
             <ng-container *ngFor="let sidebarTool of sideBarToolsTop">
-                <button mat-flat-button (click)="onButtonPressTop(sidebarTool)">{{ sidebarTool.name }}</button>
+                <button
+                    mat-flat-button
+                    (click)="onButtonPressTop(sidebarTool)"
+                    [ngStyle]="{ 'background-color': selectedSideBarToolId === sidebarTool.id ? 'rgb(0,117,255,0.5)' : 'white' }"
+                >
+                    {{ sidebarTool.name }}
+                </button>
             </ng-container>
-            <button mat-flat-button *ngIf="showUndo" (click)="undoRedo.undo()">{{ sideBarUndoRedoButtons[0].name }}</button>
-            <button mat-flat-button *ngIf="showRedo" (click)="undoRedo.redo()">{{ sideBarUndoRedoButtons[1].name }}</button>
+            <button mat-flat-button *ngIf="showUndo" (click)="undoRedo.undo()"><mat-icon>undo</mat-icon></button>
+            <button mat-flat-button *ngIf="showRedo" (click)="undoRedo.redo()"><mat-icon>redo</mat-icon></button>
         </li>
     </div>
     <div>

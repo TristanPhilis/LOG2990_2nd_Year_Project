@@ -1,10 +1,11 @@
 import { ColorSelectionService } from '@app/services/color/color-selection-service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
-import { UndoRedoService } from '@app/services/tools/undo-redo-service';
 import { Options, TraceTypes } from '@app/shared/enum';
+import { Subject } from 'rxjs';
 import { Color } from './color';
 import { DrawingAction } from './drawing-action';
 import { DrawingOptions } from './drawing-options';
+import { SelectionAction } from './selection-action';
 import { ToolOption } from './tool-option';
 import { Vec2 } from './vec2';
 
@@ -12,16 +13,18 @@ import { Vec2 } from './vec2';
 // tslint:disable:no-empty
 export abstract class Tool {
     mouseDownCoord: Vec2;
-    mouseDown: boolean = false;
-    shiftDown: boolean = false;
-    dblClick: boolean = false;
+    mouseDown: boolean;
+    shiftDown: boolean;
+    dblClick: boolean;
     options: DrawingOptions;
+    action: Subject<DrawingAction | SelectionAction>;
 
-    constructor(
-        protected drawingService: DrawingService,
-        protected undoRedoService: UndoRedoService,
-        protected colorService: ColorSelectionService,
-    ) {}
+    constructor(protected drawingService: DrawingService, protected colorService: ColorSelectionService) {
+        this.action = new Subject<DrawingAction>();
+        this.mouseDown = false;
+        this.shiftDown = false;
+        this.dblClick = false;
+    }
 
     onMouseDown(event: MouseEvent): void {}
 
@@ -37,7 +40,9 @@ export abstract class Tool {
 
     onKeyUp(event: KeyboardEvent): void {}
 
-    draw(ctx: CanvasRenderingContext2D, action: DrawingAction): void {}
+    onWheel(event: WheelEvent): void {}
+
+    draw(ctx: CanvasRenderingContext2D, action: DrawingAction | SelectionAction): void {}
 
     getPositionFromMouse(event: MouseEvent): Vec2 {
         return { x: event.offsetX, y: event.offsetY };
@@ -78,6 +83,8 @@ export abstract class Tool {
     }
 
     setDefaultOptions(): void {}
+
+    onOptionValueChange(): void {}
 
     get primaryColor(): Color {
         return this.colorService.primaryColor;

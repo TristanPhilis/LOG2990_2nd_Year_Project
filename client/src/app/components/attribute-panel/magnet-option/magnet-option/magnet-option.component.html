@@ -1,0 +1,16 @@
+<div class="container">
+    <label>Magnétisme</label>
+    <button mat-raised-button class="button" (click)="toggleMagnetism()">{{ buttonText }}</button>
+    <label *ngIf="isMagnetismActivated">Anchrage</label>
+    <div *ngIf="isMagnetismActivated" class="anchor-selection-container" #anchorsContainer>
+        <div class="anchor-choice selected" (click)="onAnchorClick($event.target, AnchorsPosition.topLeft)" id="top-left"></div>
+        <div class="anchor-choice" (click)="onAnchorClick($event.target, AnchorsPosition.middleTop)" id="middle-top"></div>
+        <div class="anchor-choice" (click)="onAnchorClick($event.target, AnchorsPosition.topRight)" id="top-right"></div>
+        <div class="anchor-choice" (click)="onAnchorClick($event.target, AnchorsPosition.middleLeft)" id="middle-left"></div>
+        <div class="anchor-choice" (click)="onAnchorClick($event.target, AnchorsPosition.center)" id="center"></div>
+        <div class="anchor-choice" (click)="onAnchorClick($event.target, AnchorsPosition.middleRight)" id="middle-right"></div>
+        <div class="anchor-choice" (click)="onAnchorClick($event.target, AnchorsPosition.bottomLeft)" id="bottom-left"></div>
+        <div class="anchor-choice" (click)="onAnchorClick($event.target, AnchorsPosition.middleBottom)" id="middle-bottom"></div>
+        <div class="anchor-choice" (click)="onAnchorClick($event.target, AnchorsPosition.bottomRight)" id="bottom-right"></div>
+    </div>
+</div>

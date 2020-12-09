@@ -8,6 +8,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { canvasTestHelper } from '@app/classes/canvas-test-helper';
 import { Vec2 } from '@app/classes/vec2';
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { WebRequestService } from '@app/services/index/web-request-service';
 import { ExportPopupComponent } from './export-popup.component';
 
 // tslint:disable:no-any
@@ -20,10 +21,12 @@ describe('ExportPopupComponent', () => {
     let canvasSpy: jasmine.SpyObj<HTMLCanvasElement>;
     let anchorSpy: jasmine.SpyObj<HTMLAnchorElement>;
     let ctxSpy: jasmine.SpyObj<CanvasRenderingContext2D>;
+    let webRequestServiceSpy: jasmine.SpyObj<WebRequestService>;
 
     beforeEach(
         waitForAsync(() => {
             // spys for testing the exportDrawing function
+            webRequestServiceSpy = jasmine.createSpyObj('WebRequestService', ['postDrawing', 'sendEmail']);
             canvasSpy = jasmine.createSpyObj('HTMLCanvasElement', ['toDataURL', 'getContext'], ['width', 'height']);
             ctxSpy = jasmine.createSpyObj('CanvasRenderingContext2D', ['drawImage', 'clearRect'], ['filter']);
             canvasSpy.getContext.and.returnValue(ctxSpy);
@@ -36,7 +39,10 @@ describe('ExportPopupComponent', () => {
             drawServiceSpy.canvas = canvasTestHelper.canvas;
             TestBed.configureTestingModule({
                 declarations: [ExportPopupComponent],
-                providers: [{ provide: DrawingService, useValue: drawServiceSpy }],
+                providers: [
+                    { provide: DrawingService, useValue: drawServiceSpy },
+                    { provide: WebRequestService, useValue: webRequestServiceSpy },
+                ],
                 imports: [FormsModule, ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatRadioModule, BrowserAnimationsModule],
             }).compileComponents();
         }),
@@ -131,5 +137,15 @@ describe('ExportPopupComponent', () => {
         component.exportDrawing();
         expect(rendererMock.createElement).toHaveBeenCalledTimes(2);
         expect(anchorSpy.click).toHaveBeenCalled();
+    });
+
+    it('sendEmail should call toDataURL with the right type', () => {
+        const type = ['png', 'jpeg'];
+        const expectedType = ['image/png', 'image/jpeg'];
+        for (let i = 0; i < 2; i++) {
+            component.fileType = type[i];
+            component.sendEmail();
+            expect(canvasSpy.toDataURL).toHaveBeenCalledWith(expectedType[i]);
+        }
     });
 });

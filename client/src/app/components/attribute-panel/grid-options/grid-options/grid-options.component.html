@@ -1,0 +1,19 @@
+<div class="container">
+    <button mat-raised-button class="button" (click)="toggleGrid()">{{ buttonText }}</button>
+    <div class="slider-container">
+        <label>Grosseur</label>
+        <mat-slider (input)="updateSize($event.value)" thumbLabel [displayWith]="formatSize" min="10" max="200" step="1"></mat-slider>
+    </div>
+    <div class="slider-container">
+        <label>Transparence</label>
+        <mat-slider
+            (input)="updateTransparency($event.value)"
+            thumbLabel
+            [displayWith]="formatTransparency"
+            min="10"
+            max="100"
+            step="1"
+            value="50"
+        ></mat-slider>
+    </div>
+</div>

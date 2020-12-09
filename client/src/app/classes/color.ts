@@ -18,7 +18,7 @@ export class Color {
         this.r = r;
         this.g = g;
         this.b = b;
-        this.a = a ? a : MAX_ALPHA;
+        this.a = a !== undefined ? a : MAX_ALPHA;
         // disable tlsint to combine the rgb values into a single hex value.
         // tslint:disable-next-line:no-bitwise
         this.hex = (r << (2 * BYTE)) | (g << BYTE) | b;
@@ -48,4 +48,8 @@ export class Color {
         this.hex = hex;
     }
     // tslint:enable:no-bitwise
+
+    equal(color: Color): boolean {
+        return this.r === color.r && this.g === color.g && this.b === color.b && this.a === color.a;
+    }
 }

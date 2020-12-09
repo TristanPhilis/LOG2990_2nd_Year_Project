@@ -8,9 +8,9 @@ import { ToolOption } from '@app/classes/tool-option';
 import { Vec2 } from '@app/classes/vec2';
 import { ColorSelectionService } from '@app/services/color/color-selection-service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
-import { UndoRedoService } from '@app/services/tools/undo-redo-service';
 import { A_POSITION, B_POSITION, DEFAULT_OPTIONS, G_POSITION, MAX_TOLERANCE, PIXEL_INTERVAL, R_POSITION } from '@app/shared/constant';
-import { drawingToolId, MouseButton, Options } from '@app/shared/enum';
+import { DrawingToolId, MouseButton, Options } from '@app/shared/enum';
+import { SearchHelper } from '@app/utils/search-helper';
 
 @Injectable({
     providedIn: 'root',
@@ -25,8 +25,8 @@ export class BucketService extends Tool {
     initialColor: Color;
     boundingBox: BoundingBox;
 
-    constructor(drawingService: DrawingService, undoRedoService: UndoRedoService, colorService: ColorSelectionService) {
-        super(drawingService, undoRedoService, colorService);
+    constructor(drawingService: DrawingService, colorService: ColorSelectionService) {
+        super(drawingService, colorService);
         this.pixelsData = new Uint8ClampedArray();
         this.boundingBox = new BoundingBox();
         this.visitedPixel = [];
@@ -52,7 +52,7 @@ export class BucketService extends Tool {
         if (this.tolerance === MAX_TOLERANCE) {
             this.drawingService.fillCanvas(this.primaryColor.getRgbString());
             this.setParamsForMaxTolerance();
-            this.undoRedoService.saveAction(this.getDrawingAction());
+            this.action.next(this.getDrawingAction());
         } else {
             const initialCoord = this.getPositionFromMouse(event);
             this.initSearchParams(initialCoord);
@@ -76,7 +76,7 @@ export class BucketService extends Tool {
         this.canvasSize = { x: this.drawingService.canvas.width, y: this.drawingService.canvas.height };
 
         this.endColor = this.primaryColor;
-        this.initialColor = this.getColorFromCoord(initialCoord);
+        this.initialColor = SearchHelper.getColorFromCoord(initialCoord, this.canvasSize, this.pixelsData);
 
         this.boundingBox = new BoundingBox();
         this.boundingBox.setStartingCoord(initialCoord);
@@ -84,58 +84,51 @@ export class BucketService extends Tool {
 
     private beginBFS(startingCoord: Vec2): void {
         this.visitedPixel = new Array(this.pixelsData.length).fill(false);
-        this.visitedPixel[this.getIndexFromCoord(startingCoord)] = true;
+        this.visitedPixel[SearchHelper.getIndexFromCoord(startingCoord, this.canvasSize)] = true;
         this.pixelToVisit = [startingCoord];
 
         let currentPixelCoord;
         while (this.pixelToVisit.length > 0) {
-            currentPixelCoord = this.pixelToVisit.shift();
-            if (currentPixelCoord) {
-                this.boundingBox.update(currentPixelCoord);
-                this.addAdjacentPixel(currentPixelCoord);
-                const currentPixelIndex = this.getIndexFromCoord(currentPixelCoord);
-                this.fillPixel(currentPixelIndex);
-            }
+            currentPixelCoord = this.pixelToVisit.shift() as Vec2;
+            this.boundingBox.update(currentPixelCoord);
+            this.addAdjacentPixel(currentPixelCoord);
+            const currentPixelIndex = SearchHelper.getIndexFromCoord(currentPixelCoord, this.canvasSize);
+            this.fillPixel(currentPixelIndex);
         }
         const action = this.getDrawingAction();
-        this.undoRedoService.saveAction(action);
+        this.action.next(action);
         this.draw(this.drawingService.baseCtx, action);
     }
 
     private beginLinearSearch(): void {
         for (let colorIndex = 0; colorIndex < this.pixelsData.length; colorIndex += PIXEL_INTERVAL) {
-            const currentColor = this.getColorFromIndex(colorIndex);
+            const currentColor = SearchHelper.getColorFromIndex(colorIndex, this.pixelsData);
             if (this.isColorSimilar(currentColor)) {
-                this.boundingBox.update(this.getCoordFromIndex(colorIndex));
+                this.boundingBox.update(SearchHelper.getCoordFromIndex(colorIndex, this.canvasSize));
                 this.fillPixel(colorIndex);
             }
         }
         const action = this.getDrawingAction();
-        this.undoRedoService.saveAction(action);
+        this.action.next(action);
         this.draw(this.drawingService.baseCtx, action);
     }
 
     private addAdjacentPixel(startingCoord: Vec2): void {
-        const coordsToCheck: Vec2[] = [
-            { x: startingCoord.x - 1, y: startingCoord.y },
-            { x: startingCoord.x + 1, y: startingCoord.y },
-            { x: startingCoord.x, y: startingCoord.y - 1 },
-            { x: startingCoord.x, y: startingCoord.y + 1 },
-        ];
+        const coordsToCheck = SearchHelper.getAdjacentCoords(startingCoord);
         for (const coord of coordsToCheck) {
             if (this.shouldAddCoord(coord)) {
-                this.visitedPixel[this.getIndexFromCoord(coord)] = true;
+                this.visitedPixel[SearchHelper.getIndexFromCoord(coord, this.canvasSize)] = true;
                 this.pixelToVisit.push(coord);
             }
         }
     }
 
     private shouldAddCoord(coord: Vec2): boolean {
-        if (!this.isValidCoord(coord) || this.wasCoordVisited(coord)) {
+        if (!this.isValidCoord(coord) || SearchHelper.wasCoordVisited(coord, this.canvasSize, this.visitedPixel)) {
             return false;
         }
 
-        const currentColor = this.getColorFromCoord(coord);
+        const currentColor = SearchHelper.getColorFromCoord(coord, this.canvasSize, this.pixelsData);
         return this.isColorSimilar(currentColor);
     }
 
@@ -146,36 +139,8 @@ export class BucketService extends Tool {
         this.pixelsData[colorIndex + A_POSITION] = this.endColor.a * MAX_RGBA_VALUE;
     }
 
-    private getColorFromCoord(coord: Vec2): Color {
-        const colorIndex = this.getIndexFromCoord(coord);
-        return this.getColorFromIndex(colorIndex);
-    }
-
-    private getColorFromIndex(colorIndex: number): Color {
-        return new Color(
-            this.pixelsData[colorIndex + R_POSITION],
-            this.pixelsData[colorIndex + G_POSITION],
-            this.pixelsData[colorIndex + B_POSITION],
-            this.pixelsData[colorIndex + A_POSITION] / MAX_RGBA_VALUE,
-        );
-    }
-
-    private getIndexFromCoord(coord: Vec2): number {
-        return (coord.x + this.canvasSize.x * coord.y) * PIXEL_INTERVAL;
-    }
-
-    private getCoordFromIndex(colorIndex: number): Vec2 {
-        const y = Math.floor(colorIndex / PIXEL_INTERVAL / this.canvasSize.x);
-        const x = colorIndex / PIXEL_INTERVAL - this.canvasSize.x * y;
-        return { x, y };
-    }
-
     private isValidCoord(coord: Vec2): boolean {
         return this.drawingService.isCoordInCanvas(coord);
-    }
-
-    private wasCoordVisited(coord: Vec2): boolean {
-        return this.visitedPixel[this.getIndexFromCoord(coord)];
     }
 
     private isColorSimilar(color: Color): boolean {
@@ -194,6 +159,7 @@ export class BucketService extends Tool {
                 drawingAction.box.height + 1,
             );
         }
+        this.drawingService.autoSave();
     }
 
     getDrawingAction(): DrawingAction {
@@ -203,7 +169,7 @@ export class BucketService extends Tool {
             toolOptions: this.copyToolOptionMap(this.options.toolOptions),
         };
         return {
-            id: drawingToolId.bucketService,
+            id: DrawingToolId.bucketService,
             box: this.boundingBox.copy(),
             imageData: newImageData,
             options,

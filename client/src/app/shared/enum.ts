@@ -1,4 +1,4 @@
-export enum sidebarToolID {
+export enum SidebarToolID {
     move,
     selection,
     tracing,
@@ -16,20 +16,25 @@ export enum sidebarToolID {
     openGuide,
     undo,
     redo,
+    aerosol,
+    grid,
+    none,
 }
 
-export enum drawingToolId {
+export enum DrawingToolId {
     pencilService,
     rectangleService,
     ellipseService,
     eraserService,
     lineService,
     brushService,
-    rectangleSelectionService,
-    ellipseSelectionService,
+    selectionService,
     polygonService,
     bucketService,
     pipetteService,
+    aerosolService,
+    stampService,
+    featherService,
 }
 
 export enum MouseButton {
@@ -42,6 +47,14 @@ export enum MouseButton {
 }
 
 export enum Texture {
+    one,
+    two,
+    three,
+    four,
+    five,
+}
+
+export enum Stamp {
     one,
     two,
     three,
@@ -63,17 +76,41 @@ export enum JointSelection {
 export enum SelectionType {
     rectangle,
     ellipse,
+    magic,
 }
 
 export enum Options {
     eraserSize,
     size,
+    stampSize,
     traceType,
     texture,
     tolerance,
     numberOfSides,
     angle,
+    stamp,
     lineLength,
     emissionPerSecond,
     imageChoice,
+    selectionType,
+    spraySize,
+    sprayDiameter,
+}
+
+export enum CanvasAnchorsId {
+    bottom,
+    right,
+    corner,
+}
+
+export enum AnchorsPosition {
+    topLeft,
+    middleTop,
+    topRight,
+    middleRight,
+    bottomRight,
+    middleBottom,
+    bottomLeft,
+    middleLeft,
+    center,
 }

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, HostListener } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Color } from '@app/classes/color';
 import { ColorPickerComponent } from '@app/components/sidebar//color-picker/color-picker.component';
@@ -15,14 +15,17 @@ export class SidebarColorOptionsComponent {
     constructor(private colorSelectionService: ColorSelectionService, private dialog: MatDialog) {}
     private isPrimaryColorOpened: boolean;
 
+    @HostListener('contextmenu', ['$event'])
+    disableContextMenu(event: MouseEvent): void {
+        event.preventDefault();
+    }
+
     swap(): void {
         this.colorSelectionService.swap();
     }
 
-    // need any to acces target.valueAsNumber
-    // tslint:disable-next-line:no-any
-    onAlphaChange(event: any, isPrimaryColor: boolean): void {
-        const newAlpha = event.target.valueAsNumber * PERCENT_MULTIPLIER;
+    onAlphaChange(value: number, isPrimaryColor: boolean): void {
+        const newAlpha = value * PERCENT_MULTIPLIER;
         const newColor = isPrimaryColor
             ? new Color(this.primaryColor.r, this.primaryColor.g, this.primaryColor.b, newAlpha)
             : new Color(this.secondaryColor.r, this.secondaryColor.g, this.secondaryColor.b, newAlpha);
@@ -37,7 +40,9 @@ export class SidebarColorOptionsComponent {
 
     openColorPicker(isPrimaryColor: boolean): void {
         this.isPrimaryColorOpened = isPrimaryColor;
-        const colorPickerRef = this.dialog.open(ColorPickerComponent, { data: this.colorHistory });
+        const colorPickerRef = this.dialog.open(ColorPickerComponent, {
+            data: { colorHistory: this.colorHistory, isPrimaryColor },
+        });
 
         colorPickerRef.afterClosed().subscribe((color?: Color) => {
             if (color) {
@@ -49,7 +54,7 @@ export class SidebarColorOptionsComponent {
     }
 
     get colorHistory(): Color[] {
-        return this.colorSelectionService.getcolorsHistory();
+        return this.colorSelectionService.getColorsHistory();
     }
 
     get primaryColor(): Color {

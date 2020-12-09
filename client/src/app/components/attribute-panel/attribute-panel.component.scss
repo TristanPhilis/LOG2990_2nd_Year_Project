@@ -7,6 +7,35 @@
     flex-direction: column;
 }
 
-.slide-container {
+.slider-container {
     width: 100%;
+    display: flex;
+    flex-wrap: nowrap;
+
+    & > :first-child {
+        width: 110px;
+        margin-right: 5px;
+        margin-bottom: 5px;
+        margin-left: 5px;
+    }
+}
+
+.selection-container {
+    margin: 0px 10px 10px 10px;
+    width: 135px;
+}
+
+label {
+    margin-left: 10px;
+    margin-top: 10px;
+}
+
+.sidebar-tool-name {
+    margin-top: 15px;
+    text-align: center;
+}
+
+button {
+    margin-left: 10px;
+    margin-right: 10px;
 }
