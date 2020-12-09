@@ -5,18 +5,10 @@ import { ToolOption } from '@app/classes/tool-option';
 import { Vec2 } from '@app/classes/vec2';
 import { ColorSelectionService } from '@app/services/color/color-selection-service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
-import {
-    ANGLE_ROTATION,
-    ANGLE_ROTATION_BASE,
-    ANGLE_ROTATION_ONE,
-    DEFAULT_OPTIONS,
-    DEG_TO_RAD_FACTOR,
-    ROTATION_COMPLETE,
-    ROTATION_HALF,
-} from '@app/shared/constant';
+import { ANGLE_ROTATION, DEFAULT_OPTIONS, DEG_TO_RAD_FACTOR, ROTATION_COMPLETE, ROTATION_HALF } from '@app/shared/constant';
 import { DrawingToolId, MouseButton, Options } from '@app/shared/enum';
 
-export const MINIMUM_FEATHER_SIZE = 50;
+export const MINIMUM_FEATHER_SIZE = 2;
 @Injectable({
     providedIn: 'root',
 })
@@ -32,6 +24,10 @@ export class FeatherService extends Tool {
 
     get lastAddedPoint(): Vec2 {
         return this.pathData[this.pathData.length - 2];
+    }
+
+    private degreesToRadians(degrees: number): number {
+        return degrees * (Math.PI / ROTATION_HALF);
     }
 
     setDefaultOptions(): void {
@@ -106,23 +102,21 @@ export class FeatherService extends Tool {
             angle.value = newAngle;
             this.options.toolOptions.set(Options.angle, angle);
             if (this.mouseDown) {
-                this.fillFromRotation(angle.value, event);
+                this.fillFromRotation(changeAngle, angle.value);
             }
         }
     }
-    fillFromRotation(changeAngle: number, event: WheelEvent): void {
+    private fillFromRotation(changeAngle: number, angleValue: number): void {
         this.addPointToPath(this.lastAddedPoint);
         this.draw(this.drawingService.baseCtx, this.getDrawingAction());
 
         const ctx = this.drawingService.baseCtx;
-        const angle = event.altKey ? ANGLE_ROTATION_ONE : ANGLE_ROTATION_BASE;
-        const actualChangeAngle = (changeAngle * Math.PI) / ROTATION_HALF;
         const size = (this.options.toolOptions.get(Options.size) as ToolOption).value;
         ctx.fillStyle = this.getDrawingAction().options.primaryColor.getRgbString();
 
         ctx.beginPath();
         ctx.lineTo(this.lastAddedPoint.x, this.lastAddedPoint.y);
-        ctx.arc(this.lastAddedPoint.x, this.lastAddedPoint.y, size, actualChangeAngle, angle, true);
+        ctx.arc(this.lastAddedPoint.x, this.lastAddedPoint.y, size, this.degreesToRadians(angleValue), this.degreesToRadians(changeAngle), true);
         ctx.fill();
         ctx.stroke();
     }

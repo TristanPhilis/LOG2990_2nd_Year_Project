@@ -174,29 +174,4 @@ describe('Service: Feather', () => {
         service.onWheel(wheelEvent);
         expect(fillFromRotationSpy).toHaveBeenCalled();
     });
-
-    it('fillFromRotation should call drawif the angle is 15 degree', () => {
-        const angle = 0;
-        service['pathData'].push({ x: 0, y: 0 });
-        service['pathData'].push({ x: 1, y: 1 });
-        service['pathData'].push({ x: 2, y: 2 });
-        const wheelEvent = {
-            deltaY: 1,
-            altKey: false,
-        } as WheelEvent;
-        service.fillFromRotation(angle, wheelEvent);
-        expect(drawSpy).toHaveBeenCalled();
-    });
-    it('fillFromRotation should call drawif the angle is 1 degree', () => {
-        const angle = 0;
-        service['pathData'].push({ x: 0, y: 0 });
-        service['pathData'].push({ x: 1, y: 1 });
-        service['pathData'].push({ x: 2, y: 2 });
-        const wheelEvent = {
-            deltaY: 1,
-            altKey: true,
-        } as WheelEvent;
-        service.fillFromRotation(angle, wheelEvent);
-        expect(drawSpy).toHaveBeenCalled();
-    });
 });
