@@ -39,7 +39,7 @@ export class SidebarComponent {
             { id: SidebarToolID.line, name: 'Ligne', defaultDrawingToolid: DrawingToolId.lineService },
             { id: SidebarToolID.shapes, name: 'Figures', defaultDrawingToolid: DrawingToolId.rectangleService },
             { id: SidebarToolID.text, name: 'Texte' },
-            { id: SidebarToolID.paintBucket, name: 'Sceau', defaultDrawingToolid: DrawingToolId.bucketService },
+            { id: SidebarToolID.paintBucket, name: 'Seau', defaultDrawingToolid: DrawingToolId.bucketService },
             { id: SidebarToolID.aerosol, name: 'Aerosol', defaultDrawingToolid: DrawingToolId.aerosolService },
             { id: SidebarToolID.stamp, name: 'Étampe', defaultDrawingToolid: DrawingToolId.stampService },
             { id: SidebarToolID.eraser, name: 'Efface', defaultDrawingToolid: DrawingToolId.eraserService },
