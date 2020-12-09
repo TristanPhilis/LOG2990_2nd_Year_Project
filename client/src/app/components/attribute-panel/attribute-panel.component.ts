@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { ToolOption } from '@app/classes/tool-option';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { SelectionService } from '@app/services/tools/selection/selection-service';
@@ -18,6 +18,8 @@ export class AttributePanelComponent {
     tracingTypes: ToolOption[];
     textures: ToolOption[];
     stamps: ToolOption[];
+
+    @Input() selectedSideBarToolName: string;
 
     constructor(public toolsService: ToolsService, public drawingService: DrawingService, public selectionService: SelectionService) {
         this.tracingTools = [

@@ -35,17 +35,17 @@ export class SidebarComponent {
         private clipBoard: ClipboardService,
     ) {
         this.sideBarToolsTop = [
-            { id: SidebarToolID.selection, name: 'Selection', defaultDrawingToolid: DrawingToolId.selectionService },
-            { id: SidebarToolID.grid, name: 'Grille' },
             { id: SidebarToolID.tracing, name: 'Traçage', defaultDrawingToolid: DrawingToolId.pencilService },
-            { id: SidebarToolID.shapes, name: 'Figures', defaultDrawingToolid: DrawingToolId.rectangleService },
             { id: SidebarToolID.line, name: 'Ligne', defaultDrawingToolid: DrawingToolId.lineService },
+            { id: SidebarToolID.shapes, name: 'Figures', defaultDrawingToolid: DrawingToolId.rectangleService },
             { id: SidebarToolID.text, name: 'Texte' },
             { id: SidebarToolID.paintBucket, name: 'Sceau', defaultDrawingToolid: DrawingToolId.bucketService },
+            { id: SidebarToolID.aerosol, name: 'Aerosol', defaultDrawingToolid: DrawingToolId.aerosolService },
             { id: SidebarToolID.stamp, name: 'Étampe', defaultDrawingToolid: DrawingToolId.stampService },
-            { id: SidebarToolID.pipette, name: 'Pipette', defaultDrawingToolid: DrawingToolId.pipetteService },
             { id: SidebarToolID.eraser, name: 'Efface', defaultDrawingToolid: DrawingToolId.eraserService },
-            { id: SidebarToolID.aerosol, name: 'aerosol', defaultDrawingToolid: DrawingToolId.aerosolService },
+            { id: SidebarToolID.pipette, name: 'Pipette', defaultDrawingToolid: DrawingToolId.pipetteService },
+            { id: SidebarToolID.selection, name: 'Selection', defaultDrawingToolid: DrawingToolId.selectionService },
+            { id: SidebarToolID.grid, name: 'Grille' },
         ];
 
         this.sideBarUndoRedoButtons = [
@@ -66,7 +66,7 @@ export class SidebarComponent {
     }
 
     openCloseSidenav(id: SidebarToolID): void {
-        if (this.toolsService.selectedSideBarToolID === id && this.toolsService.toolSidenavToggle.getValue() === true) {
+        if (this.toolsService.selectedSideBarTool.id === id && this.toolsService.toolSidenavToggle.getValue() === true) {
             this.toolsService.closeToolSidenav();
         } else {
             this.toolsService.openToolSidenav();
@@ -76,7 +76,7 @@ export class SidebarComponent {
     onButtonPressTop(object: SidebarTool | undefined): void {
         if (object) {
             this.openCloseSidenav(object.id);
-            this.toolsService.selectedSideBarToolID = object.id;
+            this.toolsService.selectedSideBarTool = object;
             if (object.defaultDrawingToolid !== undefined) {
                 this.toolsService.setCurrentDrawingTool(object.defaultDrawingToolid);
             }
@@ -99,7 +99,8 @@ export class SidebarComponent {
             }
             case SidebarToolID.openCarrousel: {
                 this.isDialogOpen = true;
-                const dialogRef = this.dialog.open(CarouselComponent);
+                const dialogRef = this.dialog.open(CarouselComponent, { width: '90%', height: '70%' });
+
                 dialogRef.afterClosed().subscribe(() => {
                     this.isDialogOpen = false;
                 });
@@ -116,23 +117,6 @@ export class SidebarComponent {
             case SidebarToolID.exportCurrent: {
                 this.isDialogOpen = true;
                 const dialogRef = this.dialog.open(ExportPopupComponent);
-                dialogRef.afterClosed().subscribe(() => {
-                    this.isDialogOpen = false;
-                });
-                break;
-            }
-            case SidebarToolID.openCarrousel: {
-                this.isDialogOpen = true;
-                const dialogRef = this.dialog.open(CarouselComponent, { width: '90%', height: '70%' });
-
-                dialogRef.afterClosed().subscribe(() => {
-                    this.isDialogOpen = false;
-                });
-                break;
-            }
-            case SidebarToolID.saveCurrent: {
-                const dialogRef = this.dialog.open(SavePopupComponent);
-                this.isDialogOpen = true;
                 dialogRef.afterClosed().subscribe(() => {
                     this.isDialogOpen = false;
                 });
@@ -187,7 +171,7 @@ export class SidebarComponent {
             },
             'C-v': () => {
                 this.clipBoard.paste();
-                if (this.toolsService.selectedSideBarToolID !== SidebarToolID.selection) {
+                if (this.toolsService.selectedSideBarTool.id !== SidebarToolID.selection) {
                     this.onButtonPressTop(this.sideBarToolsTopMap.get(SidebarToolID.selection));
                     this.toolsService.updateOptionValue(Options.selectionType, SelectionType.rectangle);
                 }
@@ -249,6 +233,7 @@ export class SidebarComponent {
         if (kbd[keys]) {
             const func: callback = kbd[keys];
             func();
+            this.toolsService.openToolSidenav();
         }
     }
 
@@ -260,6 +245,10 @@ export class SidebarComponent {
             this.canvasSizeService.restoreInitialSize();
             this.isDialogOpen = false;
         });
+    }
+
+    get selectedSideBarToolId(): SidebarToolID {
+        return this.toolsService.selectedSideBarTool.id;
     }
 
     get showUndo(): boolean {

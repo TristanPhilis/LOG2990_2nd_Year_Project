@@ -107,12 +107,12 @@ export class DrawingComponent implements AfterViewInit, OnChanges {
         }
     }
 
-    @HostListener('keydown', ['$event'])
+    @HostListener('window:keydown', ['$event'])
     onKeyDown(event: KeyboardEvent): void {
         this.currentTool.onKeyDown(event);
     }
 
-    @HostListener('keyup', ['$event'])
+    @HostListener('window:keyup', ['$event'])
     onKeyUp(event: KeyboardEvent): void {
         this.currentTool.onKeyUp(event);
     }

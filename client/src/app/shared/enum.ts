@@ -18,6 +18,7 @@ export enum SidebarToolID {
     redo,
     aerosol,
     grid,
+    none,
 }
 
 export enum DrawingToolId {
