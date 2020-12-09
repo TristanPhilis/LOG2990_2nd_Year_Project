@@ -23,6 +23,7 @@ export class AttributePanelComponent {
         this.tracingTools = [
             { value: DrawingToolId.pencilService, displayName: 'Crayon' },
             { value: DrawingToolId.brushService, displayName: 'Pinceau' },
+            { value: DrawingToolId.featherService, displayName: 'Plume' },
         ];
         this.shapesTools = [
             { value: DrawingToolId.rectangleService, displayName: 'Rectangle' },
