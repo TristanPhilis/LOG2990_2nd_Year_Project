@@ -43,6 +43,8 @@ export class CanvasSizeService implements OnDestroy {
         this.resizeCanvas(this.drawingService.selectionCanvas, workzoneWidth, workzoneHeight);
         this.drawingService.fillCanvas('white');
         this.updateAnchorsPosition(this.canvasSize);
+        this.drawingService.autoSave();
+        this.drawingService.loadDrawing(this.drawingService.baseCtx);
     }
 
     initializeResizing(pressedAnchor: AnchorsPosition): void {
@@ -73,16 +75,17 @@ export class CanvasSizeService implements OnDestroy {
         this.drawingService.autoSave();
     }
 
-    restoreInitialSize(): void {
-        this.resizeMainCanvas(this.initialCanvasSize.x, this.initialCanvasSize.y);
-        this.drawingService.fillCanvas('white');
-        this.drawingService.autoSave();
-    }
-
     private updatePreviewSize(event: MouseEvent): void {
         const width = this.resizeX ? event.offsetX : this.previewSize.x;
         const height = this.resizeY ? event.offsetY : this.previewSize.y;
         this.previewSize = this.getValidCanvasSize(width, height);
+    }
+
+    restoreInitialSize(): void {
+        this.resizeMainCanvas(this.initialCanvasSize.x, this.initialCanvasSize.y);
+        this.drawingService.fillCanvas('white');
+        this.drawingService.drawingToLoad = '';
+        this.drawingService.autoSave();
     }
 
     private updateAnchorsPosition(size: Vec2): void {

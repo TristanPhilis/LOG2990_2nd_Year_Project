@@ -68,15 +68,10 @@ export class DrawingService {
     loadDrawing(context: CanvasRenderingContext2D): void {
         const image = new Image();
         image.src = this.drawingToLoad;
-        if (image.complete) {
+        image.onload = () => {
             this.onLoadingImage.next({ x: image.width, y: image.height });
             context.drawImage(image, 0, 0);
-        } else {
-            image.onload = () => {
-                this.onLoadingImage.next({ x: image.width, y: image.height });
-                context.drawImage(image, 0, 0);
-            };
-        }
+        };
     }
 
     sendDrawing(drawing: string): void {

@@ -14,7 +14,7 @@ describe('ResizingService', () => {
 
     beforeEach(() => {
         gridServiceSpy = jasmine.createSpyObj('GridService', ['drawGrid']);
-        drawingServiceSpy = jasmine.createSpyObj('DrawingService', ['fillCanvas', 'setImageData', 'autoSave', 'getImageData']);
+        drawingServiceSpy = jasmine.createSpyObj('DrawingService', ['fillCanvas', 'setImageData', 'autoSave', 'getImageData', 'loadDrawing']);
         drawingServiceSpy.onLoadingImage = new Subject<Vec2>();
         TestBed.configureTestingModule({
             providers: [

@@ -228,9 +228,11 @@ export class SidebarComponent {
         this.undoRedo.clearPile();
         this.shortCurtsService.shortcutsEnabled = false;
         const dialogRef = this.dialog.open(CreateNewDrawingComponent);
-        dialogRef.afterClosed().subscribe(() => {
-            this.canvasSizeService.restoreInitialSize();
-            this.shortCurtsService.shortcutsEnabled = true;
+        dialogRef.afterClosed().subscribe((result: boolean) => {
+            if (result) {
+                this.canvasSizeService.restoreInitialSize();
+                this.shortCurtsService.shortcutsEnabled = true;
+            }
         });
     }
 

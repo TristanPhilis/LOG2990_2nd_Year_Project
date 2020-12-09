@@ -1,9 +1,11 @@
 import * as bodyParser from 'body-parser';
 import * as cookieParser from 'cookie-parser';
 import * as cors from 'cors';
+
 import * as express from 'express';
 import { inject, injectable } from 'inversify';
 import * as logger from 'morgan';
+import { EmailController } from './controllers/email-controller';
 import { IndexController } from './controllers/index.controller';
 import { TYPES } from './types';
 
@@ -12,7 +14,10 @@ export class Application {
     private readonly internalError: number = 500;
     app: express.Application;
 
-    constructor(@inject(TYPES.IndexController) private indexController: IndexController) {
+    constructor(
+        @inject(TYPES.IndexController) private indexController: IndexController,
+        @inject(TYPES.EmailController) private emailController: EmailController,
+    ) {
         this.app = express();
 
         this.config();
@@ -32,6 +37,7 @@ export class Application {
     bindRoutes(): void {
         // Notre application utilise le routeur de notre API `Index`
         this.app.use('/api/index', this.indexController.router);
+        this.app.use('/api/email', this.emailController.router);
         this.errorHandling();
     }
 

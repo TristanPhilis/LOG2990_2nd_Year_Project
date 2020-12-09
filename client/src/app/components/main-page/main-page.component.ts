@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { CarouselComponent } from '@app/components/carousel/carousel.component';
-import { CreateNewDrawingComponent } from '@app/components/create-new-drawing/create-new-drawing.component';
 import { GuideComponent } from '@app/components/guide/guide.component';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 
@@ -18,8 +17,7 @@ export class MainPageComponent {
     }
 
     createNew(): void {
-        this.drawingService.fillCanvas('white');
-        this.drawingService.autoSave();
+        this.drawingService.drawingToLoad = '';
     }
 
     openGuide(): void {
@@ -30,21 +28,10 @@ export class MainPageComponent {
         this.dialog.open(CarouselComponent, { width: '90%', height: '70%' });
     }
 
-    continueDrawing(): void {
-        const newDrawingRef = this.dialog.open(CreateNewDrawingComponent);
-        newDrawingRef.afterClosed().subscribe((result) => {
-            this.sendDrawingToEditor(result);
-        });
-    }
-
     // tslint:disable-next-line: no-any Result is of any type
-    sendDrawingToEditor(result: any): void {
-        if (result) {
-            this.drawingService.clearCanvas(this.drawingService.baseCtx);
-            this.drawingService.fillCanvas('white');
-            this.drawingService.sendDrawing(localStorage.getItem(this.drawingService.lastDrawingKey) || '{}');
-
-            this.drawingService.loadDrawing(this.drawingService.baseCtx);
-        }
+    continueDrawing(): void {
+        this.drawingService.clearCanvas(this.drawingService.baseCtx);
+        this.drawingService.fillCanvas('white');
+        this.drawingService.sendDrawing(localStorage.getItem(this.drawingService.lastDrawingKey) || '{}');
     }
 }
