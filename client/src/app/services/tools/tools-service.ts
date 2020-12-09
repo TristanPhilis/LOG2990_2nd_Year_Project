@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Tool } from '@app/classes/tool';
 import { ToolOption } from '@app/classes/tool-option';
+import { SidebarTool } from '@app/components/sidebar/sidebar-tool/sidebar-tool';
 import { BrushService } from '@app/services/tools/brush-service';
 import { BucketService } from '@app/services/tools/bucket-service';
 import { EllipseService } from '@app/services/tools/ellipse-service';
@@ -23,7 +24,7 @@ export class ToolsService {
     currentDrawingTool: Tool;
     private tools: Tool[];
 
-    selectedSideBarToolID: SidebarToolID;
+    selectedSideBarTool: SidebarTool;
     currentDrawingToolID: DrawingToolId;
     toolSidenavToggle: BehaviorSubject<boolean> = new BehaviorSubject(false);
 
@@ -57,6 +58,7 @@ export class ToolsService {
             sprayService,
             stampService,
         ];
+        this.selectedSideBarTool = { id: SidebarToolID.none, name: '' };
     }
 
     getTool(id: DrawingToolId): Tool {

@@ -73,6 +73,7 @@ export class StampService extends Tool {
     }
 
     onWheel(event: WheelEvent): void {
+        event.preventDefault();
         const changeAngle = event.altKey ? 1 : 1 * ANGLE_ROTATION;
         const angle = this.options.toolOptions.get(Options.angle);
         if (!angle) {
@@ -86,6 +87,7 @@ export class StampService extends Tool {
         }
         angle.value = newAngle;
         this.options.toolOptions.set(Options.angle, angle);
+        this.draw(this.drawingService.previewCtx, this.getDrawingAction());
     }
 
     getDrawingAction(): DrawingAction {

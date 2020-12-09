@@ -111,6 +111,9 @@ describe('StampService', () => {
         const wheelEvent = {
             deltaY: 1,
             altKey: false,
+            preventDefault: () => {
+                return;
+            },
         } as WheelEvent;
         service.onWheel(wheelEvent);
         angle = service.getDrawingAction().options.toolOptions.get(Options.angle);
@@ -130,6 +133,9 @@ describe('StampService', () => {
         const wheelEvent = {
             deltaY: 1,
             altKey: true,
+            preventDefault: () => {
+                return;
+            },
         } as WheelEvent;
         service.onWheel(wheelEvent);
         angle = service.getDrawingAction().options.toolOptions.get(Options.angle);
@@ -156,6 +162,9 @@ describe('StampService', () => {
         const wheelEvent = {
             deltaY: 1,
             altKey: false,
+            preventDefault: () => {
+                return;
+            },
         } as WheelEvent;
 
         service.onWheel(wheelEvent);
@@ -185,6 +194,9 @@ describe('StampService', () => {
         const wheelEvent = {
             deltaY: -1,
             altKey: false,
+            preventDefault: () => {
+                return;
+            },
         } as WheelEvent;
 
         service.onWheel(wheelEvent);
