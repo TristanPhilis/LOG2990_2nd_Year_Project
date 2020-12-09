@@ -1,10 +1,13 @@
 import { DrawingInfo } from '@common/communication/drawing-info';
 import { fail } from 'assert';
 import { expect } from 'chai';
+import * as dotenv from 'dotenv';
 import { describe } from 'mocha';
 import { Db, MongoClient } from 'mongodb';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import { DatabaseService } from './database.service';
+
+dotenv.config();
 
 describe('DatabaseService', () => {
     let databaseService: DatabaseService;

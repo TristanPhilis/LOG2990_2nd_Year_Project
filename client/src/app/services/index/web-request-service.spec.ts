@@ -1,23 +1,26 @@
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { DrawingInfo } from '@common/communication/drawing-info';
-import { IndexService } from './index.service';
+import { EmailInfo } from '@common/communication/email-info';
+import { WebRequestService } from './web-request-service';
 
-describe('IndexService', () => {
+describe('WebRequestService', () => {
     let httpMock: HttpTestingController;
-    let service: IndexService;
+    let service: WebRequestService;
     let baseUrl: string;
+    let emailUrl: string;
 
     beforeEach(() => {
         TestBed.configureTestingModule({
             imports: [HttpClientTestingModule],
         });
-        service = TestBed.inject(IndexService);
+        service = TestBed.inject(WebRequestService);
         httpMock = TestBed.inject(HttpTestingController);
         // BASE_URL is private so we need to access it with its name as a key
         // Try to avoid this syntax which violates encapsulation
         // tslint:disable: no-string-literal
         baseUrl = service['BASE_URL'];
+        emailUrl = service['EMAIL_URL'];
     });
 
     afterEach(() => {
@@ -43,6 +46,21 @@ describe('IndexService', () => {
         // actually send the request
         req.flush(expectedDrawing);
         postReq.flush(expectedDrawing);
+    });
+
+    it('should call post on sending email', () => {
+        const validEmail: EmailInfo = {
+            emailAddress: 'ramzibelbahri@gmail.com',
+            metadata: '',
+            fileExtension: 'png',
+            fileName: 'image.png',
+        };
+        // tslint:disable-next-line: no-empty
+        service.sendEmail(validEmail).subscribe(() => {}, fail);
+
+        const req = httpMock.expectOne(emailUrl);
+        expect(req.request.method).toBe('POST');
+        req.flush(validEmail);
     });
 
     it('should not return any drawing when sending a POST request (HttpClient called once)', () => {

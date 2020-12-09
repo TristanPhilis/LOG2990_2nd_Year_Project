@@ -8,11 +8,14 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatSliderModule } from '@angular/material/slider';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './components/app/app.component';
 import { AttributePanelComponent } from './components/attribute-panel/attribute-panel.component';
+import { GridOptionsComponent } from './components/attribute-panel/grid-options/grid-options/grid-options.component';
+import { MagnetOptionComponent } from './components/attribute-panel/magnet-option/magnet-option/magnet-option.component';
 import { CarouselComponent } from './components/carousel/carousel.component';
 import { CreateNewDrawingComponent } from './components/create-new-drawing/create-new-drawing.component';
 import { DrawingComponent } from './components/drawing/drawing.component';
@@ -45,6 +48,8 @@ import { SidebarComponent } from './components/sidebar/sidebar.component';
         SavePopupComponent,
         ExportPopupComponent,
         PipettePreviewComponent,
+        GridOptionsComponent,
+        MagnetOptionComponent,
     ],
     imports: [
         BrowserModule,
@@ -59,6 +64,7 @@ import { SidebarComponent } from './components/sidebar/sidebar.component';
         BrowserAnimationsModule,
         MatSidenavModule,
         MatRadioModule,
+        MatSliderModule,
     ],
     entryComponents: [GuideComponent, CarouselComponent, ColorPickerComponent, ExportPopupComponent, SavePopupComponent],
     providers: [],

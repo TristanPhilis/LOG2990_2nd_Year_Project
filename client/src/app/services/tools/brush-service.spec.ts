@@ -4,14 +4,12 @@ import { Color } from '@app/classes/color';
 import { Vec2 } from '@app/classes/vec2';
 import { ColorSelectionService } from '@app/services/color/color-selection-service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
-import { BrushService } from './brush.service';
-import { UndoRedoService } from './undo-redo-service';
+import { BrushService } from './brush-service';
 
 // tslint:disable:no-any
 describe('BrushService', () => {
     let service: BrushService;
     let drawServiceSpy: jasmine.SpyObj<DrawingService>;
-    let undoRedoServiceSpy: jasmine.SpyObj<UndoRedoService>;
     let colorServiceSpy: jasmine.SpyObj<ColorSelectionService>;
     let mouseEvent: MouseEvent;
     let baseCtxStub: CanvasRenderingContext2D;
@@ -19,19 +17,17 @@ describe('BrushService', () => {
     let drawSpy: jasmine.Spy<any>;
 
     beforeEach(() => {
-        undoRedoServiceSpy = jasmine.createSpyObj('UndoRedoService', ['saveAction']);
         const defaultColor = new Color(0, 0, 0);
         colorServiceSpy = jasmine.createSpyObj('colorServiceSpy', ['']);
         colorServiceSpy.primaryColor = defaultColor;
         colorServiceSpy.secondaryColor = defaultColor;
         baseCtxStub = canvasTestHelper.canvas.getContext('2d') as CanvasRenderingContext2D;
         previewCtxStub = canvasTestHelper.drawCanvas.getContext('2d') as CanvasRenderingContext2D;
-        drawServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas']);
+        drawServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas', 'autoSave']);
 
         TestBed.configureTestingModule({
             providers: [
                 { provide: DrawingService, useValue: drawServiceSpy },
-                { provide: UndoRedoService, useValue: undoRedoServiceSpy },
                 { provide: ColorSelectionService, useValue: colorServiceSpy },
             ],
         });

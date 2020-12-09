@@ -1,9 +1,9 @@
 import { Component } from '@angular/core';
 import { ToolOption } from '@app/classes/tool-option';
 import { DrawingService } from '@app/services/drawing/drawing.service';
-import { RectangleSelectorService } from '@app/services/tools/rectangle-selector-service';
+import { SelectionService } from '@app/services/tools/selection/selection-service';
 import { ToolsService } from '@app/services/tools/tools-service';
-import { drawingToolId, Options, sidebarToolID, Texture, TraceTypes } from '@app/shared/enum';
+import { DrawingToolId, Options, SelectionType, SidebarToolID, Stamp, Texture, TraceTypes } from '@app/shared/enum';
 // tslint:disable:no-any
 
 @Component({
@@ -12,30 +12,28 @@ import { drawingToolId, Options, sidebarToolID, Texture, TraceTypes } from '@app
     styleUrls: ['./attribute-panel.component.scss'],
 })
 export class AttributePanelComponent {
-    showTools: boolean;
-    selectionTools: ToolOption[];
+    selectorTypes: ToolOption[];
     tracingTools: ToolOption[];
     shapesTools: ToolOption[];
     tracingTypes: ToolOption[];
     textures: ToolOption[];
+    stamps: ToolOption[];
 
-    constructor(
-        public toolsService: ToolsService,
-        public drawingService: DrawingService,
-        public rectangleSelectionService: RectangleSelectorService,
-    ) {
-        this.selectionTools = [
-            { value: drawingToolId.rectangleSelectionService, displayName: 'Selection Rectangulaire' },
-            { value: drawingToolId.ellipseSelectionService, displayName: 'Selection Elliptique' },
-        ];
+    constructor(public toolsService: ToolsService, public drawingService: DrawingService, public selectionService: SelectionService) {
         this.tracingTools = [
-            { value: drawingToolId.pencilService, displayName: 'Crayon' },
-            { value: drawingToolId.brushService, displayName: 'Pinceau' },
+            { value: DrawingToolId.pencilService, displayName: 'Crayon' },
+            { value: DrawingToolId.brushService, displayName: 'Pinceau' },
+            { value: DrawingToolId.featherService, displayName: 'Plume' },
         ];
         this.shapesTools = [
-            { value: drawingToolId.rectangleService, displayName: 'Rectangle' },
-            { value: drawingToolId.ellipseService, displayName: 'Ellipse' },
-            { value: drawingToolId.polygonService, displayName: 'Polygone' },
+            { value: DrawingToolId.rectangleService, displayName: 'Rectangle' },
+            { value: DrawingToolId.ellipseService, displayName: 'Ellipse' },
+            { value: DrawingToolId.polygonService, displayName: 'Polygone' },
+        ];
+        this.selectorTypes = [
+            { value: SelectionType.rectangle, displayName: 'Rectangulaire' },
+            { value: SelectionType.ellipse, displayName: 'Elliptique' },
+            { value: SelectionType.magic, displayName: 'Baguette magique' },
         ];
         this.tracingTypes = [
             { value: TraceTypes.fill, displayName: 'Rempli' },
@@ -49,10 +47,17 @@ export class AttributePanelComponent {
             { value: Texture.four, displayName: 'Texture Quatre' },
             { value: Texture.five, displayName: 'Texture Cinq' },
         ];
+        this.stamps = [
+            { value: Stamp.one, displayName: 'Sourire' },
+            { value: Stamp.two, displayName: 'Grimace' },
+            { value: Stamp.three, displayName: 'Etoile' },
+            { value: Stamp.four, displayName: 'Licorne' },
+            { value: Stamp.five, displayName: 'Crane' },
+        ];
     }
 
-    get sidebarToolID(): typeof sidebarToolID {
-        return sidebarToolID;
+    get SidebarToolID(): typeof SidebarToolID {
+        return SidebarToolID;
     }
 
     get Options(): typeof Options {
@@ -60,19 +65,14 @@ export class AttributePanelComponent {
     }
 
     get toolOptions(): Map<Options, ToolOption> {
-        const optionsMap = this.toolsService.currentDrawingToolOptions;
-        return optionsMap ? optionsMap : new Map<Options, ToolOption>();
+        return this.toolsService.currentDrawingToolOptions;
     }
 
-    handleToolChange(selectedTool: drawingToolId): void {
-        this.toolsService._currentDrawingTool = Number(selectedTool);
+    handleToolChange(selectedTool: DrawingToolId): void {
+        this.toolsService.setCurrentDrawingTool(Number(selectedTool));
     }
 
     updateToolOptionValue(key: Options, value: number): void {
-        const option = this.toolOptions.get(key);
-        if (option) {
-            option.value = Number(value);
-            this.toolsService.updateOptionValue(key, option);
-        }
+        this.toolsService.updateOptionValue(key, value);
     }
 }

@@ -1,4 +1,17 @@
-<div (mouseover)="drawingService.mouseIsOverCanvas = true" (mouseout)="drawingService.mouseIsOverCanvas = false" id="canvas-container">
-    <canvas id="canvas" #baseCanvas></canvas>
+<div id="canvas-container">
+    <canvas id="mainCanvas" #baseCanvas></canvas>
     <canvas id="previewLayer" #previewCanvas></canvas>
+    <canvas id="selectionLayer" #selectionCanvas></canvas>
+    <canvas
+        id="gridLayer"
+        #gridCanvas
+        (mouseover)="drawingService.mouseIsOverCanvas = true"
+        (mouseout)="drawingService.mouseIsOverCanvas = false"
+    ></canvas>
+    <div class="preview-container">
+        <div #bottomAnchor id="bottomAnchor" class="anchor" (mousedown)="onAnchorPressed($event, AnchorsPosition.middleBottom)"></div>
+        <div #rightAnchor id="rightAnchor" class="anchor" (mousedown)="onAnchorPressed($event, AnchorsPosition.middleRight)"></div>
+        <div #cornerAnchor id="cornerAnchor" class="anchor" (mousedown)="onAnchorPressed($event, AnchorsPosition.bottomRight)"></div>
+        <div *ngIf="isResizing" class="resize-preview" [style.width.px]="previewSize.x" [style.height.px]="previewSize.y"></div>
+    </div>
 </div>

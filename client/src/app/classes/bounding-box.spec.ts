@@ -66,20 +66,6 @@ describe('BoundingBox', () => {
         expect(boundingBox.bottom).toEqual(selectionWidth);
     });
 
-    it('Should translate on the x axis', () => {
-        const translationValue = 5;
-        boundingBox.translateX(translationValue);
-        expect(boundingBox.left).toEqual(corner + translationValue);
-        expect(boundingBox.width).toEqual(width);
-    });
-
-    it('Should translate on the y axis', () => {
-        const translationValue = 5;
-        boundingBox.translateY(translationValue);
-        expect(boundingBox.top).toEqual(corner + translationValue);
-        expect(boundingBox.height).toEqual(height);
-    });
-
     it('updating with top right coord should update properly', () => {
         // tslint:disable-next-line:no-magic-number
         const topRightCoord = { x: 40, y: 0 };
@@ -98,16 +84,5 @@ describe('BoundingBox', () => {
         expect(boundingBox.left).toEqual(bottomLeftCoord.x);
         expect(boundingBox.width).toEqual(corner + width);
         expect(boundingBox.height).toEqual(bottomLeftCoord.y - corner);
-    });
-
-    it('isInBoxShould return true if coord in box', () => {
-        // tslint:disable-next-line:no-magic-number
-        const result = boundingBox.isInBox({ x: 20, y: 20 });
-        expect(result).toBeTrue();
-    });
-
-    it('isInBox should return false if coord not in box', () => {
-        const result = boundingBox.isInBox({ x: 0, y: 0 });
-        expect(result).toBeFalse();
     });
 });

@@ -3,41 +3,39 @@ import { canvasTestHelper } from '@app/classes/canvas-test-helper';
 import { Color } from '@app/classes/color';
 import { ColorSelectionService } from '@app/services/color/color-selection-service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
-import { BACKSPACE_KEY, ESCAPE_KEY, MIDDLE_SNAP_ANGLE, SHIFT_KEY } from '@app/shared/constant';
+import { KEYS, MIDDLE_SNAP_ANGLE } from '@app/shared/constant';
 import { LineService } from './line-service';
-import { UndoRedoService } from './undo-redo-service';
 
 // tslint:disable:no-any
 describe('LineService', () => {
     let service: LineService;
     let drawServiceSpy: jasmine.SpyObj<DrawingService>;
-    let undoRedoServiceSpy: jasmine.SpyObj<UndoRedoService>;
     let colorServiceSpy: jasmine.SpyObj<ColorSelectionService>;
     let mouseEvent: MouseEvent;
 
     let baseCtxStub: CanvasRenderingContext2D;
     let previewCtxStub: CanvasRenderingContext2D;
     let drawSpy: jasmine.Spy<any>;
+    let saveActionSpy: jasmine.Spy<any>;
 
     beforeEach(() => {
-        undoRedoServiceSpy = jasmine.createSpyObj('UndoRedoService', ['saveAction']);
         const defaultColor = new Color(0, 0, 0);
         colorServiceSpy = jasmine.createSpyObj('colorServiceSpy', ['']);
         colorServiceSpy.primaryColor = defaultColor;
         colorServiceSpy.secondaryColor = defaultColor;
         baseCtxStub = canvasTestHelper.canvas.getContext('2d') as CanvasRenderingContext2D;
         previewCtxStub = canvasTestHelper.drawCanvas.getContext('2d') as CanvasRenderingContext2D;
-        drawServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas']);
+        drawServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas', 'autoSave']);
 
         TestBed.configureTestingModule({
             providers: [
                 { provide: DrawingService, useValue: drawServiceSpy },
-                { provide: UndoRedoService, useValue: undoRedoServiceSpy },
                 { provide: ColorSelectionService, useValue: colorServiceSpy },
             ],
         });
         service = TestBed.inject(LineService);
         drawSpy = spyOn<any>(service, 'draw').and.callThrough();
+        saveActionSpy = spyOn<any>(service.action, 'next');
 
         // Spy Service configuration
         // tslint:disable-next-line:no-string-literal
@@ -98,7 +96,7 @@ describe('LineService', () => {
         service.onMouseDoubleClick(mouseEvent);
         expect(drawSpy).toHaveBeenCalled();
         expect(endLineSpy).toHaveBeenCalled();
-        expect(undoRedoServiceSpy.saveAction).toHaveBeenCalled();
+        expect(saveActionSpy).toHaveBeenCalled();
     });
 
     it('onMouseDoubleClick should not call drawnLine if line not started', () => {
@@ -132,7 +130,7 @@ describe('LineService', () => {
     it('onKeyUp should update lastCoord and call drawLine when shift is released and line is started', () => {
         service['lineStarted'] = true;
         const keyEvent = {
-            key: SHIFT_KEY,
+            key: KEYS.SHIFT,
         } as KeyboardEvent;
         const updateLastCoordSpy = spyOn(service, 'updateLastCoord');
         service['pathData'].push({ x: 0, y: 0 });
@@ -146,7 +144,7 @@ describe('LineService', () => {
     it('onKeyDown should call drawLine with shiftDown to true when shift is pressed and line is started', () => {
         service['lineStarted'] = true;
         const keyEvent = {
-            key: SHIFT_KEY,
+            key: KEYS.SHIFT,
         } as KeyboardEvent;
         const coord = { x: 0, y: 0 };
         service['pathData'].push(coord);
@@ -162,7 +160,7 @@ describe('LineService', () => {
         service['lineStarted'] = true;
         service.shiftDown = true;
         const keyEvent = {
-            key: SHIFT_KEY,
+            key: KEYS.SHIFT,
         } as KeyboardEvent;
 
         service.onKeyDown(keyEvent);
@@ -171,7 +169,7 @@ describe('LineService', () => {
 
     it('onKeyUp Should not call drawLine with other key then shift released', () => {
         const keyEvent = {
-            key: BACKSPACE_KEY,
+            key: KEYS.SHIFT,
         } as KeyboardEvent;
 
         service.onKeyUp(keyEvent);
@@ -182,7 +180,7 @@ describe('LineService', () => {
         // tslint:disable-next-line:no-string-literal
         service['lineStarted'] = false;
         const keyEvent = {
-            key: SHIFT_KEY,
+            key: KEYS.SHIFT,
         } as KeyboardEvent;
 
         service.onKeyDown(keyEvent);
@@ -242,7 +240,7 @@ describe('LineService', () => {
             service['pathData'].push({ x: i, y: i });
         }
         const event = {
-            key: BACKSPACE_KEY,
+            key: KEYS.BACKSPACE,
         } as KeyboardEvent;
 
         service.onKeyDown(event);
@@ -262,7 +260,7 @@ describe('LineService', () => {
             service['pathData'].push({ x: i, y: i });
         }
         const event = {
-            key: ESCAPE_KEY,
+            key: KEYS.ESCAPE,
         } as KeyboardEvent;
 
         service.onKeyDown(event);

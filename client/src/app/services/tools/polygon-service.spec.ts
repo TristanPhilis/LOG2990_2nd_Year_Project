@@ -5,22 +5,20 @@ import { ColorSelectionService } from '@app/services/color/color-selection-servi
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { Options, TraceTypes } from '@app/shared/enum';
 import { MAX_SIDES, MIN_SIDES, PolygonService } from './polygon-service';
-import { UndoRedoService } from './undo-redo-service';
 
 // tslint:disable:no-any
 describe('PolygonService', () => {
     let service: PolygonService;
     let drawServiceSpy: jasmine.SpyObj<DrawingService>;
-    let undoRedoServiceSpy: jasmine.SpyObj<UndoRedoService>;
     let colorServiceSpy: jasmine.SpyObj<ColorSelectionService>;
     let mouseEventLClick: MouseEvent;
     let mouseEventRClick: MouseEvent;
     let baseCtxSpy: jasmine.SpyObj<CanvasRenderingContext2D>;
     let previewCtxSpy: jasmine.SpyObj<CanvasRenderingContext2D>;
     let drawSpy: jasmine.Spy<any>;
+    let saveActionSpy: jasmine.Spy<any>;
 
     beforeEach(() => {
-        undoRedoServiceSpy = jasmine.createSpyObj('UndoRedoService', ['saveAction']);
         const defaultColor = new Color(0, 0, 0);
         colorServiceSpy = jasmine.createSpyObj('colorServiceSpy', ['']);
         colorServiceSpy.primaryColor = defaultColor;
@@ -28,16 +26,16 @@ describe('PolygonService', () => {
         const contextMethod = ['stroke', 'fill', 'beginPath', 'moveTo', 'lineTo', 'closePath', 'setLineDash', 'arc'];
         baseCtxSpy = jasmine.createSpyObj('CanvasRenderingContext2D', contextMethod);
         previewCtxSpy = jasmine.createSpyObj('CanvasRenderingContext2D', contextMethod);
-        drawServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas']);
+        drawServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas', 'autoSave']);
         TestBed.configureTestingModule({
             providers: [
                 { provide: DrawingService, useValue: drawServiceSpy },
-                { provide: UndoRedoService, useValue: undoRedoServiceSpy },
                 { provide: ColorSelectionService, useValue: colorServiceSpy },
             ],
         });
         service = TestBed.inject(PolygonService);
         drawSpy = spyOn<any>(service, 'draw').and.callThrough();
+        saveActionSpy = spyOn<any>(service.action, 'next');
 
         // tslint:disable:no-string-literal
         service['drawingService'].baseCtx = baseCtxSpy;
@@ -90,7 +88,7 @@ describe('PolygonService', () => {
         service.mouseDown = true;
         service.onMouseUp(mouseEventLClick);
         expect(updateOpposingCornerSpy).toHaveBeenCalled();
-        expect(undoRedoServiceSpy.saveAction).toHaveBeenCalled();
+        expect(saveActionSpy).toHaveBeenCalled();
         expect(drawSpy).toHaveBeenCalled();
     });
 
@@ -116,7 +114,7 @@ describe('PolygonService', () => {
         service.mouseDown = true;
         service.onMouseMove(mouseEventRClick);
         expect(drawSpy).toHaveBeenCalled();
-        expect(undoRedoServiceSpy.saveAction).toHaveBeenCalled();
+        expect(saveActionSpy).toHaveBeenCalled();
         expect(service.mouseDown).toBeFalse();
     });
 

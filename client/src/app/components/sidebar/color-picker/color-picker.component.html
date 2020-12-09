@@ -1,30 +1,29 @@
-<div class="color-picker-wrapper box">
-    <div class="palette-wrapper box-elem">
-        <app-color-palette [hue]="hue" (colorChange)="updateColor($event)"></app-color-palette>
-    </div>
-    <div class="slider-wrapper box-elem">
-        <app-color-slider (colorChange)="hue = $event"></app-color-slider>
-    </div>
-    <div class="prewiew-wrapper box-elem">
-        <span>Color</span>
-        <div class="color-preview" [ngStyle]="{'background-color': color ? color.getRgbString() : 'white'}"></div>
+<h1 mat-dialog-title align="center">Sélection de la couleur {{ colorTitleText }}</h1>
+<div class="container" mat-dialog-content>
+    <div class="top-section-container">
+        <div class="palette-container">
+            <app-color-palette [hue]="hue" (colorChange)="updateColor($event)"></app-color-palette>
+        </div>
+        <div class="slider-container">
+            <app-color-slider (colorChange)="hue = $event"></app-color-slider>
+        </div>
+        <div class="prewiew-container">
+            <span>Couleur</span>
+            <div class="color-preview" [ngStyle]="{ 'background-color': color ? color.getRgbString() : 'white' }"></div>
 
-        <form class="input-wrapper box" [formGroup]="colorForm">
-            <label>r</label><input type:number formControlName="r">
-            <label>g</label><input type:number formControlName="g">
-            <label>b</label><input type:number formControlName="b">
-            <label>#</label><input type:text formControlName="hex">
-        </form>
+            <form class="input-container" [formGroup]="colorForm">
+                <label>r</label><input type:number formControlName="r" /> <label>g</label><input type:number formControlName="g" /> <label>b</label
+                ><input type:number formControlName="b" /> <label>#</label><input type:text formControlName="hex" />
+            </form>
+        </div>
     </div>
-    <div class="color-history-wrapper box">
-        <ng-container *ngFor="let color of colorHistory">
-            <div class="color-choice" (click)="updateColor(color)"
-                [ngStyle]="{'background-color': color.getRgbString()}">
-            </div>
+    <div class="color-history-container">
+        <ng-container *ngFor="let color of colorPickerData.colorHistory">
+            <div class="color-choice" (click)="updateColor(color)" [ngStyle]="{ 'background-color': color.getRgbString() }"></div>
         </ng-container>
     </div>
-    <div class="buttons-wrapper box">
-        <button (click)="onSelect()">Select</button>
-        <button mat-dialog-close>Cancel</button>
-    </div>
+</div>
+<div mat-dialog-actions>
+    <button mat-raised-button [mat-dialog-close]="color" [disabled]="colorForm.invalid">Sélectionner</button>
+    <button mat-raised-button mat-dialog-close>Annuler</button>
 </div>

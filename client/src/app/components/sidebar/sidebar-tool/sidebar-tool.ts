@@ -1,6 +1,6 @@
-import { drawingToolId, sidebarToolID } from '@app/shared/enum';
+import { DrawingToolId, SidebarToolID } from '@app/shared/enum';
 export interface SidebarTool {
-    id: sidebarToolID;
+    id: SidebarToolID;
     name: string;
-    defaultDrawingToolid?: drawingToolId;
+    defaultDrawingToolid?: DrawingToolId;
 }

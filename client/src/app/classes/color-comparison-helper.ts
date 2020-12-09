@@ -1,27 +1,27 @@
 import { MAX_TOLERANCE } from '@app/shared/constant';
 import { Color, MAX_RGBA_VALUE } from './color';
 
-interface Lab {
+interface CIELab {
     L: number;
     a: number;
     b: number;
 }
 
-interface XYZ {
+interface CIEXYZ {
     X: number;
     Y: number;
     Z: number;
 }
 
 export const isColorSimilar = (color1: Color, color2: Color, tolerence: number): boolean => {
-    const labColor1: Lab = getLabFromColor(color1);
-    const labColor2: Lab = getLabFromColor(color2);
+    const labColor1: CIELab = getLabFromColor(color1);
+    const labColor2: CIELab = getLabFromColor(color2);
     const difference = calculateDeltaE(labColor1, labColor2);
     return Math.min(difference, MAX_TOLERANCE) <= tolerence;
 };
 
 // Steps taking from http://www.brucelindbloom.com/index.html?Eqn_XYZ_to_Lab.html
-const getLabFromColor = (color: Color): Lab => {
+const getLabFromColor = (color: Color): CIELab => {
     const xyzColor = getXYZFromColor(color);
 
     // Using illuminant D65 for reference white tristimulus values as seen in link below
@@ -62,7 +62,7 @@ const getLabFromColor = (color: Color): Lab => {
 // lots of values in this function, like multiplication matrix, taken from website without meaning explained
 // tslint:disable:no-magic-numbers
 // Steps taking from http://www.brucelindbloom.com/index.html?Eqn_RGB_to_XYZ.html
-const getXYZFromColor = (color: Color): XYZ => {
+const getXYZFromColor = (color: Color): CIEXYZ => {
     // Bring 0-255 range to 0-1 range
     let r = color.r / MAX_RGBA_VALUE;
     let g = color.g / MAX_RGBA_VALUE;
@@ -84,7 +84,7 @@ const getXYZFromColor = (color: Color): XYZ => {
 // tslint:enable:no-magic-numbers
 
 // Using DeltaE version CIE94 as seen here: http://www.brucelindbloom.com/index.html?Eqn_DeltaE_CIE94.html
-const calculateDeltaE = (lab1: Lab, lab2: Lab): number => {
+const calculateDeltaE = (lab1: CIELab, lab2: CIELab): number => {
     const defaultK = 1;
     const k1 = 0.045;
     const k2 = 0.015;

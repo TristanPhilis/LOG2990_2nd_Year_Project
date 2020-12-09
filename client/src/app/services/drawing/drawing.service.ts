@@ -1,16 +1,36 @@
 import { Injectable } from '@angular/core';
 import { Box } from '@app/classes/box';
 import { Vec2 } from '@app/classes/vec2';
+import { Subject } from 'rxjs';
 
 @Injectable({
     providedIn: 'root',
 })
 export class DrawingService {
-    baseCtx: CanvasRenderingContext2D;
-    previewCtx: CanvasRenderingContext2D;
     canvas: HTMLCanvasElement;
+    baseCtx: CanvasRenderingContext2D;
+
+    previewCanvas: HTMLCanvasElement;
+    previewCtx: CanvasRenderingContext2D;
+
+    gridCanvas: HTMLCanvasElement;
+    gridCtx: CanvasRenderingContext2D;
+
+    selectionCanvas: HTMLCanvasElement;
+    selectionCtx: CanvasRenderingContext2D;
+
     drawingToLoad: string;
-    mouseIsOverCanvas: boolean = false;
+    mouseIsOverCanvas: boolean;
+
+    lastDrawingKey: string;
+
+    onLoadingImage: Subject<Vec2>;
+
+    constructor() {
+        localStorage.setItem(this.lastDrawingKey, '');
+        this.onLoadingImage = new Subject<Vec2>();
+        this.mouseIsOverCanvas = false;
+    }
 
     getImageData(): ImageData {
         return this.baseCtx.getImageData(0, 0, this.canvas.width, this.canvas.height);
@@ -35,7 +55,8 @@ export class DrawingService {
     }
 
     clearCanvas(context: CanvasRenderingContext2D): void {
-        context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        const canvas = context === this.selectionCtx ? this.selectionCanvas : this.canvas;
+        context.clearRect(0, 0, canvas.width, canvas.height);
     }
 
     isCoordInCanvas(coord: Vec2): boolean {
@@ -47,10 +68,17 @@ export class DrawingService {
     loadDrawing(context: CanvasRenderingContext2D): void {
         const image = new Image();
         image.src = this.drawingToLoad;
-        context.drawImage(image, 0, 0);
+        image.onload = () => {
+            this.onLoadingImage.next({ x: image.width, y: image.height });
+            context.drawImage(image, 0, 0);
+        };
     }
 
     sendDrawing(drawing: string): void {
         this.drawingToLoad = drawing;
+    }
+
+    autoSave(): void {
+        localStorage.setItem(this.lastDrawingKey, this.getImageURL());
     }
 }

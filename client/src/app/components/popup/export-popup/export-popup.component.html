@@ -12,6 +12,11 @@
             <span matSuffix>.{{fileType}}</span>
             <mat-error *ngIf="nameInput.invalid">Le champ nom est requis</mat-error>
         </mat-form-field>
+        <mat-form-field>
+            <mat-label>Addresse de destination</mat-label>
+            <input matInput [formControl]="emailInput" autocomplete="off">
+            <mat-error *ngIf="emailInput.invalid">Le champ email est requis</mat-error>
+        </mat-form-field>
         <mat-radio-group class="filter-container" (change)="updateFilter($event.value)">
             <p>Appliquer un filtre</p>
             <mat-radio-button class="radio-button" *ngFor="let filter of filterOptions;" [value]="filter.value">
@@ -24,6 +29,7 @@
     </div>
 </div>
 <div mat-dialog-actions>
-    <button mat-raised-button (click)="exportDrawing()" mat-dialog-close [disabled]="nameInput.invalid">Exporter</button>
+    <button mat-raised-button (click)="exportDrawing()" mat-dialog-close [disabled]="nameInput.invalid">Exporter localement</button>
+    <button mat-raised-button (click)="sendEmail()" mat-dialog-close [disabled]="emailInput.invalid || nameInput.invalid">Envoyer par courriel</button>
     <button mat-raised-button mat-dialog-close>Annuler</button>
 </div>

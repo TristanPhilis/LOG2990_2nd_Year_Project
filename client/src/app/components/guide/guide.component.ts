@@ -6,9 +6,8 @@ import { Component } from '@angular/core';
     styleUrls: ['./guide.component.scss'],
 })
 export class GuideComponent {
-    tabElement: HTMLElement | null;
-    tabContent: HTMLCollectionOf<HTMLElement>;
-    tabLinks: HTMLCollectionOf<HTMLElement>;
+    private tabElement: HTMLElement | null;
+    private tabContent: HTMLCollectionOf<HTMLElement>;
     openTab(tab: string): void {
         let i: number;
 
@@ -22,7 +21,7 @@ export class GuideComponent {
         for (i = 0; i < tablinks.length; i++) {
             tablinks[i].className = tablinks[i].className.replace(' active', '');
         }
-        if (this.tabElement !== null) {
+        if (this.tabElement) {
             this.tabElement.style.display = 'block';
         }
     }

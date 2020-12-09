@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { Color } from '@app/classes/color';
 import { ColorSelectionService } from './color-selection-service';
 
-describe('ColorSelectionServiceService', () => {
+describe('ColorSelectionService', () => {
     let service: ColorSelectionService;
     let primaryColor: Color;
     let secondaryColor: Color;
@@ -34,9 +34,9 @@ describe('ColorSelectionServiceService', () => {
         expect(service).toBeTruthy();
     });
 
-    it('default history should be size 10 and all white', () => {
+    it('default history should be size 10 and all black', () => {
         const defaultColor = new Color(0, 0, 0);
-        const history = service.getcolorsHistory();
+        const history = service.getColorsHistory();
         expect(history.length).toEqual(defaultSize);
         for (const color of history) {
             expect(color).toEqual(defaultColor);
@@ -44,15 +44,19 @@ describe('ColorSelectionServiceService', () => {
     });
 
     it('should update color history properly', () => {
-        for (let index = 0; index < service.getcolorsHistory().length; index++) {
+        for (let index = 0; index < service.getColorsHistory().length; index++) {
             service.updateHistory(colorHistory[index]);
         }
-        // New color should be inserted at the end
-        expect(service.getcolorsHistory()).toEqual(colorHistory);
+        // New color should be inserted at the start
+        // 9 8 7 6 5 4 3 2 1 0
+        expect(service.getColorsHistory()).toEqual(colorHistory.reverse());
+        colorHistory.reverse();
         service.updateHistory(colorHistory[1]);
-        // Existing color should be inserted at the end, and the rest of the array should shift
-        expect(service.getcolorsHistory()[1]).toEqual(colorHistory[2]);
-        expect(service.getcolorsHistory()[defaultSize - 1]).toEqual(colorHistory[1]);
+        // 1 9 8 7 6 5 4 3 2 0
+        // Existing color should be inserted at the start, and the rest of the array should shift
+        const expectedIndex = 8;
+        expect(service.getColorsHistory()[2]).toEqual(colorHistory[expectedIndex]); // everything shifted
+        expect(service.getColorsHistory()[0]).toEqual(colorHistory[1]); // inserted at the start
     });
 
     it('Should swap primary and secondary', () => {

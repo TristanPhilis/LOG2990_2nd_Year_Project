@@ -8,7 +8,7 @@ export class BoundingBox extends Box {
     left: number;
     right: number;
     squareSize: number;
-    oldSelectedBox: BoundingBox;
+    mouseCoord: Vec2;
 
     constructor() {
         super();
@@ -54,22 +54,6 @@ export class BoundingBox extends Box {
         }
     }
 
-    translateX(distance: number): void {
-        this.right += distance;
-        this.left += distance;
-    }
-
-    translateY(distance: number): void {
-        this.top += distance;
-        this.bottom += distance;
-    }
-
-    isInBox(coord: Vec2): boolean {
-        const xIsValid = coord.x > this.left && coord.x < this.right;
-        const yIsValid = coord.y > this.top && coord.y < this.bottom;
-        return xIsValid && yIsValid;
-    }
-
     get position(): Vec2 {
         return { x: this.left, y: this.top };
     }
@@ -103,9 +87,6 @@ export class BoundingBox extends Box {
         copy.right = this.right;
         copy.bottom = this.bottom;
         copy.squareSize = this.squareSize;
-        if (this.oldSelectedBox) {
-            copy.oldSelectedBox = this.oldSelectedBox.copy();
-        }
         return copy;
     }
 }

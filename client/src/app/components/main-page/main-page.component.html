@@ -1,11 +1,15 @@
 <div class="container">
     <h1 class="header-item">Bienvenue au cours {{ title }}</h1>
 
-    <button mat-raised-button routerLink="/editor">Créer un nouveau dessin</button>
-    <ng-template [ngIf]="false"><div><button mat-raised-button routerLink="/continue">Continuer un dessin</button></div></ng-template>
-    <button mat-raised-button (click) = "openCarousel()">Ouvrir le carrousel de dessins</button>
+    <button mat-raised-button routerLink="/editor" (click)="createNew()">Créer un nouveau dessin</button>
+    <ng-template [ngIf]="canContinueDrawing">
+        <div>
+            <button mat-raised-button routerLink="/editor" routerLinkActive="active" (click)="continueDrawing()">Continuer un dessin</button>
+        </div>
+    </ng-template>
 
-    <button mat-raised-button (click)= "openGuide()">Afficher le Guide d'utilisation</button>
+    <button mat-raised-button (click)="openCarousel()">Ouvrir le carrousel de dessins</button>
+    <button mat-raised-button (click)="openGuide()">Afficher le Guide d'utilisation</button>
 
     <div class="footer-item">
         <h4 class="team-name">Équipe Roger</h4>
