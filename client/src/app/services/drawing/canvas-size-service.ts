@@ -1,33 +1,38 @@
-import { Injectable } from '@angular/core';
+import { Injectable, OnDestroy } from '@angular/core';
 import { ResizeAction } from '@app/classes/resize-action';
 import { Vec2 } from '@app/classes/vec2';
 import { GridService } from '@app/services/grid/grid-service';
 import { Action } from '@app/services/tools/undo-redo-service';
 import { MIN_CANVAS_SIZE } from '@app/shared/constant';
 import { AnchorsPosition } from '@app/shared/enum';
-import { Subject } from 'rxjs';
+import { Subject, Subscription } from 'rxjs';
 import { DrawingService } from './drawing.service';
 
 @Injectable({
     providedIn: 'root',
 })
-export class CanvasSizeService {
-    initialCanvasSize: Vec2;
+export class CanvasSizeService implements OnDestroy {
+    private initialCanvasSize: Vec2;
     canvasSize: Vec2;
     previewSize: Vec2;
     bottomAnchor: HTMLDivElement;
     rightAnchor: HTMLDivElement;
     cornerAnchor: HTMLDivElement;
     action: Subject<Action>;
+    private subscription: Subscription;
 
     private resizeX: boolean;
     private resizeY: boolean;
 
     constructor(private drawingService: DrawingService, private gridService: GridService) {
         this.action = new Subject<Action>();
-        this.drawingService.onLoadingImage?.subscribe((size: Vec2) => {
+        this.subscription = this.drawingService.onLoadingImage.subscribe((size: Vec2) => {
             this.resizeMainCanvas(size.x, size.y);
         });
+    }
+
+    ngOnDestroy(): void {
+        this.subscription.unsubscribe();
     }
 
     setInitialCanvasSize(workzoneWidth: number, workzoneHeight: number): void {
@@ -68,16 +73,16 @@ export class CanvasSizeService {
         this.drawingService.autoSave();
     }
 
-    updatePreviewSize(event: MouseEvent): void {
-        const width = this.resizeX ? event.offsetX : this.previewSize.x;
-        const height = this.resizeY ? event.offsetY : this.previewSize.y;
-        this.previewSize = this.getValidCanvasSize(width, height);
-    }
-
     restoreInitialSize(): void {
         this.resizeMainCanvas(this.initialCanvasSize.x, this.initialCanvasSize.y);
         this.drawingService.fillCanvas('white');
         this.drawingService.autoSave();
+    }
+
+    private updatePreviewSize(event: MouseEvent): void {
+        const width = this.resizeX ? event.offsetX : this.previewSize.x;
+        const height = this.resizeY ? event.offsetY : this.previewSize.y;
+        this.previewSize = this.getValidCanvasSize(width, height);
     }
 
     private updateAnchorsPosition(size: Vec2): void {

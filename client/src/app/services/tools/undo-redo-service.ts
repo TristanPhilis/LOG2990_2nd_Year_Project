@@ -6,6 +6,7 @@ import { Tool } from '@app/classes/tool';
 import { CanvasSizeService } from '@app/services/drawing/canvas-size-service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ToolsService } from '@app/services/tools/tools-service';
+import { Subscription } from 'rxjs';
 
 export type Action = DrawingAction | ResizeAction | SelectionAction;
 
@@ -17,28 +18,31 @@ export class UndoRedoService implements OnDestroy {
     redoPile: Action[];
     undidAction: boolean;
     resizeActionIndexes: number[];
+    private subscriptions: Subscription;
 
     constructor(private drawingService: DrawingService, private canvasResizeService: CanvasSizeService, private toolsService: ToolsService) {
+        this.subscriptions = new Subscription();
         this.clearPile();
         this.undidAction = false;
         this.subscribeToToolsActions();
-        this.canvasResizeService.action.subscribe((action: Action) => {
-            this.saveAction(action);
-        });
+        this.subscriptions.add(
+            this.canvasResizeService.action.subscribe((action: Action) => {
+                this.saveAction(action);
+            }),
+        );
     }
 
     ngOnDestroy(): void {
-        this.canvasResizeService.action.complete();
-        this.toolsService.getTools().forEach((tool: Tool) => {
-            tool.action.complete();
-        });
+        this.subscriptions.unsubscribe();
     }
 
     private subscribeToToolsActions(): void {
         this.toolsService.getTools().forEach((tool: Tool) => {
-            tool.action.subscribe((action: Action) => {
-                this.saveAction(action);
-            });
+            this.subscriptions.add(
+                tool.action.subscribe((action: Action) => {
+                    this.saveAction(action);
+                }),
+            );
         });
     }
 
