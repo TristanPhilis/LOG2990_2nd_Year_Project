@@ -1,8 +1,8 @@
 import { TestBed } from '@angular/core/testing';
 import { canvasTestHelper } from '@app/classes/canvas-test-helper';
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { ShortcutService } from '@app/services/shortcut/shortcut-service';
 import { AnchorsPosition } from '@app/shared/enum';
-import { ShortcutService } from '../shortcut/shortcut-service';
 import { DEFAULT_GRID_SIZE, GridService, MAX_GRID_SIZE } from './grid-service';
 
 fdescribe('GridService', () => {
