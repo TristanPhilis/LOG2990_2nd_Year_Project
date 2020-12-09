@@ -25,7 +25,7 @@ export class SprayService extends Tool {
         const toolOptions = new Map<Options, ToolOption>([
             [Options.spraySize, { value: DEFAULT_OPTIONS.spraySize, displayName: 'diametre du jet' }],
             [Options.sprayDiameter, { value: DEFAULT_OPTIONS.sprayDiameter, displayName: 'diametre des gouttelettes' }],
-            [Options.emissionPerSecond, { value: DEFAULT_OPTIONS.emissionPerSecond, displayName: 'emission par seconde' }],
+            [Options.emissionPerSecond, { value: DEFAULT_OPTIONS.emissionPerSecond, displayName: 'Interval entre jet' }],
         ]);
         this.options = {
             primaryColor: this.primaryColor,
