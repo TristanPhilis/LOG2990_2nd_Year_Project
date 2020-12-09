@@ -5,6 +5,7 @@ import { ToolOption } from '@app/classes/tool-option';
 import { Vec2 } from '@app/classes/vec2';
 import { ColorSelectionService } from '@app/services/color/color-selection-service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { ShortcutService } from '@app/services/shortcut/shortcut-service';
 import { ANGLE_ROTATION, DEFAULT_OPTIONS, DEG_TO_RAD_FACTOR, ROTATION_COMPLETE, STAMPS } from '@app/shared/constant';
 import { DrawingToolId, MouseButton, Options } from '@app/shared/enum';
 
@@ -14,8 +15,8 @@ import { DrawingToolId, MouseButton, Options } from '@app/shared/enum';
 export class StampService extends Tool {
     private availableStamps: string[];
     mousePosition: Vec2;
-    constructor(drawingService: DrawingService, colorService: ColorSelectionService) {
-        super(drawingService, colorService);
+    constructor(drawingService: DrawingService, colorService: ColorSelectionService, shortcutService: ShortcutService) {
+        super(drawingService, colorService, shortcutService);
         this.setDefaultOptions();
         this.availableStamps = STAMPS;
     }
@@ -34,6 +35,7 @@ export class StampService extends Tool {
 
     onMouseDown(event: MouseEvent): void {
         this.mouseDown = event.buttons === MouseButton.Left;
+        this.onActionStart();
         if (this.mouseDown) {
             this.mousePosition = this.getPositionFromMouse(event);
             const drawingAction = this.getDrawingAction();
@@ -44,6 +46,7 @@ export class StampService extends Tool {
 
     onMouseUp(event: MouseEvent): void {
         this.mouseDown = false;
+        this.onActionFinish();
     }
 
     onMouseMove(event: MouseEvent): void {

@@ -6,6 +6,7 @@ import { Tool } from '@app/classes/tool';
 import { ToolOption } from '@app/classes/tool-option';
 import { ColorSelectionService } from '@app/services/color/color-selection-service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { ShortcutService } from '@app/services/shortcut/shortcut-service';
 import { DEFAULT_OPTIONS, KEYS } from '@app/shared/constant';
 import { DrawingToolId, MouseButton, Options } from '@app/shared/enum';
 
@@ -15,8 +16,8 @@ import { DrawingToolId, MouseButton, Options } from '@app/shared/enum';
 export class EllipseService extends Tool {
     selectionBox: SelectionBox;
 
-    constructor(drawingService: DrawingService, colorService: ColorSelectionService) {
-        super(drawingService, colorService);
+    constructor(drawingService: DrawingService, colorService: ColorSelectionService, shortcutService: ShortcutService) {
+        super(drawingService, colorService, shortcutService);
         this.setDefaultOptions();
         this.selectionBox = new SelectionBox();
     }
@@ -38,6 +39,7 @@ export class EllipseService extends Tool {
         if (this.mouseDown) {
             const currentPosition = this.getPositionFromMouse(event);
             this.selectionBox.setAnchor(currentPosition);
+            this.onActionStart();
         }
     }
 
@@ -53,6 +55,7 @@ export class EllipseService extends Tool {
             const drawingAction = this.getDrawingAction();
             this.action.next(drawingAction);
             this.draw(this.drawingService.baseCtx, drawingAction);
+            this.onActionFinish();
         }
     }
 
@@ -65,6 +68,7 @@ export class EllipseService extends Tool {
             this.draw(this.drawingService.baseCtx, drawingAction);
         }
         this.mouseDown = false;
+        this.onActionFinish();
     }
 
     onKeyUp(event: KeyboardEvent): void {

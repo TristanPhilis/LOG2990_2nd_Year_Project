@@ -5,6 +5,7 @@ import { Vec2 } from '@app/classes/vec2';
 import { ColorSelectionService } from '@app/services/color/color-selection-service';
 import { CanvasSizeService } from '@app/services/drawing/canvas-size-service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { ShortcutService } from '@app/services/shortcut/shortcut-service';
 import { ToolsService } from '@app/services/tools/tools-service';
 import { AnchorsPosition, MouseButton } from '@app/shared/enum';
 import { DrawingComponent } from './drawing.component';
@@ -23,7 +24,7 @@ describe('DrawingComponent', () => {
 
     beforeEach(
         waitForAsync(() => {
-            toolStub = new ToolStub({} as DrawingService, {} as ColorSelectionService);
+            toolStub = new ToolStub({} as DrawingService, {} as ColorSelectionService, {} as ShortcutService);
             drawServiceSpy = jasmine.createSpyObj('DrawingService', ['']);
             toolsServiceSpy = jasmine.createSpyObj('ToolsService', ['']);
             canvasSizeServiceSpy = jasmine.createSpyObj('CanvasSizeService', [

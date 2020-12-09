@@ -5,6 +5,7 @@ import { ToolOption } from '@app/classes/tool-option';
 import { Vec2 } from '@app/classes/vec2';
 import { ColorSelectionService } from '@app/services/color/color-selection-service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { ShortcutService } from '@app/services/shortcut/shortcut-service';
 import { ANGLE_ROTATION, DEFAULT_OPTIONS, DEG_TO_RAD_FACTOR, ROTATION_COMPLETE, ROTATION_HALF } from '@app/shared/constant';
 import { DrawingToolId, MouseButton, Options } from '@app/shared/enum';
 
@@ -16,8 +17,8 @@ export class FeatherService extends Tool {
     private pathData: Vec2[];
     mousePosition: Vec2;
     coord: Vec2[] = [];
-    constructor(drawingService: DrawingService, colorService: ColorSelectionService) {
-        super(drawingService, colorService);
+    constructor(drawingService: DrawingService, colorService: ColorSelectionService, shortcutService: ShortcutService) {
+        super(drawingService, colorService, shortcutService);
         this.clearPath();
         this.setDefaultOptions();
     }
@@ -51,12 +52,14 @@ export class FeatherService extends Tool {
         this.mouseDownCoord = this.getPositionFromMouse(event);
         this.addPointToPath(this.mouseDownCoord);
         this.draw(this.drawingService.baseCtx, this.getDrawingAction());
+        this.onActionStart();
     }
 
     onMouseUp(event: MouseEvent): void {
         this.mouseDown = false;
         this.action.next(this.getDrawingAction());
         this.clearPath();
+        this.onActionFinish();
     }
 
     onMouseMove(event: MouseEvent): void {
