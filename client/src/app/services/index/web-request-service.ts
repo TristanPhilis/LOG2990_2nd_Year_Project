@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { DrawingInfo } from '@common/communication/drawing-info';
+import { EmailInfo } from '@common/communication/email-info';
 import { Observable, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
@@ -9,10 +10,15 @@ import { catchError } from 'rxjs/operators';
 })
 export class WebRequestService {
     private readonly BASE_URL: string = 'http://localhost:3000/api/index';
+    private readonly EMAIL_URL: string = 'http://localhost:3000/api/email';
     nextDrawingId: number;
 
     constructor(private http: HttpClient) {
         this.nextDrawingId = 0;
+    }
+
+    sendEmail(emailInfo: EmailInfo): Observable<void> {
+        return this.http.post<void>(this.EMAIL_URL, emailInfo).pipe(catchError(this.handleError<void>('exportEmail')));
     }
 
     getAllDrawings(): Observable<DrawingInfo[]> {

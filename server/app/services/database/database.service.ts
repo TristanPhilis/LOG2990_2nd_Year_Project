@@ -2,13 +2,6 @@ import { DrawingInfo } from '@common/communication/drawing-info';
 import { injectable } from 'inversify';
 import { Collection, MongoClient, MongoClientOptions } from 'mongodb';
 import 'reflect-metadata';
-
-const DB_USER = 'NewUser';
-const DB_PASSWORD = 'eWLZhsX3pGPJJE8N';
-const DB_NAME = 'DrawingsDB';
-const DB_COLLECTION = 'Drawings';
-
-const DB_URL = 'mongodb+srv://' + DB_USER + ':' + DB_PASSWORD + '@database.boh6g.mongodb.net/' + DB_NAME + '?retryWrites=true&w=majority';
 @injectable()
 export class DatabaseService {
     collection: Collection<DrawingInfo>;
@@ -20,10 +13,18 @@ export class DatabaseService {
     };
 
     start(): void {
+        const DB_URL =
+            'mongodb+srv://' +
+            process.env.DB_USER +
+            ':' +
+            process.env.DB_PASSWORD +
+            '@database.boh6g.mongodb.net/' +
+            process.env.DB_NAME +
+            '?retryWrites=true&w=majority';
         MongoClient.connect(DB_URL, this.options)
             .then((client: MongoClient) => {
                 this.client = client;
-                this.collection = client.db(DB_NAME).collection(DB_COLLECTION);
+                this.collection = client.db(process.env.DB_NAME).collection(process.env.DB_COLLECTION as string);
             })
             .catch(() => {
                 console.error('CONNECTION ERROR. EXITING PROCESS');

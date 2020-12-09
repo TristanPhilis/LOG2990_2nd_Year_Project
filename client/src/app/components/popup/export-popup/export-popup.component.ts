@@ -3,6 +3,9 @@ import { FormControl, Validators } from '@angular/forms';
 import { Filter } from '@app/classes/filter';
 import { Vec2 } from '@app/classes/vec2';
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { WebRequestService } from '@app/services/index/web-request-service';
+import { ValidatorService } from '@app/services/validator-service';
+import { EmailInfo } from '@common/communication/email-info';
 
 const MAX_PREVIEW_SIZE = 250;
 const DEFAULT_TYPE = 'png';
@@ -15,14 +18,21 @@ const DEFAULT_TYPE = 'png';
 export class ExportPopupComponent implements OnInit, AfterViewInit {
     filterOptions: Filter[];
     nameInput: FormControl;
+    emailInput: FormControl;
     fileType: string;
     private originalCanvas: HTMLCanvasElement;
     private selectedFilterValue: string;
     private previewSize: Vec2;
     @ViewChild('previewCanvas', { static: false }) previewCanvas: ElementRef<HTMLCanvasElement>;
     private canvasCtx: CanvasRenderingContext2D;
+    exportedDrawing: string;
 
-    constructor(private drawingService: DrawingService, private renderer: Renderer2) {}
+    constructor(
+        private drawingService: DrawingService,
+        private renderer: Renderer2,
+        private webRequestService: WebRequestService,
+        private validatorService: ValidatorService,
+    ) {}
 
     ngOnInit(): void {
         this.filterOptions = [
@@ -35,8 +45,11 @@ export class ExportPopupComponent implements OnInit, AfterViewInit {
         ];
         this.selectedFilterValue = 'none';
         this.nameInput = new FormControl('', [Validators.required]);
+        this.emailInput = new FormControl('', [this.validatorService.isValidEmailAddress()]);
         this.fileType = DEFAULT_TYPE;
         this.originalCanvas = this.drawingService.canvas;
+        this.exportedDrawing = '';
+
         this.setPreviewSize();
     }
 
@@ -67,7 +80,7 @@ export class ExportPopupComponent implements OnInit, AfterViewInit {
         context.filter = this.selectedFilterValue;
     }
 
-    exportDrawing(): void {
+    createExportUrl(): string {
         const finalCanvas = this.renderer.createElement('canvas');
         finalCanvas.width = this.originalCanvas.width;
         finalCanvas.height = this.originalCanvas.height;
@@ -75,9 +88,25 @@ export class ExportPopupComponent implements OnInit, AfterViewInit {
         this.applySelectedFilter(finalCtx);
         finalCtx.drawImage(this.originalCanvas, 0, 0);
 
+        return finalCanvas.toDataURL(`image/${this.fileType}`);
+    }
+
+    exportDrawing(): void {
         const a = this.renderer.createElement('a');
-        a.href = finalCanvas.toDataURL(`image/${this.fileType}`);
+        a.href = this.createExportUrl();
         a.download = `${this.nameInput.value}.${this.fileType}`;
         a.click();
+    }
+
+    sendEmail(): void {
+        this.exportedDrawing = this.createExportUrl();
+
+        const sentEmail: EmailInfo = {
+            emailAddress: this.emailInput.value,
+            metadata: this.exportedDrawing,
+            fileExtension: this.fileType,
+            fileName: `${this.nameInput.value}.${this.fileType}`,
+        };
+        this.webRequestService.sendEmail(sentEmail)?.subscribe();
     }
 }

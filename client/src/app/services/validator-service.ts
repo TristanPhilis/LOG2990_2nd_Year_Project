@@ -17,6 +17,10 @@ export class ValidatorService {
         return this.isValidTagFunction;
     }
 
+    isValidEmailAddress(): ValidatorFn {
+        return this.isValidEmailAddressFunction;
+    }
+
     // Course note extract
     /**
      * Validate that form input is a number (Extrait note de cour)
@@ -41,6 +45,15 @@ export class ValidatorService {
 
     private isValidTagFunction(control: FormControl): { [key: string]: boolean } | null {
         const regEx = /^[a-z][a-z0-9]{0,4}$/i;
+        if (regEx.test(control.value)) {
+            return null;
+        } else {
+            return { input: control.value };
+        }
+    }
+
+    private isValidEmailAddressFunction(control: FormControl): { [key: string]: boolean } | null {
+        const regEx = /^\S+@\S+\.\S+$/i;
         if (regEx.test(control.value)) {
             return null;
         } else {

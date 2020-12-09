@@ -19,7 +19,7 @@ export class MainPageComponent {
 
     createNew(): void {
         this.drawingService.fillCanvas('white');
-        this.drawingService.autoSave();
+        (this.drawingService as DrawingService).autoSave();
     }
 
     openGuide(): void {
