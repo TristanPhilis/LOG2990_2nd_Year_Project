@@ -42,6 +42,7 @@ export class ToolsService {
         stampService: StampService,
     ) {
         this.currentDrawingTool = pencilService;
+        this.currentDrawingToolID = DrawingToolId.pencilService;
         this.tools = [
             pencilService,
             rectangleService,

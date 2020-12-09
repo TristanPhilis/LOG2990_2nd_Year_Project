@@ -65,6 +65,12 @@ describe('MagicSelectorService', () => {
         expect(drawServiceSpy.setImageData).toHaveBeenCalled();
     });
 
+    it('clearInitialSelectedZone should do nothing if no initial selected pixels', () => {
+        service.clearInitialSelectedZone({} as SelectionImageData);
+        expect(drawServiceSpy.getImageData).not.toHaveBeenCalled();
+        expect(drawServiceSpy.setImageData).not.toHaveBeenCalled();
+    });
+
     it('executeMagicSelection with leftClick should start bfs', () => {
         const bfsSpy = spyOn<any>(service, 'beginBFS');
         const linearSearchSpy = spyOn<any>(service, 'beginLinearSearch');
