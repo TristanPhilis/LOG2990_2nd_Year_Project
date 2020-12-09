@@ -193,6 +193,56 @@
                     <span>{{ option.value.value }}</span>
                 </div>
             </ng-container>
+            <!-- Text font size -->
+            <ng-container *ngIf="option.key === Options.fontSize">
+                <label for="fontSize">{{ option.value.displayName }}</label>
+                <div class="slider-container">
+                    <input
+                        type="range"
+                        min="20"
+                        max="200"
+                        [value]="option.value.value"
+                        id="fontSize"
+                        (input)="this.updateToolOptionValue(option.key, $event.target.value)"
+                    />
+                    <span>{{ option.value.value }}</span>
+                </div>
+            </ng-container>
+            <!-- Text font -->
+            <ng-container *ngIf="option.key === Options.font">
+                <label for="font">{{ option.value.displayName }}</label>
+                <select (change)="this.updateToolOptionValue(option.key, $event.target.value)" id="font" class="selection-container">
+                    <option *ngFor="let font of fonts" value="{{ font.value }}" [selected]="option.value.value === font.value">
+                        {{ font.displayName }}
+                    </option>
+                </select>
+            </ng-container>
+            <!-- Text font weight-->
+            <ng-container *ngIf="option.key === Options.fontWeight">
+                <label for="fontWeight">{{ option.value.displayName }}</label>
+                <select (change)="this.updateToolOptionValue(option.key, $event.target.value)" id="fontWeight" class="selection-container">
+                    <option
+                        *ngFor="let fontWeight of fontWeights"
+                        value="{{ fontWeight.value }}"
+                        [selected]="option.value.value === fontWeight.value"
+                    >
+                        {{ fontWeight.displayName }}
+                    </option>
+                </select>
+            </ng-container>
+            <!-- Text alignment-->
+            <ng-container *ngIf="option.key === Options.textAlignment">
+                <label for="textAlignment">{{ option.value.displayName }}</label>
+                <select (change)="this.updateToolOptionValue(option.key, $event.target.value)" id="textAlignment" class="selection-container">
+                    <option
+                        *ngFor="let textAlignment of textAlignments"
+                        value="{{ textAlignment.value }}"
+                        [selected]="option.value.value === textAlignment.value"
+                    >
+                        {{ textAlignment.displayName }}
+                    </option>
+                </select>
+            </ng-container>
         </ng-container>
     </div>
 </ng-template>
