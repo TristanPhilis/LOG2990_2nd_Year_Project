@@ -11,6 +11,7 @@ import { ClipboardService } from '@app/services/clipboard/clipboard-service';
 import { CanvasSizeService } from '@app/services/drawing/canvas-size-service';
 import { ShortcutService } from '@app/services/shortcut/shortcut-service';
 import { SelectionService } from '@app/services/tools/selection/selection-service';
+import { TextService } from '@app/services/tools/text-service';
 import { ToolsService } from '@app/services/tools/tools-service';
 import { UndoRedoService } from '@app/services/tools/undo-redo-service';
 import { DrawingToolId, Options, SelectionType, SidebarToolID } from '@app/shared/enum';
@@ -31,6 +32,7 @@ export class SidebarComponent {
     constructor(
         private toolsService: ToolsService,
         private dialog: MatDialog,
+        private textService: TextService,
         private canvasSizeService: CanvasSizeService,
         public undoRedo: UndoRedoService,
         private clipBoard: ClipboardService,
@@ -39,8 +41,8 @@ export class SidebarComponent {
         this.sideBarToolsTop = [
             { id: SidebarToolID.tracing, name: 'Traçage', defaultDrawingToolid: DrawingToolId.pencilService },
             { id: SidebarToolID.line, name: 'Ligne', defaultDrawingToolid: DrawingToolId.lineService },
+            { id: SidebarToolID.text, name: 'Texte', defaultDrawingToolid: DrawingToolId.textService },
             { id: SidebarToolID.shapes, name: 'Figures', defaultDrawingToolid: DrawingToolId.rectangleService },
-            { id: SidebarToolID.text, name: 'Texte' },
             { id: SidebarToolID.paintBucket, name: 'Seau', defaultDrawingToolid: DrawingToolId.bucketService },
             { id: SidebarToolID.aerosol, name: 'Aerosol', defaultDrawingToolid: DrawingToolId.aerosolService },
             { id: SidebarToolID.stamp, name: 'Étampe', defaultDrawingToolid: DrawingToolId.stampService },
@@ -78,6 +80,9 @@ export class SidebarComponent {
     }
 
     onButtonPressTop(object: SidebarTool | undefined): void {
+        if (this.toolsService.currentDrawingToolID === DrawingToolId.textService) {
+            this.textService.confirmTextFromOther();
+        }
         if (object) {
             this.openCloseSidenav(object.id);
             this.toolsService.selectedSideBarTool = object;
@@ -88,6 +93,9 @@ export class SidebarComponent {
     }
 
     onButtonPressBottom(id: SidebarToolID): void {
+        if (this.toolsService.currentDrawingToolID === DrawingToolId.textService) {
+            this.textService.confirmTextFromOther();
+        }
         switch (id) {
             case SidebarToolID.createNew: {
                 this.createNewDrawing();
@@ -212,6 +220,7 @@ export class SidebarComponent {
                 this.toolsService.updateOptionValue(Options.selectionType, SelectionType.magic);
             })
             .set('i', () => this.onButtonPressTop(this.sideBarToolsTopMap.get(SidebarToolID.pipette)))
+            .set('t', () => this.onButtonPressTop(this.sideBarToolsTopMap.get(SidebarToolID.text)))
             .set('1', () => this.onButtonPressTop(this.sideBarToolsTopMap.get(SidebarToolID.shapes)))
             .set('2', () => {
                 this.onButtonPressTop(this.sideBarToolsTopMap.get(SidebarToolID.shapes));

@@ -3,7 +3,7 @@ import { ToolOption } from '@app/classes/tool-option';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { SelectionService } from '@app/services/tools/selection/selection-service';
 import { ToolsService } from '@app/services/tools/tools-service';
-import { DrawingToolId, Options, SelectionType, SidebarToolID, Stamp, Texture, TraceTypes } from '@app/shared/enum';
+import { DrawingToolId, Font, FontWeight, Options, SelectionType, SidebarToolID, Stamp, TextAlignment, Texture, TraceTypes } from '@app/shared/enum';
 // tslint:disable:no-any
 
 @Component({
@@ -17,6 +17,9 @@ export class AttributePanelComponent {
     shapesTools: ToolOption[];
     tracingTypes: ToolOption[];
     textures: ToolOption[];
+    fonts: ToolOption[];
+    fontWeights: ToolOption[];
+    textAlignments: ToolOption[];
     stamps: ToolOption[];
 
     constructor(public toolsService: ToolsService, public drawingService: DrawingService, public selectionService: SelectionService) {
@@ -46,6 +49,24 @@ export class AttributePanelComponent {
             { value: Texture.three, displayName: 'Texture Trois' },
             { value: Texture.four, displayName: 'Texture Quatre' },
             { value: Texture.five, displayName: 'Texture Cinq' },
+        ];
+        this.fonts = [
+            { value: Font.arial, displayName: 'Arial' },
+            { value: Font.verdana, displayName: 'Verdana' },
+            { value: Font.newRoman, displayName: 'New Roman' },
+            { value: Font.courier, displayName: 'Courier' },
+            { value: Font.serif, displayName: 'Serif' },
+            { value: Font.comicSans, displayName: 'Comic Sans MS' },
+        ];
+        this.fontWeights = [
+            { value: FontWeight.normal, displayName: 'Normal' },
+            { value: FontWeight.bold, displayName: 'Gras' },
+            { value: FontWeight.italic, displayName: 'Italique' },
+        ];
+        this.textAlignments = [
+            { value: TextAlignment.left, displayName: 'Gauche' },
+            { value: TextAlignment.centre, displayName: 'Centre' },
+            { value: TextAlignment.right, displayName: 'Droite' },
         ];
         this.stamps = [
             { value: Stamp.one, displayName: 'Sourire' },
