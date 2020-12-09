@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { GuideComponent } from './guide.component';
-
+// tslint:disable:no-any
 describe('GuideComponent', () => {
     let component: GuideComponent;
     let fixture: ComponentFixture<GuideComponent>;
@@ -27,7 +27,7 @@ describe('GuideComponent', () => {
     });
 
     it('openTab should set tabElement and tabContent', () => {
-        const tempString = "temp";
+        const tempString = 'temp';
         component.openTab(tempString);
         expect((component as any).tabElement).toEqual(document.getElementById(tempString));
         expect((component as any).tabContent).toEqual(document.getElementsByClassName('tabcontent'));
