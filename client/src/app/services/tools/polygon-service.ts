@@ -8,7 +8,7 @@ import { ToolOption } from '@app/classes/tool-option';
 import { Vec2 } from '@app/classes/vec2';
 import { ColorSelectionService } from '@app/services/color/color-selection-service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
-import { DASHLINE_EMPTY, DASHLINE_FULL, DEFAULT_OPTIONS } from '@app/shared/constant';
+import { DASHLINE_EMPTY, DASHLINE_FULL, DEFAULT_OPTIONS, SELECTION_CONTOUR_BORDER_SIZE } from '@app/shared/constant';
 import { DrawingToolId, MouseButton, Options } from '@app/shared/enum';
 
 export const MAX_SIDES = 12;
@@ -74,6 +74,7 @@ export class PolygonService extends Tool {
     drawSelectionBox(): void {
         const ctx = this.drawingService.previewCtx;
         ctx.beginPath();
+        ctx.lineWidth = SELECTION_CONTOUR_BORDER_SIZE;
         ctx.strokeStyle = '#111155';
         ctx.setLineDash([DASHLINE_EMPTY, DASHLINE_FULL]);
 
