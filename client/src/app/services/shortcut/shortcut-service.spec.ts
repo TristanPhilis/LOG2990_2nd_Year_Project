@@ -12,4 +12,11 @@ describe('ShortcutService', () => {
     it('should be created', () => {
         expect(service).toBeTruthy();
     });
+
+    it('if shortcut disabled, execute should return early', () => {
+        service.shortcutsEnabled = false;
+        const getSpy = spyOn(service.shortcuts, 'get');
+        service.execute('d');
+        expect(getSpy).not.toHaveBeenCalled();
+    });
 });
