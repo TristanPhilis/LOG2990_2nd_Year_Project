@@ -6,6 +6,7 @@ import { ToolOption } from '@app/classes/tool-option';
 import { Vec2 } from '@app/classes/vec2';
 import { ColorSelectionService } from '@app/services/color/color-selection-service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { ShortcutService } from '@app/services/shortcut/shortcut-service';
 import { BLINKER_INTERVAL_TIME, FONTS, FONT_ALIGNMENTS, FONT_WEIGHTS, KEYS, TEXT_DEFAULT_OPTIONS } from '@app/shared/constant';
 import { DrawingToolId, MouseButton, Options } from '@app/shared/enum';
 
@@ -24,8 +25,8 @@ export class TextService extends Tool {
     private textAlignments: string[];
     writingMode: boolean;
 
-    constructor(drawingService: DrawingService, colorService: ColorSelectionService) {
-        super(drawingService, colorService);
+    constructor(drawingService: DrawingService, colorService: ColorSelectionService, shortcutService: ShortcutService) {
+        super(drawingService, colorService, shortcutService);
         this.clearPath();
         this.setDefaultOptions();
         this.clearText();
@@ -61,6 +62,7 @@ export class TextService extends Tool {
             this.blinkerPosition = mouseUpCoord;
             this.writingMode = true;
             this.startBlinker();
+            this.onActionStart();
         } else if (this.writingMode) {
             this.completeAction();
         }
@@ -93,6 +95,7 @@ export class TextService extends Tool {
             case KEYS.ESCAPE: {
                 this.cleanAll();
                 this.drawingService.clearCanvas(ctx);
+                this.onActionFinish();
                 return;
             }
             case KEYS.ARROW_LEFT: {
@@ -166,11 +169,12 @@ export class TextService extends Tool {
         this.action.next(drawingAction);
         this.draw(this.drawingService.baseCtx, this.getDrawingAction());
         this.cleanAll();
+        this.onActionFinish();
     }
     // End of section //
 
     // Methods to confirm text or refresh the preview, used by other components //
-    confirmTextFromOther(): void {
+    onToolChange(): void {
         if (this.writingMode) {
             this.completeAction();
         }

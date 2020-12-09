@@ -33,6 +33,10 @@ export class EraserService extends Tool {
         };
     }
 
+    onToolChange(): void {
+        this.drawingService.clearCanvas(this.drawingService.previewCtx);
+    }
+
     onMouseDown(event: MouseEvent): void {
         this.mouseDown = event.buttons === MouseButton.Left;
         if (this.mouseDown) {

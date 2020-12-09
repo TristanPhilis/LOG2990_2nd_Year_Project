@@ -110,6 +110,12 @@ export class SelectionService extends Tool implements OnDestroy {
         this.currentSelector = this.selectorOptions[selectorIndex];
     }
 
+    onToolChange(): void {
+        if (this.isAreaSelected) {
+            this.placeImage();
+        }
+    }
+
     onMouseDown(event: MouseEvent): void {
         const isRightClick = event.buttons === MouseButton.Right;
         const isLeftClick = event.buttons === MouseButton.Left;
@@ -337,6 +343,7 @@ export class SelectionService extends Tool implements OnDestroy {
         ctx.resetTransform();
     }
 
+    // tslint:disable:max-file-line-count  so close :(
     getDrawingAction(): SelectionAction {
         return {
             id: DrawingToolId.selectionService,

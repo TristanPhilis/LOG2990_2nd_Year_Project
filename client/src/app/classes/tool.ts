@@ -96,6 +96,8 @@ export abstract class Tool {
         this.shortCutService.shortcutsEnabled = true;
     }
 
+    onToolChange(): void {}
+
     get primaryColor(): Color {
         return this.colorService.primaryColor;
     }

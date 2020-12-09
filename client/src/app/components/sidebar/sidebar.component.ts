@@ -11,7 +11,6 @@ import { ClipboardService } from '@app/services/clipboard/clipboard-service';
 import { CanvasSizeService } from '@app/services/drawing/canvas-size-service';
 import { ShortcutService } from '@app/services/shortcut/shortcut-service';
 import { SelectionService } from '@app/services/tools/selection/selection-service';
-import { TextService } from '@app/services/tools/text-service';
 import { ToolsService } from '@app/services/tools/tools-service';
 import { UndoRedoService } from '@app/services/tools/undo-redo-service';
 import { DrawingToolId, Options, SelectionType, SidebarToolID } from '@app/shared/enum';
@@ -32,7 +31,6 @@ export class SidebarComponent {
     constructor(
         private toolsService: ToolsService,
         private dialog: MatDialog,
-        private textService: TextService,
         private canvasSizeService: CanvasSizeService,
         public undoRedo: UndoRedoService,
         private clipBoard: ClipboardService,
@@ -80,9 +78,6 @@ export class SidebarComponent {
     }
 
     onButtonPressTop(object: SidebarTool | undefined): void {
-        if (this.toolsService.currentDrawingToolID === DrawingToolId.textService) {
-            this.textService.confirmTextFromOther();
-        }
         if (object) {
             this.openCloseSidenav(object.id);
             this.toolsService.selectedSideBarTool = object;
@@ -93,9 +88,7 @@ export class SidebarComponent {
     }
 
     onButtonPressBottom(id: SidebarToolID): void {
-        if (this.toolsService.currentDrawingToolID === DrawingToolId.textService) {
-            this.textService.confirmTextFromOther();
-        }
+        this.toolsService.currentDrawingTool.onToolChange();
         switch (id) {
             case SidebarToolID.createNew: {
                 this.createNewDrawing();

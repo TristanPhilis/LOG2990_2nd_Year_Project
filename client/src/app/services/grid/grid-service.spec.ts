@@ -5,7 +5,7 @@ import { ShortcutService } from '@app/services/shortcut/shortcut-service';
 import { AnchorsPosition } from '@app/shared/enum';
 import { DEFAULT_GRID_SIZE, GridService, MAX_GRID_SIZE } from './grid-service';
 
-fdescribe('GridService', () => {
+describe('GridService', () => {
     let service: GridService;
     let drawServiceSpy: jasmine.SpyObj<DrawingService>;
     let gridCtxSpy: jasmine.SpyObj<CanvasRenderingContext2D>;

@@ -32,6 +32,10 @@ export class LineService extends Tool {
         };
     }
 
+    onToolChange(): void {
+        this.cancelAction();
+    }
+
     private getLastClickedCoord(): Vec2 {
         const length = this.pathData.length;
         return length > 1 ? this.pathData[length - 2] : { x: 0, y: 0 };
@@ -108,11 +112,15 @@ export class LineService extends Tool {
                 }
                 break;
             case KEYS.ESCAPE:
-                this.lineStarted = false;
-                this.clearPath();
-                this.drawingService.clearCanvas(this.drawingService.previewCtx);
+                this.cancelAction();
                 break;
         }
+    }
+
+    private cancelAction(): void {
+        this.lineStarted = false;
+        this.clearPath();
+        this.drawingService.clearCanvas(this.drawingService.previewCtx);
     }
 
     updateLastCoord(): void {

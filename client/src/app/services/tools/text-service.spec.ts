@@ -340,7 +340,7 @@ describe('TextService', () => {
         const completeActionSpy = spyOn<any>(service, 'completeAction').and.callThrough();
 
         service['writingMode'] = true;
-        service.confirmTextFromOther();
+        service.onToolChange();
 
         expect(completeActionSpy).toHaveBeenCalled();
     });
@@ -349,7 +349,7 @@ describe('TextService', () => {
         const completeActionSpy = spyOn<any>(service, 'completeAction').and.callThrough();
 
         service['writingMode'] = false;
-        service.confirmTextFromOther();
+        service.onToolChange();
 
         expect(completeActionSpy).not.toHaveBeenCalled();
     });
