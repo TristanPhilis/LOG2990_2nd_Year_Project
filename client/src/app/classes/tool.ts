@@ -19,7 +19,6 @@ export abstract class Tool {
     dblClick: boolean;
     options: DrawingOptions;
     action: Subject<DrawingAction | SelectionAction>;
-    onActionStateChange: Subject<boolean>;
 
     constructor(protected drawingService: DrawingService, protected colorService: ColorSelectionService, private shortCutService: ShortcutService) {
         this.action = new Subject<DrawingAction>();
