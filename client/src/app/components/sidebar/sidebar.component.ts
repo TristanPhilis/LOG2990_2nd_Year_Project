@@ -33,7 +33,7 @@ export class SidebarComponent {
         private dialog: MatDialog,
         private canvasSizeService: CanvasSizeService,
         public undoRedo: UndoRedoService,
-        private clipBoard: ClipboardService,
+        public clipBoard: ClipboardService,
         private shortCurtsService: ShortcutService,
     ) {
         this.sideBarToolsTop = [
