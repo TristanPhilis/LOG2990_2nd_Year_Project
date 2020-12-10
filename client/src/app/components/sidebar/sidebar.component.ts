@@ -13,6 +13,7 @@ import { ShortcutService } from '@app/services/shortcut/shortcut-service';
 import { SelectionService } from '@app/services/tools/selection/selection-service';
 import { ToolsService } from '@app/services/tools/tools-service';
 import { UndoRedoService } from '@app/services/tools/undo-redo-service';
+import { KEYS } from '@app/shared/constant';
 import { DrawingToolId, Options, SelectionType, SidebarToolID } from '@app/shared/enum';
 
 @Component({
@@ -140,6 +141,25 @@ export class SidebarComponent {
     @HostListener('window: keydown', ['$event'])
     onKeyDown(event: KeyboardEvent): void {
         const keys: string = this.getComposedKey(event);
+        switch (keys) {
+            case 'C-c':
+                this.clipBoard.copy();
+                break;
+
+            case 'C-x':
+                this.clipBoard.cut();
+                break;
+            case 'C-v':
+                this.clipBoard.paste();
+                if (this.toolsService.selectedSideBarTool.id !== SidebarToolID.selection) {
+                    this.onButtonPressTop(this.sideBarToolsTopMap.get(SidebarToolID.selection));
+                    this.toolsService.updateOptionValue(Options.selectionType, SelectionType.rectangle);
+                }
+                break;
+            case KEYS.DELETE.toLowerCase():
+                this.clipBoard.delete();
+                break;
+        }
         if (this.shortCurtsService.shortcutsEnabled) {
             event.preventDefault();
         }
@@ -166,19 +186,6 @@ export class SidebarComponent {
             })
             .set('C-S-z', () => {
                 this.undoRedo.redo();
-            })
-            .set('C-c', () => {
-                this.clipBoard.copy();
-            })
-            .set('C-x', () => {
-                this.clipBoard.cut();
-            })
-            .set('C-v', () => {
-                this.clipBoard.paste();
-                if (this.toolsService.selectedSideBarTool.id !== SidebarToolID.selection) {
-                    this.onButtonPressTop(this.sideBarToolsTopMap.get(SidebarToolID.selection));
-                    this.toolsService.updateOptionValue(Options.selectionType, SelectionType.rectangle);
-                }
             })
             .set('C-a', () => {
                 this.onButtonPressTop(this.sideBarToolsTopMap.get(SidebarToolID.selection));
@@ -222,8 +229,7 @@ export class SidebarComponent {
             .set('3', () => {
                 this.onButtonPressTop(this.sideBarToolsTopMap.get(SidebarToolID.shapes));
                 this.toolsService.setCurrentDrawingTool(DrawingToolId.polygonService);
-            })
-            .set('delete', () => this.clipBoard.delete());
+            });
     }
 
     private createNewDrawing(): void {
@@ -243,10 +249,10 @@ export class SidebarComponent {
     }
 
     get showUndo(): boolean {
-        return this.undoRedo.undoPile.length > 0;
+        return this.undoRedo.undoPile.length > 0 && this.shortCurtsService.shortcutsEnabled;
     }
 
     get showRedo(): boolean {
-        return this.undoRedo.redoPile.length > 0;
+        return this.undoRedo.redoPile.length > 0 && this.shortCurtsService.shortcutsEnabled;
     }
 }

@@ -209,7 +209,6 @@ export class TextService extends Tool {
 
     private getAlignmentString(drawingAction: DrawingAction): CanvasTextAlign {
         const index = (drawingAction.options.toolOptions.get(Options.textAlignment) as ToolOption).value;
-
         return this.textAlignments[index] as CanvasTextAlign;
     }
     // End of section //
