@@ -1,4 +1,4 @@
-import { AfterViewChecked, Component, HostListener, OnInit } from '@angular/core';
+import { AfterViewChecked, ChangeDetectorRef, Component, HostListener, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { CreateNewDrawingComponent } from '@app/components/create-new-drawing/create-new-drawing.component';
 import { CarouselService } from '@app/services/carousel/carousel-service';
@@ -12,7 +12,12 @@ import { DrawingInfo } from '@common/communication/drawing-info';
 export class CarouselComponent implements OnInit, AfterViewChecked {
     private noDrawings: boolean;
     displayedMessage: string;
-    constructor(private drawingService: DrawingService, public carouselService: CarouselService, private dialog: MatDialog) {
+    constructor(
+        private drawingService: DrawingService,
+        public carouselService: CarouselService,
+        private dialog: MatDialog,
+        private cdRef: ChangeDetectorRef,
+    ) {
         this.carouselService.getAllDrawings();
     }
 
@@ -21,8 +26,9 @@ export class CarouselComponent implements OnInit, AfterViewChecked {
     }
 
     ngAfterViewChecked(): void {
-        this.noDrawings = this.carouselService.drawingsInfo?.value.length === 0;
+        this.noDrawings = this.carouselService.drawingsInfo?.value?.length === 0;
         this.displayedMessage = this.noDrawings ? "Il n'y a presentement aucun dessin" : 'Aucun dessin ne correspond a votre recherche';
+        this.cdRef.detectChanges();
     }
 
     @HostListener('window: keyup', ['$event'])
@@ -59,12 +65,11 @@ export class CarouselComponent implements OnInit, AfterViewChecked {
 
     loadDrawing(drawing: DrawingInfo): void {
         const newDrawingRef = this.dialog.open(CreateNewDrawingComponent);
-        newDrawingRef.afterClosed().subscribe((result) => {
+        newDrawingRef?.afterClosed().subscribe((result) => {
             this.sendDrawingToEditor(result, drawing);
         });
     }
-    // tslint:disable-next-line: no-any Here result is of unknown type
-    private sendDrawingToEditor(result: any, drawing: DrawingInfo): void {
+    private sendDrawingToEditor(result: boolean, drawing: DrawingInfo): void {
         if (result) {
             this.drawingService.clearCanvas(this.drawingService.baseCtx);
             this.drawingService.sendDrawing(drawing.metadata);
