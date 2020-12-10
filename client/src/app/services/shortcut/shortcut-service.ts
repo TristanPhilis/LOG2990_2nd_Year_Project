@@ -7,15 +7,17 @@ declare type Callback = () => void;
 })
 export class ShortcutService {
     shortcuts: Map<string, Callback>;
+    alwaysEnabledShorcuts: Set<string>;
     shortcutsEnabled: boolean;
 
     constructor() {
         this.shortcuts = new Map<string, Callback>();
+        this.alwaysEnabledShorcuts = new Set<string>();
         this.shortcutsEnabled = true;
     }
 
     execute(key: string): void {
-        if (!this.shortcutsEnabled) {
+        if (!this.shortcutsEnabled && !this.alwaysEnabledShorcuts.has(key)) {
             return;
         }
         const func = this.shortcuts.get(key);

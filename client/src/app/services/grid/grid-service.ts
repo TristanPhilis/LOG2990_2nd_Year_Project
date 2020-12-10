@@ -123,6 +123,7 @@ export class GridService implements OnDestroy {
             .set('m', () => {
                 this.toggleMagnetism();
             });
+        this.shortcutService.alwaysEnabledShorcuts.add('-').add('S-+').add('+').add('g').add('m');
     }
 
     get canvasWidth(): number {

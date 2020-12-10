@@ -17,6 +17,7 @@ describe('GridService', () => {
         gridCtxSpy = jasmine.createSpyObj('CanvasRenderingContext2D', contextMethod);
         shortcutServiceSpy = jasmine.createSpyObj('ShortcutService', ['execute']);
         shortcutServiceSpy.shortcuts = new Map();
+        shortcutServiceSpy.alwaysEnabledShorcuts = new Set();
 
         TestBed.configureTestingModule({
             providers: [
