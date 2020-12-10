@@ -6,6 +6,7 @@ import { Tool } from '@app/classes/tool';
 import { ToolOption } from '@app/classes/tool-option';
 import { ColorSelectionService } from '@app/services/color/color-selection-service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { ShortcutService } from '@app/services/shortcut/shortcut-service';
 import { DEFAULT_OPTIONS, KEYS } from '@app/shared/constant';
 import { DrawingToolId, MouseButton, Options } from '@app/shared/enum';
 
@@ -15,8 +16,8 @@ import { DrawingToolId, MouseButton, Options } from '@app/shared/enum';
 export class RectangleService extends Tool {
     selectionBox: SelectionBox;
 
-    constructor(drawingService: DrawingService, colorService: ColorSelectionService) {
-        super(drawingService, colorService);
+    constructor(drawingService: DrawingService, colorService: ColorSelectionService, shortcutService: ShortcutService) {
+        super(drawingService, colorService, shortcutService);
         this.setDefaultOptions();
         this.selectionBox = new SelectionBox();
     }
@@ -35,6 +36,7 @@ export class RectangleService extends Tool {
 
     onMouseDown(event: MouseEvent): void {
         this.mouseDown = event.buttons === MouseButton.Left;
+        this.onActionStart();
         if (this.mouseDown) {
             const currentCoord = this.getPositionFromMouse(event);
             this.selectionBox.setAnchor(currentCoord);
@@ -50,6 +52,7 @@ export class RectangleService extends Tool {
             this.draw(this.drawingService.baseCtx, action);
         }
         this.mouseDown = false;
+        this.onActionFinish();
     }
 
     onMouseMove(event: MouseEvent): void {
@@ -63,6 +66,7 @@ export class RectangleService extends Tool {
             this.action.next(action);
             this.draw(this.drawingService.baseCtx, action);
             this.mouseDown = false;
+            this.onActionFinish();
         }
     }
 

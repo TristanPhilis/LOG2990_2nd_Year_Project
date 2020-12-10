@@ -22,7 +22,7 @@ describe('ToolsService', () => {
     let toolSpyObj: jasmine.SpyObj<Tool>;
 
     beforeEach(() => {
-        toolSpyObj = jasmine.createSpyObj('Tool', ['onOptionValueChange']);
+        toolSpyObj = jasmine.createSpyObj('Tool', ['onOptionValueChange', 'onToolChange']);
         TestBed.configureTestingModule({
             providers: [
                 { provide: PencilService, useValue: toolSpyObj },

@@ -76,6 +76,7 @@ export class ToolsService {
     }
 
     setCurrentDrawingTool(newToolID: DrawingToolId): void {
+        this.currentDrawingTool.onToolChange();
         this.currentDrawingTool = this.tools[newToolID];
         this.currentDrawingToolID = newToolID;
     }
