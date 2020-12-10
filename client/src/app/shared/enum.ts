@@ -18,6 +18,10 @@ export enum SidebarToolID {
     redo,
     aerosol,
     grid,
+    copy,
+    cut,
+    paste,
+    delete,
     none,
 }
 
