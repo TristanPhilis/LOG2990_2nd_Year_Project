@@ -13,8 +13,6 @@ import { of } from 'rxjs';
 import { SidebarTool } from './sidebar-tool/sidebar-tool';
 import { SidebarComponent } from './sidebar.component';
 
-// class ToolStub extends Tool {}
-
 // tslint:disable:no-any
 describe('SidebarComponent', () => {
     let component: SidebarComponent;
