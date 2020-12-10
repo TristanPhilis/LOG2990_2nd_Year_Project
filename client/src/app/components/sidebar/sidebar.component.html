@@ -10,6 +10,10 @@
                     {{ sidebarTool.name }}
                 </button>
             </ng-container>
+            <button mat-flat-button (click)="clipBoard.copy()">Copier</button>
+            <button mat-flat-button (click)="clipBoard.cut()">Couper</button>
+            <button mat-flat-button (click)="clipBoard.paste()">Coller</button>
+            <button mat-flat-button (click)="clipBoard.delete()">Supprimer</button>
             <button mat-flat-button *ngIf="showUndo" (click)="undoRedo.undo()"><mat-icon>undo</mat-icon></button>
             <button mat-flat-button *ngIf="showRedo" (click)="undoRedo.redo()"><mat-icon>redo</mat-icon></button>
         </li>

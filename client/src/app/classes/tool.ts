@@ -1,5 +1,6 @@
 import { ColorSelectionService } from '@app/services/color/color-selection-service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { ShortcutService } from '@app/services/shortcut/shortcut-service';
 import { Options, TraceTypes } from '@app/shared/enum';
 import { Subject } from 'rxjs';
 import { Color } from './color';
@@ -19,7 +20,7 @@ export abstract class Tool {
     options: DrawingOptions;
     action: Subject<DrawingAction | SelectionAction>;
 
-    constructor(protected drawingService: DrawingService, protected colorService: ColorSelectionService) {
+    constructor(protected drawingService: DrawingService, protected colorService: ColorSelectionService, private shortCutService: ShortcutService) {
         this.action = new Subject<DrawingAction>();
         this.mouseDown = false;
         this.shiftDown = false;
@@ -85,6 +86,16 @@ export abstract class Tool {
     setDefaultOptions(): void {}
 
     onOptionValueChange(): void {}
+
+    onActionStart(): void {
+        this.shortCutService.shortcutsEnabled = false;
+    }
+
+    onActionFinish(): void {
+        this.shortCutService.shortcutsEnabled = true;
+    }
+
+    onToolChange(): void {}
 
     get primaryColor(): Color {
         return this.colorService.primaryColor;

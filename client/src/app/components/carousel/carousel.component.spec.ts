@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MatDialogModule } from '@angular/material/dialog';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
@@ -19,6 +19,8 @@ describe('CarouselComponent', () => {
     let fixture: ComponentFixture<CarouselComponent>;
     let carouselServiceSpy: SpyObj<CarouselService>;
     let drawingServiceSpy: SpyObj<DrawingService>;
+    let dialogSpy: SpyObj<MatDialog>;
+    let keyEvent: KeyboardEvent;
 
     beforeEach(
         waitForAsync(() => {
@@ -35,6 +37,7 @@ describe('CarouselComponent', () => {
             carouselServiceSpy.tagInput = new FormControl();
 
             drawingServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas', 'sendDrawing', 'loadDrawing', 'autoSave']);
+            dialogSpy = jasmine.createSpyObj('MatDialog', ['open', 'afterClosed']);
 
             TestBed.configureTestingModule({
                 imports: [
@@ -51,6 +54,7 @@ describe('CarouselComponent', () => {
                 providers: [
                     { provide: CarouselService, useValue: carouselServiceSpy },
                     { provide: DrawingService, useValue: drawingServiceSpy },
+                    { provide: MatDialog, useValue: dialogSpy },
                 ],
                 declarations: [CarouselComponent],
             }).compileComponents();
@@ -92,5 +96,38 @@ describe('CarouselComponent', () => {
         (component as any).sendDrawingToEditor(true, carouselServiceSpy.drawingsInfo.value[0]);
         expect(drawingServiceSpy.clearCanvas).toHaveBeenCalled();
         expect(drawingServiceSpy.sendDrawing).toHaveBeenCalled();
+    });
+
+    it('should open createNew on drawingLoad', () => {
+        component.loadDrawing({} as DrawingInfo);
+        expect(dialogSpy.open).toHaveBeenCalled();
+    });
+
+    it('should not open carrousel if drawing was loaded', () => {
+        // tslint:disable-next-line: no-string-literal
+        component['sendDrawingToEditor'](false, {} as DrawingInfo);
+        expect(dialogSpy.open).toHaveBeenCalled();
+    });
+
+    it('should not open carrousel if drawing was loaded', () => {
+        // tslint:disable-next-line: no-string-literal
+        component['sendDrawingToEditor'](true, {} as DrawingInfo);
+        expect(dialogSpy.open).not.toHaveBeenCalled();
+    });
+
+    it('shortcuts should work', () => {
+        // tslint:disable-next-line: no-any
+        const goToPreviousDrawingSpy = spyOn<any>(component, 'goToPreviousDrawing');
+        keyEvent = { key: 'ArrowLeft' } as KeyboardEvent;
+        component.onKeyUp(keyEvent);
+        expect(goToPreviousDrawingSpy).toHaveBeenCalled();
+    });
+
+    it('shortcuts should work', () => {
+        // tslint:disable-next-line: no-any
+        const goToNextDrawingSpy = spyOn<any>(component, 'goToNextDrawing');
+        keyEvent = { key: 'ArrowRight' } as KeyboardEvent;
+        component.onKeyUp(keyEvent);
+        expect(goToNextDrawingSpy).toHaveBeenCalled();
     });
 });

@@ -5,6 +5,7 @@ import { ToolOption } from '@app/classes/tool-option';
 import { Vec2 } from '@app/classes/vec2';
 import { ColorSelectionService } from '@app/services/color/color-selection-service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { ShortcutService } from '@app/services/shortcut/shortcut-service';
 import { AEROSOL_CONVERTER_TIMER, AEROSOL_DENSITY, DEFAULT_OPTIONS } from '@app/shared/constant';
 import { DrawingToolId, MouseButton, Options } from '@app/shared/enum';
 
@@ -15,8 +16,8 @@ export class SprayService extends Tool {
     private pathData: Vec2[];
     private sprayTimerHandler: number;
 
-    constructor(drawingService: DrawingService, colorService: ColorSelectionService) {
-        super(drawingService, colorService);
+    constructor(drawingService: DrawingService, colorService: ColorSelectionService, shortcutService: ShortcutService) {
+        super(drawingService, colorService, shortcutService);
         this.clearPath();
         this.setDefaultOptions();
     }
@@ -35,6 +36,7 @@ export class SprayService extends Tool {
 
     onMouseDown(event: MouseEvent): void {
         this.mouseDown = event.buttons === MouseButton.Left;
+        this.onActionStart();
         if (!this.mouseDown) {
             return;
         }
@@ -48,6 +50,7 @@ export class SprayService extends Tool {
             return;
         }
         this.mouseDown = false;
+        this.onActionFinish();
         clearInterval(this.sprayTimerHandler);
         const drawingAction = this.getDrawingAction();
         this.action.next(drawingAction);

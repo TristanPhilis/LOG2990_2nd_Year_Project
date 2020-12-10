@@ -8,7 +8,8 @@ import { ToolOption } from '@app/classes/tool-option';
 import { Vec2 } from '@app/classes/vec2';
 import { ColorSelectionService } from '@app/services/color/color-selection-service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
-import { DASHLINE_EMPTY, DASHLINE_FULL, DEFAULT_OPTIONS } from '@app/shared/constant';
+import { ShortcutService } from '@app/services/shortcut/shortcut-service';
+import { DASHLINE_EMPTY, DASHLINE_FULL, DEFAULT_OPTIONS, SELECTION_CONTOUR_BORDER_SIZE } from '@app/shared/constant';
 import { DrawingToolId, MouseButton, Options } from '@app/shared/enum';
 
 export const MAX_SIDES = 12;
@@ -20,8 +21,8 @@ export const MIN_SIDES = 3;
 export class PolygonService extends Tool {
     selectionBox: SelectionBox;
 
-    constructor(drawingService: DrawingService, colorService: ColorSelectionService) {
-        super(drawingService, colorService);
+    constructor(drawingService: DrawingService, colorService: ColorSelectionService, shortcutService: ShortcutService) {
+        super(drawingService, colorService, shortcutService);
         this.setDefaultOptions();
         this.selectionBox = new SelectionBox();
     }
@@ -41,6 +42,7 @@ export class PolygonService extends Tool {
 
     onMouseDown(event: MouseEvent): void {
         this.mouseDown = event.buttons === MouseButton.Left;
+        this.onActionStart();
         if (this.mouseDown) {
             const currentCoord = this.getPositionFromMouse(event);
             this.selectionBox.setAnchor(currentCoord);
@@ -55,6 +57,7 @@ export class PolygonService extends Tool {
             this.draw(this.drawingService.baseCtx, action);
         }
         this.mouseDown = false;
+        this.onActionFinish();
     }
 
     onMouseMove(event: MouseEvent): void {
@@ -68,12 +71,14 @@ export class PolygonService extends Tool {
             this.action.next(action);
             this.draw(this.drawingService.baseCtx, action);
             this.mouseDown = false;
+            this.onActionFinish();
         }
     }
 
     drawSelectionBox(): void {
         const ctx = this.drawingService.previewCtx;
         ctx.beginPath();
+        ctx.lineWidth = SELECTION_CONTOUR_BORDER_SIZE;
         ctx.strokeStyle = '#111155';
         ctx.setLineDash([DASHLINE_EMPTY, DASHLINE_FULL]);
 

@@ -54,6 +54,9 @@ export class ClipboardService {
             return;
         }
 
+        this.selector.onToolChange();
+
+        this.selectedBox.rotationCenter = this.selectedBox.center;
         this.selector.selectedBox = this.selectedBox.copy();
         this.selector.selectedBox.initializeAnchors();
         this.selector.selectionImageData = {

@@ -58,10 +58,12 @@ export class CarouselService {
                 ];
                 break;
             default:
-                for (let i = 0; i < CURRENT_DRAWINGS_MAX_SIZE; i++) {
-                    this.currentDrawings[i] = currentArray[this.getDrawingPosition(this.drawingCounter - 1 + i, currentArray)];
+                if (currentArray !== undefined) {
+                    for (let i = 0; i < CURRENT_DRAWINGS_MAX_SIZE; i++) {
+                        this.currentDrawings[i] = currentArray[this.getDrawingPosition(this.drawingCounter - 1 + i, currentArray)];
+                    }
+                    break;
                 }
-                break;
         }
     }
 
@@ -86,7 +88,7 @@ export class CarouselService {
                     this.drawingsInfo.next(drawingsInfo);
                 },
                 (error: Error) => {
-                    throw error;
+                    console.log('error:', error);
                 },
                 () => {
                     this.updateCurrentDrawings();
@@ -114,9 +116,9 @@ export class CarouselService {
     }
 
     getDrawingPosition(counter: number, currentArray: DrawingInfo[]): number {
-        let position = counter % currentArray.length;
+        let position = counter % currentArray?.length;
         if (position < 0) {
-            position += currentArray.length;
+            position += currentArray?.length;
         }
         return position;
     }

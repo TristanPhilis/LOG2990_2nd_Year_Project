@@ -1,4 +1,4 @@
-import { SelectionType, Stamp, Texture, TraceTypes } from './enum';
+import { Font, FontWeight, SelectionType, Stamp, TextAlignment, Texture, TraceTypes } from './enum';
 // Canvas constants
 export const MIN_CANVAS_SIZE = 250;
 
@@ -11,6 +11,10 @@ export const KEYS = {
     ARROW_DOWN: 'ArrowDown',
     ARROW_RIGHT: 'ArrowRight',
     ARROW_LEFT: 'ArrowLeft',
+    DELETE: 'Delete',
+    ENTER: 'Enter',
+    SPACE: 'Space',
+    TAB: 'Tab',
 };
 export const CONTROL = 17;
 export const A_KEY = 65;
@@ -62,10 +66,29 @@ export const DEFAULT_OPTIONS = {
     spraySize: 20,
 };
 export const TEXTURES = [
-    '/assets/textureOne.jpg',
-    '/assets/textureTwo.jpg',
-    '/assets/textureThree.jpg',
-    '/assets/textureFour.jpg',
-    '/assets/textureFive.jpg',
+    '/assets/textures/textureOne.jpg',
+    '/assets/textures/textureTwo.jpg',
+    '/assets/textures/textureThree.jpg',
+    '/assets/textures/textureFour.jpg',
+    '/assets/textures/textureFive.jpg',
 ];
-export const STAMPS = ['/assets/stampOne.png', '/assets/stampTwo.png', '/assets/stampThree.png', '/assets/stampFour.png', '/assets/stampFive.png'];
+export const STAMPS = [
+    '/assets/stamps/stampOne.png',
+    '/assets/stamps/stampTwo.png',
+    '/assets/stamps/stampThree.png',
+    '/assets/stamps/stampFour.png',
+    '/assets/stamps/stampFive.png',
+];
+
+export const TEXT_DEFAULT_OPTIONS = {
+    size: 20,
+    font: Font.arial,
+    weight: FontWeight.normal,
+    alignment: TextAlignment.left,
+};
+
+export const BLINKER_INTERVAL_TIME = 500;
+
+export const FONTS = ['arial', 'verdana', 'New Roman', 'courier', 'serif', 'Comic Sans MS'];
+export const FONT_WEIGHTS = ['normal', 'bold', 'italic'];
+export const FONT_ALIGNMENTS = ['letf', 'center', 'right'];

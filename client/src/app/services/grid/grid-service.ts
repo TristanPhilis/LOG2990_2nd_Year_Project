@@ -1,10 +1,13 @@
 import { Injectable, OnDestroy } from '@angular/core';
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { ShortcutService } from '@app/services/shortcut/shortcut-service';
 import { AnchorsPosition } from '@app/shared/enum';
 import { Subject } from 'rxjs';
 
 export const DEFAULT_TRANSPARENCY = 0.5;
 export const DEFAULT_GRID_SIZE = 10;
+export const MAX_GRID_SIZE = 200;
+export const GRID_INCREMENT = 5;
 
 @Injectable({
     providedIn: 'root',
@@ -17,9 +20,10 @@ export class GridService implements OnDestroy {
     currentAnchor: AnchorsPosition;
     onMagnetismStateChange: Subject<void>;
 
-    constructor(private drawingService: DrawingService) {
+    constructor(private drawingService: DrawingService, private shortcutService: ShortcutService) {
         this.setDefaultOptions();
         this.onMagnetismStateChange = new Subject();
+        this.addShortcut();
     }
 
     ngOnDestroy(): void {
@@ -88,6 +92,38 @@ export class GridService implements OnDestroy {
         ctx.globalAlpha = this.transparency;
         ctx.strokeStyle = 'black';
         ctx.lineWidth = 1;
+    }
+
+    private addShortcut(): void {
+        this.shortcutService.shortcuts
+            .set('+', () => {
+                this.squareSize += GRID_INCREMENT;
+                if (this.squareSize >= MAX_GRID_SIZE) {
+                    this.squareSize = MAX_GRID_SIZE;
+                }
+                this.onOptionChange();
+            })
+            .set('S-+', () => {
+                this.squareSize += GRID_INCREMENT;
+                if (this.squareSize >= MAX_GRID_SIZE) {
+                    this.squareSize = MAX_GRID_SIZE;
+                }
+                this.onOptionChange();
+            })
+            .set('-', () => {
+                this.squareSize -= GRID_INCREMENT;
+                if (this.squareSize < DEFAULT_GRID_SIZE) {
+                    this.squareSize = DEFAULT_GRID_SIZE;
+                }
+                this.onOptionChange();
+            })
+            .set('g', () => {
+                this.toggleGrid();
+            })
+            .set('m', () => {
+                this.toggleMagnetism();
+            });
+        this.shortcutService.alwaysEnabledShorcuts.add('-').add('S-+').add('+').add('g').add('m');
     }
 
     get canvasWidth(): number {

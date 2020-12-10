@@ -5,6 +5,7 @@ import { ToolOption } from '@app/classes/tool-option';
 import { Vec2 } from '@app/classes/vec2';
 import { ColorSelectionService } from '@app/services/color/color-selection-service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { ShortcutService } from '@app/services/shortcut/shortcut-service';
 import { BASE_SNAP_ANGLE, DEFAULT_OPTIONS, KEYS, MIDDLE_SNAP_ANGLE } from '@app/shared/constant';
 import { DrawingToolId, Options } from '@app/shared/enum';
 
@@ -16,8 +17,8 @@ export class LineService extends Tool {
     private lineStarted: boolean;
     currentCoord: Vec2;
 
-    constructor(drawingService: DrawingService, colorService: ColorSelectionService) {
-        super(drawingService, colorService);
+    constructor(drawingService: DrawingService, colorService: ColorSelectionService, shortcutService: ShortcutService) {
+        super(drawingService, colorService, shortcutService);
         this.clearPath();
         this.setDefaultOptions();
         this.lineStarted = false;
@@ -29,6 +30,10 @@ export class LineService extends Tool {
             primaryColor: this.primaryColor,
             toolOptions,
         };
+    }
+
+    onToolChange(): void {
+        this.cancelAction();
     }
 
     private getLastClickedCoord(): Vec2 {
@@ -44,6 +49,7 @@ export class LineService extends Tool {
             const initialCoord = this.getPositionFromMouse(event);
             this.currentCoord = initialCoord;
             this.pathData = [initialCoord, initialCoord];
+            this.onActionStart();
         }
     }
 
@@ -63,6 +69,7 @@ export class LineService extends Tool {
             this.draw(this.drawingService.baseCtx, drawingAction);
             this.lineStarted = false;
             this.clearPath();
+            this.onActionFinish();
         }
     }
 
@@ -105,11 +112,15 @@ export class LineService extends Tool {
                 }
                 break;
             case KEYS.ESCAPE:
-                this.lineStarted = false;
-                this.clearPath();
-                this.drawingService.clearCanvas(this.drawingService.previewCtx);
+                this.cancelAction();
                 break;
         }
+    }
+
+    private cancelAction(): void {
+        this.lineStarted = false;
+        this.clearPath();
+        this.drawingService.clearCanvas(this.drawingService.previewCtx);
     }
 
     updateLastCoord(): void {

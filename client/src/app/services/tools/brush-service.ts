@@ -5,6 +5,7 @@ import { ToolOption } from '@app/classes/tool-option';
 import { Vec2 } from '@app/classes/vec2';
 import { ColorSelectionService } from '@app/services/color/color-selection-service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { ShortcutService } from '@app/services/shortcut/shortcut-service';
 import { DEFAULT_OPTIONS, TEXTURES } from '@app/shared/constant';
 import { DrawingToolId, MouseButton, Options } from '@app/shared/enum';
 
@@ -15,8 +16,8 @@ export class BrushService extends Tool {
     private pathData: Vec2[];
     private availableTextures: string[];
 
-    constructor(drawingService: DrawingService, colorService: ColorSelectionService) {
-        super(drawingService, colorService);
+    constructor(drawingService: DrawingService, colorService: ColorSelectionService, shortcutService: ShortcutService) {
+        super(drawingService, colorService, shortcutService);
         this.clearPath();
         this.setDefaultOptions();
         this.availableTextures = TEXTURES;
@@ -36,6 +37,7 @@ export class BrushService extends Tool {
     onMouseDown(event: MouseEvent): void {
         this.mouseDown = event.buttons === MouseButton.Left;
         if (this.mouseDown) {
+            this.onActionStart();
             this.clearPath();
             this.mouseDownCoord = this.getPositionFromMouse(event);
             this.pathData.push(this.mouseDownCoord);
@@ -52,6 +54,7 @@ export class BrushService extends Tool {
         }
         this.mouseDown = false;
         this.clearPath();
+        this.onActionFinish();
     }
 
     onMouseMove(event: MouseEvent): void {
@@ -63,6 +66,7 @@ export class BrushService extends Tool {
         }
         if (this.mouseDown && !(event.buttons === MouseButton.Left)) {
             this.draw(this.drawingService.baseCtx, this.getDrawingAction());
+            this.onActionFinish();
         }
     }
 

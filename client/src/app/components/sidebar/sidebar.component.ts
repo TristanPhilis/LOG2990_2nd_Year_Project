@@ -1,5 +1,6 @@
+import { ComponentType } from '@angular/cdk/portal';
 import { Component, HostListener } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { CarouselComponent } from '@app/components/carousel/carousel.component';
 import { CreateNewDrawingComponent } from '@app/components/create-new-drawing/create-new-drawing.component';
 import { GuideComponent } from '@app/components/guide/guide.component';
@@ -8,11 +9,11 @@ import { SavePopupComponent } from '@app/components/popup/save-popup/save-popup.
 import { SidebarTool } from '@app/components/sidebar/sidebar-tool/sidebar-tool';
 import { ClipboardService } from '@app/services/clipboard/clipboard-service';
 import { CanvasSizeService } from '@app/services/drawing/canvas-size-service';
+import { ShortcutService } from '@app/services/shortcut/shortcut-service';
+import { SelectionService } from '@app/services/tools/selection/selection-service';
 import { ToolsService } from '@app/services/tools/tools-service';
 import { UndoRedoService } from '@app/services/tools/undo-redo-service';
 import { DrawingToolId, Options, SelectionType, SidebarToolID } from '@app/shared/enum';
-
-declare type callback = () => void;
 
 @Component({
     selector: 'app-sidebar',
@@ -32,13 +33,14 @@ export class SidebarComponent {
         private dialog: MatDialog,
         private canvasSizeService: CanvasSizeService,
         public undoRedo: UndoRedoService,
-        private clipBoard: ClipboardService,
+        public clipBoard: ClipboardService,
+        private shortCurtsService: ShortcutService,
     ) {
         this.sideBarToolsTop = [
             { id: SidebarToolID.tracing, name: 'Traçage', defaultDrawingToolid: DrawingToolId.pencilService },
             { id: SidebarToolID.line, name: 'Ligne', defaultDrawingToolid: DrawingToolId.lineService },
+            { id: SidebarToolID.text, name: 'Texte', defaultDrawingToolid: DrawingToolId.textService },
             { id: SidebarToolID.shapes, name: 'Figures', defaultDrawingToolid: DrawingToolId.rectangleService },
-            { id: SidebarToolID.text, name: 'Texte' },
             { id: SidebarToolID.paintBucket, name: 'Seau', defaultDrawingToolid: DrawingToolId.bucketService },
             { id: SidebarToolID.aerosol, name: 'Aerosol', defaultDrawingToolid: DrawingToolId.aerosolService },
             { id: SidebarToolID.stamp, name: 'Étampe', defaultDrawingToolid: DrawingToolId.stampService },
@@ -63,6 +65,8 @@ export class SidebarComponent {
         this.sideBarToolsTop.forEach((object) => {
             this.sideBarToolsTopMap.set(object.id, object);
         });
+
+        this.addShortcuts();
     }
 
     openCloseSidenav(id: SidebarToolID): void {
@@ -84,45 +88,37 @@ export class SidebarComponent {
     }
 
     onButtonPressBottom(id: SidebarToolID): void {
+        this.toolsService.currentDrawingTool.onToolChange();
         switch (id) {
             case SidebarToolID.createNew: {
                 this.createNewDrawing();
                 break;
             }
             case SidebarToolID.openGuide: {
-                this.isDialogOpen = true;
-                const dialogRef = this.dialog.open(GuideComponent);
-                dialogRef.afterClosed().subscribe(() => {
-                    this.isDialogOpen = false;
-                });
+                this.openDialog(GuideComponent);
                 break;
             }
             case SidebarToolID.openCarrousel: {
-                this.isDialogOpen = true;
-                const dialogRef = this.dialog.open(CarouselComponent, { width: '90%', height: '70%' });
-
-                dialogRef.afterClosed().subscribe(() => {
-                    this.isDialogOpen = false;
-                });
+                this.openDialog(CarouselComponent, { width: '90%', height: '70%' });
                 break;
             }
             case SidebarToolID.saveCurrent: {
-                this.isDialogOpen = true;
-                const dialogRef = this.dialog.open(SavePopupComponent);
-                dialogRef.afterClosed().subscribe(() => {
-                    this.isDialogOpen = false;
-                });
+                this.openDialog(SavePopupComponent);
                 break;
             }
             case SidebarToolID.exportCurrent: {
-                this.isDialogOpen = true;
-                const dialogRef = this.dialog.open(ExportPopupComponent);
-                dialogRef.afterClosed().subscribe(() => {
-                    this.isDialogOpen = false;
-                });
+                this.openDialog(ExportPopupComponent);
                 break;
             }
         }
+    }
+
+    private openDialog<T>(component: ComponentType<T>, config?: MatDialogConfig): void {
+        this.shortCurtsService.shortcutsEnabled = false;
+        const dialogRef = this.dialog.open(component, config);
+        dialogRef.afterClosed().subscribe(() => {
+            this.shortCurtsService.shortcutsEnabled = true;
+        });
     }
 
     private getComposedKey(event: KeyboardEvent): string {
@@ -144,111 +140,102 @@ export class SidebarComponent {
     @HostListener('window: keydown', ['$event'])
     onKeyDown(event: KeyboardEvent): void {
         const keys: string = this.getComposedKey(event);
-        const kbd: { [id: string]: callback } = {
-            'C-o': () => {
+        if (this.shortCurtsService.shortcutsEnabled) {
+            event.preventDefault();
+        }
+        this.shortCurtsService.execute(keys);
+        this.toolsService.openToolSidenav();
+    }
+
+    private addShortcuts(): void {
+        this.shortCurtsService.shortcuts
+            .set('C-o', () => {
                 this.createNewDrawing();
-            },
-            'C-e': () => {
+            })
+            .set('C-e', () => {
                 this.onButtonPressBottom(SidebarToolID.exportCurrent);
-            },
-            'C-g': () => {
+            })
+            .set('C-g', () => {
                 this.onButtonPressBottom(SidebarToolID.openCarrousel);
-            },
-            'C-s': () => {
+            })
+            .set('C-s', () => {
                 this.onButtonPressBottom(SidebarToolID.saveCurrent);
-            },
-            'C-z': () => {
+            })
+            .set('C-z', () => {
                 this.undoRedo.undo();
-            },
-            'C-S-z': () => {
+            })
+            .set('C-S-z', () => {
                 this.undoRedo.redo();
-            },
-            'C-c': () => {
+            })
+            .set('C-c', () => {
                 this.clipBoard.copy();
-            },
-            'C-x': () => {
+            })
+            .set('C-x', () => {
                 this.clipBoard.cut();
-            },
-            'C-v': () => {
+            })
+            .set('C-v', () => {
                 this.clipBoard.paste();
                 if (this.toolsService.selectedSideBarTool.id !== SidebarToolID.selection) {
                     this.onButtonPressTop(this.sideBarToolsTopMap.get(SidebarToolID.selection));
                     this.toolsService.updateOptionValue(Options.selectionType, SelectionType.rectangle);
                 }
-            },
-        };
-        const func: callback | undefined = kbd[keys];
-        if (func) {
-            func();
-        }
-    }
-
-    @HostListener('window: keyup', ['$event'])
-    onKeyUp(event: KeyboardEvent): void {
-        if (this.isDialogOpen) {
-            return;
-        }
-        const kbd: { [id: string]: callback } = {
-            c: () => {
+            })
+            .set('C-a', () => {
+                this.onButtonPressTop(this.sideBarToolsTopMap.get(SidebarToolID.selection));
+                (this.toolsService.getTool(DrawingToolId.selectionService) as SelectionService).selectAllCanvas();
+            })
+            .set('c', () => {
                 this.onButtonPressTop(this.sideBarToolsTopMap.get(SidebarToolID.tracing));
-            },
-            w: () => {
+            })
+            .set('w', () => {
                 this.onButtonPressTop(this.sideBarToolsTopMap.get(SidebarToolID.tracing));
                 this.toolsService.setCurrentDrawingTool(DrawingToolId.brushService);
-            },
-            p: () => {
+            })
+            .set('p', () => {
                 this.onButtonPressTop(this.sideBarToolsTopMap.get(SidebarToolID.tracing));
                 this.toolsService.setCurrentDrawingTool(DrawingToolId.featherService);
-            },
-
-            a: () => this.onButtonPressTop(this.sideBarToolsTopMap.get(SidebarToolID.aerosol)),
-            b: () => this.onButtonPressTop(this.sideBarToolsTopMap.get(SidebarToolID.paintBucket)),
-            e: () => this.onButtonPressTop(this.sideBarToolsTopMap.get(SidebarToolID.eraser)),
-            l: () => this.onButtonPressTop(this.sideBarToolsTopMap.get(SidebarToolID.line)),
-            r: () => {
+            })
+            .set('d', () => this.onButtonPressTop(this.sideBarToolsTopMap.get(SidebarToolID.stamp)))
+            .set('a', () => this.onButtonPressTop(this.sideBarToolsTopMap.get(SidebarToolID.aerosol)))
+            .set('b', () => this.onButtonPressTop(this.sideBarToolsTopMap.get(SidebarToolID.paintBucket)))
+            .set('e', () => this.onButtonPressTop(this.sideBarToolsTopMap.get(SidebarToolID.eraser)))
+            .set('l', () => this.onButtonPressTop(this.sideBarToolsTopMap.get(SidebarToolID.line)))
+            .set('r', () => {
                 this.onButtonPressTop(this.sideBarToolsTopMap.get(SidebarToolID.selection));
                 this.toolsService.updateOptionValue(Options.selectionType, SelectionType.rectangle);
-            },
-            s: () => {
+            })
+            .set('s', () => {
                 this.onButtonPressTop(this.sideBarToolsTopMap.get(SidebarToolID.selection));
                 this.toolsService.updateOptionValue(Options.selectionType, SelectionType.ellipse);
-            },
-            v: () => {
+            })
+            .set('v', () => {
                 this.onButtonPressTop(this.sideBarToolsTopMap.get(SidebarToolID.selection));
                 this.toolsService.updateOptionValue(Options.selectionType, SelectionType.magic);
-            },
-            i: () => this.onButtonPressTop(this.sideBarToolsTopMap.get(SidebarToolID.pipette)),
-
-            1: () => {
-                this.onButtonPressTop(this.sideBarToolsTopMap.get(SidebarToolID.shapes));
-            },
-            2: () => {
+            })
+            .set('i', () => this.onButtonPressTop(this.sideBarToolsTopMap.get(SidebarToolID.pipette)))
+            .set('t', () => this.onButtonPressTop(this.sideBarToolsTopMap.get(SidebarToolID.text)))
+            .set('1', () => this.onButtonPressTop(this.sideBarToolsTopMap.get(SidebarToolID.shapes)))
+            .set('2', () => {
                 this.onButtonPressTop(this.sideBarToolsTopMap.get(SidebarToolID.shapes));
                 this.toolsService.setCurrentDrawingTool(DrawingToolId.ellipseService);
-            },
-            3: () => {
+            })
+            .set('3', () => {
                 this.onButtonPressTop(this.sideBarToolsTopMap.get(SidebarToolID.shapes));
                 this.toolsService.setCurrentDrawingTool(DrawingToolId.polygonService);
-            },
-            delete: () => {
-                this.clipBoard.delete();
-            },
-        };
-        const keys: string = this.getComposedKey(event);
-        if (kbd[keys]) {
-            const func: callback = kbd[keys];
-            func();
-            this.toolsService.openToolSidenav();
-        }
+            })
+            .set('delete', () => this.clipBoard.delete());
+        this.shortCurtsService.alwaysEnabledShorcuts.add('delete').add('C-c').add('C-x').add('C-v');
     }
 
     private createNewDrawing(): void {
         this.undoRedo.clearPile();
-        this.isDialogOpen = true;
+        this.shortCurtsService.shortcutsEnabled = false;
         const dialogRef = this.dialog.open(CreateNewDrawingComponent);
-        dialogRef.afterClosed().subscribe(() => {
-            this.canvasSizeService.restoreInitialSize();
-            this.isDialogOpen = false;
+        dialogRef.afterClosed().subscribe((result: boolean) => {
+            if (result) {
+                this.canvasSizeService.restoreInitialSize();
+                this.shortCurtsService.shortcutsEnabled = true;
+            }
         });
     }
 
@@ -257,10 +244,10 @@ export class SidebarComponent {
     }
 
     get showUndo(): boolean {
-        return this.undoRedo.undoPile.length > 0;
+        return this.undoRedo.undoPile.length > 0 && this.shortCurtsService.shortcutsEnabled;
     }
 
     get showRedo(): boolean {
-        return this.undoRedo.redoPile.length > 0;
+        return this.undoRedo.redoPile.length > 0 && this.shortCurtsService.shortcutsEnabled;
     }
 }
