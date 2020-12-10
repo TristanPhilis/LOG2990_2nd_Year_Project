@@ -8,7 +8,6 @@ import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ShortcutService } from '@app/services/shortcut/shortcut-service';
 import { A_POSITION, B_POSITION, G_POSITION, PREVIEW_RADIUS_SIZE, PREVIEW_SCALE, PREVIEW_SELECTION_SIZE, R_POSITION } from '@app/shared/constant';
 import { MouseButton } from '@app/shared/enum';
-
 @Injectable({
     providedIn: 'root',
 })

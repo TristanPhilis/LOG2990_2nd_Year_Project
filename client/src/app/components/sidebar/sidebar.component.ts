@@ -243,6 +243,20 @@ export class SidebarComponent {
         return this.toolsService.selectedSideBarTool.id;
     }
 
+    private createNewDrawing(): void {
+        this.undoRedo.clearPile();
+        this.isDialogOpen = true;
+        const dialogRef = this.dialog.open(CreateNewDrawingComponent);
+        dialogRef.afterClosed().subscribe(() => {
+            this.canvasSizeService.restoreInitialSize();
+            this.isDialogOpen = false;
+        });
+    }
+
+    get selectedSideBarToolId(): SidebarToolID {
+        return this.toolsService.selectedSideBarTool.id;
+    }
+
     get showUndo(): boolean {
         return this.undoRedo.undoPile.length > 0 && this.shortCurtsService.shortcutsEnabled;
     }

@@ -5,7 +5,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { DrawingService } from '@app/services/drawing/drawing.service';
-import { WebRequestService } from '@app/services/index/web-request-service';
+import { IndexService } from '@app/services/index/index.service';
 import { DrawingInfo } from '@common/communication/drawing-info';
 import { SavePopupComponent } from './save-popup.component';
 
@@ -13,17 +13,17 @@ describe('SavePopupComponent', () => {
     let component: SavePopupComponent;
     let fixture: ComponentFixture<SavePopupComponent>;
     let drawingServiceSpy: jasmine.SpyObj<DrawingService>;
-    let webRequestServiceSpy: jasmine.SpyObj<WebRequestService>;
+    let webRequestServiceSpy: jasmine.SpyObj<IndexService>;
 
     beforeEach(
         waitForAsync(() => {
-            webRequestServiceSpy = jasmine.createSpyObj('WebRequestService', ['postDrawing']);
+            webRequestServiceSpy = jasmine.createSpyObj('IndexService', ['postDrawing', 'getAllDrawings']);
             drawingServiceSpy = jasmine.createSpyObj('DrawingService', ['getImageURL']);
             TestBed.configureTestingModule({
                 declarations: [SavePopupComponent],
                 providers: [
                     { provide: DrawingService, useValue: drawingServiceSpy },
-                    { provide: WebRequestService, useValue: webRequestServiceSpy },
+                    { provide: IndexService, useValue: webRequestServiceSpy },
                 ],
                 imports: [FormsModule, ReactiveFormsModule, MatInputModule, MatFormFieldModule, MatIconModule, BrowserAnimationsModule],
             }).compileComponents();
