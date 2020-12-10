@@ -54,7 +54,7 @@ describe('MainPageComponent', () => {
         expect(dialogSpy.open).toHaveBeenCalled();
     });
 
-    it('openGuide should have been call', () => {
+    it('continueDrawing should have been call', () => {
         component.continueDrawing();
         expect(drawingServiceSpy.clearCanvas).toHaveBeenCalled();
         expect(drawingServiceSpy.fillCanvas).toHaveBeenCalled();
