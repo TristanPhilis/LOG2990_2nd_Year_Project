@@ -24,7 +24,7 @@ describe('ClipBoardService', () => {
     let actionSpyObj: jasmine.SpyObj<Subject<DrawingAction | SelectionAction>>;
     beforeEach(() => {
         drawServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas', 'fillCanvasAtLocation']);
-        selectionServiceSpy = jasmine.createSpyObj('SelectionService', ['getDrawingAction', 'updateSelectedAreaPreview']);
+        selectionServiceSpy = jasmine.createSpyObj('SelectionService', ['getDrawingAction', 'updateSelectedAreaPreview', 'onToolChange']);
         TestBed.configureTestingModule({});
         TestBed.configureTestingModule({
             providers: [

@@ -5,6 +5,7 @@ import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
 import { ColorSelectionService } from '@app/services/color/color-selection-service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { ShortcutService } from '@app/services/shortcut/shortcut-service';
 import { A_POSITION, B_POSITION, G_POSITION, PREVIEW_RADIUS_SIZE, PREVIEW_SCALE, PREVIEW_SELECTION_SIZE, R_POSITION } from '@app/shared/constant';
 import { MouseButton } from '@app/shared/enum';
 @Injectable({
@@ -14,8 +15,8 @@ export class PipetteService extends Tool {
     private previewSquare: BoundingBox = new BoundingBox();
     pipettePreviewCtx: CanvasRenderingContext2D;
 
-    constructor(drawingService: DrawingService, colorService: ColorSelectionService) {
-        super(drawingService, colorService);
+    constructor(drawingService: DrawingService, colorService: ColorSelectionService, shortcutService: ShortcutService) {
+        super(drawingService, colorService, shortcutService);
         this.previewSquare.squareSize = PREVIEW_SELECTION_SIZE;
     }
 

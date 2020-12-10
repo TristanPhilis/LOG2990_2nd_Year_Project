@@ -1,19 +1,20 @@
 <div class="container">
     <button mat-raised-button class="button" (click)="toggleGrid()">{{ buttonText }}</button>
+    <label>Grosseur</label>
     <div class="slider-container">
-        <label>Grosseur</label>
-        <mat-slider (input)="updateSize($event.value)" thumbLabel [displayWith]="formatSize" min="10" max="200" step="1"></mat-slider>
+        <input type="range" (input)="updateSize($event.target.valueAsNumber)" min="10" max="200" step="5" [value]="gridService.squareSize" />
+        <span>{{ gridService.squareSize }}</span>
     </div>
+    <label>Transparence</label>
     <div class="slider-container">
-        <label>Transparence</label>
-        <mat-slider
-            (input)="updateTransparency($event.value)"
-            thumbLabel
-            [displayWith]="formatTransparency"
+        <input
+            type="range"
+            (input)="updateTransparency($event.target.valueAsNumber)"
             min="10"
             max="100"
             step="1"
-            value="50"
-        ></mat-slider>
+            [value]="gridService.transparency * 100"
+        />
+        <span>{{ gridService.transparency | percent }}</span>
     </div>
 </div>

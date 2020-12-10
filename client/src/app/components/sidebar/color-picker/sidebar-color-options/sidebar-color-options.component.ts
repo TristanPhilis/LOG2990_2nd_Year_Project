@@ -3,6 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { Color } from '@app/classes/color';
 import { ColorPickerComponent } from '@app/components/sidebar//color-picker/color-picker.component';
 import { ColorSelectionService } from '@app/services/color/color-selection-service';
+import { ShortcutService } from '@app/services/shortcut/shortcut-service';
 import { PERCENT_MULTIPLIER } from '@app/shared/constant';
 import { MouseButton } from '@app/shared/enum';
 
@@ -12,7 +13,7 @@ import { MouseButton } from '@app/shared/enum';
     styleUrls: ['./sidebar-color-options.component.scss'],
 })
 export class SidebarColorOptionsComponent {
-    constructor(private colorSelectionService: ColorSelectionService, private dialog: MatDialog) {}
+    constructor(private colorSelectionService: ColorSelectionService, private dialog: MatDialog, private shortcutService: ShortcutService) {}
     private isPrimaryColorOpened: boolean;
 
     @HostListener('contextmenu', ['$event'])
@@ -40,6 +41,7 @@ export class SidebarColorOptionsComponent {
 
     openColorPicker(isPrimaryColor: boolean): void {
         this.isPrimaryColorOpened = isPrimaryColor;
+        this.shortcutService.shortcutsEnabled = false;
         const colorPickerRef = this.dialog.open(ColorPickerComponent, {
             data: { colorHistory: this.colorHistory, isPrimaryColor },
         });
@@ -50,6 +52,7 @@ export class SidebarColorOptionsComponent {
                 this.colorSelectionService.selectNewColor(color, this.isPrimaryColorOpened);
             }
             this.isPrimaryColorOpened = false;
+            this.shortcutService.shortcutsEnabled = true;
         });
     }
 

@@ -11,6 +11,7 @@ import { Vec2 } from '@app/classes/vec2';
 import { ColorSelectionService } from '@app/services/color/color-selection-service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { GridService } from '@app/services/grid/grid-service';
+import { ShortcutService } from '@app/services/shortcut/shortcut-service';
 import { HitboxDetectionService } from '@app/services/tools/selection/hit-detection/hitbox-detection-service';
 import { SelectionManipulationService } from '@app/services/tools/selection/manipulation/selection-manipulation-service';
 import { SelectionMouvementService } from '@app/services/tools/selection/mouvement/selection-mouvement-service';
@@ -38,6 +39,7 @@ export class SelectionService extends Tool implements OnDestroy {
     constructor(
         drawingService: DrawingService,
         colorService: ColorSelectionService,
+        shortCutService: ShortcutService,
         private rectangleSelector: RectangleSelectorService,
         private ellipseSelector: EllipseSelectorService,
         private magicSelector: MagicSelectorService,
@@ -47,7 +49,7 @@ export class SelectionService extends Tool implements OnDestroy {
         private manipulationService: SelectionManipulationService,
         private gridService: GridService,
     ) {
-        super(drawingService, colorService);
+        super(drawingService, colorService, shortCutService);
         this.setDefaultOptions();
 
         this.selectorOptions = [this.rectangleSelector, this.ellipseSelector, this.magicSelector];
@@ -108,6 +110,12 @@ export class SelectionService extends Tool implements OnDestroy {
         this.currentSelector = this.selectorOptions[selectorIndex];
     }
 
+    onToolChange(): void {
+        if (this.isAreaSelected) {
+            this.placeImage();
+        }
+    }
+
     onMouseDown(event: MouseEvent): void {
         const isRightClick = event.buttons === MouseButton.Right;
         const isLeftClick = event.buttons === MouseButton.Left;
@@ -165,6 +173,7 @@ export class SelectionService extends Tool implements OnDestroy {
             }
         } else {
             if (event.buttons === MouseButton.Left) {
+                this.onActionStart();
                 this.selectionBox.updateOpposingCorner(this.mouseDownCoord);
                 this.currentSelector.drawSelectionBox(this.selectionBox, this.shiftDown);
             } else {
@@ -236,6 +245,7 @@ export class SelectionService extends Tool implements OnDestroy {
     private initializeSelectedArea(): void {
         this.isAreaSelected = (this.selectionBox.width > 0 && this.selectionBox.height > 0) || this.currentSelector.id === SelectionType.magic;
         if (this.isAreaSelected) {
+            this.onActionStart();
             if (this.currentSelector.id !== SelectionType.magic) {
                 this.selectedBox.updateFromSelectionBox(this.selectionBox, this.shiftDown);
             }
@@ -261,6 +271,7 @@ export class SelectionService extends Tool implements OnDestroy {
             this.draw(this.drawingService.baseCtx, action);
         }
         this.isAreaSelected = false;
+        this.onActionFinish();
     }
 
     selectAllCanvas(): void {
@@ -332,6 +343,7 @@ export class SelectionService extends Tool implements OnDestroy {
         ctx.resetTransform();
     }
 
+    // tslint:disable:max-file-line-count  so close :(
     getDrawingAction(): SelectionAction {
         return {
             id: DrawingToolId.selectionService,

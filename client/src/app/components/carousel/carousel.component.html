@@ -1,5 +1,5 @@
 <div class ="dialog">
-      <ng-container *ngIf="carouselService.drawingsInfo?.value.length === 0
+      <ng-container *ngIf="carouselService.drawingsInfo?.value?.length === 0
         || (carouselService.filteredDrawings?.length === 0 && carouselService.tags?.length > 0); else elseBlock">{{displayedMessage}}</ng-container>
         <ng-template #elseBlock>
         <li *ngFor="let currentDrawing of carouselService.currentDrawings; let i = index">

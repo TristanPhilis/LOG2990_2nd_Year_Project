@@ -9,6 +9,7 @@
     <div class="tab">
         <button class="tablinks" (click)="openTab('NouveauDessin')">Créer un nouveau dessin</button>
         <button class="tablinks" (click)="openTab('ExporterDessin')">Exporter un dessin</button>
+        <button class="tablinks" (click)="openTab('EnvoyerDessin')">Envoyer un dessin</button>
         <button class="tablinks" (click)="openTab('SauvegarderDessin')">Sauvegarder un dessin</button>
         <button class="tablinks" (click)="openTab('CarrouselDessin')">Carrousel de dessin</button>
     </div>
@@ -22,7 +23,7 @@
             + o" il est possible de créer un nouveau dessin. Si il y a un déssin deja présent lors de l'utilisation de cette fonction l'utilisateur
             recevra un avertissement confirmant ou non vouloir abondonner ses changements.
         </p>
-        <img src="../../../assets/images/createNewDrawing.png" alt="" width="1366" height="625" />
+        <img src="../../assets/guide/createNewDrawing.png" alt="" width="1366" height="625" />
     </div>
 
 
@@ -32,10 +33,17 @@
             Grace au boutton exporter dessin (sur la barre latérale) ou avec les touches "CTRL + e" il est possible d'exporter dessin en format PNG ou JPEG.
             Il est possible d'appliquer des filtres sur le dessin que l'on veut exporter et de nommer le dessin.
         </p>
-        <img src="../../../assets/images/exportDrawing.png" alt="" width="1366" height="625" />
+        <img src="../../assets/guide/exportDrawing.png" alt="" width="1366" height="625" />
     </div>
 
-
+    <div id="EnvoyerDessin" class="tabcontent">
+        <h3>Envoyer un dessin</h3>
+        <p>
+            Grace au boutton envoyer dessin (sur la barre latérale) il est possible d'envoyer dessin par courriel en format PNG ou JPEG.
+            Il est possible d'appliquer des filtres sur le dessin que l'on veut envoyer et de nommer le dessin.
+        </p>
+        <img src="../../assets/guide/exportDrawing.png" alt="" width="1366" height="625" />
+    </div>
 
     <div id="SauvegarderDessin" class="tabcontent">
         <h3>Sauvegarder un dessin</h3>
@@ -44,7 +52,7 @@
             + s" il est possible de sauvegarder dessin en format PNG sur le serveur. Afin de sauvegarder le dessin il est possible
             de creer des etiquettes pour classifier le dessin sauvegarde.
         </p>
-        <img src="../../../assets/images/saveDrawing.png" alt="" width="1366" height="625" />
+        <img src="../../assets/guide/saveDrawing.png" alt="" width="1366" height="625" />
     </div>
 
 
@@ -56,7 +64,7 @@
             afin de continuer a dessiner dessus, il est aussi possible de suprimer les dessin sauvegardes. Finalement il est possible de filtrer les dessins
             grace a leur etiquettes.
         </p>
-        <img src="../../../assets/images/carrousel.png" alt="" width="1366" height="625" />
+        <img src="../../assets/guide/carrousel.png" alt="" width="1366" height="625" />
     </div>
 
 
@@ -64,18 +72,23 @@
     <div class="tab">
         <button class="tablinks" (click)="openTab('Crayon')">Crayon</button>
         <button class="tablinks" (click)="openTab('Pinceau')">Pinceau</button>
+        <button class="tablinks" (click)="openTab('Plume')">Plume</button>
         <button class="tablinks" (click)="openTab('Ligne')">Ligne</button>
+        <button class="tablinks" (click)="openTab('Aerosol')">Aerosol</button>
         <button class="tablinks" (click)="openTab('Efface')">Efface</button>
         <button class="tablinks" (click)="openTab('Rectangle')">Rectangle</button>
         <button class="tablinks" (click)="openTab('Polygone')">Polygone</button>
         <button class="tablinks" (click)="openTab('Ellipse')">Ellipse</button>
-        <button class="tablinks" (click)="openTab('Sceau de Peinture')">Sceau de Peinture</button>
+        <button class="tablinks" (click)="openTab('Etampe')">Etampe</button>
+        <button class="tablinks" (click)="openTab('Texte')">Texte</button>
+        <button class="tablinks" (click)="openTab('Seau de Peinture')">Seau de Peinture</button>
         <button class="tablinks" (click)="openTab('Pipette')">Pipette</button>
         <button class="tablinks" (click)="openTab('Palette de couleur')">Palette de couleur</button>
         <button class="tablinks" (click)="openTab('Selection')">Selection</button>
         <button class="tablinks" (click)="openTab('AnnulerRefaire')">Annuler-Refaire</button>
     </div>
 </div>
+
 
 <body>
     <div id="Crayon" class="tabcontent">
@@ -84,14 +97,7 @@
             Le boutton "Crayon" et la touche "c" permet d'acceder a l'outil crayon, ce dernier peut etre utiliser pour dessiner sur le canvas. Il est
             possible de changer la couleur et la largeur du trait grace au option données sur la toolbar.
         </p>
-        <iframe
-            width="560"
-            height="315"
-            src="https://www.youtube.com/embed/DgMfXbJqNJg"
-            frameborder="0"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowfullscreen
-        ></iframe>
+        <iframe width="560" height="315" src="https://www.youtube.com/embed/LOUnfRr9_vc" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
     </div>
 </body>
 
@@ -101,24 +107,55 @@
         Le boutton "Pinceau" et la touche "w" permet d'acceder a l'outil pinceau, ce dernier peut etre utiliser pour dessiner sur le canvas avec divers
         textures. Il est possible de changer la couleur, la texture et la largeur du trait grace au option données sur la toolbar.
     </p>
-    <iframe width="560" height="315" src="https://www.youtube.com/embed/a3e3hCdOxYQ" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+    <iframe width="560" height="315" src="https://www.youtube.com/embed/SZ7e474Y854" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+</div>
+
+<div id="Texte" class="tabcontent">
+    <h3>Texte</h3>
+    <p>
+        Le boutton "Texte" et la touche "t" permet d'acceder a l'outil texte, ce dernier peut etre utiliser pour ecrire sur le canvas.
+        Il est possible de changer la taille de chatactere, la police, la typographie et l'allignement grace au option données sur la toolbar.
+    </p>
+    <iframe width="560" height="315" src="https://www.youtube.com/embed/nXEeJHji7RY" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+</div>
+
+<div id="Plume" class="tabcontent">
+    <h3>Plume</h3>
+    <p>
+        Le boutton "Plume" et la touche "p" permet d'acceder a l'outil plume, ce dernier peut etre utiliser pour dessiner sur le canvas.
+        Il est possible de changer la couleur, et la largeur du trait grace au option données sur la toolbar. De plus la largeur du trait depend aussi de l'angle
+        vers lequel on dessine, qui peut etre change avec la molette de la souris par crans de 15 degres (avec la touche ALT on change par crans de 1 degres).
+    </p>
+    <iframe width="560" height="315" src="https://www.youtube.com/embed/bfKOAv1KJGw" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 </div>
 
 <div id="Ligne" class="tabcontent">
     <h3>Ligne</h3>
     <p>
         Le boutton "ligne" et la touche "l" permet d'acceder a l'outil ligne, ce dernier peut etre utiliser pour dessiner des lignes droites sur le
-        canvas ou plusieur segments qui se suivent. Il est possible de changer la couleur et la largeur des segments grace au option données sur la
+        canvas ou plusieur segments qui se suivent. Il est possible de changer la couleur et la largeur des segments grace au options données sur la
         toolbar.
     </p>
-    <iframe
-        width="560"
-        height="315"
-        src="https://www.youtube.com/embed/4qrEzlIqmgo"
-        frameborder="0"
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-        allowfullscreen
-    ></iframe>
+    <iframe width="560" height="315" src="https://www.youtube.com/embed/83EBhm015KE" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+</div>
+
+<div id="Aerosol" class="tabcontent">
+    <h3>Aerosol</h3>
+    <p>
+        Le boutton "Aerosol" et la touche "a" permet d'acceder a l'outil aerosol, ce dernier peut etre utiliser pour dessiner sur le canvas.
+        Il est possible de changer la couleur, l'interval entre jets, le diametre du jet et le diametre des gouttelettes grace au options données sur la
+        toolbar.
+    </p>
+    <iframe width="560" height="315" src="https://www.youtube.com/embed/PylRjJefz78" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+</div>
+
+<div id="Etampe" class="tabcontent">
+    <h3>Etampe</h3>
+    <p>
+        Le boutton "Etampe" et la touche "d" permet d'acceder a l'outil etampe, ce dernier peut etre utiliser pour dessiner sur le canvas.
+        Il est possible de changer la largeur de l'etampe et le type d'etampe grace au options données sur la toolbar.
+    </p>
+    <iframe width="560" height="315" src="https://www.youtube.com/embed/MJKXy_GAQfg" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 </div>
 
 <div id="Efface" class="tabcontent">
@@ -127,14 +164,7 @@
         Le boutton "Efface" et la touche "e" permet d'acceder a l'outil efface, ce dernier peut etre utiliser pour effacer der dessin deja present sur
         le canvas. Il est possible de changer la largeur de l'efface grace au option données sur la toolbar.
     </p>
-    <iframe
-        width="560"
-        height="315"
-        src="https://www.youtube.com/embed/jChLgI6qeg8"
-        frameborder="0"
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-        allowfullscreen
-    ></iframe>
+    <iframe width="560" height="315" src="https://www.youtube.com/embed/2mpp1YLx3dk" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 </div>
 
 <div id="Rectangle" class="tabcontent">
@@ -145,7 +175,7 @@
         est possible de choisir 3 types de tracé (Contour, Plein ou Plein avec contour). Il est possible de choisir la couleur du contour et du
         'filling' séparement, et la largeur du contour grace au option donnée sur la toolbar.
     </p>
-    <iframe width="560" height="315" src="https://www.youtube.com/embed/Y-YKCZbpZo8" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+    <iframe width="560" height="315" src="https://www.youtube.com/embed/eACGSZOQcEM" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 </div>
 
 <div id="Ellipse" class="tabcontent">
@@ -156,7 +186,7 @@
         est possible de choisir 3 types de tracé (Contour, Plein ou Plein avec contour). Il est possible de choisir la couleur du contour et du
         'filling' séparement, et la largeur du contour grace au option donnée sur la toolbar.
     </p>
-    <iframe width="560" height="315" src="https://www.youtube.com/embed/QAZ7JOEvoxY" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+    <iframe width="560" height="315" src="https://www.youtube.com/embed/tvFX_dL6y7w" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 </div>
 
 <div id="Polygone" class="tabcontent">
@@ -166,27 +196,27 @@
         est possible de choisir 3 types de tracé (Contour, Plein ou Plein avec contour). Il est possible de choisir le nombre de cotes (entre 3 et 12). Il est possible de choisir la couleur du contour et du
         'filling' séparement, et la largeur du contour grace au option donnée sur la toolbar.
     </p>
-    <iframe width="560" height="315" src="https://www.youtube.com/embed/XXZLWmgHXxc" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+    <iframe width="560" height="315" src="https://www.youtube.com/embed/FZ4KwDMwnl4" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 </div>
 
-<div id="Sceau de Peinture" class="tabcontent">
-    <h3>Sceau de Peinture</h3>
+<div id="Seau de Peinture" class="tabcontent">
+    <h3>Seau de Peinture</h3>
     <p>
-        Le boutton "Sceau de Peinture" et la touche "B" permet d'acceder a l'outil "Sceau de Peinture", ce dernier peut etre utiliser pour remplir une region avec la couleur principale selectionne. 
-        Il est possible de choisir 2 types de remplicage (pixels contigus ou non contigus) qui peuvent etre selectionner avec le boutton gauche (contigus) ou droit (non contigus). Il est possible de choisir  
+        Le boutton "Seau" et la touche "b" permet d'acceder a l'outil "Sceau de Peinture", ce dernier peut etre utiliser pour remplir une region avec la couleur principale selectionne.
+        Il est possible de choisir 2 types de remplicage (pixels contigus ou non contigus) qui peuvent etre selectionner avec le boutton gauche (contigus) ou droit (non contigus). Il est possible de choisir
         la tolerance d'ecart qui permet de definir l'etendue de la region a remplir.
     </p>
-    <iframe width="560" height="315" src="https://www.youtube.com/embed/RtX2WHw6lhM" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+    <iframe width="560" height="315" src="https://www.youtube.com/embed/WUgx3WEIs-A" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 </div>
 
 <div id="Pipette" class="tabcontent">
     <h3>Pipette</h3>
     <p>
-        Le boutton "Pipette" et la touche "I" permet d'acceder a l'outil "Pipette", ce dernier peut etre utiliser pour choisir une couleur qui sera saisie du pixel sous le pointeur de la souris. 
-        Avec un clic gauche la couleur sera donner a la couleur primaire, avec un clic droit elle sera donne a la couleur secondaire. Un cercle de previsualisation sera present afin de montrer la 
+        Le boutton "Pipette" et la touche "I" permet d'acceder a l'outil "Pipette", ce dernier peut etre utiliser pour choisir une couleur qui sera saisie du pixel sous le pointeur de la souris.
+        Avec un clic gauche la couleur sera donner a la couleur primaire, avec un clic droit elle sera donne a la couleur secondaire. Un cercle de previsualisation sera present afin de montrer la
         surdimension des pixels sous le pointeur et ceux qui l'entoure. Le pixel centre sera mis en evidence par la previsualisation.
     </p>
-    <iframe width="560" height="315" src="https://www.youtube.com/embed/shJ-9WxkeOU" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+    <iframe width="560" height="315" src="https://www.youtube.com/embed/2d0hU5Ry8E4" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 </div>
 
 <div id="Palette de couleur" class="tabcontent">
@@ -195,14 +225,7 @@
         La palette de couleur est un outil present dans la barre lateral qui permet de choisir la/les couleurs qui seront utilisée pour les divers
         outils de l'application
     </p>
-    <iframe
-        width="560"
-        height="315"
-        src="https://www.youtube.com/embed/GQvzTKWVpWk"
-        frameborder="0"
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-        allowfullscreen
-    ></iframe>
+    <iframe width="560" height="315" src="https://www.youtube.com/embed/ji8RVN0-MN8" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 </div>
 
 <div id="AnnulerRefaire" class="tabcontent">
@@ -212,5 +235,25 @@
         et "CTRL" + "SHIFT" + "Z" pour refaire. "Annuler" peut seulement etre utilisé lorsque quelque chose a deja ete dessine sur le canvas, et l'outil "refaire" peut
         seulement etre utilisé lorsque quelque chose a deja ete annule.
     </p>
-    <iframe width="560" height="315" src="https://www.youtube.com/embed/hJNyH8UYcTw" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+    <iframe width="560" height="315" src="https://www.youtube.com/embed/D05VGAQUr8U" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 </div>
+
+<div id="Selection" class="tabcontent">
+    <h3>Sélection</h3>
+    <p>
+        Il existe plusieur type de sélection, soit la selection par rectangle, par ellipse et par baguette magique qui peuvent etre selectionné grace au option de la toolbar après
+        avoir cliqué sur le bouton selection de la toolbar ou par les touches "r", "s", et "v".
+        La selection par rectangle selectionne une zone rectangulaire, la selection par ellipse selectionne une zone elliptique et la selection par baguette magique selectionne par couleur.
+
+        Losrque quelque chose est selectionné, la selection peut etre bougé, changé de taille et tourné (grace a la molette de la souris).
+
+        Par après, on peut activer la grille (que l'on peut changer de taille et d'épaisseur grace au option de la sidebar). Grace a cette grille, on peut choisir comment est que l'on veut activer
+        le magnétisme. Le magnetisme affecte le déplacement de la sélection.
+
+        Finalement, lorsque quelque chose est sélectionné on peut utilisé le presse papier afin de copier, couper, coller et efface ce qui a été sélectionné grace au touche "ctrl + c", "ctrl + x",
+        "ctrl + v" et "delete".
+    </p>
+    <iframe width="560" height="315" src="https://www.youtube.com/embed/7xvriBHFWy0" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+</div>
+
+

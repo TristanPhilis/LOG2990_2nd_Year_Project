@@ -17,7 +17,7 @@ describe('SavePopupComponent', () => {
 
     beforeEach(
         waitForAsync(() => {
-            webRequestServiceSpy = jasmine.createSpyObj('WebRequestService', ['postDrawing']);
+            webRequestServiceSpy = jasmine.createSpyObj('IndexService', ['postDrawing', 'getAllDrawings']);
             drawingServiceSpy = jasmine.createSpyObj('DrawingService', ['getImageURL']);
             TestBed.configureTestingModule({
                 declarations: [SavePopupComponent],

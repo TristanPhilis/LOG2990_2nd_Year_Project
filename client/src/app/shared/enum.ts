@@ -18,6 +18,10 @@ export enum SidebarToolID {
     redo,
     aerosol,
     grid,
+    copy,
+    cut,
+    paste,
+    delete,
     none,
 }
 
@@ -27,6 +31,7 @@ export enum DrawingToolId {
     ellipseService,
     eraserService,
     lineService,
+    textService,
     brushService,
     selectionService,
     polygonService,
@@ -92,9 +97,34 @@ export enum Options {
     lineLength,
     emissionPerSecond,
     imageChoice,
+    fontSize,
+    font,
+    fontWeight,
+    textAlignment,
     selectionType,
     spraySize,
     sprayDiameter,
+}
+
+export enum Font {
+    arial,
+    verdana,
+    newRoman,
+    courier,
+    serif,
+    comicSans,
+}
+
+export enum FontWeight {
+    normal,
+    bold,
+    italic,
+}
+
+export enum TextAlignment {
+    left,
+    centre,
+    right,
 }
 
 export enum CanvasAnchorsId {

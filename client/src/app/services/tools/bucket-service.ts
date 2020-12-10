@@ -8,6 +8,7 @@ import { ToolOption } from '@app/classes/tool-option';
 import { Vec2 } from '@app/classes/vec2';
 import { ColorSelectionService } from '@app/services/color/color-selection-service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { ShortcutService } from '@app/services/shortcut/shortcut-service';
 import { A_POSITION, B_POSITION, DEFAULT_OPTIONS, G_POSITION, MAX_TOLERANCE, PIXEL_INTERVAL, R_POSITION } from '@app/shared/constant';
 import { DrawingToolId, MouseButton, Options } from '@app/shared/enum';
 import { SearchHelper } from '@app/utils/search-helper';
@@ -25,8 +26,8 @@ export class BucketService extends Tool {
     initialColor: Color;
     boundingBox: BoundingBox;
 
-    constructor(drawingService: DrawingService, colorService: ColorSelectionService) {
-        super(drawingService, colorService);
+    constructor(drawingService: DrawingService, colorService: ColorSelectionService, shortcutService: ShortcutService) {
+        super(drawingService, colorService, shortcutService);
         this.pixelsData = new Uint8ClampedArray();
         this.boundingBox = new BoundingBox();
         this.visitedPixel = [];
