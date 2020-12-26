@@ -20,26 +20,28 @@
 
 ## Continuer un dessin
 
-- [ ] Il est possible de charger le dernier dessin sauvegardé par le système de sauvegarde automatique.
+- [x] Il est possible de charger le dernier dessin sauvegardé par le système de sauvegarde automatique.
 - [ ] Il est possible de voir l'option _Continuer un dessin_ dans le point d'entrée de l'application seulement s'il y a un dessin sauvegardé.
-- [ ] L'utilisateur est amené à la vue de dessin avec le dessin déjà chargé sur la surface de dessin.
+- [x] L'utilisateur est amené à la vue de dessin avec le dessin déjà chargé sur la surface de dessin.
 
 ### Commentaires
 
-Non disponible
+Si on navigue au site manuellement le dessin n'est pas disponible.
 
 ## Sauvegarde automatique
 
-- [ ] Il est possible de faire une sauvegarde automatique du dessin pendant son édition.
+- [x] Il est possible de faire une sauvegarde automatique du dessin pendant son édition.
 - [ ] La sauvegarde automatique est déclenchée après le chargement d'un dessin (à partir du serveur ou continuation d'un dessin sauvegardé automatiquement).
-- [ ] La sauvegarde automatique est déclenchée après toute modification au dessin (création, ouverture de dessin, modification de la surface de dessin).
+- [x] La sauvegarde automatique est déclenchée après toute modification au dessin (création, ouverture de dessin, modification de la surface de dessin).
 - [ ] La sauvegarde est locale au fureteur seulement.
-- [ ] La sauvegarde automatique a lieu sans intervention de l'utilisateur.
-- [ ] Un dessin sauvegardé automatiquement n'a pas de nom ou d'étiquettes.
+- [x] La sauvegarde automatique a lieu sans intervention de l'utilisateur.
+- [x] Un dessin sauvegardé automatiquement n'a pas de nom ou d'étiquettes.
 
 ### Commentaires
 
-Non disponible
+Problème avec la selection
+Enregistrement automatique non activé lors de l'ouverture d'un dessin du serveur
+Si on navigue au site manuellement le dessin n'est perdu.
 
 ## Envoyer le dessin par courriel
 
